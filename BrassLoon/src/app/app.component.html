@@ -1,1 +1,12 @@
-<app-head></app-head>
+<div id="rootContainer" style="height: 100%; overflow-x: scroll;" class="container">
+    <header>
+        <div style="float: right;">
+            <button *ngIf="!IsLoggedIn" class="btn btn-dark" (click)="Login()">Google Login</button>
+            <img *ngIf="UserImageSource" alt="your image" style="max-height: 50px; max-width: 50px; border-radius: 12px; border: 2px solid gray;" [src]="UserImageSource" />
+        </div>
+        <div style="text-align: center;">
+            <h1 style="cursor: pointer;" (click)="NavigateHome()">Brass Loon</h1>
+        </div>    
+    </header>
+    <router-outlet></router-outlet>
+</div>
