@@ -1,14 +1,15 @@
 http:
   port: 8080
-admin:
-  port: 9876
-  host: localhost
 apiEndpoints:
   # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
+  accountApi:
+    host: '*'
+    paths: /account/*
 serviceEndpoints:
   # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+  accountService:
+    url: http://localhost:5000
 policies:
-  - basic-auth
   - cors
   - expression
   - key-auth
@@ -18,3 +19,24 @@ policies:
   - rate-limit
 pipelines:
   # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
+  account:
+    apiEndpoints: 
+      - accountApi
+    policies:
+      -
+        cors:
+          -
+            action:
+              origin: http://localhost:4200
+      -
+        log:
+          - 
+            action:
+              message: ${req.method} ${req.originalUrl} 
+      - 
+        proxy:
+          - action:
+              serviceEndpoint: accountService
+              prependPath: true
+              ignorePath: false
+              stripPath: true

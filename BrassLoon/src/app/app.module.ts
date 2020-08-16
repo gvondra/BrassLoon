@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AppSettingsService } from './app-settings.service';
+import { AccountsComponent } from './accounts/accounts.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -45,7 +46,8 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     AutoLoginComponent,
     HomeComponent,
     UnauthorizedComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    AccountsComponent
   ],
   imports: [
     BrowserModule,
