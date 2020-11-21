@@ -1,0 +1,37 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:49857",
+      "sslPort": 44318
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "AccountAPI": {
+      "commandName": "Project",
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "TknCsp": "{\"d\":\"m_71jlIYn0cR6yQxi4qNkYj19Gw6kAtov2XNe7rZjWqRLVw2kTl63PrJNFJr6gBlWg93epQxCispENsPHbv76jeQEA4xxG_q_LsQ3iKSawljlhUuS7S_ztBQyaMcCeb4_ZS0FV5qA8M5swhnAmGzSMI-MhRaoa_F3qYZQ0gCkbAq7xyz7j4AOKY6HLgbko4I2lkqXdR5FY08gqox0l0k4vAS3clORxvqTpPpSPfcwUM8MBypsIoKvd-4fA3Bv6SA7b8LHdYW4SS5g4ddRljXsyYrY9T561rFpUBl9k6nLY7CE7GnvHhCihNHHZPED7oxu8FSp8wQXc_ghE0FscQNkQ\",\"dp\":\"A8YTIAjpiDwiR24YvMk8F46kJP-sBRmA8Lz4xi63PGy9tRZRzDpMt3G1zGUANfQSH1Joo-2UbIf2lEQ2N06DA08jbneQ2Z_GTMJ0XV2KjNIW2fxlkh39zGFlik-H28Q6qVcJhkRHjdJhKxiI0tKdgNLJuScxbBRrFd-ZbYjbs2M\",\"dq\":\"P_i8YhyMVmMOmNnQwU-LZcrLMdwk20gvVm-jLqGBaeVLuDRC2AQgta8dLhjzmS5qGjmvx3WBfTYT_H_mfMUkJp1VlkU8Ps0NGEVTFM5f9Ie_4t6hdMoTI6KXetHUNsmbgRAK2YQEIwOviVVXa05_ZsLKkDArXr0NpsFRTKdX6kU\",\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"wGrHTkPVwr_sgbJQmO4GHCGSGBn5i4F1eyBrx9c-ipdIyvfT9_uWQyKMG88MYAmiHW717iHv_ucE0XnmaNvVPo6NYhIWLSUY501eWI48T-xVzLz4n3Bbme6dMq_VWrFcoKWFvl542cTSBq2yJse7SQM2qLnZwN_BKch-eXaJTqwRFuYY54E_BkmDdQFUOL8BxVwelg_4RI_YWu28JcxQ5UUkFocTla2GHx8o0W_NOIxO2DFQe3yljzdCyXV_ONXAHirPtVoRVCV10Madoifn00IyzR2xWbVJUQmqpmBfbr2W4F8Ufo5wWUxFh5WtVbk4V4uUhpq1JUoP0T099clU5Q\",\"p\":\"wV50HNR6ua2jcMNi2pCwS85NMDNxpKIiea1wHlJZGQPUVN8mvV4P9hPdMZk9o5WIL1fccIgtQe3Ozrg9jUGD3gDy6S5_8BzOqxWkStbzdmueVrenoj07Htz07sz-dU8lvknUoHx2HM8o7VNy9hR7LxhUDctGG_1uWDSzkSuuYp8\",\"q\":\"_r1mbPW9qHLPMBIRiDut1Fs6dwO-iWVNWQzvhCH45dEcrNgSW-Gl_1AW2mv574sUUw8eiUZqX99qdzW12GxGfYTPPsqvtPvsTBG46rZwGgDAy460TTTamhTEcoDXKa8WuGj2SXaFka7YCkegMV6VeDXHHbCaCYat1jwqppH5ffs\",\"qi\":\"kviI7gjaf61GZe3NX8k5wcQQPsxkYllgiBwKMd6pv4-kKtNByVWrnJwUhiv-m2NzlPmlihpcBVUU-UDPO1TwRH2p0-IAdlJlmlcWC5LLZ993HE3-UPshqsHJ6j_xP04d4f0IBBtf0KZGnFGRHtY7u077JkDtQFohsIg7C-SpQ0E\"}",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/weatherforecast",
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}
