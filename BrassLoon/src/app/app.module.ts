@@ -1,8 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { AuthModule, LogLevel, OidcConfigService, OidcSecurityService } from 'angular-auth-oidc-client';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AutoLoginComponent } from './auto-login/auto-login.component';
@@ -11,6 +13,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AppSettingsService } from './app-settings.service';
 import { AccountsComponent } from './accounts/accounts.component';
+import { AccountComponent } from './account/account.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -47,10 +50,13 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     HomeComponent,
     UnauthorizedComponent,
     ForbiddenComponent,
-    AccountsComponent
+    AccountsComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    FontAwesomeModule,
     AppRoutingModule,
     HttpClientModule,
     AuthModule.forRoot()

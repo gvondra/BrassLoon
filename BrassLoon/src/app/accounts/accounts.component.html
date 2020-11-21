@@ -1,1 +1,18 @@
-<p>accounts works!</p>
+<h2>Accounts</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<ng-container *ngIf="Accounts">
+    <table class="table">
+        <tr *ngFor="let account of Accounts">
+            <td><a [routerLink]="['/a', account.AccountId]">{{ account.Name }}</a></td>
+        </tr>
+        <tr>
+            <td colspan="99">
+                <button class="btn btn-secondary" type="button" (click)="AddAccount()">
+                    <fa-icon [icon]="faPlus" size="xl"></fa-icon>
+                </button>
+            </td>
+        </tr>
+    </table>    
+</ng-container>

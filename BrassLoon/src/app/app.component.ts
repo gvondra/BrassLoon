@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe((isAuthenticated) => {
             if (!isAuthenticated) {
                 this.UserImageSource = null;
-                if ('/autologin' !== window.location.pathname && !this.read("isAuthenticating")) {
+                if ('/autologin' !== window.location.pathname) {
                     this.write('redirect', window.location.pathname);
                     this.router.navigate(['/autologin']);
                 }
@@ -50,14 +50,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private navigateToStoredEndpoint() {
         const path = this.read('redirect');
-        if (this.router.url === path) {
-            return;
-        }
-
-        if (path.toString().includes('/unauthorized')) {
-            this.router.navigate(['/']);
-        } else {
-            this.router.navigate([path]);
+        this.remove('redirect');
+        if (path)
+        {
+            if (this.router.url === path) {
+                return;
+            }
+    
+            if (path.toString().includes('/unauthorized')) {
+                this.router.navigate(['/']);
+            } else {
+                this.router.navigate([path]);
+            }
         }
     }
 
@@ -72,6 +76,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private write(key: string, value: any): void {
         localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    private remove(key: string){
+        localStorage.removeItem(key);
     }
 
     NavigateHome()

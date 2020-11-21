@@ -20,4 +20,28 @@ export class AccountService {
         .then(res => res as Array<Account>);
     });      
   }
+
+  Get(id: string) : Promise<Account> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}`, {headers: headers}).toPromise()
+        .then(res => res as Account);
+    });      
+  }
+
+  Create(account: Account) : Promise<Account> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.post(`${this.httpClientUtil.GetAccountBaseAddress()}Account`, account, {headers: headers}).toPromise()
+        .then(res => res as Account);
+    });      
+  }
+
+  Update(id: string, account: Account) : Promise<Account> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.put(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}`, account, {headers: headers}).toPromise()
+        .then(res => res as Account);
+    });      
+  }
 }

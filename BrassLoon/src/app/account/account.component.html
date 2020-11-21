@@ -1,0 +1,26 @@
+<h2>Account</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<form *ngIf="!ErrorMessage && Account" (ngSubmit)="Save()" #accountForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <label for="accountName">Name</label>
+            </div>
+            <div class="col-md-4">
+                <input id="accountName" name="accountName" #accountName="ngModel" class="form-control" type="text" required="true" maxlength="2000" placeholder="Account Name" [(ngModel)]="Account.Name"/>
+                <div *ngIf="accountName.invalid && (accountName.dirty || accountName.touched)" class="alert alert-danger">
+                    <div *ngIf="accountName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-md-2 col-md-4" style="padding-top: 0.75em;">
+                <button class="btn btn-primary" type="submit" [disabled]="!accountForm.form.valid">Save</button>
+            </div>
+        </div>
+    </div>
+</form>

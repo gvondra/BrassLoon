@@ -4,6 +4,7 @@ import { AutoLoginComponent } from './auto-login/auto-login.component';
 import { HomeComponent } from './home/home.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
+import { AccountComponent } from './account/account.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,14 @@ const routes: Routes = [
   {
     path: "forbidden",
     component: ForbiddenComponent
+  },
+  {
+    path: "a",
+    component: AccountComponent
+  },
+  {
+    path: "a/:id",
+    component: AccountComponent
   }
 ];
 

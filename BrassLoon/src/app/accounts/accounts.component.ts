@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { AccountService } from '../services/account.service';
+import { Account } from '../models/account';
 
 @Component({
   selector: 'app-accounts',
@@ -9,14 +12,24 @@ import { AccountService } from '../services/account.service';
 })
 export class AccountsComponent implements OnInit {
 
-  constructor(private accountService: AccountService) { }
+  ErrorMessage: string = null;
+  Accounts: Array<Account> = null;
+  faPlus = faPlus;
+
+  constructor(private accountService: AccountService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.accountService.GetAll()
-    .then(res => console.log(res))
+    .then(res => this.Accounts = res)
     .catch(err => {
       console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
     });
+  }
+
+  AddAccount() {
+    this.router.navigate(["/a"]);
   }
 
 }
