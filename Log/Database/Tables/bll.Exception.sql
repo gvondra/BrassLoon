@@ -2,7 +2,7 @@
 (
 	[ExceptionId] BIGINT IDENTITY(1,1)  NOT NULL,
 	[ParentExceptionId] BIGINT NULL,
-	[DomainId] VARCHAR(32) NOT NULL,
+	[DomainId] UNIQUEIDENTIFIER NOT NULL,
 	[Message] NVARCHAR(2000) NOT NULL,
 	[TypeName] NVARCHAR(2000) NOT NULL,
 	[Source] NVARCHAR(2000) NOT NULL,
@@ -14,7 +14,12 @@
 	CONSTRAINT [PK_Exception] PRIMARY KEY CLUSTERED ([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_Exception] FOREIGN KEY ([ParentExceptionId]) REFERENCES [bll].[Exception]([ExceptionId])
 )
+WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
 CREATE INDEX [IX_Exception_ParentExceptionId] ON [bll].[Exception] ([ParentExceptionId])
+
+GO
+
+CREATE INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId])

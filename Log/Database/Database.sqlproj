@@ -67,5 +67,11 @@
     <Build Include="Tables\bll.Exception.sql" />
     <Build Include="Tables\bll.Metric.sql" />
     <Build Include="Tables\bll.Trace.sql" />
+    <Build Include="Stored Procedures\bll.CreateTrace.sql" />
+    <Build Include="Stored Procedures\bll.CreateMetric.sql" />
+    <Build Include="Stored Procedures\bll.CreateException.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LocalSqlSchemaCompare.scmp" />
   </ItemGroup>
 </Project>
