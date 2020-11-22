@@ -4,6 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>BrassLoon.CommonCore</AssemblyName>
     <RootNamespace>BrassLoon.CommonCore</RootNamespace>
+    <Authors>Greg Vondra</Authors>
+    <Company />
+    <Product>Brass Loon</Product>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
