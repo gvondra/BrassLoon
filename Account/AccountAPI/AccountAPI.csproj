@@ -5,6 +5,10 @@
     <UserSecretsId>11ea03e6-6f09-4fd5-bb87-0d4208dc6795</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <AssemblyName>BrassLoon.AccountAPI</AssemblyName>
+    <Authors>Greg Vondra</Authors>
+    <Company />
+    <Product>Brass Loon</Product>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
