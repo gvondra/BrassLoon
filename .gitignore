@@ -16,6 +16,7 @@
 # Mono auto generated files
 mono_crash.*
 
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -31,7 +32,6 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-!/[Ll]og/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+!/[Ll]og/
+!/[Ll]og/[Ii]nterface.[Ll]og/
+!/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
