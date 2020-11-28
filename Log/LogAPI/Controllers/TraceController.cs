@@ -12,10 +12,12 @@ namespace LogAPI.Controllers
     [ApiController]
     public class TraceController : ControllerBase
     {
-        [HttpPost()]
-        public IActionResult Create([FromBody] LogModels.Trace trace)
+        [HttpPost("{domain}")]
+        public IActionResult Create([FromRoute] Guid? domain, [FromBody] LogModels.Trace trace)
         {
             IActionResult result = null;
+            if (!domain.HasValue || domain.Value.Equals(Guid.Empty))
+                result = BadRequest("Missing domain guid value");
             return result;
         }
     }

@@ -6,7 +6,7 @@ namespace BrassLoon.Interface.Log.Models
 {
     public class Exception
     {
-        public long ExceptionId { get; set; }
+        public long? ExceptionId { get; set; }
         public Guid? DomainId { get; set; }
         public string Message { get; set; }
         public string TypeName { get; set; }
