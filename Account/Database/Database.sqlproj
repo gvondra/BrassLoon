@@ -85,6 +85,10 @@
     <Build Include="Stored Procedures\bla.GetAccountByUserGuid.sql" />
     <Build Include="Stored Procedures\bla.GatUserByAccountGuid.sql" />
     <Build Include="Stored Procedures\bla.GetAccountGuidByUserGuid.sql" />
+    <Build Include="Stored Procedures\bla.GetDomain.sql" />
+    <Build Include="Stored Procedures\bla.GetDomainByAccountId.sql" />
+    <Build Include="Stored Procedures\bla.CreateDomain.sql" />
+    <Build Include="Stored Procedures\bla.UpdateDomain.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

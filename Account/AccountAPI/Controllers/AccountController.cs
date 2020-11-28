@@ -79,6 +79,31 @@ namespace AccountAPI.Controllers
             return result;
         }
 
+        [HttpGet("{id}/Domain")]
+        [ProducesResponseType(typeof(Domain[]), 200)]
+        [Authorize("READ:ACCOUNT")]
+        public async Task<IActionResult> GetDomains([FromRoute] Guid? id)
+        {
+            IActionResult result = null;
+            if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                result = BadRequest("Missing account id value");
+            if (result == null && !UserCanAccessAccount(id.Value))
+                result = StatusCode(StatusCodes.Status401Unauthorized);
+            if (result == null)
+            {
+                using ILifetimeScope scope = _container.BeginLifetimeScope();
+                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
+                IEnumerable<IDomain> domains = await domainFactory.GetByAccountId(settings, id.Value);
+                IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                result = Ok(
+                    domains.Select<IDomain, Domain>(d => mapper.Map<Domain>(d))
+                    );
+            }
+            return result;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(Account), 200)]
         [Authorize("EDIT:ACCOUNT")]

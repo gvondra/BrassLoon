@@ -14,6 +14,8 @@ namespace BrassLoon.Account.Data
             builder.RegisterInstance<IDbProviderFactory>(new SqlClientProviderFactory());
             builder.RegisterType<AccountDataFactory>().As<IAccountDataFactory>();
             builder.RegisterType<AccountDataSaver>().As<IAccountDataSaver>();
+            builder.RegisterType<DomainDataFactory>().As<IDomainDataFactory>();
+            builder.RegisterType<DomainDataSaver>().As<IDomainDataSaver>();
             builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
             builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
             builder.RegisterType<UserDataFactory>().As<IUserDataFactory>();

@@ -8,6 +8,7 @@
     <Company />
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

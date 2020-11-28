@@ -37,8 +37,8 @@ namespace BrassLoon.Account.Data
                     timestamp.Direction = ParameterDirection.Output;
                     command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, userGuid);
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, accountData.Name);
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, DataUtil.GetParameterValue(userGuid));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(accountData.Name));
 
                     await command.ExecuteNonQueryAsync();
                     accountData.AccountGuid = (Guid)guid.Value;
@@ -63,8 +63,8 @@ namespace BrassLoon.Account.Data
                     timestamp.Direction = ParameterDirection.Output;
                     command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, accountData.AccountGuid);
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, accountData.Name);
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, DataUtil.GetParameterValue(accountData.AccountGuid));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(accountData.Name));
 
                     await command.ExecuteNonQueryAsync();
                     accountData.UpdateTimestamp = (DateTime)timestamp.Value;

@@ -14,6 +14,8 @@ namespace AccountAPI
             {
                 config.CreateMap<Account, IAccount>();
                 config.CreateMap<IAccount, Account>();
+                config.CreateMap<Domain, IDomain>();
+                config.CreateMap<IDomain, Domain>();
             });
         }
 
