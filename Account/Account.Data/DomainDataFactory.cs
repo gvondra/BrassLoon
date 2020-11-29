@@ -35,7 +35,7 @@ namespace BrassLoon.Account.Data
 
         public async Task<IEnumerable<DomainData>> GetByAccountId(ISettings settings, Guid accountId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "acountId", DbType.Guid, accountId);
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "accountId", DbType.Guid, accountId);
             return (await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
