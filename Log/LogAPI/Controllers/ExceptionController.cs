@@ -16,6 +16,8 @@ namespace LogAPI.Controllers
         public IActionResult Create([FromBody] LogModels.Exception exception)
         {
             IActionResult result = null;
+            if (!exception.DomainId.HasValue || exception.DomainId.Value.Equals(Guid.Empty))
+                result = BadRequest("Missing domain guid value");
             return result;
         }
     }

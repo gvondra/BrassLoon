@@ -16,6 +16,8 @@ namespace LogAPI.Controllers
         public IActionResult Create([FromBody] LogModels.Metric metric)
         {
             IActionResult result = null;
+            if (!metric.DomainId.HasValue || metric.DomainId.Value.Equals(Guid.Empty))
+                result = BadRequest("Missing domain guid value");
             return result;
         }
     }
