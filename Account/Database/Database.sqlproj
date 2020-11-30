@@ -89,6 +89,15 @@
     <Build Include="Stored Procedures\bla.GetDomainByAccountId.sql" />
     <Build Include="Stored Procedures\bla.CreateDomain.sql" />
     <Build Include="Stored Procedures\bla.UpdateDomain.sql" />
+    <Build Include="Tables\bla.ClientCredential.sql" />
+    <Build Include="Tables\bla.Client.sql" />
+    <Build Include="Stored Procedures\bla.CreateClient.sql" />
+    <Build Include="Stored Procedures\bla.CreateClientCredential.sql" />
+    <Build Include="Stored Procedures\bla.UpdateClient.sql" />
+    <Build Include="Stored Procedures\bla.GetClient.sql" />
+    <Build Include="Stored Procedures\bla.GetClientCredential.sql" />
+    <Build Include="Stored Procedures\bla.GetClient_by_AccountId.sql" />
+    <Build Include="Stored Procedures\bla.GetClientCredential_by_ClientId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

@@ -9,6 +9,7 @@ namespace BrassLoon.Account.Framework
     public interface IClient
     {
         Guid ClientId { get; }
+        Guid AccountId { get; }
         string Name { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BrassLoon.Account.Framework;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace BrassLoon.Account.Core
 {
-    public class SecretProcessor
+    public class SecretProcessor : ISecretProcessor
     {
         private const string PADDING = "brass-loon:";
         public byte[] Hash(string secret)
