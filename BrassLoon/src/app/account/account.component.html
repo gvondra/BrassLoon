@@ -47,3 +47,13 @@
         </tr>
     </table>
 </div>
+<div *ngIf="!ErrorMessage && Clients">
+    <h3>Clients</h3>
+    <p>Clients are used for OAuth client credential requests.  The client id and secrect can be exchanged for a security token.  The security token can be used to access logging API's.</p>
+    <a [routerLink]="['/a', AccountId, 'Client']">Add Client</a>
+    <table class="table">
+        <tr *ngFor="let client of Clients">
+            <td>{{ client.Name }}</td>
+        </tr>        
+    </table>
+</div>

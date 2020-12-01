@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AccountComponent } from './account/account.component';
+import { ClientComponent } from './client/client.component';
 
 
 const routes: Routes = [
@@ -35,6 +36,14 @@ const routes: Routes = [
   {
     path: "a/:id",
     component: AccountComponent
+  },
+  {
+    path: "a/:accountId/Client",
+    component: ClientComponent
+  },
+  {
+    path: "a/:accountId/Client/:clientId",
+    component: ClientComponent
   }
 ];
 

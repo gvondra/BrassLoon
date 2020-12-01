@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AccountService } from '../services/account.service';
 import { Domain } from '../models/domain';
 import { DomainService } from '../services/domain.service';
+import { Client } from '../models/client';
 
 @Component({
   selector: 'app-account',
@@ -19,6 +20,7 @@ export class AccountComponent implements OnInit {
   IsNew: boolean = false;
   Domains: Array<Domain> = null;
   NewDomainName: string = null;
+  Clients: Array<Client> = null;
 
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -32,6 +34,7 @@ export class AccountComponent implements OnInit {
       this.AccountId = null;
       this.Domains = null;
       this.NewDomainName = null;
+      this.Clients = null;
       if (params["id"]) {
         this.IsNew = false;
         this.AccountId = params["id"];
@@ -46,7 +49,13 @@ export class AccountComponent implements OnInit {
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
-        });    
+        }); 
+        this.accountService.GetClients(params["id"])
+        .then(clients => this.Clients = clients)
+        .catch(err => {
+          console.error(err);
+          this.ErrorMessage = err.message || "Unexpected Error"
+        }); 
       }
       else {
         this.IsNew = true;

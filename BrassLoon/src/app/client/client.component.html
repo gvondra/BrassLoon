@@ -1,0 +1,36 @@
+<h2>Account <span *ngIf="Account">{{ Account.Name }} </span>Client</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<form *ngIf="!ErrorMessage && ClientRequest" (ngSubmit)="Save()" #clientForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                <label for="clientName">Name</label>
+            </div>
+            <div class="col-md-9">
+                <input id="clientName" name="clientName" #clientName="ngModel" class="form-control" type="text" required="true" maxlength="2000" placeholder="Client Name" [(ngModel)]="ClientRequest.Name"/>
+                <div *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)" class="alert alert-danger">
+                    <div *ngIf="clientName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+                <label for="clientSecret">Secret</label>
+            </div>
+            <div class="col-md-9">
+                <input id="clientSecret" name="clientSecret" #clientSecret="ngModel" class="form-control" type="text" readonly="true" [(ngModel)]="ClientRequest.Secret"/>
+                <p *ngIf="ClientRequest.Secret && ClientRequest.Secret != ''" style="font-size: small;">Be sure to capture this secret before saving. There is no way to recover it after it's saved.</p>                
+            </div>
+            <div class="col-md-2"><button class="btn btn-secondary btn-sm" type="button" (click)="GenerateSecret()">Generate Secret</button></div>
+        </div>        
+        <div class="row">
+            <div class="offset-md-2 col-md-4" style="padding-top: 0.75em;">
+                <button class="btn btn-primary" type="submit" [disabled]="!clientForm.form.valid">Save</button>
+            </div>
+        </div>
+    </div>
+</form>

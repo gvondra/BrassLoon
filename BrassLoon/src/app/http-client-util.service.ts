@@ -49,9 +49,7 @@ export class HttpClientUtilService {
       if (Date.now() < Number(expiration)) {
         result = true;
       }
-      console.log(expiration);
       let dt: Date = new Date(Number(expiration));
-      console.log(dt.toLocaleString());
     }
     return result;
   }

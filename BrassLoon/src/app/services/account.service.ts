@@ -4,6 +4,7 @@ import { HttpClientUtilService } from '../http-client-util.service';
 import { Account } from '../models/account';
 import { TokenService } from './token.service';
 import { Domain } from '../models/domain';
+import { Client } from '../models/client';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,14 @@ export class AccountService {
     .then(headers => {
         return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}/Domain`, {headers: headers}).toPromise()
         .then(res => res as Array<Domain>);
+    });      
+  }
+
+  GetClients(id: string) : Promise<Array<Client>> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}/Client`, {headers: headers}).toPromise()
+        .then(res => res as Array<Client>);
     });      
   }
 

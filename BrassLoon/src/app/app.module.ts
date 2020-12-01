@@ -14,6 +14,7 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AppSettingsService } from './app-settings.service';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AccountComponent } from './account/account.component';
+import { ClientComponent } from './client/client.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -51,7 +52,8 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     UnauthorizedComponent,
     ForbiddenComponent,
     AccountsComponent,
-    AccountComponent
+    AccountComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,
