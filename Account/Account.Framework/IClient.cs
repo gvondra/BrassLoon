@@ -16,5 +16,6 @@ namespace BrassLoon.Account.Framework
 
         Task Create(ITransactionHandler transactionHandler);
         Task Update(ITransactionHandler transactionHandler);
+        Task<byte[]> GetSecretHash(ISettings settings);
     }
 }

@@ -4,6 +4,7 @@ using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,13 +13,19 @@ namespace BrassLoon.Account.Core
     public class Client : IClient
     {
         private readonly ClientData _data;
-        private readonly IClientDataSaver _dataSaver;        
+        private readonly IClientDataSaver _dataSaver;
+        private readonly IClientCredentialDataFactory _clientCredentialDataFactory;
+        private readonly SettingsFactory _settingsFactory;
 
         public Client(ClientData data,
-            IClientDataSaver dataSaver)
+            IClientDataSaver dataSaver,
+            IClientCredentialDataFactory clientCredentialDataFactory,
+            SettingsFactory settingsFactory)
         {
             _data = data;
             _dataSaver = dataSaver;
+            _clientCredentialDataFactory = clientCredentialDataFactory;
+            _settingsFactory = settingsFactory;
         }
 
         public Guid ClientId => _data.ClientId;
@@ -40,6 +47,19 @@ namespace BrassLoon.Account.Core
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(transactionHandler);
             ClientCredentialChange = null;
+        }
+
+        public async Task<byte[]> GetSecretHash(ISettings settings)
+        {
+            byte[] result = null;
+            ClientCredentialData data = (await _clientCredentialDataFactory.GetByClientId(_settingsFactory.CreateData(settings), ClientId))
+                .Where(d => d.IsActive)
+                .OrderByDescending(d => d.CreateTimestamp)
+                .FirstOrDefault()
+                ;
+            if (data != null)
+                result = data.Secret;
+            return result;
         }
 
         public async Task Update(ITransactionHandler transactionHandler)

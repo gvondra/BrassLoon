@@ -16,16 +16,19 @@ namespace BrassLoon.Account.Core
         private readonly IClientDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
         private readonly IClientCredentialDataSaver _clientCredentialDataSaver;
+        private readonly IClientCredentialDataFactory _clientCredentialDataFactory;
 
         public ClientFactory(IClientDataFactory dataFactory,
             IClientDataSaver dataSaver,
             SettingsFactory settingsFactory,
-            IClientCredentialDataSaver clientCredentialDataSaver)
+            IClientCredentialDataSaver clientCredentialDataSaver,
+            IClientCredentialDataFactory clientCredentialDataFactory)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _settingsFactory = settingsFactory;
             _clientCredentialDataSaver = clientCredentialDataSaver;
+            _clientCredentialDataFactory = clientCredentialDataFactory;
         }
 
         public Task<IClient> Create(Guid accountId, string secret)
@@ -36,7 +39,9 @@ namespace BrassLoon.Account.Core
                 {
                     AccountId = accountId                    
                 },
-                _dataSaver
+                _dataSaver,
+                _clientCredentialDataFactory,
+                _settingsFactory
                 );
             client.ClientCredentialChange = new ClientCredential(
                 client,
@@ -57,14 +62,14 @@ namespace BrassLoon.Account.Core
             Client result = null;
             ClientData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
             if (data != null)
-                result = new Client(data, _dataSaver);
+                result = new Client(data, _dataSaver, _clientCredentialDataFactory, _settingsFactory);
             return result;
         }
 
         public async Task<IEnumerable<IClient>> GetByAccountId(ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
-                .Select<ClientData, IClient>(data => new Client(data, _dataSaver));
+                .Select<ClientData, IClient>(data => new Client(data, _dataSaver, _clientCredentialDataFactory, _settingsFactory));
         }
     }
 }

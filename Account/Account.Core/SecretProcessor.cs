@@ -26,22 +26,25 @@ namespace BrassLoon.Account.Core
         /// </summary>
         public bool Verify(string secret, byte[] hash)
         {
-            byte[] secretHash = this.Hash(secret);
             bool result = false;
-            if (secretHash.Length == hash.Length)
+            if (!string.IsNullOrEmpty(secret) && hash != null)
             {
-                bool isMatch = true;
-                int i = 0;
-                while (isMatch && i < hash.Length)
+                byte[] secretHash = this.Hash(secret);
+                if (secretHash.Length == hash.Length)
                 {
-                    if (secretHash[i] != hash[i])
+                    bool isMatch = true;
+                    int i = 0;
+                    while (isMatch && i < hash.Length)
                     {
-                        isMatch = false;
+                        if (secretHash[i] != hash[i])
+                        {
+                            isMatch = false;
+                        }
+                        i += 1;
                     }
-                    i += 1;
+                    result = isMatch;
                 }
-                result = isMatch;
-            }
+            }            
             return result;
         }
 
