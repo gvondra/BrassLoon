@@ -14,8 +14,8 @@ def Create(id, secret):
             "Secret": secret
         }
         response = requests.post("{0}Token/ClientCredential".format(BASE_URL), json=request, verify=False)        
-        logging.info("Create token status {}".format(response.status_code))
-        logging.info(response.text)
+        logging.debug("Create token status {}".format(response.status_code))
+        return response.text
     except:
         logging.error(sys.exc_info()[0])            
         raise
@@ -31,5 +31,5 @@ if __name__ == "__main__":
     args = GetArgs()
     logLevel = getattr(logging, args.log.upper())
     logging.basicConfig(level=logLevel)
-    Create(args.id, args.secret)
+    logging.info(Create(args.id, args.secret))
     logging.info("Complete")

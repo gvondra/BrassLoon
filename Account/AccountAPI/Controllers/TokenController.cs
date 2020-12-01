@@ -114,7 +114,7 @@ namespace AccountAPI.Controllers
                 //RSA rsa = new RSACryptoServiceProvider(2048);
                 //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));
                 RsaSecurityKey securityKey = new RsaSecurityKey(rsaParameters);
-                JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
+                //JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
                 //Debug.WriteLine(JsonConvert.SerializeObject(jsonWebKey));
                 SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
                 List<Claim> claims = new List<Claim>

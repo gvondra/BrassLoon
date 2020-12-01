@@ -74,7 +74,14 @@ namespace AccountAPI
                     new string[] { }
                 }
                 });
-            });
+            });            
+            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            AddAuthentication(services);
+            AddAuthorization(services);
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
             services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,10 +103,10 @@ namespace AccountAPI
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     ValidateActor = false,
-                    ValidateTokenReplay = false,                    
+                    ValidateTokenReplay = false,
                     RequireAudience = false,
                     RequireExpirationTime = true,
-                    RequireSignedTokens = true,                    
+                    RequireSignedTokens = true,
                     ValidAudience = Configuration["Issuer"],
                     ValidIssuer = Configuration["Issuer"],
                     IssuerSigningKey = Controllers.JwksController.GetSecurityKey(Configuration["TknCsp"])
@@ -107,8 +114,6 @@ namespace AccountAPI
                 o.IncludeErrorDetails = true;
             })
             ;
-            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
-            AddAuthorization(services);
         }
 
         private void AddAuthorization(IServiceCollection services)
@@ -136,7 +141,7 @@ namespace AccountAPI
                 o.AddPolicy(POLICY_EDIT_ACCOUNT,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, Configuration["Issuer"]))
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, Configuration["Issuer"]))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });

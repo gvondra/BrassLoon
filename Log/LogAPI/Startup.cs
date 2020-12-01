@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -16,6 +20,9 @@ namespace LogAPI
 {
     public class Startup
     {
+        internal const string POLICY_READ_ACCOUNT = "READ:ACCOUNT";
+        internal const string POLICY_EDIT_ACCOUNT = "EDIT:ACCOUNT";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -64,6 +71,69 @@ namespace LogAPI
                     new string[] { }
                 }
                 });
+            });
+            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            AddAuthentication(services);
+            AddAuthorization(services);
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
+            JsonWebKeySet keySet = JsonWebKeySet.Create(
+                documentRetriever.GetDocumentAsync(@"http://localhost:5000/api/jwks", new System.Threading.CancellationToken()).Result
+                );
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer("BrassLoon", o =>
+            {
+                //o.Authority = "urn:brassloon";
+                //o.Audience = "urn:brassloon";                
+                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateActor = false,
+                    ValidateTokenReplay = false,
+                    RequireAudience = false,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    ValidAudience = Configuration["Issuer"],
+                    ValidIssuer = Configuration["Issuer"],
+                    IssuerSigningKey = keySet.Keys[0]
+                };
+                o.IncludeErrorDetails = true;
+            })
+            ;
+        }
+
+        private void AddAuthorization(IServiceCollection services)
+        {
+            services.AddAuthorization(o =>
+            {
+                o.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("BrassLoon")
+                .Build();
+                o.AddPolicy(POLICY_READ_ACCOUNT,
+                    configure =>
+                    {
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_READ_ACCOUNT, Configuration["Issuer"]))
+                        .AddAuthenticationSchemes("BrassLoon")
+                        .Build();
+                    });
+                o.AddPolicy(POLICY_EDIT_ACCOUNT,
+                    configure =>
+                    {
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, Configuration["Issuer"]))
+                        .AddAuthenticationSchemes("BrassLoon")
+                        .Build();
+                    });
             });
         }
 

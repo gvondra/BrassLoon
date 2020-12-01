@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogAPI.Controllers
 {
@@ -28,6 +29,7 @@ namespace LogAPI.Controllers
 
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Trace), 200)]
+        [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] LogModels.Trace trace)
         {
             IActionResult result = null;
