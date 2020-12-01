@@ -53,6 +53,7 @@
     <a [routerLink]="['/a', AccountId, 'Client']">Add Client</a>
     <table class="table">
         <tr *ngFor="let client of Clients">
+            <td><a [routerLink]="['/a', AccountId, 'Client', client.ClientId]">{{ client.ClientId }}</a></td>
             <td>{{ client.Name }}</td>
         </tr>        
     </table>
