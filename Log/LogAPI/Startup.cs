@@ -81,7 +81,7 @@ namespace LogAPI
         {
             HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
             JsonWebKeySet keySet = JsonWebKeySet.Create(
-                documentRetriever.GetDocumentAsync(@"http://localhost:5000/api/jwks", new System.Threading.CancellationToken()).Result
+                documentRetriever.GetDocumentAsync(Configuration["JwkAddress"], new System.Threading.CancellationToken()).Result
                 );
             services.AddAuthentication(o =>
             {

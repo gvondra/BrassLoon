@@ -1,6 +1,7 @@
 ﻿using LogModels = BrassLoon.Interface.Log.Models;
 using Autofac;
 using AutoMapper;
+using BrassLoon.Interface.Account;
 using BrassLoon.Log.Framework;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace LogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TraceController : ControllerBase
+    public class TraceController : LogControllerBase
     {
         private readonly IOptions<Settings> _settings;
         private readonly IContainer _container;
@@ -33,20 +34,27 @@ namespace LogAPI.Controllers
         public async Task<IActionResult> Create([FromBody] LogModels.Trace trace)
         {
             IActionResult result = null;
-            if (!trace.DomainId.HasValue || trace.DomainId.Value.Equals(Guid.Empty))
+            if (result == null && (!trace.DomainId.HasValue || trace.DomainId.Value.Equals(Guid.Empty)))
                 result = BadRequest("Missing domain guid value");            
             if (result == null)
             {
                 using ILifetimeScope scope = _container.BeginLifetimeScope();
                 SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                ITraceFactory factory = scope.Resolve<ITraceFactory>();
-                ITrace innerTrace = factory.Create(trace.DomainId.Value, trace.EventCode);
-                IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
-                ITraceSaver saver = scope.Resolve<ITraceSaver>();
-                await saver.Create(settings, innerTrace);
-                result = Ok(mapper.Map<LogModels.Trace>(innerTrace));
+                if (!(await VerifyDomainAccount(trace.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                {
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                }
+                if (result == null)
+                {
+                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                    ITraceFactory factory = scope.Resolve<ITraceFactory>();
+                    ITrace innerTrace = factory.Create(trace.DomainId.Value, trace.EventCode);
+                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
+                    ITraceSaver saver = scope.Resolve<ITraceSaver>();
+                    await saver.Create(settings, innerTrace);
+                    result = Ok(mapper.Map<LogModels.Trace>(innerTrace));
+                }
             }
             return result;
         }

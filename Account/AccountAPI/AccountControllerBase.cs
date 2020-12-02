@@ -11,12 +11,14 @@ namespace AccountAPI
 {
     public abstract class AccountControllerBase : ControllerBase
     {
+        [NonAction]
         protected async Task<IUser> GetUser(IUserFactory userFactory, CoreSettings settings)
         {
             string referenceId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             return await userFactory.GetByReferenceId(settings, referenceId);
         }
 
+        [NonAction]
         protected bool UserCanAccessAccount(Guid accountId)
         {
             string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);

@@ -6,12 +6,20 @@ using System.Threading.Tasks;
 namespace LogAPI
 {
     public class SettingsFactory
-    {
+    {        
         public CoreSettings CreateCore(Settings settings)
         {
             return new CoreSettings()
             {
                 ConnectionString = settings.ConnectionString
+            };
+        }
+
+        public AccountSettings CreateAccount(Settings settings, string accessToken)
+        {
+            return new AccountSettings(accessToken)
+            {
+                BaseAddress = settings.AccountApiBaseAddress
             };
         }
     }
