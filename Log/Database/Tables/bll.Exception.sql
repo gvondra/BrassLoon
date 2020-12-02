@@ -18,7 +18,7 @@ WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE INDEX [IX_Exception_ParentExceptionId] ON [bll].[Exception] ([ParentExceptionId])
+CREATE UNIQUE INDEX [IX_Exception_ParentExceptionId] ON [bll].[Exception] ([ParentExceptionId]) WHERE [ParentExceptionId] IS NOT NULL
 
 GO
 

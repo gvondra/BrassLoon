@@ -70,6 +70,7 @@
     <Build Include="Stored Procedures\bll.CreateTrace.sql" />
     <Build Include="Stored Procedures\bll.CreateMetric.sql" />
     <Build Include="Stored Procedures\bll.CreateException.sql" />
+    <Build Include="Stored Procedures\bll.GetInnerException.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

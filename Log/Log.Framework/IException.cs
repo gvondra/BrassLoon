@@ -17,9 +17,9 @@ namespace BrassLoon.Log.Framework
         string TargetSite { get; set; }
         string StackTrace { get; set; }
         dynamic Data { get; set; }
-        DateTime CreateTimestamp { get; set; }
+        DateTime CreateTimestamp { get; }
 
-        IException GetInnerException(ISettings settings);
+        Task<IException> GetInnerException(ISettings settings);
         Task Create(ITransactionHandler transactionHandler);
     }
 }

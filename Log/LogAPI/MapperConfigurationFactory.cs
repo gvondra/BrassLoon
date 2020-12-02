@@ -16,6 +16,8 @@ namespace LogAPI
         {
             _mapperConfiguratin = new MapperConfiguration(config =>
             {
+                config.CreateMap<BrassLoon.Interface.Log.Models.Exception, IException>();
+                config.CreateMap<IException, BrassLoon.Interface.Log.Models.Exception>();
                 config.CreateMap<Metric, IMetric>();
                 config.CreateMap<IMetric, Metric>();
                 config.CreateMap<Trace, ITrace>();
