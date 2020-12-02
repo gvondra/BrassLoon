@@ -16,6 +16,8 @@ namespace LogAPI
         {
             _mapperConfiguratin = new MapperConfiguration(config =>
             {
+                config.CreateMap<Metric, IMetric>();
+                config.CreateMap<IMetric, Metric>();
                 config.CreateMap<Trace, ITrace>();
                 config.CreateMap<ITrace, Trace>();
             });

@@ -24,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="BrassLoon.Interface.Account" Version="1.0.0-prerelease.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.10" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
@@ -34,7 +35,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Account.Core\Account.Core.csproj" />
     <ProjectReference Include="..\Account.Framework\Account.Framework.csproj" />
-    <ProjectReference Include="..\Interface.Account\Interface.Account.csproj" />
   </ItemGroup>
 
 

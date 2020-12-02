@@ -1,8 +1,5 @@
 ﻿using Autofac;
 using BrassLoon.Log.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Log.Core
 {
@@ -12,6 +9,8 @@ namespace BrassLoon.Log.Core
         {
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Log.Data.LogDataModule());
+            builder.RegisterType<MetricFactory>().As<IMetricFactory>();
+            builder.RegisterType<MetricSaver>().As<IMetricSaver>();
             builder.RegisterType<TraceFactory>().As<ITraceFactory>();
             builder.RegisterType<TraceSaver>().As<ITraceSaver>();
         }

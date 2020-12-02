@@ -10,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core
 {
-    public class Trace : ITrace
+    public class Metric : IMetric
     {
-        private readonly TraceData _data;
-        private readonly ITraceDataSaver _dataSaver;
+        private readonly MetricData _data;
+        private readonly IMetricDataSaver _dataSaver;
 
-        public Trace(TraceData data,
-            ITraceDataSaver dataSaver)
+        public Metric(MetricData data,
+            IMetricDataSaver dataSaver)
         {
             _data = data;
             _dataSaver = dataSaver;
         }
 
-        public long TraceId => _data.TraceId;
+        public long MetricId => _data.MetricId;
 
         public Guid DomainId => _data.DomainId;
 
         public string EventCode => _data.EventCode;
 
-        public string Message { get => _data.Message; set => _data.Message = value; }
+        public double? Magnitude { get => _data.Magnitude; set => _data.Magnitude = value; }
         public dynamic Data 
         { 
             get => JsonConvert.DeserializeObject(_data.Data);
