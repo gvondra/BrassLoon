@@ -25,6 +25,8 @@
     <DefaultSchema>bla</DefaultSchema>
     <TargetFrameworkProfile />
     <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
+    <QueryStoreDesiredState>ReadWrite</QueryStoreDesiredState>
+    <QueryStoreCaptureMode>Auto</QueryStoreCaptureMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
