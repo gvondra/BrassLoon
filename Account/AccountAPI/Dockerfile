@@ -4,10 +4,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["AccountAPI/AccountAPI.csproj", "AccountAPI/"]
-RUN dotnet restore "AccountAPI/AccountAPI.csproj"
 COPY . .
-WORKDIR "/src/AccountAPI"
+RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "Account/AccountAPI/nuget.config"
+RUN dotnet restore "Account/AccountAPI/AccountAPI.csproj" --configfile "Account/AccountAPI/nuget.config"
+WORKDIR "/src/Account/AccountAPI"
 RUN dotnet build "AccountAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
