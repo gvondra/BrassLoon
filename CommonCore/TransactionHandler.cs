@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
 {
@@ -17,6 +18,6 @@ namespace BrassLoon.CommonCore
         public DbConnection Connection { get; set; }
         public DataClient.IDbTransaction Transaction { get; set; }
 
-        public string ConnectionString => _settings.ConnectionString;
+        public Task<string> GetConnectionString() => _settings.GetConnetionString();
     }
 }

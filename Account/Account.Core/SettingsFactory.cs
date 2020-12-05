@@ -8,10 +8,7 @@ namespace BrassLoon.Account.Core
     {
         public DataSettings CreateData(CommonCore.ISettings settings)
         {
-            return new DataSettings
-            {
-                ConnectionString = settings.ConnectionString
-            };
+            return new DataSettings(settings);
         }
     }
 }

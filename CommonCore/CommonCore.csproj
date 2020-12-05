@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BrassLoon.DataClient" Version="0.0.0-prerelease" />
+    <PackageReference Include="BrassLoon.DataClient" Version="1.0.0-prerelease.1" />
   </ItemGroup>
 
 </Project>

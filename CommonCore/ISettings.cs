@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
 {
     public interface ISettings
     {
-        string ConnectionString { get; }
+        Task<string> GetConnetionString();
     }
 }

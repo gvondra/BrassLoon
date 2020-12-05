@@ -9,10 +9,7 @@ namespace AccountAPI
     {
         public CoreSettings CreateAccount(Settings settings)
         {
-            return new CoreSettings
-            {
-                ConnectionString = settings.ConnectionString
-            };
+            return new CoreSettings(settings);
         }
     }
 }

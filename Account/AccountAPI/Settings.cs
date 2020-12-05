@@ -9,6 +9,8 @@ namespace AccountAPI
     {
         public string TknCsp { get; set; }
         public string ConnectionString { get; set; }
+        public string ConnectionStringUser { get; set; }
+        public string KeyVaultAddress { get; set; }
         public string IdIssuer { get; set; }
         public string Issuer { get; set; }
     }
