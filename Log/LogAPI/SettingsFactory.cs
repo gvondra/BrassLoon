@@ -9,10 +9,7 @@ namespace LogAPI
     {        
         public CoreSettings CreateCore(Settings settings)
         {
-            return new CoreSettings()
-            {
-                ConnectionString = settings.ConnectionString
-            };
+            return new CoreSettings(settings);
         }
 
         public AccountSettings CreateAccount(Settings settings, string accessToken)

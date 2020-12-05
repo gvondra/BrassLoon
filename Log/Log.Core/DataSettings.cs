@@ -2,11 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core
 {
     public class DataSettings : ISettings
     {
-        public string ConnectionString { get; set; }
+        private readonly CommonCore.ISettings _settings;
+
+        public DataSettings(CommonCore.ISettings settings)
+        {
+            _settings = settings;
+        }
+
+        public Task<string> GetConnectionString()
+        {
+            return _settings.GetConnetionString();
+        }
     }
 }
