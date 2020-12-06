@@ -1,9 +1,9 @@
 ### STAGE 1: Build ###
 FROM node:12.7-alpine AS build
-ARG baseHref=/
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install
+ARG baseHref=/
 RUN npm run build --prod=true --baseHref=$baseHref
 ### STAGE 2: Run ###
 FROM socialengine/nginx-spa
