@@ -2,7 +2,7 @@
 (
 	[AccountGuid] UNIQUEIDENTIFIER NOT NULL,
 	[UserGuid] UNIQUEIDENTIFIER NOT NULL,
-	[IsActive] BIT DEFAULT(1) NOT NULL,
+	[IsActive] BIT CONSTRAINT [DF_AccountUser_IsActive] DEFAULT(1) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_AccountUser_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_AccountUser_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	CONSTRAINT [PK_AccountUser] PRIMARY KEY CLUSTERED ([AccountGuid], [UserGuid]), 
