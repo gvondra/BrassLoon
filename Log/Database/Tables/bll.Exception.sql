@@ -10,7 +10,7 @@
 	[TargetSite] NVARCHAR(2000) NOT NULL,
 	[StackTrace] NVARCHAR(MAX) NOT NULL,
 	[Data] NVARCHAR(MAX) NOT NULL,
-	[CreateTimestamp] DATETIME2(4) DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Exception_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	CONSTRAINT [PK_Exception] PRIMARY KEY CLUSTERED ([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_Exception] FOREIGN KEY ([ParentExceptionId]) REFERENCES [bll].[Exception]([ExceptionId])
 )
