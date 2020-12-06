@@ -5,6 +5,10 @@ COPY . .
 RUN npm install
 ARG baseHref=/
 RUN npm run build -- --prod=true --baseHref=$baseHref
+
 ### STAGE 2: Run ###
-FROM socialengine/nginx-spa
-COPY --from=build /usr/src/app/dist/BrassLoon /app
+FROM nginx:1.19.5-alpine
+## Remove default Nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY --from=build /usr/src/app/dist/BrassLoon /usr/share/nginx/html
