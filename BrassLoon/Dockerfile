@@ -13,4 +13,3 @@ RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /usr/src/app/dist/BrassLoon /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY ./mime.types /etc/nginx/mime.types
