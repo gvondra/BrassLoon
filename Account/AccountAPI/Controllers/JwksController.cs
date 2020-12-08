@@ -39,7 +39,15 @@ namespace AccountAPI.Controllers
 
         public static RsaSecurityKey GetSecurityKey(string tknCsp)
         {
-            dynamic tknCspData = JsonConvert.DeserializeObject(tknCsp);
+            dynamic tknCspData;
+            try
+            {
+                tknCspData = JsonConvert.DeserializeObject(tknCsp);
+            }   
+            catch (Exception ex)
+            {
+                throw new ApplicationException(tknCsp, ex);
+            }
             RSAParameters rsaParameters = new RSAParameters
             {
                 D = Base64UrlEncoder.DecodeBytes((string)tknCspData.d),
