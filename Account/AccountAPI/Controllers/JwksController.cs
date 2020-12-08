@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace AccountAPI.Controllers
 {
@@ -39,15 +40,7 @@ namespace AccountAPI.Controllers
 
         public static RsaSecurityKey GetSecurityKey(string tknCsp)
         {
-            dynamic tknCspData;
-            try
-            {
-                tknCspData = JsonConvert.DeserializeObject(tknCsp);
-            }   
-            catch (Exception ex)
-            {
-                throw new ApplicationException(tknCsp, ex);
-            }
+            dynamic tknCspData = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(tknCsp))); 
             RSAParameters rsaParameters = new RSAParameters
             {
                 D = Base64UrlEncoder.DecodeBytes((string)tknCspData.d),
