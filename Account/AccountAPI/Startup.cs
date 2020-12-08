@@ -159,7 +159,7 @@ namespace AccountAPI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brass Loon Account API");
+                c.SwaggerEndpoint("v1/swagger.json", "Brass Loon Account API");
             });
 
             app.UseRouting();
