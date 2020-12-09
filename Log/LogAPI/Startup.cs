@@ -148,7 +148,7 @@ namespace LogAPI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brass Loon Log API");
+                c.SwaggerEndpoint("v1/swagger.json", "Brass Loon Log API");
             });
 
             app.UseRouting();
