@@ -22,7 +22,7 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
       .then(() =>       
       oidcConfigService.withConfig({
           stsServer: appSettingsService.GetSettings().GoogleStsServer,
-          redirectUrl: window.location.origin,
+          redirectUrl: window.location.origin + appSettingsService.GetSettings().BaseHref + "/",
           clientId: appSettingsService.GetSettings().GoogleClientId,
           responseType: 'id_token token',
           scope: 'openid email profile',
