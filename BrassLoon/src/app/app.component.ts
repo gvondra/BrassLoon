@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe((isAuthenticated) => {
             if (!isAuthenticated) {
                 this.UserImageSource = null;
-                if ('/autologin' !== window.location.pathname) {
+                if (!window.location.pathname.endsWith('autologin')) {
                     this.write('redirect', window.location.pathname);
                     this.router.navigate(['/autologin']);
                 }
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
             if (path.toString().includes('/unauthorized')) {
                 this.router.navigate(['/']);
             } else {
-                this.router.navigate([path]);
+                this.router.navigateByUrl(path);
             }
         }
     }
