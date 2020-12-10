@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     private navigateToStoredEndpoint() {
-        const path = this.read('redirect');
+        let path: string = this.read('redirect');
         this.remove('redirect');
         if (path)
         {
@@ -60,6 +60,9 @@ export class AppComponent implements OnInit, OnDestroy {
             if (path.toString().includes('/unauthorized')) {
                 this.router.navigate(['/']);
             } else {
+                if (!path.startsWith('/')) {
+                    path = '/' + path;
+                }
                 this.router.navigateByUrl(path);
             }
         }
