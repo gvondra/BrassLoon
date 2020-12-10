@@ -5,6 +5,7 @@ import { AccountService } from '../services/account.service';
 import { Domain } from '../models/domain';
 import { DomainService } from '../services/domain.service';
 import { Client } from '../models/client';
+import { HttpClientUtilService } from '../http-client-util.service';
 
 @Component({
   selector: 'app-account',
@@ -25,7 +26,8 @@ export class AccountComponent implements OnInit {
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
     private accountService: AccountService,
-    private domainService: DomainService) { }
+    private domainService: DomainService,
+    private httpClientUtilService: HttpClientUtilService) { }
 
   ngOnInit(): void {            
     this.activatedRoute.params.subscribe(params => {
@@ -67,7 +69,12 @@ export class AccountComponent implements OnInit {
   Save() {
     if (this.IsNew) {
       this.accountService.Create(this.Account)
-      .then(account => this.router.navigate(["/a", account.AccountId]))
+      .then(account => {
+        // an existing access token wouldn't have this new account
+        // listed, so drop the cache to force retrieval of a new token
+        this.httpClientUtilService.DropCache();
+        this.router.navigate(["/a", account.AccountId])
+      })
       .catch(err => {
         console.error(err);
         this.ErrorMessage = err.message || "Unexpected Error"

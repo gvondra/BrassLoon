@@ -57,4 +57,9 @@ export class HttpClientUtilService {
   private GetCachedToken() : string {
     return sessionStorage.getItem("AccessToken");
   }
+
+  DropCache() : void {
+    sessionStorage.removeItem("AccessToken");
+    sessionStorage.removeItem("AccessToknExpiration");
+  }
 }
