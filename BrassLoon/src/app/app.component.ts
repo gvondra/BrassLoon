@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 if (!path.startsWith('/')) {
                     path = '/' + path;
                 }
-                this.router.navigateByUrl(path);
+                window.location.href = path;
             }
         }
     }
