@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
@@ -178,7 +179,7 @@ namespace AccountAPI.Controllers
         [NonAction]
         private RSAParameters CreateRSAParameter()
         {
-            dynamic tknCsp = JsonConvert.DeserializeObject(_settings.Value.TknCsp);
+            dynamic tknCsp = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(_settings.Value.TknCsp)));
             return new RSAParameters
             {
                 D = Base64UrlEncoder.DecodeBytes((string)tknCsp.d),
