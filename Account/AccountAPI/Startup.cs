@@ -45,6 +45,7 @@ namespace AccountAPI
                     o.JsonSerializerOptions.PropertyNamingPolicy = null;
                 })
                 ;
+            AddCors(services);
             services.AddSwaggerGen(o =>
             {
                 o.SwaggerDoc(
@@ -78,6 +79,25 @@ namespace AccountAPI
             services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
             AddAuthentication(services);
             AddAuthorization(services);
+        }
+
+        private void AddCors(IServiceCollection services)
+        {
+            IConfigurationSection section = Configuration.GetSection("CorsOrigins");
+            string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
+            if (corsOrigins != null && corsOrigins.Length > 0)
+            {
+                services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                        builder.WithOrigins(corsOrigins);
+                    });
+                });
+            }            
         }
 
         private void AddAuthentication(IServiceCollection services)
@@ -163,6 +183,7 @@ namespace AccountAPI
             });
 
             app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
