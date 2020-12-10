@@ -39,7 +39,7 @@
         <tr>
             <td></td>
             <td>
-                <input type="text" class="form-control" maxlength="2000" (change)="NewDomainName = $event.target.value"/>
+                <input type="text" class="form-control" maxlength="2000" [value]="NewDomainName" (change)="NewDomainName = $event.target.value"/>
             </td>
             <td>
                 <button type="button" class="btn btn-secondary" (click)="AddDomain()">Add</button>
