@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit  } from '@angular/core';
 import { Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { HttpClientUtilService } from './http-client-util.service';
 
 @Component({
     selector: 'app-root',
@@ -12,7 +13,9 @@ export class AppComponent implements OnInit, OnDestroy {
     UserImageSource: string = null;
     IsLoggedIn: boolean = false;
 
-    constructor(public oidcSecurityService: OidcSecurityService, private router: Router) { }
+    constructor(public oidcSecurityService: OidcSecurityService, 
+        private router: Router,
+        private httpClientUtilService: HttpClientUtilService) { }
 
     ngOnInit(): void {
         this.IsLoggedIn = false;
@@ -22,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe((isAuthenticated) => {
             if (!isAuthenticated) {
                 this.UserImageSource = null;
+                this.httpClientUtilService.DropCache();
                 if (!window.location.pathname.endsWith('autologin')) {
                     this.write('redirect', window.location.pathname);
                     this.router.navigate(['/autologin']);
