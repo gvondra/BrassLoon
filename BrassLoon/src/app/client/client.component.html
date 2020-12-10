@@ -4,6 +4,14 @@
 </div>
 <form *ngIf="!ErrorMessage && ClientRequest" (ngSubmit)="Save()" #clientForm="ngForm">
     <div class="container">
+        <div *ngIf="ClientRequest.ClientId" class="row">
+            <div class="col-md-1">
+                <label for="clientId">Id</label>
+            </div>
+            <div class="col-md-9">
+                {{ ClientRequest.ClientId }}
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-1">
                 <label for="clientName">Name</label>
