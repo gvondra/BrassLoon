@@ -12,4 +12,4 @@ WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE INDEX [IX_Trace_DomainId] ON [bll].[Trace] ([DomainId])
+CREATE INDEX [IX_Trace_DomainId] ON [bll].[Trace] ([DomainId], [EventCode])
