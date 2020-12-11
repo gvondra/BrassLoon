@@ -30,8 +30,14 @@ namespace BrassLoon.Log.Core
 
         public double? Magnitude { get => _data.Magnitude; set => _data.Magnitude = value; }
         public dynamic Data 
-        { 
-            get => JsonConvert.DeserializeObject(_data.Data);
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_data.Data))
+                    return JsonConvert.DeserializeObject(_data.Data);
+                else
+                    return null;
+            }
             set
             {
                 if (value != null)
