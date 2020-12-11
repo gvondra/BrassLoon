@@ -33,9 +33,9 @@ namespace BrassLoon.Interface.Log
         {
             IRestResponse<T> restResponse = await client.ExecuteAsync<T>(request);
             if (restResponse.ErrorException != null)
-                throw new ApplicationException($"Error {restResponse.StatusCode.ToString()} {restResponse.StatusDescription}: {restResponse.ErrorMessage}", restResponse.ErrorException);
+                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}: {restResponse.ErrorMessage}", restResponse.ErrorException);
             else if (!restResponse.IsSuccessful)
-                throw new ApplicationException($"Error {restResponse.StatusCode.ToString()} {restResponse.StatusDescription}");
+                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}");
             return restResponse.Data;
         }
     }

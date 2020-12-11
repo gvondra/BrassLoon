@@ -23,14 +23,14 @@ namespace BrassLoon.Interface.Account
             RestClient client = new RestClient(settings.BaseAddress);
             client.UseJson()
                 .UseSerializer(() => new JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() }))
-                ;
-            RestRequest request = new RestRequest("Token/ClientCredential", Method.POST, DataFormat.Json);
+                ;            
+            RestRequest request = new RestRequest("Token/ClientCredential", Method.POST, DataFormat.Json);            
             request.AddJsonBody(clientCredential);
             IRestResponse restResponse = await client.ExecuteAsync(request);
             if (restResponse.ErrorException != null)
-                throw new ApplicationException($"Error {restResponse.StatusCode.ToString()} {restResponse.StatusDescription}: {restResponse.ErrorMessage}", restResponse.ErrorException);
+                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}: {restResponse.ErrorMessage}", restResponse.ErrorException);
             else if (!restResponse.IsSuccessful)
-                throw new ApplicationException($"Error {restResponse.StatusCode.ToString()} {restResponse.StatusDescription}");
+                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}");
             return restResponse.Content;
         }
 
