@@ -9,5 +9,6 @@ namespace TestClient
         public Guid ClientId { get; set; }
         public string Secret { get; set; }
         public int EntryCount { get; set; }
+        public int ConcurentTaskCount { get; set; }
     }
 }

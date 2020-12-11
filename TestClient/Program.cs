@@ -2,12 +2,14 @@
 using AccountInterfaceModels = BrassLoon.Interface.Account.Models;
 using Autofac;
 using BrassLoon.Interface.Log;
+using BrassLoon.Interface.Log.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Binder;
 using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -32,7 +34,7 @@ namespace TestClient
                     await GenerateEntries(domain);
                 }    
             }    
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
             }
@@ -40,14 +42,24 @@ namespace TestClient
 
         private static async Task GenerateEntries(AccountInterfaceModels.Domain domain) 
         {
+            DateTime start = DateTime.UtcNow;
+            Console.WriteLine($"Entry generation started at {start:HH:mm:ss}");
             using ILifetimeScope scope = _diContainer.BeginLifetimeScope();
             IMetricService metricService = scope.Resolve<IMetricService>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             LogSettings logSettings = settingsFactory.CreateLog(_settings);
+            Queue<Task<Metric>> queue = new Queue<Task<Metric>>();
             for (int i = 0; i < _settings.EntryCount; i += 1)
             {
-                await metricService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds);
+                if (queue.Count >= _settings.ConcurentTaskCount) 
+                {
+                    await queue.Dequeue();
+                }
+                queue.Enqueue(metricService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds));
             }
+            await Task.WhenAll(queue);
+            DateTime end = DateTime.UtcNow;
+            Console.WriteLine($"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
         }
 
         private static async Task<AccountInterfaceModels.Domain> GetDomain(Guid domainId)

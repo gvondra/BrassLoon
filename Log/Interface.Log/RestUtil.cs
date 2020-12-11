@@ -1,9 +1,14 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json.Serialization;
+using Polly;
+using Polly.Caching;
+using Polly.Caching.Memory;
 using RestSharp;
 using RestSharp.Authenticators;
 using RestSharp.Serializers.NewtonsoftJson;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,14 +16,25 @@ namespace BrassLoon.Interface.Log
 {
     public sealed class RestUtil
     {
+        private static Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
+
         public async Task<RestClient> CreateClient(ISettings settings)
         {
-            RestClient client = new RestClient(settings.BaseAddress);
-            client.UseJson()
-                .UseSerializer(() => new JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() }))
-                ;
-            client.Authenticator = new JwtAuthenticator(await settings.GetToken());
-            return client;
+            string token = await settings.GetToken();
+            HashAlgorithm hashAlgorithm = SHA256.Create();
+            string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(token)));
+            return _cache.Execute<RestClient>(
+                context =>
+                {
+                    RestClient result = new RestClient(settings.BaseAddress);
+                    result.UseJson()
+                        .UseSerializer(() => new JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() }))
+                        ;
+                    result.Authenticator = new JwtAuthenticator(token);
+                    return result;
+                },
+                new Context(string.Format("{0}::{1}", hash, settings.BaseAddress))
+                );
         }
 
         public async Task<T> Execute<T>(ISettings settings, RestRequest request)
