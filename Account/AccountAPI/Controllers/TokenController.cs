@@ -68,7 +68,7 @@ namespace AccountAPI.Controllers
                 }
                 if (result == null)
                 {
-                    result = Ok(await CreateToken(client));
+                    result = Content(await CreateToken(client), "text/plain");
                 }
             }
             return result;
