@@ -1,24 +1,28 @@
 ﻿using BrassLoon.Interface.Account.Models;
-using RestSharp;
+using BrassLoon.RestClient;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Account
 {
     public class DomainService : IDomainService
     {
-        private readonly RestUtil _restUtil;
+        private readonly IService _service;
 
-        public DomainService(RestUtil restUtil)
+        public DomainService(IService service)
         {
-            _restUtil = restUtil;
+            _service = service;
         }
 
         public async Task<Domain> Get(ISettings settings, Guid id)
         {
-            RestRequest request = new RestRequest("Domain/{id}", Method.GET, DataFormat.Json);
-            request.AddParameter("id", id.ToString(), ParameterType.UrlSegment);
-            return await _restUtil.Execute<Domain>(settings, request);
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get) 
+                .AddPath("Domain/{id}")
+                .AddPathParameter("id", id.ToString())
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            return (await _service.Send<Domain>(request)).Value;
         }
     }
 }

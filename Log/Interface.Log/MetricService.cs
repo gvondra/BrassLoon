@@ -1,7 +1,8 @@
 ﻿using BrassLoon.Interface.Log.Models;
-using RestSharp;
+using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,18 +10,20 @@ namespace BrassLoon.Interface.Log
 {
     public class MetricService : IMetricService
     {
-        private readonly RestUtil _restUtil;
+        private readonly IService _service;
 
-        public MetricService(RestUtil restUtil)
+        public MetricService(IService service)
         {
-            _restUtil = restUtil;
+            _service = service;
         }
 
         public async Task<Metric> Create(ISettings settings, Metric metric)
         {
-            RestRequest request = new RestRequest("Metric", Method.POST, DataFormat.Json);
-            request.AddJsonBody(metric);
-            return await _restUtil.Execute<Metric>(settings, request);
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, metric)
+            .AddPath("Metric")
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            return (await _service.Send<Metric>(request)).Value;
         }
 
         public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double maginitue, object data = null)

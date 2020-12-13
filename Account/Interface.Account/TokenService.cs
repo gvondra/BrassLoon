@@ -1,37 +1,26 @@
 ﻿using BrassLoon.Interface.Account.Models;
-using Newtonsoft.Json.Serialization;
-using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
+using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Account
 {
     public class TokenService : ITokenService
     {
-        private readonly RestUtil _restUtil;
+        private readonly IService _service;
 
-        public TokenService(RestUtil restUtil)
+        public TokenService(IService service)
         {
-            _restUtil = restUtil;
+            _service = service;
         }
 
         public async Task<string> CreateClientCredentialToken(ISettings settings, ClientCredential clientCredential)
         {
-            RestClient client = new RestClient(settings.BaseAddress);
-            client.UseJson()
-                .UseSerializer(() => new JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() }))
-                ;            
-            RestRequest request = new RestRequest("Token/ClientCredential", Method.POST, DataFormat.Json);            
-            request.AddJsonBody(clientCredential);
-            IRestResponse restResponse = await client.ExecuteAsync(request);
-            if (restResponse.ErrorException != null)
-                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}: {restResponse.ErrorMessage}", restResponse.ErrorException);
-            else if (!restResponse.IsSuccessful)
-                throw new ApplicationException($"Error {(int)restResponse.StatusCode} {restResponse.StatusDescription}");
-            return restResponse.Content;
+            UriBuilder builder = new UriBuilder(settings.BaseAddress);
+            builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
+            return (await _service.Post<string>(builder.Uri, clientCredential)).Value;
         }
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)

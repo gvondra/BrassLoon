@@ -32,8 +32,8 @@ namespace TestClient
                     AccountInterfaceModels.Domain domain = await GetDomain(_settings.DomainId);
                     Console.WriteLine($"Loaded domain {domain.Name}");
                     await GenerateEntries(domain);
-                }    
-            }    
+                }                    
+            } 
             catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
@@ -60,6 +60,8 @@ namespace TestClient
             await Task.WhenAll(queue);
             DateTime end = DateTime.UtcNow;
             Console.WriteLine($"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
+            double rate = Math.Round((double)_settings.EntryCount / end.Subtract(start).TotalSeconds, 3, MidpointRounding.ToEven);
+            Console.WriteLine($"at {rate} records per second");
         }
 
         private static async Task<AccountInterfaceModels.Domain> GetDomain(Guid domainId)

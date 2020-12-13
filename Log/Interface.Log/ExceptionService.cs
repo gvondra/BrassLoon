@@ -1,27 +1,30 @@
 ﻿using LogModels = BrassLoon.Interface.Log.Models;
+using BrassLoon.RestClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using RestSharp;
 
 namespace BrassLoon.Interface.Log
 {
     public class ExceptionService : IExceptionService
     {
-        private readonly RestUtil _restUtil;
+        private readonly IService _service;
 
-        public ExceptionService(RestUtil restUtil)
+        public ExceptionService(IService service)
         {
-            _restUtil = restUtil;
+            _service = service;
         }
 
         public async Task<LogModels.Exception> Create(ISettings settings, LogModels.Exception exception)
         {
-            RestRequest request = new RestRequest("Exception", Method.POST, DataFormat.Json);
-            request.AddJsonBody(exception);
-            return await _restUtil.Execute<LogModels.Exception>(settings, request);
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, exception) 
+            .AddPath("Exception")
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            return (await _service.Send<LogModels.Exception>(request)).Value;
         }
 
         public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception)
