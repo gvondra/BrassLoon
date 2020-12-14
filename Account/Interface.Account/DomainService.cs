@@ -8,10 +8,12 @@ namespace BrassLoon.Interface.Account
 {
     public class DomainService : IDomainService
     {
+        private readonly RestUtil _restUtil;
         private readonly IService _service;
 
-        public DomainService(IService service)
+        public DomainService(RestUtil restUtil, IService service)
         {
+            _restUtil = restUtil;
             _service = service;
         }
 
@@ -22,7 +24,7 @@ namespace BrassLoon.Interface.Account
                 .AddPathParameter("id", id.ToString())
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return (await _service.Send<Domain>(request)).Value;
+            return await _restUtil.Send<Domain>(_service, request);
         }
     }
 }

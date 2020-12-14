@@ -10,10 +10,12 @@ namespace BrassLoon.Interface.Log
 {
     public class MetricService : IMetricService
     {
+        private readonly RestUtil _restUtil;
         private readonly IService _service;
 
-        public MetricService(IService service)
+        public MetricService(RestUtil restUtil, IService service)
         {
+            _restUtil = restUtil;
             _service = service;
         }
 
@@ -23,7 +25,7 @@ namespace BrassLoon.Interface.Log
             .AddPath("Metric")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return (await _service.Send<Metric>(request)).Value;
+            return await _restUtil.Send<Metric>(_service, request);
         }
 
         public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double maginitue, object data = null)

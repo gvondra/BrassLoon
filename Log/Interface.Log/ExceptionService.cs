@@ -11,10 +11,12 @@ namespace BrassLoon.Interface.Log
 {
     public class ExceptionService : IExceptionService
     {
+        private readonly RestUtil _restUtil;
         private readonly IService _service;
 
-        public ExceptionService(IService service)
+        public ExceptionService(RestUtil restUtil, IService service)
         {
+            _restUtil = restUtil;
             _service = service;
         }
 
@@ -24,7 +26,7 @@ namespace BrassLoon.Interface.Log
             .AddPath("Exception")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return (await _service.Send<LogModels.Exception>(request)).Value;
+            return await _restUtil.Send<LogModels.Exception>(_service, request);
         }
 
         public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception)

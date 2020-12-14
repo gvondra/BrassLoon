@@ -8,10 +8,12 @@ namespace BrassLoon.Interface.Log
 {
     public class TraceService : ITraceService
     {
+        private readonly RestUtil _restUtil;
         private readonly IService _service;
 
-        public TraceService(IService service)
+        public TraceService(RestUtil restUtil, IService service)
         {
+            _restUtil = restUtil;
             _service = service;
         }
 
@@ -21,7 +23,7 @@ namespace BrassLoon.Interface.Log
             .AddPath("Trace")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return (await _service.Send<Trace>(request)).Value;
+            return await _restUtil.Send<Trace>(_service, request);
         }
 
         public Task<Trace> Create(ISettings settings, Guid domainId, string eventCode, string message, object data = null)

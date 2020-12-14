@@ -9,10 +9,12 @@ namespace BrassLoon.Interface.Account
 {
     public class TokenService : ITokenService
     {
+        private readonly RestUtil _restUtil;
         private readonly IService _service;
 
-        public TokenService(IService service)
+        public TokenService(RestUtil restUtil, IService service)
         {
+            _restUtil = restUtil;
             _service = service;
         }
 
@@ -20,7 +22,7 @@ namespace BrassLoon.Interface.Account
         {
             UriBuilder builder = new UriBuilder(settings.BaseAddress);
             builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
-            return (await _service.Post<string>(builder.Uri, clientCredential)).Value;
+            return await _restUtil.Post<string>(_service, builder.Uri, clientCredential);
         }
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)
