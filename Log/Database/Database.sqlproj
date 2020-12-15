@@ -73,6 +73,12 @@
     <Build Include="Stored Procedures\bll.CreateMetric.sql" />
     <Build Include="Stored Procedures\bll.CreateException.sql" />
     <Build Include="Stored Procedures\bll.GetInnerException.sql" />
+    <Build Include="Stored Procedures\bll.GetTopExceptionBeforeTimestamp.sql" />
+    <Build Include="Stored Procedures\bll.GetTopMetricBeforeTimestamp.sql" />
+    <Build Include="Stored Procedures\bll.GetTopTraceBeforeTimestamp.sql" />
+    <Build Include="Stored Procedures\bll.GetAllMetricEventCode.sql" />
+    <Build Include="Stored Procedures\bll.GetAllTraceEventCode.sql" />
+    <Build Include="Stored Procedures\bll.GetException.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

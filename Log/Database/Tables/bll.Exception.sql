@@ -22,4 +22,4 @@ CREATE UNIQUE INDEX [IX_Exception_ParentExceptionId] ON [bll].[Exception] ([Pare
 
 GO
 
-CREATE INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId])
+CREATE INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId]) INCLUDE ([ParentExceptionId], [CreateTimestamp])
