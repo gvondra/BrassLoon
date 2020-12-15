@@ -15,6 +15,7 @@ namespace LogAPI
             builder.RegisterInstance(new SettingsFactory());
             builder.RegisterModule(new BrassLoon.Log.Core.LogModule());
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
         }
     }
 

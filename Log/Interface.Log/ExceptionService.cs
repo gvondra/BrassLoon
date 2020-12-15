@@ -56,7 +56,7 @@ namespace BrassLoon.Interface.Log
                 Message = exception.Message,
                 Source = exception.Source,
                 StackTrace = exception.StackTrace, 
-                TargetSite = exception.TargetSite.Name,
+                TargetSite = exception.TargetSite.ToString(),
                 TypeName = exception.GetType().FullName,
                 InnerException = innerException,
                 Data = GetData(exception.Data)
