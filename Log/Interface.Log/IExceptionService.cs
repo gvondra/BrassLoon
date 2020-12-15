@@ -10,5 +10,6 @@ namespace BrassLoon.Interface.Log
     {
         Task<LogModels.Exception> Create(ISettings settings, LogModels.Exception exception);
         Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception);
+        Task<LogModels.Exception> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, System.Exception exception);
     }
 }

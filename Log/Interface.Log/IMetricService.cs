@@ -10,5 +10,6 @@ namespace BrassLoon.Interface.Log
     {
         Task<Metric> Create(ISettings settings, Metric metric);
         Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double maginitue, object data = null);
+        Task<Metric> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, double maginitue, object data = null);
     }
 }

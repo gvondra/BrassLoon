@@ -6,6 +6,6 @@ namespace BrassLoon.Log.Framework
 {
     public interface ITraceFactory
     {
-        ITrace Create(Guid domainId, string eventCode);
+        ITrace Create(Guid domainId, DateTime? createTimestamp, string eventCode);
     }
 }

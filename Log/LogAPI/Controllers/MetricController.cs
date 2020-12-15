@@ -51,7 +51,7 @@ namespace LogAPI.Controllers
                     {
                         CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
                         IMetricFactory factory = scope.Resolve<IMetricFactory>();
-                        IMetric innerMetric = factory.Create(metric.DomainId.Value, metric.EventCode);
+                        IMetric innerMetric = factory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
                         IMetricSaver saver = scope.Resolve<IMetricSaver>();

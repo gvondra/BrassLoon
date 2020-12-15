@@ -52,7 +52,7 @@ namespace LogAPI.Controllers
                         IExceptionFactory factory = scope.Resolve<IExceptionFactory>();
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         List<IException> allExceptions = new List<IException>();
-                        IException innerException = Map(exception, exception.DomainId.Value, factory, mapper, allExceptions);
+                        IException innerException = Map(exception, exception.DomainId.Value, exception.CreateTimestamp, factory, mapper, allExceptions);
                         IExceptionSaver saver = scope.Resolve<IExceptionSaver>();
                         await saver.Create(settings, allExceptions.ToArray());
                         result = Ok(
@@ -73,16 +73,17 @@ namespace LogAPI.Controllers
         private IException Map(
             LogModels.Exception exception, 
             Guid domainId, 
+            DateTime? timestamp,
             IExceptionFactory exceptionFactory, 
             IMapper mapper,
             List<IException> allExceptions,
             IException parentException = null)
         {
-            IException innerException = exceptionFactory.Create(domainId, parentException);
+            IException innerException = exceptionFactory.Create(domainId, timestamp, parentException);
             mapper.Map<LogModels.Exception, IException>(exception, innerException);
             allExceptions.Add(innerException);
             if (exception.InnerException != null)
-                Map(exception.InnerException, domainId, exceptionFactory, mapper, allExceptions, innerException);
+                Map(exception.InnerException, domainId, timestamp, exceptionFactory, mapper, allExceptions, innerException);
             return innerException;
         }
 

@@ -16,13 +16,17 @@ namespace BrassLoon.Log.Core
             _dataSaver = dataSaver;
         }
 
-        public ITrace Create(Guid domainId, string eventCode)
+        public ITrace Create(Guid domainId, DateTime? createTimestamp, string eventCode)
         {
+            if (!createTimestamp.HasValue)
+                createTimestamp = DateTime.UtcNow;
+            createTimestamp = createTimestamp.Value.ToUniversalTime();
             return new Trace(
                 new TraceData()
                 {
                     DomainId = domainId,
-                    EventCode = (eventCode ?? string.Empty).Trim()
+                    EventCode = (eventCode ?? string.Empty).Trim(),
+                    CreateTimestamp = createTimestamp.Value
                 },
                 _dataSaver
                 );

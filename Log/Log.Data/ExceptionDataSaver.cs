@@ -33,10 +33,6 @@ namespace BrassLoon.Log.Data
                     id.Direction = ParameterDirection.Output;
                     command.Parameters.Add(id);
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
-
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(exceptionData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "parentExceptionId", DbType.Int64, DataUtil.GetParameterValue(exceptionData.ParentExceptionId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "message", DbType.String, DataUtil.GetParameterValue(exceptionData.Message));
@@ -46,10 +42,10 @@ namespace BrassLoon.Log.Data
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "targetSite", DbType.String, DataUtil.GetParameterValue(exceptionData.TargetSite));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "stackTrace", DbType.String, DataUtil.GetParameterValue(exceptionData.StackTrace));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "data", DbType.String, DataUtil.GetParameterValue(exceptionData.Data));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "timestamp", DbType.DateTime2, DataUtil.GetParameterValue(exceptionData.CreateTimestamp));
 
                     await command.ExecuteNonQueryAsync();
                     exceptionData.ExceptionId = (long)id.Value;
-                    exceptionData.CreateTimestamp = (DateTime)timestamp.Value;
                 }
             }
         }

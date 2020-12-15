@@ -17,6 +17,6 @@ namespace BrassLoon.Log.Data.Models
         [ColumnMapping("TargetSite")] public string TargetSite { get; set; }
         [ColumnMapping("StackTrace")] public string StackTrace { get; set; }
         [ColumnMapping("Data")] public string Data { get; set; }
-        [ColumnMapping("CreateTimestamp")] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
     }
 }

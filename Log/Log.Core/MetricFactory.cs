@@ -16,13 +16,17 @@ namespace BrassLoon.Log.Core
             _dataSaver = dataSaver;
         }
 
-        public IMetric Create(Guid domainId, string eventCode)
+        public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode)
         {
+            if (!createTimestamp.HasValue)
+                createTimestamp = DateTime.UtcNow;
+            createTimestamp = createTimestamp.Value.ToUniversalTime();
             return new Metric(
                 new MetricData()
                 { 
                     DomainId = domainId,
-                    EventCode = eventCode
+                    EventCode = eventCode,
+                    CreateTimestamp = createTimestamp.Value
                 },
                 _dataSaver
                 );

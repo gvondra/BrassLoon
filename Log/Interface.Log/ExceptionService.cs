@@ -38,17 +38,22 @@ namespace BrassLoon.Interface.Log
 
         public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception)
         {
+            return Create(settings, domainId, null, exception);
+        }
+
+        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, System.Exception exception)
+        {
             return Create(
                 settings,
-                CreateException(domainId, exception)
+                CreateException(domainId, createTimestamp, exception)
                 );
         }
 
-        private LogModels.Exception CreateException(Guid domainId, System.Exception exception)
+        private LogModels.Exception CreateException(Guid domainId, DateTime? createTimestamp, System.Exception exception)
         {
             LogModels.Exception innerException = null;
             if (exception.InnerException != null)
-                innerException = CreateException(domainId, exception.InnerException);
+                innerException = CreateException(domainId, createTimestamp, exception.InnerException);
             return new LogModels.Exception
             {
                 AppDomain = AppDomain.CurrentDomain.FriendlyName,
@@ -59,7 +64,8 @@ namespace BrassLoon.Interface.Log
                 TargetSite = exception.TargetSite.ToString(),
                 TypeName = exception.GetType().FullName,
                 InnerException = innerException,
-                Data = GetData(exception.Data)
+                Data = GetData(exception.Data),
+                CreateTimestamp = createTimestamp
             };
         }
 

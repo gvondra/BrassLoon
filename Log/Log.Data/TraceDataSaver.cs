@@ -33,18 +33,14 @@ namespace BrassLoon.Log.Data
                     id.Direction = ParameterDirection.Output;
                     command.Parameters.Add(id);
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
-
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(traceData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "eventCode", DbType.AnsiString, DataUtil.GetParameterValue(traceData.EventCode));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "message", DbType.String, DataUtil.GetParameterValue(traceData.Message));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "data", DbType.String, DataUtil.GetParameterValue(traceData.Data));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "timestamp", DbType.DateTime2, DataUtil.GetParameterValue(traceData.CreateTimestamp));
 
                     await command.ExecuteNonQueryAsync();
                     traceData.TraceId = (long)id.Value;
-                    traceData.CreateTimestamp = (DateTime)timestamp.Value;
                 }
             }
         }

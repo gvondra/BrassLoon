@@ -6,6 +6,6 @@ namespace BrassLoon.Log.Framework
 {
     public interface IMetricFactory
     {
-        IMetric Create(Guid domainId, string eventCode);
+        IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode);
     }
 }

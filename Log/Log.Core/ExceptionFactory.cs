@@ -24,15 +24,18 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public IException Create(Guid domainId)
+        public IException Create(Guid domainId, DateTime? createTimestamp)
         {
-            return Create(domainId, null);
+            return Create(domainId, createTimestamp, null);
         }
 
-        public IException Create(Guid domainId, IException parentException)
+        public IException Create(Guid domainId, DateTime? createTimestamp, IException parentException)
         {
+            if (!createTimestamp.HasValue)
+                createTimestamp = DateTime.UtcNow;
+            createTimestamp = createTimestamp.Value.ToUniversalTime();
             return new Exception(
-                new ExceptionData() { DomainId = domainId },
+                new ExceptionData() { DomainId = domainId, CreateTimestamp = createTimestamp.Value },
                 _dataSaver,
                 this
                 );

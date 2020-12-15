@@ -36,6 +36,11 @@ namespace BrassLoon.Interface.Log
 
         public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double maginitue, object data = null)
         {
+            return Create(settings, domainId, null, eventCode, maginitue, data);
+        }
+
+        public Task<Metric> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, double maginitue, object data = null)
+        {
             return Create(
                 settings,
                 new Metric
@@ -43,7 +48,8 @@ namespace BrassLoon.Interface.Log
                     DomainId = domainId,
                     EventCode = eventCode,
                     Magnitude = maginitue,
-                    Data = data
+                    Data = data,
+                    CreateTimestamp = createTimestamp
                 });
         }
     }

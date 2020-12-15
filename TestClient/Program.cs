@@ -55,7 +55,7 @@ namespace TestClient
                 {
                     await queue.Dequeue();
                 }
-                queue.Enqueue(metricService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds));
+                queue.Enqueue(metricService.Create(logSettings, domain.DomainId.Value, DateTime.UtcNow, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds));
             }
             await Task.WhenAll(queue);
             DateTime end = DateTime.UtcNow;

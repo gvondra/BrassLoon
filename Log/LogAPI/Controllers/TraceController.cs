@@ -51,7 +51,7 @@ namespace LogAPI.Controllers
                     {
                         CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
                         ITraceFactory factory = scope.Resolve<ITraceFactory>();
-                        ITrace innerTrace = factory.Create(trace.DomainId.Value, trace.EventCode);
+                        ITrace innerTrace = factory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
                         ITraceSaver saver = scope.Resolve<ITraceSaver>();

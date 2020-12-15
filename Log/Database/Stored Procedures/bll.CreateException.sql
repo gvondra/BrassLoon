@@ -9,10 +9,9 @@
 	@targetSite NVARCHAR(2000),
 	@stackTrace NVARCHAR(MAX),
 	@data NVARCHAR(MAX),
-	@timestamp DATETIME2(4) OUT
+	@timestamp DATETIME2(4)
 AS
 BEGIN
-	SET @timestamp = SYSUTCDATETIME();
 	INSERT INTO [bll].[Exception] ([ParentExceptionId], [DomainId], [Message], [TypeName], [Source], [AppDomain], [TargetSite], [StackTrace], [Data], [CreateTimestamp]) 
 	VALUES (@parentExceptionId, @domainId, @message, @typeName, @source, @appDomain, @targetSite, @stackTrace, @data, @timestamp)
 	;

@@ -8,8 +8,8 @@ namespace BrassLoon.Log.Framework
 {
     public interface IExceptionFactory
     {
-        IException Create(Guid domainId);
-        IException Create(Guid domainId, IException parentException);
+        IException Create(Guid domainId, DateTime? createTimestamp);
+        IException Create(Guid domainId, DateTime? createTimestamp, IException parentException);
         Task<IException> GetInnerException(ISettings settings, long id);
     }
 }

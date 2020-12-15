@@ -35,6 +35,11 @@ namespace BrassLoon.Interface.Log
 
         public Task<Trace> Create(ISettings settings, Guid domainId, string eventCode, string message, object data = null)
         {
+            return Create(settings, domainId, null, eventCode, message, data);
+        }
+
+        public Task<Trace> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, string message, object data = null)
+        {
             return Create(
                 settings,
                 new Trace
@@ -42,7 +47,8 @@ namespace BrassLoon.Interface.Log
                     DomainId = domainId,
                     EventCode = eventCode,
                     Message = message,
-                    Data = data
+                    Data = data,
+                    CreateTimestamp = createTimestamp
                 }
                 );
         }
