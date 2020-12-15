@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Account.Models;
+using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
@@ -19,6 +20,24 @@ namespace LogAPI
     public abstract class LogControllerBase : ControllerBase
     {
         private static Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
+
+        [NonAction]
+        protected async Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
+        {
+            if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && Guid.Parse(settings.ExceptionLoggingDomainId).Equals(domainId))
+                return true;
+            else
+            {
+                Domain domain = await GetDomain(
+                domainId,
+                settingsFactory,
+                settings,
+                GetAccessToken(),
+                domainService
+                );
+                return VerifyDomainAccount(domain);
+            }            
+        }
 
         [NonAction]
         protected async Task<bool> VerifyDomainAccount(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
@@ -80,6 +99,25 @@ namespace LogAPI
                     token = match.Value;
             }
             return token;
+        }
+
+        [NonAction]
+        protected async Task LogException(Exception ex, IExceptionService exceptionService, SettingsFactory settingsFactory, Settings settings)
+        {
+            try
+            {
+                Console.WriteLine(ex.ToString());
+                if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
+                    await exceptionService.Create(
+                        settingsFactory.CreateLog(settings, GetAccessToken()),
+                        Guid.Parse(settings.ExceptionLoggingDomainId),
+                        ex
+                        );                
+            }
+            catch (Exception innerException)
+            {
+                Console.Write(innerException.ToString());
+            }
         }
     }
 }

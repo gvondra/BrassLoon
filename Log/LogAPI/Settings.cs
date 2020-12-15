@@ -11,5 +11,7 @@ namespace LogAPI
         public string ConnectionStringUser { get; set; }
         public string KeyVaultAddress { get; set; }
         public string AccountApiBaseAddress { get; set; }
+        public string LogApiBaseAddress { get; set; }
+        public string ExceptionLoggingDomainId { get; set; }
     }
 }

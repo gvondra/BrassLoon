@@ -34,29 +34,37 @@ namespace LogAPI.Controllers
         public async Task<IActionResult> Create([FromBody] LogModels.Exception exception)
         {
             IActionResult result = null;
-            if (result == null && (!exception.DomainId.HasValue || exception.DomainId.Value.Equals(Guid.Empty)))
-                result = BadRequest("Missing domain guid value");
-            if (result == null)
+            try
             {
-                using ILifetimeScope scope = _container.BeginLifetimeScope();
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                if (!(await VerifyDomainAccount(exception.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
-                {
-                    result = StatusCode(StatusCodes.Status401Unauthorized);
-                }
+                if (result == null && (!exception.DomainId.HasValue || exception.DomainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain guid value");
                 if (result == null)
                 {
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    IExceptionFactory factory = scope.Resolve<IExceptionFactory>();
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                    List<IException> allExceptions = new List<IException>();
-                    IException innerException = Map(exception, exception.DomainId.Value, factory, mapper, allExceptions);
-                    IExceptionSaver saver = scope.Resolve<IExceptionSaver>();
-                    await saver.Create(settings, allExceptions.ToArray());
-                    result = Ok(
-                        await Map(innerException, settings, mapper)
-                        );
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    if (!(await VerifyDomainAccount(exception.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    {
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
+                    if (result == null)
+                    {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                        IExceptionFactory factory = scope.Resolve<IExceptionFactory>();
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        List<IException> allExceptions = new List<IException>();
+                        IException innerException = Map(exception, exception.DomainId.Value, factory, mapper, allExceptions);
+                        IExceptionSaver saver = scope.Resolve<IExceptionSaver>();
+                        await saver.Create(settings, allExceptions.ToArray());
+                        result = Ok(
+                            await Map(innerException, settings, mapper)
+                            );
+                    }
                 }
+            }    
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
         }

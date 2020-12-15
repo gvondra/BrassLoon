@@ -19,5 +19,13 @@ namespace LogAPI
                 BaseAddress = settings.AccountApiBaseAddress
             };
         }
+
+        public LogSettings CreateLog(Settings settings, string accessToken)
+        {
+            return new LogSettings(accessToken)
+            {
+                BaseAddress = settings.LogApiBaseAddress
+            };
+        }
     }
 }
