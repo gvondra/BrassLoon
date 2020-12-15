@@ -20,9 +20,6 @@ namespace LogAPI
 {
     public class Startup
     {
-        internal const string POLICY_READ_ACCOUNT = "READ:ACCOUNT";
-        internal const string POLICY_EDIT_ACCOUNT = "EDIT:ACCOUNT";
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -109,9 +106,7 @@ namespace LogAPI
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer("BrassLoon", o =>
-            {
-                //o.Authority = "urn:brassloon";
-                //o.Audience = "urn:brassloon";                
+            {           
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateAudience = true,
@@ -140,20 +135,6 @@ namespace LogAPI
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("BrassLoon")
                 .Build();
-                o.AddPolicy(POLICY_READ_ACCOUNT,
-                    configure =>
-                    {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_READ_ACCOUNT, Configuration["Issuer"]))
-                        .AddAuthenticationSchemes("BrassLoon")
-                        .Build();
-                    });
-                o.AddPolicy(POLICY_EDIT_ACCOUNT,
-                    configure =>
-                    {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, Configuration["Issuer"]))
-                        .AddAuthenticationSchemes("BrassLoon")
-                        .Build();
-                    });
             });
         }
 

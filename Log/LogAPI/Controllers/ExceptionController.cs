@@ -30,7 +30,7 @@ namespace LogAPI.Controllers
 
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
-        [Authorize("EDIT:ACCOUNT")]
+        [Authorize()]
         public async Task<IActionResult> Create([FromBody] LogModels.Exception exception)
         {
             IActionResult result = null;
