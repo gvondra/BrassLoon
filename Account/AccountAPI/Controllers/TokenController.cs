@@ -88,10 +88,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                Console.WriteLine(ex.ToString());
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
