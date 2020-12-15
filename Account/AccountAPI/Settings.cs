@@ -13,5 +13,7 @@ namespace AccountAPI
         public string KeyVaultAddress { get; set; }
         public string IdIssuer { get; set; }
         public string Issuer { get; set; }
+        public string LogApiBaseAddress { get; set; }
+        public string ExceptionLoggingDomainId { get; set; }
     }
 }

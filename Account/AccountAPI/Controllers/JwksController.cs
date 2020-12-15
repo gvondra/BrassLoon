@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Autofac;
+using BrassLoon.Interface.Log;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,31 +15,47 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class JwksController : ControllerBase
+    public class JwksController : AccountControllerBase
     {
         private IOptions<Settings> _settings;
+        private readonly IContainer _container;
 
-        public JwksController(IOptions<Settings> settings)
+        public JwksController(IOptions<Settings> settings,
+            IContainer container)
         {
             _settings = settings;
+            _container = container;
         }
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 90)]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var jsonWebKeySet = new { Keys = new List<object>() };
-            RsaSecurityKey securityKey = GetSecurityKey(_settings.Value.TknCsp);
-            JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
-            jsonWebKeySet.Keys.Add(jsonWebKey);
-            return Content(JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }), "appliation/json");
+            try
+            {
+                var jsonWebKeySet = new { Keys = new List<object>() };
+                RsaSecurityKey securityKey = GetSecurityKey(_settings.Value.TknCsp);
+                JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
+                jsonWebKeySet.Keys.Add(jsonWebKey);
+                return Content(JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }), "appliation/json");
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }            
         }
 
+        [NonAction]
         public static RsaSecurityKey GetSecurityKey(string tknCsp)
         {
             dynamic tknCspData = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(tknCsp))); 

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Account.Models;
+using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace AccountAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController : ControllerBase
+    public class TokenController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
         private readonly IContainer _container;
@@ -37,39 +38,61 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:USER")]
         public async Task<IActionResult> Create()
         {
-            IUser user = await GetUser();
-            return Ok(await CreateToken(user));
+            try
+            {
+                IUser user = await GetUser();
+                return Ok(await CreateToken(user));
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }            
         }
 
         [HttpPost("ClientCredential")]
         public async Task<IActionResult> CreateClientCredential([FromBody] ClientCredential clientCredential)
         {
             IActionResult result = null;
-            if (result == null && clientCredential == null)
-                result = BadRequest("Missing request data");
-            if (result == null && (!clientCredential.ClientId.HasValue || clientCredential.ClientId.Value.Equals(Guid.Empty)))
-                result = BadRequest("Missing client id value");
-            if (result == null && string.IsNullOrEmpty(clientCredential.Secret))
-                result = BadRequest("Missing secret value");
-            if (result == null)
+            try
             {
-                using ILifetimeScope scope = _container.BeginLifetimeScope();
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                IClient client = await clientFactory.Get(settings, clientCredential.ClientId.Value);
-                if (client == null)
-                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null && clientCredential == null)
+                    result = BadRequest("Missing request data");
+                if (result == null && (!clientCredential.ClientId.HasValue || clientCredential.ClientId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing client id value");
+                if (result == null && string.IsNullOrEmpty(clientCredential.Secret))
+                    result = BadRequest("Missing secret value");
                 if (result == null)
                 {
-                    ISecretProcessor secretProcessor = scope.Resolve<ISecretProcessor>();
-                    if (!secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
+                    IClient client = await clientFactory.Get(settings, clientCredential.ClientId.Value);
+                    if (client == null)
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    if (result == null)
+                    {
+                        ISecretProcessor secretProcessor = scope.Resolve<ISecretProcessor>();
+                        if (!secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
+                            result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
+                    if (result == null)
+                    {
+                        result = Content(await CreateToken(client), "text/plain");
+                    }
                 }
-                if (result == null)
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
                 {
-                    result = Content(await CreateToken(client), "text/plain");
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
                 }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
         }

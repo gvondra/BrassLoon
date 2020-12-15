@@ -11,5 +11,13 @@ namespace AccountAPI
         {
             return new CoreSettings(settings);
         }
+
+        public LogSettings CreateLog(Settings settings, string accessToken)
+        {
+            return new LogSettings(accessToken)
+            {
+                BaseAddress = settings.LogApiBaseAddress
+            };
+        }
     }
 }
