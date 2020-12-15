@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.Account.Models;
 using BrassLoon.RestClient;
+using Polly;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -24,7 +25,13 @@ namespace BrassLoon.Interface.Account
                 .AddPathParameter("id", id.ToString())
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return await _restUtil.Send<Domain>(_service, request);
+            IResponse<Domain> response = await Policy
+                .HandleResult<IResponse<Domain>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                .ExecuteAsync(() => _service.Send<Domain>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
     }
 }

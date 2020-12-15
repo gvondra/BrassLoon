@@ -1,9 +1,9 @@
 ﻿using BrassLoon.Interface.Log.Models;
 using BrassLoon.RestClient;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Log
@@ -25,7 +25,13 @@ namespace BrassLoon.Interface.Log
             .AddPath("Metric")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return await _restUtil.Send<Metric>(_service, request);
+            IResponse<Metric> response = await Policy
+                .HandleResult<IResponse<Metric>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(0.2), TimeSpan.FromSeconds(0.5) })
+                .ExecuteAsync(() => _service.Send<Metric>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
 
         public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double maginitue, object data = null)

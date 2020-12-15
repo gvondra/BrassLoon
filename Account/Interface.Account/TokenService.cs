@@ -1,8 +1,8 @@
 ﻿using BrassLoon.Interface.Account.Models;
 using BrassLoon.RestClient;
+using Polly;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Account
@@ -22,7 +22,13 @@ namespace BrassLoon.Interface.Account
         {
             UriBuilder builder = new UriBuilder(settings.BaseAddress);
             builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
-            return await _restUtil.Post<string>(_service, builder.Uri, clientCredential);
+            IResponse<string> response = await Policy
+                .HandleResult<IResponse<string>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                .ExecuteAsync(() => _service.Post<string>(builder.Uri, clientCredential))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)

@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.Log.Models;
 using BrassLoon.RestClient;
+using Polly;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -23,7 +24,13 @@ namespace BrassLoon.Interface.Log
             .AddPath("Trace")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return await _restUtil.Send<Trace>(_service, request);
+            IResponse<Trace> response = await Policy
+                .HandleResult<IResponse<Trace>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(0.2), TimeSpan.FromSeconds(0.5) })
+                .ExecuteAsync(() => _service.Send<Trace>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
 
         public Task<Trace> Create(ISettings settings, Guid domainId, string eventCode, string message, object data = null)

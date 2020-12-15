@@ -1,5 +1,6 @@
 ﻿using LogModels = BrassLoon.Interface.Log.Models;
 using BrassLoon.RestClient;
+using Polly;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,7 +27,13 @@ namespace BrassLoon.Interface.Log
             .AddPath("Exception")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            return await _restUtil.Send<LogModels.Exception>(_service, request);
+            IResponse<LogModels.Exception> response = await Policy
+                .HandleResult<IResponse<LogModels.Exception>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(2.0 + Math.Pow(2, retryAttempt)))
+                .ExecuteAsync(() => _service.Send<LogModels.Exception>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
 
         public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception)
