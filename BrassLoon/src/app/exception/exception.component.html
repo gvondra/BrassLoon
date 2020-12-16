@@ -1,0 +1,8 @@
+<h2>Exception</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<app-exception-data *ngIf="Exception" [Exception]="Exception"></app-exception-data>
+<ng-container *ngIf="InnerExceptions">
+    <app-exception-data *ngFor="let e of InnerExceptions" [Exception]="e"></app-exception-data>
+</ng-container>

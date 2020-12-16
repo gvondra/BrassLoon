@@ -1,0 +1,35 @@
+<h2>Domain</h2>
+<app-domain-nav *ngIf="Domain" CurrentTab="Exceptions" [DomainId]="Domain.DomainId"></app-domain-nav>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Until</label>
+            <input type="datetime-local" class="form-control" placeholder="Max Timestamp" [value]="MaxTimestamp" (change)="MaxTimestamp=$event.target.value" />            
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" (click)="Load()">Load</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="ShowBusy" class="spinner-border text-primary" role="status">
+<span class="sr-only">Loading...</span>
+</div>
+<table *ngIf="Domain && Exceptions" class="table">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Message</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let e of Exceptions">
+            <td><a [routerLink]="['/d', Domain.DomainId, 'Exception', e.ExceptionId]">{{ FormatDate(e.CreateTimestamp) }}</a></td>
+            <td>{{ e.Message }}</td>
+            <td>{{ e.TypeName }}</td>
+        </tr>        
+    </tbody>    
+</table>

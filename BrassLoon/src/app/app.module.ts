@@ -15,6 +15,11 @@ import { AppSettingsService } from './app-settings.service';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AccountComponent } from './account/account.component';
 import { ClientComponent } from './client/client.component';
+import { ExceptionsComponent } from './exceptions/exceptions.component';
+import { ExceptionComponent } from './exception/exception.component';
+import { ExceptionDataComponent } from './exception-data/exception-data.component';
+import { DomainComponent } from './domain/domain.component';
+import { DomainNavComponent } from './domain-nav/domain-nav.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -53,7 +58,12 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     ForbiddenComponent,
     AccountsComponent,
     AccountComponent,
-    ClientComponent
+    ClientComponent,
+    ExceptionsComponent,
+    ExceptionComponent,
+    ExceptionDataComponent,
+    DomainComponent,
+    DomainNavComponent
   ],
   imports: [
     BrowserModule,
