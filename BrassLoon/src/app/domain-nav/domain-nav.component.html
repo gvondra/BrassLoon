@@ -1,0 +1,10 @@
+<nav style="margin-bottom: 1em;">
+    <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Detail')" [routerLink]="['/d', DomainId]">Detail</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Exceptions')" [routerLink]="['/d', DomainId, 'Exception']">Exceptions</a>
+        </li>
+      </ul>
+</nav>
