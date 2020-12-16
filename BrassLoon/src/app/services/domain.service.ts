@@ -13,6 +13,14 @@ export class DomainService {
     private httpClient: HttpClient,
     private tokenService: TokenService) { }
 
+  Get(id: string) : Promise<Domain> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Domain/${id}`, {headers: headers}).toPromise()
+        .then(res => res as Domain);
+    });   
+  }
+
   Create(domain: Domain) : Promise<Domain> {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {
