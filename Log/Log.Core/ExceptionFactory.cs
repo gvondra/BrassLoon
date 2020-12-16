@@ -4,6 +4,7 @@ using BrassLoon.Log.Data.Models;
 using BrassLoon.Log.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,15 @@ namespace BrassLoon.Log.Core
                 );
         }
 
+        public async Task<IException> Get(ISettings settings, long id)
+        {
+            IException result = null;
+            ExceptionData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
+            if (data != null)
+                result = new Exception(data, _dataSaver, this);
+            return result;
+        }
+
         public async Task<IException> GetInnerException(ISettings settings, long id)
         {
             IException exception = null;
@@ -48,6 +58,13 @@ namespace BrassLoon.Log.Core
             if (data != null)
                 exception = new Exception(data, _dataSaver, this);
             return exception;
+        }
+
+        public async Task<IEnumerable<IException>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, DateTime maxTimestamp)
+        {
+            return (await _dataFactory.GetTopBeforeTimestamp(_settingsFactory.CreateData(settings), domainId, maxTimestamp))
+                .Select<ExceptionData, IException>(data => new Exception(data, _dataSaver, this))
+                ;
         }
     }
 }

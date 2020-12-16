@@ -28,6 +28,86 @@ namespace LogAPI.Controllers
             _container = container;
         }
 
+
+        [HttpGet("{domainId}")]
+        [Authorize()]
+        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id prameter value");
+                if (result == null && !maxTimestamp.HasValue)
+                    result = BadRequest("Missing max timestamp parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        IExceptionFactory exceptionFactory = scope.Resolve<IExceptionFactory>();
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        return Ok(  
+                            await Task.WhenAll<LogModels.Exception>(
+                            (await exceptionFactory.GetTopBeforeTimestamp(settings, domainId.Value, maxTimestamp.Value))
+                            .Select<IException, Task<LogModels.Exception>>(async innerException => await Map(innerException, settings, mapper))
+                            ));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpGet("{domainId}/{id}")]
+        [Authorize()]
+        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] long? id)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && !id.HasValue)
+                    result = BadRequest("Missing exception id parameter value");
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id prameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                    IExceptionFactory exceptionFactory = scope.Resolve<IExceptionFactory>();
+                    IException exception = await exceptionFactory.Get(settings, id.Value);
+                    if (exception != null && !exception.DomainId.Equals(domainId.Value))
+                        exception = null;
+                    if (result == null && !(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    if (result == null && exception == null)
+                        result = NotFound();
+                    if (result == null && exception != null)
+                    {
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(
+                            await Map(exception, settings, mapper)
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
         [Authorize()]
