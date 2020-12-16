@@ -106,14 +106,4 @@ export class AccountComponent implements OnInit {
       });  
     }
   }
-
-  UpdateDomain(domain: Domain) : void {
-    if (domain.Name && domain.Name != "") {
-      this.domainService.Update(domain.DomainId, domain)    
-      .catch(err => {
-        console.error(err);
-        this.ErrorMessage = err.message || "Unexpected Error"
-      });  
-    }
-  }
 }

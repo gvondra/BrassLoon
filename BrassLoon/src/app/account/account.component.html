@@ -28,13 +28,11 @@
     <h3>Domains</h3>
     <table class="table">
         <tr *ngFor="let domain of Domains">
-            <td>{{ domain.DomainId }}</td>
+            <td><a [routerLink]="['/d', domain.DomainId]">{{ domain.DomainId }}</a></td>
             <td>
-                <input type="text" class="form-control" maxlength="2000" [value]="domain.Name" (change)="domain.Name = $event.target.value" />
+                {{ domain.Name }}
             </td>
-            <td>
-                <button type="button" class="btn btn-secondary" (click)="UpdateDomain(domain)">Update</button>
-            </td>
+            <td></td>
         </tr>        
         <tr>
             <td></td>
