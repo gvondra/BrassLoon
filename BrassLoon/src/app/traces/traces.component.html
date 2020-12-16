@@ -1,0 +1,46 @@
+<h2>Domain</h2>
+<app-domain-nav *ngIf="Domain" CurrentTab="Traces" [DomainId]="Domain.DomainId"></app-domain-nav>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="EventCodes && EventCodes.length === 0" class="alert alert-info" role="alert">
+    <p >No event codes found</p>
+</div>
+<div *ngIf="EventCodes" class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Until</label>
+            <input type="datetime-local" class="form-control" placeholder="Max Timestamp" [value]="MaxTimestamp" (change)="MaxTimestamp=$event.target.value" />            
+        </div>
+        <div class="col-md-3">
+            <label>Events</label>
+            <select class="form-control" (change)="EventCode=$event.target.value">
+                <option *ngFor="let code of EventCodes" [value]="code" [attr.selected]="GetEventCodeSelect(code)">{{ code }}</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" (click)="Load()">Load</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="ShowBusy" class="spinner-border text-primary" role="status">
+<span class="sr-only">Loading...</span>
+</div>
+<table *ngIf="Traces" class="table">
+    <tbody>
+        <tr *ngFor="let trace of Traces">
+            <td>{{ FormatDate(trace.CreateTimestamp) }}</td>
+            <td>{{ trace.Message }}</td>
+            <td>
+                <table *ngIf="trace.Data" class="table">
+                    <tbody>
+                        <tr *ngFor="let key of GetKeys(trace.Data)">
+                            <td>{{ key }}</td>
+                            <td>{{ trace.Data[key] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
