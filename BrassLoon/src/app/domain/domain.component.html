@@ -1,0 +1,22 @@
+<h2>Domain</h2>
+<app-domain-nav *ngIf="Domain" CurrentTab="Detail" [DomainId]="Domain.DomainId"></app-domain-nav>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<form *ngIf="!ErrorMessage && Domain" (ngSubmit)="UpdateDomain(Domain)" #domainForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <input id="domainName" name="domainName" #domainName="ngModel" type="text" class="form-control" maxlength="2000" required="true" placeholder="Domain Name" [(ngModel)]="Domain.Name" />
+                <div *ngIf="domainName.invalid && (domainName.dirty || domainName.touched)" class="alert alert-danger">
+                    <div *ngIf="domainName.errors.required">
+                        Domain Name is required.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary" type="submit" [disabled]="!domainForm.form.valid">Update</button>
+            </div>
+        </div>
+    </div>        
+</form>
