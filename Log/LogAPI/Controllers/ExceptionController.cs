@@ -30,6 +30,7 @@ namespace LogAPI.Controllers
 
 
         [HttpGet("{domainId}")]
+        [ProducesResponseType(typeof(LogModels.Exception[]), 200)]
         [Authorize()]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null)
         {
@@ -44,11 +45,11 @@ namespace LogAPI.Controllers
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
                     if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
                         IExceptionFactory exceptionFactory = scope.Resolve<IExceptionFactory>();
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         return Ok(  
@@ -68,6 +69,7 @@ namespace LogAPI.Controllers
         }
 
         [HttpGet("{domainId}/{id}")]
+        [ProducesResponseType(typeof(LogModels.Exception), 200)]
         [Authorize()]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] long? id)
         {

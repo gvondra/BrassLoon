@@ -29,6 +29,87 @@ namespace LogAPI.Controllers
             _container = container;
         }
 
+        [HttpGet("{domainId}")]
+        [ProducesResponseType(typeof(LogModels.Trace[]), 200)]
+        [Authorize()]
+        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null, [FromQuery] string eventCode = null)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !maxTimestamp.HasValue)
+                    result = BadRequest("Missing max timestamp parameter value");
+                if (result == null && string.IsNullOrEmpty(eventCode))
+                    result = BadRequest("Missing event code parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                        ITraceFactory traceFactory = scope.Resolve<ITraceFactory>();
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(
+                            (await traceFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
+                            .Select<ITrace, LogModels.Trace>(innerTrace => mapper.Map<LogModels.Trace>(innerTrace))
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpGet("/api/TraceEventCode/{domainId}")]
+        [ProducesResponseType(typeof(string[]), 200)]
+        [ResponseCache(Duration = 150, Location = ResponseCacheLocation.Client)]
+        [Authorize()]
+        public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                        ITraceFactory traceFactory = scope.Resolve<ITraceFactory>();
+                        result = Ok(
+                            await traceFactory.GetEventCodes(settings, domainId.Value)
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Trace), 200)]
         [Authorize()]

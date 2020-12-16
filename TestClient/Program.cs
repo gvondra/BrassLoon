@@ -43,12 +43,14 @@ namespace TestClient
         private static async Task GenerateEntries(AccountInterfaceModels.Domain domain) 
         {
             DateTime start = DateTime.UtcNow;
-            Console.WriteLine($"Entry generation started at {start:HH:mm:ss}");
             using ILifetimeScope scope = _diContainer.BeginLifetimeScope();
             IMetricService metricService = scope.Resolve<IMetricService>();
+            ITraceService traceService = scope.Resolve<ITraceService>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             LogSettings logSettings = settingsFactory.CreateLog(_settings);
             Queue<Task<Metric>> queue = new Queue<Task<Metric>>();
+            Console.WriteLine($"Entry generation started at {start:HH:mm:ss}");
+            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"Entry generation started at {start:HH:mm:ss}", new { Date = DateTime.UtcNow });
             for (int i = 0; i < _settings.EntryCount; i += 1)
             {
                 if (queue.Count >= _settings.ConcurentTaskCount) 
@@ -60,8 +62,12 @@ namespace TestClient
             await Task.WhenAll(queue);
             DateTime end = DateTime.UtcNow;
             Console.WriteLine($"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
+            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
+            Console.WriteLine($"{_settings.EntryCount} records created");
+            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"{_settings.EntryCount} records created");
             double rate = Math.Round((double)_settings.EntryCount / end.Subtract(start).TotalSeconds, 3, MidpointRounding.ToEven);
             Console.WriteLine($"at {rate} records per second");
+            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"at {rate} records per second");
         }
 
         private static async Task<AccountInterfaceModels.Domain> GetDomain(Guid domainId)
