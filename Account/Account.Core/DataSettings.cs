@@ -15,11 +15,8 @@ namespace BrassLoon.Account.Core
             _settings = settings;
         }
 
-        public Func<Task<string>> GetAccessToken => null;
+        public Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
 
-        public Task<string> GetConnectionString()
-        {
-            return _settings.GetConnetionString();
-        }
+        public Task<string> GetConnectionString() => _settings.GetConnetionString();
     }
 }

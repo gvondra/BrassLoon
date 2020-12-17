@@ -8,5 +8,6 @@ namespace BrassLoon.CommonCore
     public interface ISettings
     {
         Task<string> GetConnetionString();
+        Func<Task<string>> GetDatabaseAccessToken();
     }
 }
