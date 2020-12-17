@@ -11,16 +11,16 @@ namespace BrassLoon.Log.Data
 {
     public class MetricDataFactory : IMetricDataFactory
     {
-        private readonly IDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
         private readonly IGenericDataFactory<MetricData> _genericDataFactory;
 
-        public MetricDataFactory(IDbProviderFactory providerFactory)
+        public MetricDataFactory(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
             _genericDataFactory = new GenericDataFactory<MetricData>();
         }
 
-        public async Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetEventCodes(ISqlSettings settings, Guid domainId)
         {
             List<string> result = new List<string>();
             using (DbConnection connection = await _providerFactory.OpenConnection(settings))
@@ -43,7 +43,7 @@ namespace BrassLoon.Log.Data
             return result;
         }
 
-        public async Task<IEnumerable<MetricData>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
+        public async Task<IEnumerable<MetricData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

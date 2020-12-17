@@ -11,9 +11,9 @@ namespace BrassLoon.Log.Data
 {
     public class ExceptionDataSaver : IExceptionDataSaver
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
 
-        public ExceptionDataSaver(IDbProviderFactory providerFactory)
+        public ExceptionDataSaver(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

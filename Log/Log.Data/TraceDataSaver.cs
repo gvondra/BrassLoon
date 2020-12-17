@@ -11,9 +11,9 @@ namespace BrassLoon.Log.Data
 {
     public class TraceDataSaver : ITraceDataSaver
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
 
-        public TraceDataSaver(IDbProviderFactory providerFactory)
+        public TraceDataSaver(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

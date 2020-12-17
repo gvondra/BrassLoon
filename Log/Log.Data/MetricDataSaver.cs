@@ -11,9 +11,9 @@ namespace BrassLoon.Log.Data
 {
     public class MetricDataSaver : IMetricDataSaver
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
 
-        public MetricDataSaver(IDbProviderFactory providerFactory)
+        public MetricDataSaver(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

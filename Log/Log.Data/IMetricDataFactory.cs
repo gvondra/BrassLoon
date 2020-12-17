@@ -9,7 +9,7 @@ namespace BrassLoon.Log.Data
 {
     public interface IMetricDataFactory
     {
-        Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId);
-        Task<IEnumerable<MetricData>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp);
+        Task<IEnumerable<string>> GetEventCodes(ISqlSettings settings, Guid domainId);
+        Task<IEnumerable<MetricData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, string eventCode, DateTime maxTimestamp);
     }
 }
