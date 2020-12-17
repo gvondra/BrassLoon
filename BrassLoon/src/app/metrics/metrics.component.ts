@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Domain } from '../models/domain';
-import { Trace } from '../models/trace';
+import { Metric } from '../models/metric';
 import { DomainService } from '../services/domain.service';
-import { TraceService } from '../services/trace.service';
+import { MetricService } from '../services/metric.service';
 
 @Component({
-  selector: 'app-traces',
-  templateUrl: './traces.component.html',
+  selector: 'app-metrics',
+  templateUrl: './metrics.component.html',
   styles: [
   ]
 })
-export class TracesComponent implements OnInit {
+export class MetricsComponent implements OnInit {
 
   ErrorMessage: string = null;
   Domain: Domain = null;
@@ -19,12 +19,12 @@ export class TracesComponent implements OnInit {
   ShowBusy: boolean = false;
   EventCodes: Array<string> = null;
   EventCode: string = null;
-  Traces: Array<Trace> = null;
+  Metrics: Array<Metric> = null;
 
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
     private domainService: DomainService,
-    private traceService: TraceService) { }
+    private metricService: MetricService) { }
 
   ngOnInit(): void {
     this.MaxTimestamp = null;
@@ -34,21 +34,21 @@ export class TracesComponent implements OnInit {
       this.ErrorMessage = null;
       this.Domain == null;
       this.EventCodes = null;
-      this.Traces = null;
+      this.Metrics = null;
       if (params["domainId"]) { 
         this.domainService.Get(params["domainId"])     
         .then(domain => {
           this.Domain = domain;
-          this.LoadTraces();
+          this.LoadMetrics();
         })
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
         });  
-        this.traceService.GetEventCodes(params["domainId"])          
+        this.metricService.GetEventCodes(params["domainId"])          
         .then(codes => {
           this.EventCodes = codes;
-          this.LoadTraces();
+          this.LoadMetrics();
         })
         .catch(err => {
           console.error(err);
@@ -59,17 +59,17 @@ export class TracesComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       this.MaxTimestamp = null;
       this.EventCode = null;
-      this.Traces = null;
+      this.Metrics = null;
       if (params["maxTimestamp"] && params["eventCode"]) {
         let dt: Date = new Date(Number(params["maxTimestamp"]));
         this.MaxTimestamp = dt.toLocaleString();     
         this.EventCode = params["eventCode"];
       }
-      this.LoadTraces();
+      this.LoadMetrics();
     });
   }
 
-  private LoadTraces() {
+  private LoadMetrics() {
     if (this.Domain && this.EventCodes && this.EventCodes.length > 0) {
       if (this.MaxTimestamp == null || this.EventCode == null || this.EventCode == "") {
         let maxTimestamp: Date = new Date();
@@ -82,8 +82,8 @@ export class TracesComponent implements OnInit {
         this.ShowBusy = true;
         let dt: Date = new Date(this.MaxTimestamp);
         dt = new Date(dt.toUTCString());
-        this.traceService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
-        .then(traces => this.Traces = traces)
+        this.metricService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
+        .then(metrics => this.Metrics = metrics)
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
@@ -94,7 +94,7 @@ export class TracesComponent implements OnInit {
   }  
 
   Load() {
-    this.router.navigate(["/d", this.Domain.DomainId, "Trace"], { queryParams: { "maxTimestamp": Date.parse(this.MaxTimestamp), "eventCode": this.EventCode } })
+    this.router.navigate(["/d", this.Domain.DomainId, "Metric"], { queryParams: { "maxTimestamp": Date.parse(this.MaxTimestamp), "eventCode": this.EventCode } })
   }
 
   FormatDate(dt: string) : string {
@@ -117,4 +117,5 @@ export class TracesComponent implements OnInit {
   GetKeys(object) : Array<string> {
     return Object.keys(object);
   }
+
 }

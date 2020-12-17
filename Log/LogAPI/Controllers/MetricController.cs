@@ -29,6 +29,87 @@ namespace LogAPI.Controllers
             _container = container;
         }
 
+        [HttpGet("{domainId}")]
+        [ProducesResponseType(typeof(LogModels.Metric[]), 200)]
+        [Authorize()]
+        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null, [FromQuery] string eventCode = null)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !maxTimestamp.HasValue)
+                    result = BadRequest("Missing max timestamp parameter value");
+                if (result == null && string.IsNullOrEmpty(eventCode))
+                    result = BadRequest("Missing event code parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                        IMetricFactory metricFactory = scope.Resolve<IMetricFactory>();
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(
+                            (await metricFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
+                            .Select<IMetric, LogModels.Metric>(innerMetric => mapper.Map<LogModels.Metric>(innerMetric))
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpGet("/api/MetricEventCode/{domainId}")]
+        [ProducesResponseType(typeof(string[]), 200)]
+        [ResponseCache(Duration = 150, Location = ResponseCacheLocation.Client)]
+        [Authorize()]
+        public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
+                        IMetricFactory metricFactory = scope.Resolve<IMetricFactory>();
+                        result = Ok(
+                            await metricFactory.GetEventCodes(settings, domainId.Value)
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Metric), 200)]
         [Authorize()]

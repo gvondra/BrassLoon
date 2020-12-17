@@ -47,7 +47,7 @@ namespace BrassLoon.Log.Core
 
         public async Task<IEnumerable<ITrace>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
-            return (await _dataFactory.GetTopBeforeTimestamp(_settingFactory.CreateData(settings), domainId, eventCode, maxTimestamp))
+            return (await _dataFactory.GetTopBeforeTimestamp(_settingFactory.CreateData(settings), domainId, eventCode, maxTimestamp.ToUniversalTime()))
                 .Select<TraceData, ITrace>(data => new Trace(data, _dataSaver));
                 ;
         }

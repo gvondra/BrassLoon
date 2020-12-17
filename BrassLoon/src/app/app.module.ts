@@ -21,6 +21,7 @@ import { ExceptionDataComponent } from './exception-data/exception-data.componen
 import { DomainComponent } from './domain/domain.component';
 import { DomainNavComponent } from './domain-nav/domain-nav.component';
 import { TracesComponent } from './traces/traces.component';
+import { MetricsComponent } from './metrics/metrics.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -65,7 +66,8 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     ExceptionDataComponent,
     DomainComponent,
     DomainNavComponent,
-    TracesComponent
+    TracesComponent,
+    MetricsComponent
   ],
   imports: [
     BrowserModule,

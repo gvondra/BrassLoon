@@ -62,7 +62,7 @@ namespace BrassLoon.Log.Core
 
         public async Task<IEnumerable<IException>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, DateTime maxTimestamp)
         {
-            return (await _dataFactory.GetTopBeforeTimestamp(_settingsFactory.CreateData(settings), domainId, maxTimestamp))
+            return (await _dataFactory.GetTopBeforeTimestamp(_settingsFactory.CreateData(settings), domainId, maxTimestamp.ToUniversalTime()))
                 .Select<ExceptionData, IException>(data => new Exception(data, _dataSaver, this))
                 ;
         }

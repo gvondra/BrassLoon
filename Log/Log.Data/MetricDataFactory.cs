@@ -32,7 +32,10 @@ namespace BrassLoon.Log.Data
                     command.Parameters.Add(DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId));
                     using (DbDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        result.Add(await reader.GetFieldValueAsync<string>(0));
+                        while (await reader.ReadAsync())
+                        {
+                            result.Add(await reader.GetFieldValueAsync<string>(0));
+                        }                        
                     }
                 }
                 connection.Close();

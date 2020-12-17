@@ -64,7 +64,8 @@ export class ExceptionsComponent implements OnInit {
       }   
       else {
         this.ShowBusy = true;
-        const dt: Date = new Date(this.MaxTimestamp);
+        let dt: Date = new Date(this.MaxTimestamp);        
+        dt = new Date(dt.toUTCString());
         this.exceptionService.Search(this.Domain.DomainId, dt.toISOString())
         .then(exceptions => this.Exceptions = exceptions)
         .catch(err => {

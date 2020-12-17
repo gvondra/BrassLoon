@@ -1,5 +1,5 @@
 <h2>Domain</h2>
-<app-domain-nav *ngIf="Domain" CurrentTab="Traces" [DomainId]="Domain.DomainId"></app-domain-nav>
+<app-domain-nav *ngIf="Domain" CurrentTab="Metrics" [DomainId]="Domain.DomainId"></app-domain-nav>
 <div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
     {{ ErrorMessage }}
 </div>
@@ -26,17 +26,17 @@
 <div *ngIf="ShowBusy" class="spinner-border text-primary" role="status">
 <span class="sr-only">Loading...</span>
 </div>
-<table *ngIf="Traces" class="table" style="margin-top: 1em;">
+<table *ngIf="Metrics" class="table" style="margin-top: 1em;">
     <tbody>
-        <tr *ngFor="let trace of Traces">
-            <td>{{ FormatDate(trace.CreateTimestamp) }}</td>
-            <td>{{ trace.Message }}</td>
+        <tr *ngFor="let metric of Metrics">
+            <td>{{ FormatDate(metric.CreateTimestamp) }}</td>
+            <td>{{ metric.Magnitude }}</td>
             <td>
-                <table *ngIf="trace.Data" class="table">
+                <table *ngIf="metric.Data" class="table">
                     <tbody>
-                        <tr *ngFor="let key of GetKeys(trace.Data)">
+                        <tr *ngFor="let key of GetKeys(metric.Data)">
                             <td>{{ key }}</td>
-                            <td>{{ trace.Data[key] }}</td>
+                            <td>{{ metric.Data[key] }}</td>
                         </tr>
                     </tbody>
                 </table>

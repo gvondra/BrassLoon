@@ -10,6 +10,7 @@ import { ExceptionsComponent } from './exceptions/exceptions.component';
 import { ExceptionComponent } from './exception/exception.component';
 import { DomainComponent } from './domain/domain.component';
 import { TracesComponent } from './traces/traces.component';
+import { MetricsComponent } from './metrics/metrics.component';
 
 
 const routes: Routes = [
@@ -64,6 +65,10 @@ const routes: Routes = [
   {
     path: "d/:domainId/Trace",
     component: TracesComponent
+  },
+  {
+    path: "d/:domainId/Metric",
+    component: MetricsComponent
   }
 ];
 
