@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
 {
-    public class DataSettings : ISettings
+    public class DataSettings : ISqlSettings
     {
         private readonly CommonCore.ISettings _settings;
         
@@ -14,6 +14,8 @@ namespace BrassLoon.Account.Core
         {
             _settings = settings;
         }
+
+        public Func<Task<string>> GetAccessToken => null;
 
         public Task<string> GetConnectionString()
         {

@@ -8,7 +8,7 @@ namespace BrassLoon.Account.Data
 {
     public interface IClientDataFactory
     {
-        Task<ClientData> Get(ISettings settings, Guid id);
-        Task<IEnumerable<ClientData>> GetByAccountId(ISettings settings, Guid accountId);
+        Task<ClientData> Get(ISqlSettings settings, Guid id);
+        Task<IEnumerable<ClientData>> GetByAccountId(ISqlSettings settings, Guid accountId);
     }
 }

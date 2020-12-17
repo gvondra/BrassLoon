@@ -9,7 +9,7 @@ namespace BrassLoon.Account.Data
 {
     public interface IDomainDataFactory
     {
-        Task<DomainData> Get(ISettings settings, Guid id);
-        Task<IEnumerable<DomainData>> GetByAccountId(ISettings settings, Guid accountId);
+        Task<DomainData> Get(ISqlSettings settings, Guid id);
+        Task<IEnumerable<DomainData>> GetByAccountId(ISqlSettings settings, Guid accountId);
     }
 }

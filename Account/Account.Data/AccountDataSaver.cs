@@ -11,9 +11,9 @@ namespace BrassLoon.Account.Data
 {
     public class AccountDataSaver : IAccountDataSaver
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
 
-        public AccountDataSaver(IDbProviderFactory providerFactory)
+        public AccountDataSaver(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

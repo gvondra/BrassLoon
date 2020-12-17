@@ -9,7 +9,7 @@ namespace BrassLoon.Account.Data
 {    
     public interface IEmailAddressDataFactory
     {
-        Task<EmailAddressData> Get(ISettings settings, Guid id);
-        Task<EmailAddressData> GetByAddress(ISettings settings, string address);
+        Task<EmailAddressData> Get(ISqlSettings settings, Guid id);
+        Task<EmailAddressData> GetByAddress(ISqlSettings settings, string address);
     }
 }

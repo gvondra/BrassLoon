@@ -10,16 +10,16 @@ namespace BrassLoon.Account.Data
 {
     public class UserDataFactory : IUserDataFactory
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
         private GenericDataFactory<UserData> _genericDataFactory;
 
-        public UserDataFactory(IDbProviderFactory providerFactory)
+        public UserDataFactory(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
             _genericDataFactory = new GenericDataFactory<UserData>();
         }
 
-        public async Task<UserData> Get(ISettings settings, Guid id)
+        public async Task<UserData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -32,7 +32,7 @@ namespace BrassLoon.Account.Data
                 )).FirstOrDefault();
         }
 
-        public async Task<UserData> GetByReferenceId(ISettings settings, string referenceId)
+        public async Task<UserData> GetByReferenceId(ISqlSettings settings, string referenceId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "referenceId", DbType.AnsiString, referenceId);
             return (await _genericDataFactory.GetData(

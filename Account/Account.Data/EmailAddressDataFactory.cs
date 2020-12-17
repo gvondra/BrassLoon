@@ -10,16 +10,16 @@ namespace BrassLoon.Account.Data
 {
     public class EmailAddressDataFactory : IEmailAddressDataFactory
     {
-        private IDbProviderFactory _providerFactory;
+        private ISqlDbProviderFactory _providerFactory;
         private GenericDataFactory<EmailAddressData> _genericDataFactory;
 
-        public EmailAddressDataFactory(IDbProviderFactory providerFactory)
+        public EmailAddressDataFactory(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
             _genericDataFactory = new GenericDataFactory<EmailAddressData>();
         }
 
-        public async Task<EmailAddressData> Get(ISettings settings, Guid id)
+        public async Task<EmailAddressData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -32,7 +32,7 @@ namespace BrassLoon.Account.Data
                 )).FirstOrDefault();
         }
 
-        public async Task<EmailAddressData> GetByAddress(ISettings settings, string address)
+        public async Task<EmailAddressData> GetByAddress(ISqlSettings settings, string address)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "address", DbType.String, address);
             return (await _genericDataFactory.GetData(

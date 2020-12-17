@@ -11,7 +11,7 @@ namespace BrassLoon.Account.Data
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterInstance<IDbProviderFactory>(new SqlClientProviderFactory());
+            builder.RegisterInstance<ISqlDbProviderFactory>(new SqlClientProviderFactory());
             builder.RegisterType<AccountDataFactory>().As<IAccountDataFactory>();
             builder.RegisterType<AccountDataSaver>().As<IAccountDataSaver>();
             builder.RegisterType<ClientCredentialDataFactory>().As<IClientCredentialDataFactory>();
