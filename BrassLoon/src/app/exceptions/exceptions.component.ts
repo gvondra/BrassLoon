@@ -16,6 +16,8 @@ export class ExceptionsComponent implements OnInit {
   ErrorMessage: string = null;
   Domain: Domain = null;
   MaxTimestamp: string = null;
+  MinLoadedTimestamp: string = null;
+  ShowLoadNext: boolean = false;
   ShowBusy: boolean = false;
   Exceptions: Array<Exception> = null;
 
@@ -26,6 +28,8 @@ export class ExceptionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.MaxTimestamp = null;
+    this.MinLoadedTimestamp = null;
+    this.ShowLoadNext = false;
     this.activatedRoute.params.subscribe(params => {
       this.ShowBusy = false;
       this.ErrorMessage = null;
@@ -67,7 +71,7 @@ export class ExceptionsComponent implements OnInit {
         let dt: Date = new Date(this.MaxTimestamp);        
         dt = new Date(dt.toUTCString());
         this.exceptionService.Search(this.Domain.DomainId, dt.toISOString())
-        .then(exceptions => this.Exceptions = exceptions)
+        .then(exceptions => this.AppendExceptionsResult(exceptions))
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
@@ -76,6 +80,46 @@ export class ExceptionsComponent implements OnInit {
         ;         
       }   
     }    
+  }
+
+  private AppendExceptionsResult(exceptions: Array<Exception>) : void {
+    if (!this.Exceptions) {
+      this.Exceptions = exceptions;
+    }    
+    else {
+      this.Exceptions = this.Exceptions.concat(exceptions);
+    }
+    if (exceptions && exceptions.length > 0) {
+      this.ShowLoadNext = true;
+    }
+    else {
+      this.ShowLoadNext = false;
+    }
+    this.MinLoadedTimestamp = this.GetMinLoadedTimestamp(exceptions);
+  }
+
+  private GetMinLoadedTimestamp(exceptions: Array<Exception>) : string {
+    // it's assumed that the records are in descending order
+    if (exceptions && exceptions.length > 0) {
+      return exceptions[exceptions.length - 1].CreateTimestamp;
+    }
+    else {
+      return null;
+    }
+  }
+
+  LoadNext() {
+    this.ShowBusy = false;
+    this.ShowBusy = true;
+    let dt: Date = new Date(this.MinLoadedTimestamp);
+    dt = new Date(dt.toUTCString());
+    this.exceptionService.Search(this.Domain.DomainId, dt.toISOString())
+    .then(exceptions => this.AppendExceptionsResult(exceptions))
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    })
+    .finally(() => this.ShowBusy = false); 
   }
 
   Load() {

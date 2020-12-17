@@ -16,6 +16,8 @@ export class MetricsComponent implements OnInit {
   ErrorMessage: string = null;
   Domain: Domain = null;
   MaxTimestamp: string = null;
+  MinLoadedTimestamp: string = null;
+  ShowLoadNext: boolean = false;
   ShowBusy: boolean = false;
   EventCodes: Array<string> = null;
   EventCode: string = null;
@@ -28,6 +30,8 @@ export class MetricsComponent implements OnInit {
 
   ngOnInit(): void {
     this.MaxTimestamp = null;
+    this.MinLoadedTimestamp = null;
+    this.ShowLoadNext = false;
     this.EventCodes = null;
     this.activatedRoute.params.subscribe(params => {
       this.ShowBusy = false;
@@ -35,6 +39,8 @@ export class MetricsComponent implements OnInit {
       this.Domain == null;
       this.EventCodes = null;
       this.Metrics = null;
+      this.MinLoadedTimestamp = null;
+      this.ShowLoadNext = false;
       if (params["domainId"]) { 
         this.domainService.Get(params["domainId"])     
         .then(domain => {
@@ -58,6 +64,8 @@ export class MetricsComponent implements OnInit {
     });
     this.activatedRoute.queryParams.subscribe(params => {
       this.MaxTimestamp = null;
+      this.MinLoadedTimestamp = null;
+      this.ShowLoadNext = false;
       this.EventCode = null;
       this.Metrics = null;
       if (params["maxTimestamp"] && params["eventCode"]) {
@@ -83,7 +91,7 @@ export class MetricsComponent implements OnInit {
         let dt: Date = new Date(this.MaxTimestamp);
         dt = new Date(dt.toUTCString());
         this.metricService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
-        .then(metrics => this.Metrics = metrics)
+        .then(metrics => this.AppendMetricsResult(metrics))
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
@@ -92,6 +100,46 @@ export class MetricsComponent implements OnInit {
       }
     }
   }  
+
+  private AppendMetricsResult(metrics: Array<Metric>) : void {
+    if (!this.Metrics) {
+      this.Metrics = metrics;
+    }    
+    else {
+      this.Metrics = this.Metrics.concat(metrics);
+    }
+    if (metrics && metrics.length > 0) {
+      this.ShowLoadNext = true;
+    }
+    else {
+      this.ShowLoadNext = false;
+    }
+    this.MinLoadedTimestamp = this.GetMinLoadedTimestamp(metrics);
+  }
+
+  private GetMinLoadedTimestamp(metrics: Array<Metric>) : string {
+    // it's assumed that the records are in descending order
+    if (metrics && metrics.length > 0) {
+      return metrics[metrics.length - 1].CreateTimestamp;
+    }
+    else {
+      return null;
+    }
+  }
+
+  LoadNext() {
+    this.ShowBusy = false;
+    this.ShowBusy = true;
+    let dt: Date = new Date(this.MinLoadedTimestamp);
+    dt = new Date(dt.toUTCString());
+    this.metricService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
+    .then(metrics => this.AppendMetricsResult(metrics))
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    })
+    .finally(() => this.ShowBusy = false); 
+  }
 
   Load() {
     this.router.navigate(["/d", this.Domain.DomainId, "Metric"], { queryParams: { "maxTimestamp": Date.parse(this.MaxTimestamp), "eventCode": this.EventCode } })

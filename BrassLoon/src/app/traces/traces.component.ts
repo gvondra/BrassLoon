@@ -16,6 +16,8 @@ export class TracesComponent implements OnInit {
   ErrorMessage: string = null;
   Domain: Domain = null;
   MaxTimestamp: string = null;
+  MinLoadedTimestamp: string = null;
+  ShowLoadNext: boolean = false;
   ShowBusy: boolean = false;
   EventCodes: Array<string> = null;
   EventCode: string = null;
@@ -29,8 +31,12 @@ export class TracesComponent implements OnInit {
   ngOnInit(): void {
     this.MaxTimestamp = null;
     this.EventCodes = null;
+    this.MinLoadedTimestamp = null;
+    this.ShowLoadNext = false;
     this.activatedRoute.params.subscribe(params => {
       this.ShowBusy = false;
+      this.MinLoadedTimestamp = null;
+      this.ShowLoadNext = false;
       this.ErrorMessage = null;
       this.Domain == null;
       this.EventCodes = null;
@@ -58,6 +64,8 @@ export class TracesComponent implements OnInit {
     });
     this.activatedRoute.queryParams.subscribe(params => {
       this.MaxTimestamp = null;
+      this.MinLoadedTimestamp = null;
+      this.ShowLoadNext = false;
       this.EventCode = null;
       this.Traces = null;
       if (params["maxTimestamp"] && params["eventCode"]) {
@@ -83,7 +91,7 @@ export class TracesComponent implements OnInit {
         let dt: Date = new Date(this.MaxTimestamp);
         dt = new Date(dt.toUTCString());
         this.traceService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
-        .then(traces => this.Traces = traces)
+        .then(traces => this.AppendTracesResult(traces))
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
@@ -91,7 +99,47 @@ export class TracesComponent implements OnInit {
         .finally(() => this.ShowBusy = false); 
       }
     }
-  }  
+  } 
+
+  private AppendTracesResult(traces: Array<Trace>) : void {
+    if (!this.Traces) {
+      this.Traces = traces;
+    }    
+    else {
+      this.Traces = this.Traces.concat(traces);
+    }
+    if (traces && traces.length > 0) {
+      this.ShowLoadNext = true;
+    }
+    else {
+      this.ShowLoadNext = false;
+    }
+    this.MinLoadedTimestamp = this.GetMinLoadedTimestamp(traces);
+  }
+
+  private GetMinLoadedTimestamp(traces: Array<Trace>) : string {
+    // it's assumed that the records are in descending order
+    if (traces && traces.length > 0) {
+      return traces[traces.length - 1].CreateTimestamp;
+    }
+    else {
+      return null;
+    }
+  }
+
+  LoadNext() {
+    this.ShowBusy = false;
+    this.ShowBusy = true;
+    let dt: Date = new Date(this.MinLoadedTimestamp);
+    dt = new Date(dt.toUTCString());
+    this.traceService.Search(this.Domain.DomainId, dt.toISOString(), this.EventCode)
+    .then(traces => this.AppendTracesResult(traces))
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    })
+    .finally(() => this.ShowBusy = false); 
+  } 
 
   Load() {
     this.router.navigate(["/d", this.Domain.DomainId, "Trace"], { queryParams: { "maxTimestamp": Date.parse(this.MaxTimestamp), "eventCode": this.EventCode } })

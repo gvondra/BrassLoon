@@ -30,6 +30,11 @@
             <td><a [routerLink]="['/d', Domain.DomainId, 'Exception', e.ExceptionId]">{{ FormatDate(e.CreateTimestamp) }}</a></td>
             <td>{{ e.Message }}</td>
             <td>{{ e.TypeName }}</td>
-        </tr>        
+        </tr> 
+        <tr *ngIf="ShowLoadNext">
+            <td colspan="99">
+                <button type="button" class="btn btn-secondary" (click)="LoadNext()">Load Next</button>
+            </td>
+        </tr>       
     </tbody>    
 </table>
