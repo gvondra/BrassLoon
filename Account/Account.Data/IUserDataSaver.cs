@@ -9,7 +9,7 @@ namespace BrassLoon.Account.Data
 {
     public interface IUserDataSaver
     {
-        Task Create(ITransactionHandler transactionHandler, UserData userData);
-        Task Update(ITransactionHandler transactionHandler, UserData userData);
+        Task Create(ISqlTransactionHandler transactionHandler, UserData userData);
+        Task Update(ISqlTransactionHandler transactionHandler, UserData userData);
     }
 }

@@ -9,6 +9,6 @@ namespace BrassLoon.Log.Data
 {
     public interface ITraceDataSaver
     {
-        Task Create(ITransactionHandler transactionHandler, TraceData traceData);
+        Task Create(ISqlTransactionHandler transactionHandler, TraceData traceData);
     }
 }

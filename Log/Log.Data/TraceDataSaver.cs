@@ -18,7 +18,7 @@ namespace BrassLoon.Log.Data
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, TraceData traceData)
+        public async Task Create(ISqlTransactionHandler transactionHandler, TraceData traceData)
         {
             if (traceData.Manager.GetState(traceData) == DataState.New)
             {

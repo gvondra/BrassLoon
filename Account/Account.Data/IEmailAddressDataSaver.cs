@@ -9,6 +9,6 @@ namespace BrassLoon.Account.Data
 {
     public interface IEmailAddressDataSaver
     {
-        Task Create(ITransactionHandler transactionHandler, EmailAddressData emailAddressData);
+        Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData emailAddressData);
     }
 }

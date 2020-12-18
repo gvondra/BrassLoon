@@ -18,6 +18,8 @@ namespace BrassLoon.CommonCore
         public DbConnection Connection { get; set; }
         public DataClient.IDbTransaction Transaction { get; set; }
 
+        public Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
+
         public Task<string> GetConnectionString() => _settings.GetConnetionString();
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BrassLoon.CommonCore
 {
-    public interface ITransactionHandler : BrassLoon.DataClient.ITransactionHandler
+    public interface ITransactionHandler : BrassLoon.DataClient.ISqlTransactionHandler
     {
     }
 }

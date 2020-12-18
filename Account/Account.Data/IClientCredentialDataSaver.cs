@@ -9,6 +9,6 @@ namespace BrassLoon.Account.Data
 {
     public interface IClientCredentialDataSaver
     {
-        Task Create(ITransactionHandler transactionHandler, ClientCredentialData clientCredentialData);
+        Task Create(ISqlTransactionHandler transactionHandler, ClientCredentialData clientCredentialData);
     }
 }

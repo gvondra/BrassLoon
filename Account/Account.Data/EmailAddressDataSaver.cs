@@ -18,7 +18,7 @@ namespace BrassLoon.Account.Data
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, EmailAddressData emailAddressData)
+        public async Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData emailAddressData)
         {
             if (emailAddressData.Manager.GetState(emailAddressData) == DataState.New)
             {

@@ -9,6 +9,6 @@ namespace BrassLoon.Log.Data
 {
     public interface IExceptionDataSaver
     {
-        Task Create(ITransactionHandler transactionHandler, ExceptionData exceptionData);
+        Task Create(ISqlTransactionHandler transactionHandler, ExceptionData exceptionData);
     }
 }

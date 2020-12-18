@@ -18,7 +18,7 @@ namespace BrassLoon.Account.Data
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, ClientData clientData)
+        public async Task Create(ISqlTransactionHandler transactionHandler, ClientData clientData)
         {
             if (clientData.Manager.GetState(clientData) == DataState.New)
             {
@@ -48,7 +48,7 @@ namespace BrassLoon.Account.Data
             }
         }
 
-        public async Task Update(ITransactionHandler transactionHandler, ClientData clientData)
+        public async Task Update(ISqlTransactionHandler transactionHandler, ClientData clientData)
         {
             if (clientData.Manager.GetState(clientData) == DataState.Updated)
             {
