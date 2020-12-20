@@ -3,6 +3,7 @@ import { AppSettingsService } from './app-settings.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HttpHeaders } from '@angular/common/http';
 import { TokenService } from './services/token.service';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +26,14 @@ export class HttpClientUtilService {
   }
 
   CreateAuthHeader(tokenService: TokenService) : Promise<HttpHeaders> {
+    return this.GetToken(tokenService)
+    .then(tkn => this.CreateAuthorizationHeader(tkn))
+    ;
+  }
+
+  GetToken(tokenService: TokenService) : Promise<string> {
     if (this.IsCachedTokenAvailable()) {
-      return Promise.resolve(this.CreateHeader(this.GetCachedToken()));
+      return Promise.resolve(this.GetCachedToken());
     }
     else {
       return tokenService.GetToken()
@@ -35,12 +42,29 @@ export class HttpClientUtilService {
         let expiration: Date = new Date();
         expiration.setMinutes(expiration.getMinutes() + 59);
         sessionStorage.setItem("AccessToknExpiration", expiration.valueOf().toString());
-        return this.CreateHeader(tkn);
+        return tkn;
       });
     }
   }
 
-  private CreateHeader(tkn: string) : HttpHeaders {
+  GetRoles(tokenService: TokenService) : Promise<Array<string>> {
+    return this.GetToken(tokenService)
+    .then(tkn => {
+      const decoded : any = jwt_decode(tkn);
+      if (decoded && decoded.role && Array.isArray(decoded.role)) 
+      {
+        return decoded.role;
+      }
+      else if (decoded && decoded.role) {
+        return [ decoded.role ];
+      }
+      else {
+        return [];
+      }      
+    });
+  }
+
+  private CreateAuthorizationHeader(tkn: string) : HttpHeaders {
     return new HttpHeaders({"Authorization": `bearer ${tkn}`})
   }
 
