@@ -11,7 +11,8 @@ import { ExceptionComponent } from './exception/exception.component';
 import { DomainComponent } from './domain/domain.component';
 import { TracesComponent } from './traces/traces.component';
 import { MetricsComponent } from './metrics/metrics.component';
-
+import { PurgeWorkersComponent } from './purge-workers/purge-workers.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {
@@ -69,6 +70,12 @@ const routes: Routes = [
   {
     path: "d/:domainId/Metric",
     component: MetricsComponent
+  },
+  {
+    path: 'sa/PurgeWorker',
+    component: PurgeWorkersComponent,
+    data: { "Role": "sysadmin" },
+    canActivate: [ AuthGuard ]
   }
 ];
 

@@ -1,0 +1,24 @@
+<h2>Purge Workers</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<table *ngIf="PurgeWorkers" class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let worker of PurgeWorkers">
+            <td>{{ worker.PurgeWorkerId }}</td>
+            <td>{{ GetStatusText(worker.Status) }}</td>
+            <td>{{ FormatTimestamp(worker.CreateTimestamp) }}</td>
+            <td>{{ FormatTimestamp(worker.UpdateTimestamp) }}</td>
+            <td><button *ngIf="CanReset(worker.Status)" class="btn btn-secondary" (click)="ResetStatus(worker)">Reset</button></td>
+        </tr>
+    </tbody>
+</table>

@@ -22,6 +22,8 @@ import { DomainComponent } from './domain/domain.component';
 import { DomainNavComponent } from './domain-nav/domain-nav.component';
 import { TracesComponent } from './traces/traces.component';
 import { MetricsComponent } from './metrics/metrics.component';
+import { SysAdminComponent } from './sys-admin/sys-admin.component';
+import { PurgeWorkersComponent } from './purge-workers/purge-workers.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -67,7 +69,9 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     DomainComponent,
     DomainNavComponent,
     TracesComponent,
-    MetricsComponent
+    MetricsComponent,
+    SysAdminComponent,
+    PurgeWorkersComponent
   ],
   imports: [
     BrowserModule,
