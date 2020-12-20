@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace BrassLoon.Account.Core
 {
     public class User : IUser
     {
-        private UserData _userData;
+        private UserData _data;
         private IEmailAddressFactory _emailAddressFactory;
         private IEmailAddress _emailAddress;
         private IUserDataSaver _dataSaver;
@@ -20,7 +21,7 @@ namespace BrassLoon.Account.Core
             IEmailAddressFactory emailAddressFactory,
             IUserDataSaver dataSaver)
         {
-            _userData = userData;
+            _data = userData;
             _emailAddressFactory = emailAddressFactory;
             _dataSaver = dataSaver;
         }
@@ -34,20 +35,26 @@ namespace BrassLoon.Account.Core
             _emailAddress = emailAddress;
         }
 
-        public Guid UserId => _userData.UserGuid;
+        public Guid UserId => _data.UserGuid;
 
-        public string Name { get => _userData.Name; set => _userData.Name = value; }
+        public string Name { get => _data.Name; set => _data.Name = value; }
 
-        public DateTime CreateTimestamp => _userData.CreateTimestamp;
+        public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public DateTime UpdateTimestamp => _userData.UpdateTimestamp;
+        public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        private Guid EmailAddressId { get => _userData.EmailAddressGuid; set => _userData.EmailAddressGuid = value; }
+        private Guid EmailAddressId { get => _data.EmailAddressGuid; set => _data.EmailAddressGuid = value; }
+        public UserRole Roles { get => (UserRole)_data.Roles; set => _data.Roles = (short)value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {
             EmailAddressId = _emailAddress.EmailAddressId;
-            await _dataSaver.Create(transactionHandler, _userData);
+            await _dataSaver.Create(transactionHandler, _data);
+        }
+
+        public async Task Update(ITransactionHandler transactionHandler)
+        {
+            await _dataSaver.Update(transactionHandler, _data);
         }
 
         public async Task<IEmailAddress> GetEmailAddress(ISettings settings)

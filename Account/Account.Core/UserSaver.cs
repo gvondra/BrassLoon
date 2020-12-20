@@ -14,5 +14,11 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(new TransactionHandler(settings), user.Create);
         }
+
+        public async Task Update(ISettings settings, IUser user)
+        {
+            Saver saver = new Saver();
+            await saver.Save(new TransactionHandler(settings), user.Update);
+        }
     }
 }
