@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using BrassLoon.Account.Framework;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
@@ -118,11 +119,29 @@ namespace AccountAPI.Controllers
                     }
                     user = userFactory.Create(subscriber, emailAddress);
                     user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
+                    SetSuperUser(user);
                     IUserSaver userSaver = scope.Resolve<IUserSaver>();
                     await userSaver.Create(settingsFactory.CreateAccount(_settings.Value), user);
                 }
+                else
+                {
+                    user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
+                    SetSuperUser(user);
+                    IUserSaver userSaver = scope.Resolve<IUserSaver>();
+                    await userSaver.Update(settingsFactory.CreateAccount(_settings.Value), user);
+                }
             }
             return user;
+        }
+        
+        [NonAction]
+        private void SetSuperUser(IUser user)
+        {
+            string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+            if (!string.IsNullOrEmpty(_settings.Value.SuperUser) && string.Equals(email, _settings.Value.SuperUser, StringComparison.OrdinalIgnoreCase))
+            {
+                user.Roles = user.Roles | UserRole.SystemAdministrator;
+            }
         }
 
         [NonAction]
@@ -147,6 +166,8 @@ namespace AccountAPI.Controllers
                     claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
                 claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(settingsFactory.CreateAccount(_settings.Value))).Address));
                 claims.Add(new Claim("accounts", await GetAccountIdClaim(scope.Resolve<IAccountFactory>(), settingsFactory, user.UserId)));
+                if ((user.Roles & UserRole.SystemAdministrator) == UserRole.SystemAdministrator)
+                    claims.Add(new Claim("role", "sysadmin"));
                 JwtSecurityToken token = new JwtSecurityToken(
                     "urn:brassloon",
                     "urn:brassloon",

@@ -16,5 +16,6 @@ namespace AccountAPI
         public string Issuer { get; set; }
         public string LogApiBaseAddress { get; set; }
         public string ExceptionLoggingDomainId { get; set; }
+        public string SuperUser { get; set; }
     }
 }
