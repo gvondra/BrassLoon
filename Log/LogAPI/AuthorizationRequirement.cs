@@ -12,9 +12,18 @@ namespace LogAPI
         {
             this.PolicyName = policyName;
             this.Issuer = issuer;
+            this.Roles = new string[] { };
+        }
+
+        public AuthorizationRequirement(string policyName, string issuer, string role)
+        {
+            this.PolicyName = policyName;
+            this.Issuer = issuer;
+            this.Roles = new string[] { role };
         }
 
         public string PolicyName { get; set; }
         public string Issuer { get; set; }
+        public string[] Roles { get; set; }
     }
 }

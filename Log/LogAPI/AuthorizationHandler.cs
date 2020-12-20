@@ -11,11 +11,24 @@ namespace LogAPI
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AuthorizationRequirement requirement)
         {
-            if (context.User.Identity.IsAuthenticated && IssuerMatches(context.User, requirement.Issuer))
-            {
+            if (context.User.Identity.IsAuthenticated && 
+                IssuerMatches(context.User, requirement.Issuer) &&
+                RoleMatches(context.User, requirement.Roles))
+            {                
                 context.Succeed(requirement);
             }
             return Task.CompletedTask;
+        }
+        
+        private bool RoleMatches(ClaimsPrincipal user, string[] roles)
+        {
+            if (roles != null && roles.Length > 0)
+            {
+                return roles.Any(role => user.Claims.Any(
+                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals(role, c.Value, StringComparison.OrdinalIgnoreCase)
+                    ));
+            }
+            return false;
         }
 
         private bool IssuerMatches(ClaimsPrincipal user, string issuer)

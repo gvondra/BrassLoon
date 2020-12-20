@@ -21,6 +21,8 @@ namespace LogAPI
 {
     public class Startup
     {
+        public const string POLICY_SYS_ADMIN = "SysAdmin";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -139,6 +141,13 @@ namespace LogAPI
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("BrassLoon")
                 .Build();
+                o.AddPolicy(POLICY_SYS_ADMIN,
+                    configure =>
+                    {
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_SYS_ADMIN, Configuration["Issuer"], "sysadmin"))
+                        .AddAuthenticationSchemes("BrassLoon")
+                        .Build();
+                    });
             });
         }
 
