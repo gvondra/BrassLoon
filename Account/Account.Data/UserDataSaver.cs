@@ -51,7 +51,7 @@ namespace BrassLoon.Account.Data
 
         public async Task Update(ISqlTransactionHandler transactionHandler, UserData userData)
         {
-            if (userData.Manager.GetState(userData) == DataState.New)
+            if (userData.Manager.GetState(userData) == DataState.Updated)
             {
                 await _providerFactory.EstablishTransaction(transactionHandler, userData);
                 using (DbCommand command = transactionHandler.Connection.CreateCommand())
@@ -65,7 +65,8 @@ namespace BrassLoon.Account.Data
                     command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, userData.UserGuid);
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "emailAddressGuid", DbType.Int64, userData.EmailAddressGuid);
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "emailAddressGuid", DbType.Guid, userData.EmailAddressGuid);
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "roles", DbType.Int16, userData.Roles);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.AnsiString, userData.Name);
 
                     await command.ExecuteNonQueryAsync();
