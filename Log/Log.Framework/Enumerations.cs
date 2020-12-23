@@ -11,4 +11,11 @@ namespace BrassLoon.Log.Framework.Enumerations
         InProgress = 1,
         Complete = 0xFF
     }
+
+    public enum PurgeMetaDataStatus : short
+    {
+        Error = -1,
+        Ready = 0,
+        Complete = 0xFF
+    }
 }

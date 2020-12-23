@@ -14,6 +14,8 @@ namespace BrassLoon.Log.Core
             builder.RegisterType<ExceptionSaver>().As<IExceptionSaver>();
             builder.RegisterType<MetricFactory>().As<IMetricFactory>();
             builder.RegisterType<MetricSaver>().As<IMetricSaver>();
+            builder.RegisterType<PurgeFactory>().As<IPurgeFactory>();
+            builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
             builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();
             builder.RegisterType<PurgeWorkerSaver>().As<IPurgeWorkerSaver>();
             builder.RegisterType<TraceFactory>().As<ITraceFactory>();
