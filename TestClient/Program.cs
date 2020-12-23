@@ -46,6 +46,7 @@ namespace TestClient
             using ILifetimeScope scope = _diContainer.BeginLifetimeScope();
             IMetricService metricService = scope.Resolve<IMetricService>();
             ITraceService traceService = scope.Resolve<ITraceService>();
+            IExceptionService exceptionService = scope.Resolve<IExceptionService>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             LogSettings logSettings = settingsFactory.CreateLog(_settings);
             Queue<Task<Metric>> queue = new Queue<Task<Metric>>();
@@ -55,7 +56,14 @@ namespace TestClient
             {
                 if (queue.Count >= _settings.ConcurentTaskCount) 
                 {
-                    await queue.Dequeue();
+                    try 
+                    {
+                        await queue.Dequeue();
+                    }
+                    catch (System.Exception ex)
+                    {
+                        await exceptionService.Create(settingsFactory.CreateLog(_settings), domain.DomainId.Value, ex);
+                    }
                 }
                 queue.Enqueue(metricService.Create(logSettings, domain.DomainId.Value, DateTime.UtcNow, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds));
             }
