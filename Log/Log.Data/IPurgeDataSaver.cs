@@ -9,14 +9,14 @@ namespace BrassLoon.Log.Data
 {
     public interface IPurgeDataSaver
     {
-        Task CreateException(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
-        Task UpdateException(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
         Task DeleteExceptionByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task CreateMetric(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
-        Task UpdateMetric(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
+        Task InitializeException(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeException(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
         Task DeleteMetricByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task CreateTrace(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
-        Task UpdateTrace(ISqlTransactionHandler transactionHandler, PurgeData purgeData);
+        Task InitializeMetric(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeMetric(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
         Task DeleteTraceByMinTimestamp(ISqlSettings settings, DateTime timestamp);
+        Task InitializeTrace(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeTrace(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
     }
 }

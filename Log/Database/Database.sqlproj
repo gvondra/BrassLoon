@@ -91,15 +91,12 @@
     <Build Include="Stored Procedures\bll.DeleteExceptionPurgeByMinTimestamp.sql" />
     <Build Include="Stored Procedures\bll.DeleteMetricPurgeByMinTimestamp.sql" />
     <Build Include="Stored Procedures\bll.DeleteTracePurgeByMinTimestamp.sql" />
-    <Build Include="Stored Procedures\bll.GetExceptionPurgeByTargetId.sql" />
-    <Build Include="Stored Procedures\bll.GetMetricPurgeByTargetId.sql" />
-    <Build Include="Stored Procedures\bll.GetTracePurgeByTargetId.sql" />
-    <Build Include="Stored Procedures\bll.CreateExceptionPurge.sql" />
-    <Build Include="Stored Procedures\bll.CreateMetricPurge.sql" />
-    <Build Include="Stored Procedures\bll.CreateTracePurge.sql" />
-    <Build Include="Stored Procedures\bll.UpdateExceptionPurge.sql" />
-    <Build Include="Stored Procedures\bll.UpdateMetricPurge.sql" />
-    <Build Include="Stored Procedures\bll.UpdateTracePurge.sql" />
+    <Build Include="Stored Procedures\bll.InitializeExceptionPurge.sql" />
+    <Build Include="Stored Procedures\bll.InitializeMetricPurge.sql" />
+    <Build Include="Stored Procedures\bll.InitializeTracePurge.sql" />
+    <Build Include="Stored Procedures\bll.PurgeMetric.sql" />
+    <Build Include="Stored Procedures\bll.PurgeException.sql" />
+    <Build Include="Stored Procedures\bll.PurgeTrace.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
