@@ -22,11 +22,18 @@ namespace BrassLoon.Log.Purger
 
         public static async Task Main(string[] args)
         {
+            DateTime startTime;
             try
             {
                 _settings = LoadSettings(args);
                 _container = LoadDiContainer();
-                await StartPurge();
+                startTime = DateTime.UtcNow;
+                while (true)
+                {                    
+                    await StartPurge();
+                    startTime = GetNextStartTime(startTime);
+                    await Task.Delay(startTime.Subtract(DateTime.UtcNow));
+                }                
             }
             catch (Exception ex)
             {
@@ -296,6 +303,16 @@ namespace BrassLoon.Log.Purger
             builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
             builder.RegisterType<SettingsFactory>();
             return builder.Build();
+        }
+
+        private static DateTime GetNextStartTime(DateTime previous)
+        {
+            DateTime next = previous;
+            while (next.ToUniversalTime() < DateTime.UtcNow)
+            {
+                next = next.AddHours(8);
+            }
+            return next;
         }
 
         public static async Task WriteTrace(ITraceService traceService, SettingsFactory settingsFactory, string value)
