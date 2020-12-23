@@ -31,7 +31,7 @@ namespace AccountAPI.Controllers
         [HttpGet("/api/Account/{id}/Domain")]
         [ProducesResponseType(typeof(Domain[]), 200)]
         [Authorize("READ:ACCOUNT")]
-        public async Task<IActionResult> GetByAccountId([FromRoute] Guid? id)
+        public async Task<IActionResult> GetByAccountId([FromRoute] Guid? id, [FromQuery] bool deleted = false)
         {
             IActionResult result = null;
             try
@@ -46,7 +46,11 @@ namespace AccountAPI.Controllers
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                     CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
                     IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IEnumerable<IDomain> domains = await domainFactory.GetByAccountId(settings, id.Value);
+                    IEnumerable<IDomain> domains;
+                    if (deleted)
+                        domains = await domainFactory.GetDeletedByAccountId(settings, id.Value);
+                    else
+                        domains = await domainFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
                         domains.Select<IDomain, Domain>(d => mapper.Map<Domain>(d))
@@ -175,6 +179,55 @@ namespace AccountAPI.Controllers
                         mapper.Map<Domain, IDomain>(domain, innerDomain);
                         IDomainSaver saver = scope.Resolve<IDomainSaver>();
                         await saver.Update(settings, innerDomain);
+                        result = Ok(mapper.Map<Domain>(innerDomain));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpPatch("{id}/Deleted")]
+        [ProducesResponseType(typeof(Domain), 200)]
+        [Authorize("EDIT:ACCOUNT")]
+        public async Task<IActionResult> UpdateDeleted([FromRoute] Guid? id, [FromBody] Dictionary<string, string> patch)
+        {
+            bool deleted = default;
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id value");
+                if (result == null && patch == null)
+                    result = BadRequest("Missing patch data");
+                if (result == null && !patch.ContainsKey("Deleted"))
+                    result = BadRequest("Missing deleted patch value");
+                if (result == null && !bool.TryParse(patch["Deleted"], out deleted))
+                    result = BadRequest("Invalid deleted patch value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
+                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    if (result == null && innerDomain == null)
+                        result = NotFound();
+                    if (result == null && !UserCanAccessAccount(innerDomain.AccountId))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    if (result == null)
+                    {
+                        innerDomain.Deleted = deleted;
+                        IDomainSaver saver = scope.Resolve<IDomainSaver>();
+                        await saver.Update(settings, innerDomain);
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
                 }

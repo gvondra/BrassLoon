@@ -11,6 +11,7 @@ namespace BrassLoon.Account.Framework
         Guid DomainId { get; }
         Guid AccountId { get; }
         string Name { get; set; }
+        bool Deleted { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 

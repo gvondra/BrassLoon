@@ -31,6 +31,8 @@ namespace BrassLoon.Account.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
+        public bool Deleted { get => _data.Deleted; set => _data.Deleted = value; }
+
         public async Task Create(ITransactionHandler transactionHandler)
         {
             await _dataSaver.Create(transactionHandler, _data);

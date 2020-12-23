@@ -65,6 +65,7 @@ namespace BrassLoon.Account.Data
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(domainData.DomainGuid));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(domainData.Name));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "deleted", DbType.Boolean, DataUtil.GetParameterValue(domainData.Deleted));
 
                     await command.ExecuteNonQueryAsync();
                     domainData.UpdateTimestamp = (DateTime)timestamp.Value;
