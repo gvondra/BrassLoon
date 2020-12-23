@@ -367,3 +367,4 @@ TestClient/.vscode
 !/[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
+/Log/Purger/Properties/launchSettings.json
