@@ -43,4 +43,13 @@ export class DomainComponent implements OnInit {
     }
   }
 
+  Delete(domain: Domain) : void {
+    this.domainService.Delete(domain.DomainId)
+    .then(res => this.router.navigate(['/a', domain.AccountId]))   
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    });      
+  }
+
 }
