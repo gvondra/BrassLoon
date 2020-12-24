@@ -44,5 +44,18 @@ namespace BrassLoon.Account.Data
                 new List<IDataParameter> { parameter }
                 )).FirstOrDefault();
         }
+
+        public async Task<IEnumerable<UserData>> GetByEmailAddress(ISqlSettings settings, string emailAddress)
+        {
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "address", DbType.String, emailAddress);
+            return await _genericDataFactory.GetData(
+                settings,
+                _providerFactory,
+                "[bla].[GetUserByEmailAddress]",
+                () => new UserData(),
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter }
+                );
+        }
     }
 }

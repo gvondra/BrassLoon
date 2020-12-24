@@ -10,6 +10,7 @@ namespace BrassLoon.Account.Framework
     {
         Task<IUser> Get(ISettings settings, Guid id);
         Task<IUser> GetByReferenceId(ISettings settings, string referenceId);
+        Task<IEnumerable<IUser>> GetByEmailAddress(ISettings settings, string emailAddress);
         IUser Create(string referenceId, IEmailAddress emailAddress);
     }
 }

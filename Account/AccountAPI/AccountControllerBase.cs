@@ -22,8 +22,16 @@ namespace AccountAPI
         [NonAction]
         protected bool UserCanAccessAccount(Guid accountId)
         {
+            bool result;
             string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
-            return accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
+            result = accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
+            if (!result)
+            {
+                result = User.Claims.Any(
+                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals("actadmin", c.Value, StringComparison.OrdinalIgnoreCase)
+                    );
+            }
+            return result;
         }
 
         [NonAction]

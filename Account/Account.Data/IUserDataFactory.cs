@@ -11,5 +11,6 @@ namespace BrassLoon.Account.Data
     {
         Task<UserData> Get(ISqlSettings settings, Guid id);
         Task<UserData> GetByReferenceId(ISqlSettings settings, string referenceId);
+        Task<IEnumerable<UserData>> GetByEmailAddress(ISqlSettings settings, string emailAddress);
     }
 }

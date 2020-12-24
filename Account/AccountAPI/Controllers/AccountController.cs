@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,23 +33,15 @@ namespace AccountAPI.Controllers
         [HttpGet()]
         [ProducesResponseType(typeof(Account[]), 200)]
         [Authorize("READ:ACCOUNT")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Search([FromQuery] string emailAddress)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IUser user = await GetUser(scope.Resolve<IUserFactory>(), settings);
-                    IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                    IEnumerable<IAccount> accounts = await accountFactory.GetByUserId(settings, user.UserId);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                    result = Ok(
-                        accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
-                        );
-                }
+                if (!string.IsNullOrEmpty(emailAddress))
+                    result = await GetByEmailAddress(emailAddress);
+                else
+                    result = await GetAll();
             }
             catch (Exception ex)
             {
@@ -60,6 +53,54 @@ namespace AccountAPI.Controllers
             }
             return result;
         }
+
+        [NonAction]
+        public async Task<IActionResult> GetAll()
+        {
+            IActionResult result = null;
+            using (ILifetimeScope scope = _container.BeginLifetimeScope())
+            {
+                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                IUser user = await GetUser(scope.Resolve<IUserFactory>(), settings);
+                IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
+                IEnumerable<IAccount> accounts = await accountFactory.GetByUserId(settings, user.UserId);
+                IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                result = Ok(
+                    accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                    );
+            }
+            return result;
+        }
+
+        [NonAction]
+        public async Task<IActionResult> GetByEmailAddress(string emailAddress)
+        {
+            IActionResult result = null;
+            using (ILifetimeScope scope = _container.BeginLifetimeScope())
+            {
+                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                IUserFactory userFactory = scope.Resolve<IUserFactory>();
+                IEnumerable<IUser> users = await userFactory.GetByEmailAddress(settings, emailAddress);                
+                IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
+                ConcurrentBag<IAccount> accounts = new ConcurrentBag<IAccount>();
+                users.AsParallel().ForAll(async user =>
+                {
+                    foreach (IAccount innerAccount in (await accountFactory.GetByUserId(settings, user.UserId))
+                    .Where(a => UserCanAccessAccount(a.AccountId)))
+                    {
+                        accounts.Add(innerAccount);
+                    }
+                });
+                IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                result = Ok(
+                    accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                    );
+            }
+            return result;
+        }
+
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Account), 200)]

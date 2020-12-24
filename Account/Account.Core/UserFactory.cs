@@ -4,7 +4,7 @@ using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -52,6 +52,12 @@ namespace BrassLoon.Account.Core
             if (data != null)
                 result = new User(data, _emailAddressFactory, _dataSaver);
             return result;
+        }
+
+        public async Task<IEnumerable<IUser>> GetByEmailAddress(ISettings settings, string emailAddress)
+        {
+            return (await _dataFactory.GetByEmailAddress(_settingsFactory.CreateData(settings), emailAddress))
+                .Select<UserData, IUser>(data => new User(data, _emailAddressFactory, _dataSaver));
         }
     }
 }

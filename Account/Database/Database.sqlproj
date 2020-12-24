@@ -100,6 +100,7 @@
     <Build Include="Stored Procedures\bla.GetClientCredential.sql" />
     <Build Include="Stored Procedures\bla.GetClient_by_AccountId.sql" />
     <Build Include="Stored Procedures\bla.GetClientCredential_by_ClientId.sql" />
+    <Build Include="Stored Procedures\bla.GetUserByEmailAddress.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
