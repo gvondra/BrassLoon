@@ -140,7 +140,10 @@ namespace AccountAPI.Controllers
             string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
             if (!string.IsNullOrEmpty(_settings.Value.SuperUser) && string.Equals(email, _settings.Value.SuperUser, StringComparison.OrdinalIgnoreCase))
             {
-                user.Roles = user.Roles | UserRole.SystemAdministrator;
+                user.Roles = user.Roles | 
+                    UserRole.SystemAdministrator |
+                    UserRole.AccountAdministrator
+                    ;
             }
         }
 
@@ -168,6 +171,8 @@ namespace AccountAPI.Controllers
                 claims.Add(new Claim("accounts", await GetAccountIdClaim(scope.Resolve<IAccountFactory>(), settingsFactory, user.UserId)));
                 if ((user.Roles & UserRole.SystemAdministrator) == UserRole.SystemAdministrator)
                     claims.Add(new Claim("role", "sysadmin"));
+                if ((user.Roles & UserRole.AccountAdministrator) == UserRole.AccountAdministrator)
+                    claims.Add(new Claim("role", "actadmin"));
                 JwtSecurityToken token = new JwtSecurityToken(
                     "urn:brassloon",
                     "urn:brassloon",

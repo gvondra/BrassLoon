@@ -8,6 +8,7 @@ namespace BrassLoon.Account.Framework.Enumerations
     public enum UserRole : short
     {
         None = 0,
-        SystemAdministrator = 1
+        SystemAdministrator = 1,
+        AccountAdministrator = 2
     }
 }
