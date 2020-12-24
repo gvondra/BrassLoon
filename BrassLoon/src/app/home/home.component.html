@@ -1,2 +1,7 @@
 <app-accounts></app-accounts>
-<app-sys-admin *ngIf="ShowSysAdmin"></app-sys-admin>
+<div *ngIf="ShowSysAdmin" style="padding-top: 2em;">
+    <app-sys-admin></app-sys-admin>
+</div>
+<div *ngIf="ShowActAdmin" style="padding-top: 2em;">
+    <app-act-admin></app-act-admin>
+</div>

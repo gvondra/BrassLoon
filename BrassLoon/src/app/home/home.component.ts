@@ -12,6 +12,7 @@ import { TokenService } from '../services/token.service';
 export class HomeComponent implements OnInit {
 
   ShowSysAdmin: boolean = false;
+  ShowActAdmin: boolean = false;
 
   constructor(private oidcSecurityService: OidcSecurityService,
     private tokenService: TokenService,
@@ -19,6 +20,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.ShowSysAdmin = false;
+    this.ShowActAdmin = false;
     this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
       this.ShowSysAdmin = false;
       if (isAuthenticated) {
@@ -26,6 +28,9 @@ export class HomeComponent implements OnInit {
         .then(role => {
           if (role && role.length > 0 && role.some(r => r === 'sysadmin')) {
             this.ShowSysAdmin = true;
+          }
+          if (role && role.length > 0 && role.some(r => r === 'actadmin')) {
+            this.ShowActAdmin = true;
           }
         })
         .catch(err => {
