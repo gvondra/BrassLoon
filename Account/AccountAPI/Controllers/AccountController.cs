@@ -84,18 +84,15 @@ namespace AccountAPI.Controllers
                 IUserFactory userFactory = scope.Resolve<IUserFactory>();
                 IEnumerable<IUser> users = await userFactory.GetByEmailAddress(settings, emailAddress);                
                 IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                ConcurrentBag<IAccount> accounts = new ConcurrentBag<IAccount>();
-                users.AsParallel().ForAll(async user =>
-                {
-                    foreach (IAccount innerAccount in (await accountFactory.GetByUserId(settings, user.UserId))
-                    .Where(a => UserCanAccessAccount(a.AccountId)))
-                    {
-                        accounts.Add(innerAccount);
-                    }
-                });
+                ConcurrentBag<Task<IEnumerable<IAccount>>> accounts = new ConcurrentBag<Task<IEnumerable<IAccount>>>();                
+                users.AsParallel().ForAll(user => accounts.Add(accountFactory.GetByUserId(settings, user.UserId)));
                 IMapper mapper = MapperConfigurationFactory.CreateMapper();
                 result = Ok(
-                    accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                    (await Task.WhenAll<IEnumerable<IAccount>>(accounts))
+                    .SelectMany(results => results)
+                    .Where(a => UserCanAccessAccount(a.AccountId))
+                    .Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                    .ToList()
                     );
             }
             return result;
