@@ -10,6 +10,7 @@ namespace BrassLoon.Account.Framework
     {
         Task<IDomain> Create(Guid accountId);
         Task<IDomain> Get(ISettings settings, Guid id);
+        Task<IDomain> GetDeleted(ISettings settings, Guid id);
         Task<IEnumerable<IDomain>> GetByAccountId(ISettings settings, Guid accountId);
         Task<IEnumerable<IDomain>> GetDeletedByAccountId(ISettings settings, Guid accountId);
     }

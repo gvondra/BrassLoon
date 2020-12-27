@@ -217,7 +217,11 @@ namespace AccountAPI.Controllers
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                     CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
                     IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    IDomain innerDomain;
+                    if (!deleted)
+                        innerDomain = await domainFactory.GetDeleted(settings, id.Value);
+                    else
+                        innerDomain = await domainFactory.Get(settings, id.Value);
                     if (result == null && innerDomain == null)
                         result = NotFound();
                     if (result == null && !UserCanAccessAccount(innerDomain.AccountId))

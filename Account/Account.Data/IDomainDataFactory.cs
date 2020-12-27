@@ -10,6 +10,7 @@ namespace BrassLoon.Account.Data
     public interface IDomainDataFactory
     {
         Task<DomainData> Get(ISqlSettings settings, Guid id);
+        Task<DomainData> GetDeleted(ISqlSettings settings, Guid id);
         Task<IEnumerable<DomainData>> GetByAccountId(ISqlSettings settings, Guid accountId);
     }
 }

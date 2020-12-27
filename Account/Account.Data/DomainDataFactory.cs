@@ -33,6 +33,19 @@ namespace BrassLoon.Account.Data
                 )).FirstOrDefault();
         }
 
+        public async Task<DomainData> GetDeleted(ISqlSettings settings, Guid id)
+        {
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
+            return (await _genericDataFactory.GetData(
+                settings,
+                _providerFactory,
+                "[bla].[GetDeletedDomain]",
+                () => new DomainData(),
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter }
+                )).FirstOrDefault();
+        }
+
         public async Task<IEnumerable<DomainData>> GetByAccountId(ISqlSettings settings, Guid accountId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "accountId", DbType.Guid, accountId);

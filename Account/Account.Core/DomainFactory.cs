@@ -45,6 +45,15 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
+        public async Task<IDomain> GetDeleted(ISettings settings, Guid id)
+        {
+            Domain result = null;
+            DomainData data = await _dataFactory.GetDeleted(_settingsFactory.CreateData(settings), id);
+            if (data != null)
+                result = new Domain(data, _dataSaver);
+            return result;
+        }
+
         public async Task<IEnumerable<IDomain>> GetByAccountId(ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
