@@ -44,4 +44,12 @@ export class DomainService {
         .then(res => res as Domain);
     });      
   }
+
+  UnDelete(id: string) : Promise<Domain> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.patch(`${this.httpClientUtil.GetAccountBaseAddress()}Domain/${id}/Deleted`, { "Deleted": "false" }, {headers: headers}).toPromise()
+        .then(res => res as Domain);
+    });      
+  }
 }

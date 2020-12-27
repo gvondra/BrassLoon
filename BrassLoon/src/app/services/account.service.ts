@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders,HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { Account } from '../models/account';
 import { TokenService } from './token.service';
@@ -42,9 +42,15 @@ export class AccountService {
   }
 
   GetDomains(id: string) : Promise<Array<Domain>> {
+    return this.GetDomainsByDeleted(id, false);
+  }
+
+  GetDomainsByDeleted(id: string, deleted: boolean) : Promise<Array<Domain>> {
+    let params: HttpParams = new HttpParams()
+    .append("deleted", String(deleted));
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}/Domain`, {headers: headers}).toPromise()
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}/Domain`, {headers: headers, params: params}).toPromise()
         .then(res => res as Array<Domain>);
     });      
   }

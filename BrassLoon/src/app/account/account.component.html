@@ -56,3 +56,19 @@
         </tr>        
     </table>
 </div>
+<ng-container *ngIf="ShowAdmin">
+    <h2>Admin</h2>
+    <ng-container *ngIf="DeletedDomains">
+        <h3>Deleted Domains</h3>
+        <table class="table">
+            <tr *ngFor="let domain of DeletedDomains">
+                <td>
+                    {{ domain.Name }}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-secondary" (click)="UnDelete(domain.DomainId)">Restore</button>
+                </td>
+            </tr>        
+        </table>
+    </ng-container>
+</ng-container>

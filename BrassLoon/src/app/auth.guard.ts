@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, flatMap } from 'rxjs/operators';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClientUtilService } from './http-client-util.service';
 import { TokenService } from './services/token.service';
 
