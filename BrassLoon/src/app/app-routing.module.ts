@@ -13,6 +13,7 @@ import { TracesComponent } from './traces/traces.component';
 import { MetricsComponent } from './metrics/metrics.component';
 import { PurgeWorkersComponent } from './purge-workers/purge-workers.component';
 import { AuthGuard } from './auth.guard';
+import { AccountSearchComponent } from './account-search/account-search.component';
 
 const routes: Routes = [
   {
@@ -75,6 +76,12 @@ const routes: Routes = [
     path: 'sa/PurgeWorker',
     component: PurgeWorkersComponent,
     data: { "Role": "sysadmin" },
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: 'aa',
+    component: AccountSearchComponent,
+    data: { "Role": "actadmin" },
     canActivate: [ AuthGuard ]
   }
 ];

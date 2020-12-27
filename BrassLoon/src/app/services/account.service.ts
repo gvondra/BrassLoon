@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders,HttpParams } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { Account } from '../models/account';
 import { TokenService } from './token.service';
@@ -19,6 +19,16 @@ export class AccountService {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {
         return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account`, {headers: headers}).toPromise()
+        .then(res => res as Array<Account>);
+    });      
+  }
+
+  Search(emailAddress: string) : Promise<Array<Account>> {  
+    let params: HttpParams = new HttpParams()
+    .append("emailAddress", emailAddress);
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account`, { headers: headers, params: params }).toPromise()
         .then(res => res as Array<Account>);
     });      
   }
