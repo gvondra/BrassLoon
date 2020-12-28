@@ -11,4 +11,11 @@ namespace BrassLoon.Account.Framework.Enumerations
         SystemAdministrator = 1,
         AccountAdministrator = 2
     }
+
+    public enum UserInvitationStatus : short
+    {
+        Cancelled = -1,
+        Created = 0,
+        Completed = 0xFF,
+    }
 }

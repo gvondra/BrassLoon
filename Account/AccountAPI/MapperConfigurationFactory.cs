@@ -18,6 +18,8 @@ namespace AccountAPI
                 config.CreateMap<IClient, Client>();
                 config.CreateMap<Domain, IDomain>();
                 config.CreateMap<IDomain, Domain>();
+                config.CreateMap<UserInvitation, IUserInvitation>();
+                config.CreateMap<IUserInvitation, UserInvitation>();
             });
         }
 

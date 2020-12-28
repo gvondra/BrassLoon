@@ -102,6 +102,11 @@
     <Build Include="Stored Procedures\bla.GetClientCredential_by_ClientId.sql" />
     <Build Include="Stored Procedures\bla.GetUserByEmailAddress.sql" />
     <Build Include="Stored Procedures\bla.GetDeletedDomain.sql" />
+    <Build Include="Tables\bla.UserInvitation.sql" />
+    <Build Include="Stored Procedures\bla.CreateUserInvitation.sql" />
+    <Build Include="Stored Procedures\bla.UpdateUserInvitation.sql" />
+    <Build Include="Stored Procedures\bla.GetUserInvitation.sql" />
+    <Build Include="Stored Procedures\bla.GetUserInvitationByAccountGuid.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

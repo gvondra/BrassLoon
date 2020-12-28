@@ -25,6 +25,8 @@ namespace BrassLoon.Account.Core
             builder.RegisterType<SecretProcessor>().As<ISecretProcessor>();
             builder.RegisterType<UserFactory>().As<IUserFactory>();
             builder.RegisterType<UserSaver>().As<IUserSaver>();
+            builder.RegisterType<UserInvitationFactory>().As<IUserInvitationFactory>();
+            builder.RegisterType<UserInvitationSaver>().As<IUserInvitationSaver>();
         }
     }
 }

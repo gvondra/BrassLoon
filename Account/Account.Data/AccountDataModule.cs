@@ -24,6 +24,8 @@ namespace BrassLoon.Account.Data
             builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
             builder.RegisterType<UserDataFactory>().As<IUserDataFactory>();
             builder.RegisterType<UserDataSaver>().As<IUserDataSaver>();
+            builder.RegisterType<UserInvitationDataFactory>().As<IUserInvitationDataFactory>();
+            builder.RegisterType<UserInvitationDataSaver>().As<IUserInvitationDataSaver>();
         }
     }
 }
