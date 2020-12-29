@@ -1,0 +1,10 @@
+<h2>Account Invitation</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="Account && Invitation">
+    <h3>{{ Invitation.EmailAddress }}</h3>
+    <h4>Created {{ FormatDate(Invitation.CreateTimestamp) }}</h4>
+    <h4>Expires {{ FormatDate(Invitation.ExpirationTimestamp) }}</h4>
+    <button *ngIf="Invitation.Status === 0" class="btn btn-primary" (click)="Cancel()">Cancel</button>
+</div>

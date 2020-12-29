@@ -50,10 +50,23 @@
     <p>Clients are used for OAuth client credential requests.  The client id and secrect can be exchanged for a security token.  The security token can be used to access logging API's.</p>
     <a [routerLink]="['/a', AccountId, 'Client']">Add Client</a>
     <table class="table">
-        <tr *ngFor="let client of Clients">
-            <td><a [routerLink]="['/a', AccountId, 'Client', client.ClientId]">{{ client.ClientId }}</a></td>
-            <td>{{ client.Name }}</td>
-        </tr>        
+        <tbody>
+            <tr *ngFor="let client of Clients">
+                <td><a [routerLink]="['/a', AccountId, 'Client', client.ClientId]">{{ client.ClientId }}</a></td>
+                <td>{{ client.Name }}</td>
+            </tr>  
+    </tbody>      
+    </table>
+</div>
+<div *ngIf="!ErrorMessage && Invitations && Invitations">
+    <h3>User Invitations</h3>
+    <a [routerLink]="['/a', AccountId, 'Invitation']">Create Invite</a>
+    <table class="table">
+        <tbody>
+            <tr *ngFor="let invitation of Invitations">
+                <td><a [routerLink]="['/a', AccountId, 'Invitation', invitation.UserInvitationId]">{{ invitation.EmailAddress }}</a></td>
+            </tr>
+        </tbody>
     </table>
 </div>
 <ng-container *ngIf="ShowAdmin">

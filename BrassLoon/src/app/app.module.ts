@@ -26,6 +26,9 @@ import { SysAdminComponent } from './sys-admin/sys-admin.component';
 import { PurgeWorkersComponent } from './purge-workers/purge-workers.component';
 import { ActAdminComponent } from './act-admin/act-admin.component';
 import { AccountSearchComponent } from './account-search/account-search.component';
+import { CreateInvitationComponent } from './create-invitation/create-invitation.component';
+import { UserInvitationComponent } from './user-invitation/user-invitation.component';
+import { AcceptInvitationComponent } from './accept-invitation/accept-invitation.component';
 
 const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
   return () => {
@@ -75,7 +78,10 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     SysAdminComponent,
     PurgeWorkersComponent,
     ActAdminComponent,
-    AccountSearchComponent
+    AccountSearchComponent,
+    CreateInvitationComponent,
+    UserInvitationComponent,
+    AcceptInvitationComponent
   ],
   imports: [
     BrowserModule,

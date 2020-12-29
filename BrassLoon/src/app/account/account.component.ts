@@ -8,6 +8,8 @@ import { Client } from '../models/client';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { TokenService } from '../services/token.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { UserInvitation } from '../models/user-invitation';
+import { UserInvitationService } from '../services/user-invitation.service';
 
 @Component({
   selector: 'app-account',
@@ -26,11 +28,13 @@ export class AccountComponent implements OnInit {
   NewDomainName: string = null;
   Clients: Array<Client> = null;
   ShowAdmin: boolean = false;
+  Invitations: UserInvitation[] = null;
 
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
     private accountService: AccountService,
     private domainService: DomainService,
+    private invitationService: UserInvitationService,
     private oidcSecurityService: OidcSecurityService,
     private tokenService: TokenService,
     private httpClientUtil: HttpClientUtilService) { }
@@ -44,6 +48,7 @@ export class AccountComponent implements OnInit {
       this.Domains = null;
       this.DeletedDomains = null;
       this.NewDomainName = null;
+      this.Invitations = null;
       this.Clients = null;
       this.ShowAdmin = false;
       if (params["id"]) {
@@ -60,7 +65,8 @@ export class AccountComponent implements OnInit {
         .catch(err => {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
-        }); 
+        });
+        this.LoadInvitations(params["id"]);
         this.LoadDomains(params["id"]);
       }
       else {
@@ -86,6 +92,25 @@ export class AccountComponent implements OnInit {
         });   
       }
     });
+  }
+
+  private LoadInvitations(accountId: string) {    
+    this.invitationService.GetByAccountId(accountId)
+    .then(invitations => {
+      this.Invitations = [];
+      if (invitations) {
+        for (let invitation of invitations) {
+          const currentDate = new Date();
+          if (invitation.Status === 0 && currentDate < new Date(Date.parse(invitation.ExpirationTimestamp))) {
+            this.Invitations.push(invitation);
+          }
+        }
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    }); 
   }
 
   private LoadDomains(accountId: string) {

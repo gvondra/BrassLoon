@@ -1,0 +1,48 @@
+<h2>Account Invitation</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<form *ngIf="Account && Invitation && !Invitation.UserInvitationId" id="invitationForm" (ngSubmit)="Save()" #invitationForm="ngForm">
+    <div class="container">          
+        <div class="row">
+            <div class="col-md-2">
+                <label for="emailAddress">Email Address</label>
+            </div>
+            <div class="col-md-4">
+                <input id="emailAddress" name="emailAddress" #emailAddress="ngModel" class="form-control" type="text" required="true" pattern=".+@.+" [(ngModel)]="Invitation.EmailAddress"/>
+                <div *ngIf="emailAddress.invalid && (emailAddress.dirty || emailAddress.touched)" class="alert alert-danger">
+                    <div *ngIf="emailAddress.errors.required">
+                        Email Address is required.
+                    </div>
+                    <div *ngIf="emailAddress.errors.pattern">
+                        Invalid Email Address.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="expiration">Expiration</label>
+            </div>
+            <div class="col-md-4">
+                <input id="expiration" name="expiration" #expiration="ngModel" class="form-control" type="date" required="true" [(ngModel)]="Invitation.ExpirationTimestamp"/>
+                <div *ngIf="expiration.invalid && (expiration.dirty || expiration.touched)" class="alert alert-danger">
+                    <div *ngIf="expiration.errors.required">
+                        Expiration is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-md-2 col-md-4" style="padding-top: 0.75em;">
+                <button class="btn btn-primary" type="submit" [disabled]="!invitationForm.form.valid">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div *ngIf="Account && Invitation && Invitation.UserInvitationId">
+    <p>Next, you need to send the link to {{ Invitation.EmailAddress }}</p>
+    <p>Here's a sample email:</p>
+    <p id="sampleEmail" style="white-space: pre; margin-left: 2em; margin-right: 2em;" [innerText]="SampleInvitation"></p>
+    <a target="_blank" [href]="CreateMail()">Email</a>
+</div>

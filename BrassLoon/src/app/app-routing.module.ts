@@ -14,6 +14,9 @@ import { MetricsComponent } from './metrics/metrics.component';
 import { PurgeWorkersComponent } from './purge-workers/purge-workers.component';
 import { AuthGuard } from './auth.guard';
 import { AccountSearchComponent } from './account-search/account-search.component';
+import { CreateInvitationComponent } from './create-invitation/create-invitation.component';
+import { UserInvitationComponent } from './user-invitation/user-invitation.component';
+import { AcceptInvitationComponent } from './accept-invitation/accept-invitation.component';
 
 const routes: Routes = [
   {
@@ -43,6 +46,18 @@ const routes: Routes = [
   {
     path: "a/:id",
     component: AccountComponent
+  },
+  {
+    path: "a/:accountId/Invitation",
+    component: CreateInvitationComponent
+  },
+  {
+    path: "a/:accountId/Invitation/:id",
+    component: UserInvitationComponent
+  },
+  {
+    path: "a/:accountId/Invitation/:id/Accept",
+    component: AcceptInvitationComponent
   },
   {
     path: "a/:accountId/Client",
