@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
@@ -233,6 +234,13 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
+                        if (DateTime.UtcNow < innerInvitation.ExpirationTimestamp && 
+                            innerInvitation.Status != UserInvitationStatus.Cancelled && 
+                            userInvitation.Status == (short)UserInvitationStatus.Completed &&
+                            !UserTokenHasAccount(innerInvitation.AccountId))
+                        {
+                            await AddAccountUser(scope.Resolve<IUserFactory>(), scope.Resolve<IAccountSaver>(), settings, innerInvitation.AccountId);
+                        }
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
                         IUserInvitationSaver saver = scope.Resolve<IUserInvitationSaver>();
@@ -250,6 +258,20 @@ namespace AccountAPI.Controllers
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
+        }
+
+        [NonAction]
+        protected bool UserTokenHasAccount(Guid accountId)
+        {
+            string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
+            return accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
+        }
+
+        [NonAction]
+        private async Task AddAccountUser(IUserFactory userFactory, IAccountSaver accountSaver, CoreSettings settings, Guid accountId)
+        {
+            IUser user = await GetUser(userFactory, settings);
+            await accountSaver.AddUser(settings, user.UserId, accountId);
         }
     }
 }
