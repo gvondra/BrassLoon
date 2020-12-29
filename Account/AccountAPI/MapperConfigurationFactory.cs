@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Account.Models;
+using System;
 
 namespace AccountAPI
 {
@@ -18,7 +19,9 @@ namespace AccountAPI
                 config.CreateMap<IClient, Client>();
                 config.CreateMap<Domain, IDomain>();
                 config.CreateMap<IDomain, Domain>();
-                config.CreateMap<UserInvitation, IUserInvitation>();
+                config.CreateMap<UserInvitation, IUserInvitation>()
+                .ForMember(ui => ui.ExpirationTimestamp, options => options.MapFrom<DateTime>(ui => (ui.ExpirationTimestamp ?? default).ToUniversalTime()))
+                ;
                 config.CreateMap<IUserInvitation, UserInvitation>();
             });
         }
