@@ -269,7 +269,7 @@ namespace AccountAPI.Controllers
         }
 
         [HttpGet("{accountId}/User")]
-        [Authorize("EDIT:ACCOUNT")]
+        [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> GetUsers([FromRoute] Guid? accountId)
         {
             IActionResult result = null;

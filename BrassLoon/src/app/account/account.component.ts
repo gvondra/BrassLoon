@@ -10,6 +10,7 @@ import { TokenService } from '../services/token.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserInvitation } from '../models/user-invitation';
 import { UserInvitationService } from '../services/user-invitation.service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-account',
@@ -29,6 +30,7 @@ export class AccountComponent implements OnInit {
   Clients: Array<Client> = null;
   ShowAdmin: boolean = false;
   Invitations: UserInvitation[] = null;
+  Users: Array<User> = null;
 
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -39,8 +41,7 @@ export class AccountComponent implements OnInit {
     private tokenService: TokenService,
     private httpClientUtil: HttpClientUtilService) { }
 
-  ngOnInit(): void {   
-    this.RoleCheck();         
+  ngOnInit(): void {       
     this.activatedRoute.params.subscribe(params => {
       this.ErrorMessage = null;
       this.Account = null;
@@ -48,6 +49,7 @@ export class AccountComponent implements OnInit {
       this.Domains = null;
       this.DeletedDomains = null;
       this.NewDomainName = null;
+      this.Users = null;
       this.Invitations = null;
       this.Clients = null;
       this.ShowAdmin = false;
@@ -66,6 +68,7 @@ export class AccountComponent implements OnInit {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
         });
+        
         this.LoadInvitations(params["id"]);
         this.LoadDomains(params["id"]);
       }
@@ -73,7 +76,8 @@ export class AccountComponent implements OnInit {
         this.IsNew = true;
         this.Account= new Account();
       }
-    });
+    });   
+    this.RoleCheck();  
   }
 
   private RoleCheck() {
@@ -86,6 +90,7 @@ export class AccountComponent implements OnInit {
             this.ShowAdmin = true;
           }
           this.LoadDeletedDomains(this.AccountId);
+          this.LoadUsers(this.AccountId);
         })
         .catch(err => {
           console.error(err);
@@ -111,6 +116,15 @@ export class AccountComponent implements OnInit {
       console.error(err);
       this.ErrorMessage = err.message || "Unexpected Error"
     }); 
+  }
+
+  private LoadUsers(accountId: string) {
+    this.accountService.GetUsers(accountId)
+        .then(users => this.Users = users)
+        .catch(err => {
+          console.error(err);
+          this.ErrorMessage = err.message || "Unexpected Error"
+        });
   }
 
   private LoadDomains(accountId: string) {
@@ -191,6 +205,18 @@ export class AccountComponent implements OnInit {
       this.Domains = null;
       this.DeletedDomains = null;
       this.LoadDomains(domain.AccountId);
+    })
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    });  
+  }
+
+  RemoveUser(userId: string) {
+    this.accountService.RemoveUser(this.AccountId, userId)
+    .then(() => {
+      this.Users = null;
+      this.LoadUsers(this.AccountId);
     })
     .catch(err => {
       console.error(err);

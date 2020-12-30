@@ -5,6 +5,7 @@ import { Account } from '../models/account';
 import { TokenService } from './token.service';
 import { Domain } from '../models/domain';
 import { Client } from '../models/client';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -77,5 +78,20 @@ export class AccountService {
         return this.httpClient.put(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}`, account, {headers: headers}).toPromise()
         .then(res => res as Account);
     });      
+  }
+
+  GetUsers(accountId: string) : Promise<Array<User>> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${accountId}/User`, {headers: headers}).toPromise()
+        .then(res => res as Array<User>);
+    });    
+  }
+
+  RemoveUser(accountId: string, userId: string) : Promise<Object> {    
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.delete(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${accountId}/User/${userId}`, {headers: headers}).toPromise();
+    });  
   }
 }

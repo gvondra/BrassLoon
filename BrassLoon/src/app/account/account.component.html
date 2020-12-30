@@ -84,4 +84,27 @@
             </tr>        
         </table>
     </ng-container>
+    <ng-container *ngIf="Users">
+        <h3>Users</h3>
+        <table class="table">
+            <tbody>
+                <tr *ngFor="let user of Users">
+                    <td>{{ user.Name }}</td>
+                    <td>
+                        <div [id]="'confirmRemoveUser' + user.UserId" class="collapse fade show">
+                            <button class="btn btn-outline-secondary" data-toggle="collapse" [attr.data-target]="'#confirmRemoveUser' + user.UserId">Remove</button>
+                        </div>  
+                        <div [id]="'confirmRemoveUser' + user.UserId" class="alert alert-warning alert-dismissible collapse" role="alert">
+                            <h4 class="alert-heading">Confirm Remove</h4>
+                            <p>Are you sure you want to remove {{ user.Name }}?</p>
+                            <button type="button" class="btn btn-warning" (click)="RemoveUser(user.UserId)">Yes, remove {{ user.Name }}</button>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </ng-container>
 </ng-container>
