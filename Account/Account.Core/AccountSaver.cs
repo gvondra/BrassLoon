@@ -32,6 +32,15 @@ namespace BrassLoon.Account.Core
             await saver.Save(new TransactionHandler(settings), async (th) => await account.Create(th, userId));
         }
 
+        public async Task RemoveUser(ISettings settings, Guid userId, Guid accountId)
+        {
+            Saver saver = new Saver();
+            await saver.Save(
+                new TransactionHandler(settings),
+                async th => await _datSaver.RemoveUser(th, userId, accountId)
+                );
+        }
+
         public async Task Update(ISettings settings, IAccount account)
         {
             Saver saver = new Saver();

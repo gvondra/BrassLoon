@@ -68,6 +68,26 @@ namespace BrassLoon.Account.Data
             }
         }
 
+        public async Task RemoveUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid)
+        {
+            await _providerFactory.EstablishTransaction(transactionHandler);
+            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            {
+                command.CommandText = "[bla].[UpdateAccountRemoveUser]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+
+                IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                command.Parameters.Add(timestamp);
+
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "accountGuid", DbType.Guid, DataUtil.GetParameterValue(accountGuid));
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, DataUtil.GetParameterValue(userGuid));
+
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
         public async Task Update(ISqlTransactionHandler transactionHandler, AccountData accountData)
         {
             if (accountData.Manager.GetState(accountData) == DataState.Updated)

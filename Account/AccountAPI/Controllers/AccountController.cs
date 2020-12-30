@@ -231,5 +231,41 @@ namespace AccountAPI.Controllers
             }
             return result;
         }
+
+        [HttpDelete("{accountId}/User/{userId}")]
+        [Authorize("EDIT:ACCOUNT")]
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid? accountId, [FromRoute] Guid? userId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!accountId.HasValue || Guid.Empty.Equals(accountId.Value)))
+                    result = BadRequest("Missing account id parameter value");
+                if (result == null && (!userId.HasValue || Guid.Empty.Equals(userId.Value)))
+                    result = BadRequest("Missing user id parameter value");
+                if (result == null && !UserCanAccessAccount(accountId.Value))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    {
+                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                        IAccountSaver accountSaver = scope.Resolve<IAccountSaver>();
+                        await accountSaver.RemoveUser(settings, userId.Value, accountId.Value);
+                        result = Ok();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
     }
 }

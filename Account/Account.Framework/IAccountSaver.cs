@@ -11,5 +11,6 @@ namespace BrassLoon.Account.Framework
         Task Create(ISettings settings, Guid userId, IAccount account);
         Task Update(ISettings settings, IAccount account);
         Task AddUser(ISettings settings, Guid userId, Guid accountId);
+        Task RemoveUser(ISettings settings, Guid userId, Guid accountId);
     }
 }
