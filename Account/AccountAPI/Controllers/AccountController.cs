@@ -267,5 +267,42 @@ namespace AccountAPI.Controllers
             }
             return result;
         }
+
+        [HttpGet("{accountId}/User")]
+        [Authorize("EDIT:ACCOUNT")]
+        public async Task<IActionResult> GetUsers([FromRoute] Guid? accountId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!accountId.HasValue || Guid.Empty.Equals(accountId.Value)))
+                    result = BadRequest("Missing account id parameter value");
+                if (result == null && !UserCanAccessAccount(accountId.Value))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    {
+                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                        IUserFactory userFactory = scope.Resolve<IUserFactory>();
+                        IEnumerable<IUser> innerUsers = await userFactory.GetByAccountId(settings, accountId.Value);
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(
+                            innerUsers.Select<IUser, User>(innerUser => mapper.Map<User>(innerUser))
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
     }
 }

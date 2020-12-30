@@ -59,5 +59,11 @@ namespace BrassLoon.Account.Core
             return (await _dataFactory.GetByEmailAddress(_settingsFactory.CreateData(settings), emailAddress))
                 .Select<UserData, IUser>(data => new User(data, _emailAddressFactory, _dataSaver));
         }
+
+        public async Task<IEnumerable<IUser>> GetByAccountId(ISettings settings, Guid accountId)
+        {
+            return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
+                .Select<UserData, IUser>(data => new User(data, _emailAddressFactory, _dataSaver));
+        }
     }
 }

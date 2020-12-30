@@ -57,5 +57,18 @@ namespace BrassLoon.Account.Data
                 new List<IDataParameter> { parameter }
                 );
         }
+
+        public async Task<IEnumerable<UserData>> GetByAccountId(ISqlSettings settings, Guid accountId)
+        {
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "accountId", DbType.Guid, accountId);
+            return await _genericDataFactory.GetData(
+                settings,
+                _providerFactory,
+                "[bla].[GetUserByAccountId]",
+                () => new UserData(),
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter }
+                );
+        }
     }
 }

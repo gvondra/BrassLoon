@@ -107,6 +107,7 @@
     <Build Include="Stored Procedures\bla.UpdateUserInvitation.sql" />
     <Build Include="Stored Procedures\bla.GetUserInvitation.sql" />
     <Build Include="Stored Procedures\bla.GetUserInvitationByAccountGuid.sql" />
+    <Build Include="Stored Procedures\bla.GetUserByAccountId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
