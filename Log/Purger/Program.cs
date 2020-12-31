@@ -32,6 +32,12 @@ namespace BrassLoon.Log.Purger
                 {                    
                     await StartPurge();
                     startTime = GetNextStartTime(startTime);
+                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    {
+                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                        ITraceService traceService = scope.Resolve<ITraceService>();
+                        await WriteTrace(traceService, settingsFactory, $"Next start time {startTime:O}");
+                    }                    
                     await Task.Delay(startTime.Subtract(DateTime.UtcNow));
                 }                
             }
@@ -81,7 +87,20 @@ namespace BrassLoon.Log.Purger
                 }
                 workerId = await workerFactory.Claim(settings);
             }
-            await PurgMetaData(settingsFactory, scope.Resolve<IPurgeSaver>());
+            try
+            {
+                await WriteTrace(traceService, settingsFactory, "Purging meta data");
+                await PurgMetaData(settingsFactory, scope.Resolve<IPurgeSaver>());
+            }
+            catch (System.Exception ex)
+            {
+                Console.Error.WriteLine(ex.ToString());
+                try
+                {
+                    await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(_settings), _settings.ExceptionLoggingDomainId, ex);
+                }
+                catch { }
+            }
         }
 
         private static async Task Purge(IPurgeWorker purgeWorker)
