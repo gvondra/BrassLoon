@@ -4,4 +4,5 @@ AS
 SELECT [AccountGuid] 
 FROM [bla].[AccountUser] 
 WHERE [UserGuid] = @userGuid
+	AND [IsActive] <> 0
 ;
