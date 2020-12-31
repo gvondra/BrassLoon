@@ -10,11 +10,11 @@ namespace BrassLoon.Account.Core
 {
     public class AccountSaver : IAccountSaver
     {
-        private readonly IAccountDataSaver _datSaver;
+        private readonly IAccountDataSaver _dataSaver;
 
         public AccountSaver(IAccountDataSaver dataSaver)
         {
-            _datSaver = dataSaver;
+            _dataSaver = dataSaver;
         }
 
         public async Task AddUser(ISettings settings, Guid userId, Guid accountId)
@@ -22,7 +22,7 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(
                 new TransactionHandler(settings), 
-                async th => await _datSaver.AddUser(th, userId, accountId)
+                async th => await _dataSaver.AddUser(th, userId, accountId)
                 );
         }
 
@@ -37,7 +37,7 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(
                 new TransactionHandler(settings),
-                async th => await _datSaver.RemoveUser(th, userId, accountId)
+                async th => await _dataSaver.RemoveUser(th, userId, accountId)
                 );
         }
 
@@ -45,6 +45,15 @@ namespace BrassLoon.Account.Core
         {
             Saver saver = new Saver();
             await saver.Save(new TransactionHandler(settings), account.Update);
+        }
+
+        public async Task UpdateLocked(ISettings settings, Guid accountId, bool locked)
+        {
+            Saver saver = new Saver();
+            await saver.Save(
+                new TransactionHandler(settings), 
+                async th => await _dataSaver.UpdateLocked(th, accountId, locked)
+                );
         }
     }
 }

@@ -2,6 +2,12 @@
 <div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
     {{ ErrorMessage }}
 </div>
+<div *ngIf="Account && Account.Locked" class="alert alert-warning alert-dismissible fade show" role="alert">
+    This account is locked.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 <form *ngIf="!ErrorMessage && Account" (ngSubmit)="Save()" #accountForm="ngForm">
     <div class="container">
         <div class="row">

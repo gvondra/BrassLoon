@@ -9,6 +9,6 @@ namespace BrassLoon.Account.Data.Models
     {
         [ColumnMapping("EmailAddressGuid", IsPrimaryKey = true)] public Guid EmailAddressGuid { get; set; }
         [ColumnMapping("Address")] public string Address { get; set; }
-        [ColumnMapping("CreateTimestamp")] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
     }
 }

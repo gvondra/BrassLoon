@@ -111,5 +111,25 @@ namespace BrassLoon.Account.Data
                 }
             }
         }
+
+        public async Task UpdateLocked(ISqlTransactionHandler transactionHandler, Guid accountId, bool locked)
+        {
+            await _providerFactory.EstablishTransaction(transactionHandler);
+            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            {
+                command.CommandText = "[bla].[UpdateAccountLocked]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+
+                IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                command.Parameters.Add(timestamp);
+
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, DataUtil.GetParameterValue(accountId));
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "locked", DbType.Boolean, DataUtil.GetParameterValue(locked));
+
+                await command.ExecuteNonQueryAsync();
+            }
+        }
     }
 }

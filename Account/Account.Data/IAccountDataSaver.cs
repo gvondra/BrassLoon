@@ -11,6 +11,7 @@ namespace BrassLoon.Account.Data
     {
         Task Create(ISqlTransactionHandler transactionHandler, Guid userGuid, AccountData accountData);
         Task Update(ISqlTransactionHandler transactionHandler, AccountData accountData);
+        Task UpdateLocked(ISqlTransactionHandler transactionHandler, Guid accountId, bool locked);
         Task AddUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid);
         Task RemoveUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid);
     }

@@ -12,7 +12,7 @@ namespace BrassLoon.Account.Data.Models
         [ColumnMapping("Name")] public string Name { get; set; }
         [ColumnMapping("EmailAddressGuid")] public Guid EmailAddressGuid { get; set; }
         [ColumnMapping("Roles")] public short Roles { get; set; }
-        [ColumnMapping("CreateTimestamp")] public DateTime CreateTimestamp { get; set; }
-        [ColumnMapping("UpdateTimestamp")] public DateTime UpdateTimestamp { get; set; }
+        [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping("UpdateTimestamp", IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
     }
 }

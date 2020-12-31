@@ -11,7 +11,7 @@ namespace BrassLoon.Account.Data.Models
         [ColumnMapping("AccountGuid")] public Guid AccountGuid { get; set; }
         [ColumnMapping("Name")] public string Name { get; set; }
         [ColumnMapping("Deleted")] public bool Deleted { get; set; }
-        [ColumnMapping("CreateTimestamp")] public DateTime CreateTimestamp { get; set; }
-        [ColumnMapping("UpdateTimestamp")] public DateTime UpdateTimestamp { get; set; }
+        [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping("UpdateTimestamp", IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
     }
 }

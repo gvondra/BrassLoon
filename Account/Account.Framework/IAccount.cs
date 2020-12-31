@@ -10,6 +10,7 @@ namespace BrassLoon.Account.Framework
     {
         Guid AccountId { get; }
         string Name { get; set; }
+        bool Locked { get; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 

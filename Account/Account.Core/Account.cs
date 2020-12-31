@@ -11,27 +11,29 @@ namespace BrassLoon.Account.Core
 {
     public class Account : IAccount
     {
-        private AccountData _accountData;
+        private AccountData _data;
         private IAccountDataSaver _dataSaver;
 
         public Account(AccountData accountData,
             IAccountDataSaver dataSaver)
         {
-            _accountData = accountData;
+            _data = accountData;
             _dataSaver = dataSaver;
         }
 
-        public Guid AccountId => _accountData.AccountGuid;
+        public Guid AccountId => _data.AccountGuid;
 
-        public string Name { get => _accountData.Name; set => _accountData.Name = value; }
+        public string Name { get => _data.Name; set => _data.Name = value; }
 
-        public DateTime CreateTimestamp => _accountData.CreateTimestamp;
+        public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public DateTime UpdateTimestamp => _accountData.UpdateTimestamp;
+        public DateTime UpdateTimestamp => _data.UpdateTimestamp;
+
+        public bool Locked => _data.Locked;
 
         public async Task Create(ITransactionHandler transactionHandler, Guid userId)
         {
-            await _dataSaver.Create(transactionHandler, userId, _accountData);
+            await _dataSaver.Create(transactionHandler, userId, _data);
         }
 
         public Task<IEnumerable<IDomain>> GetDomains(ISettings settings)
@@ -41,7 +43,7 @@ namespace BrassLoon.Account.Core
 
         public async Task Update(ITransactionHandler transactionHandler)
         {
-            await _dataSaver.Update(transactionHandler, _accountData);
+            await _dataSaver.Update(transactionHandler, _data);
         }
     }
 }
