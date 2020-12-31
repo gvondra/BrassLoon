@@ -232,6 +232,54 @@ namespace AccountAPI.Controllers
             return result;
         }
 
+        [HttpPatch("{id}/Locked")]
+        [Authorize("ADMIN:ACCOUNT")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] Dictionary<string, string> data)
+        {            
+            IActionResult result = null;
+            bool locked = default;
+            try
+            {
+                if (result == null && data == null)
+                    result = BadRequest("Missing patch data");
+                if (result == null && (!data.ContainsKey("Locked") || string.IsNullOrEmpty(data["Locked"])))
+                    result = BadRequest("Missing Locked value");
+                if (result == null && Guid.Empty.Equals(id))
+                    result = BadRequest("Invalid account id");
+                if (result == null && !UserCanAccessAccount(id))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null && !bool.TryParse(data["Locked"], out locked))
+                    result = BadRequest("Invalid locked value.  Expecting 'True' or 'False'");
+                if (result == null)
+                {
+                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    {
+                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
+                        IAccount innerAccount = await accountFactory.Get(settings, id);
+                        if (innerAccount == null)
+                            result = NotFound();
+                        else
+                        {
+                            IAccountSaver saver = scope.Resolve<IAccountSaver>();
+                            await saver.UpdateLocked(settings, innerAccount.AccountId, locked);
+                            result = Ok();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [HttpDelete("{accountId}/User/{userId}")]
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid? accountId, [FromRoute] Guid? userId)

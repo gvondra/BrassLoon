@@ -223,4 +223,31 @@ export class AccountComponent implements OnInit {
       this.ErrorMessage = err.message || "Unexpected Error"
     });  
   }
+
+  GetLockButtonText() : string {
+    if (this.Account && this.Account.Locked) {
+      return 'Unlock Account';
+    }
+    else {
+      return 'Lock Account';
+    }
+  }
+
+  GetLockText() : string {
+    if (this.Account && this.Account.Locked) {
+      return 'unlock';
+    }
+    else {
+      return 'lock';
+    }
+  }
+
+  ToggleLock() {
+    this.accountService.UpdateLock(this.Account.AccountId, !this.Account.Locked)
+    .then(() => this.Account.Locked = !this.Account.Locked)
+    .catch(err => {
+      console.error(err);
+      this.ErrorMessage = err.message || "Unexpected Error"
+    });  
+  }
 }

@@ -80,6 +80,14 @@ export class AccountService {
     });      
   }
 
+  UpdateLock(id: string, locked: Boolean) : Promise<Account> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.patch(`${this.httpClientUtil.GetAccountBaseAddress()}Account/${id}/Locked`, { "Locked": String(locked) }, {headers: headers}).toPromise()
+        .then(res => res as Account);
+    });      
+  }
+
   GetUsers(accountId: string) : Promise<Array<User>> {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {

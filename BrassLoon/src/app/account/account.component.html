@@ -77,6 +77,17 @@
 </div>
 <ng-container *ngIf="ShowAdmin">
     <h2>Admin</h2>
+    <div *ngIf="Account" id="confirmLockAccount" class="collapse fade show">
+        <button class="btn btn-outline-primary" data-toggle="collapse" data-target="#confirmLockAccount">{{ GetLockButtonText() }}</button>
+    </div>  
+    <div *ngIf="Account" id="confirmLockAccount" class="alert alert-warning alert-dismissible collapse" role="alert">
+        <h4 class="alert-heading">Confirm Toggle Account Lock</h4>
+        <p>Are you sure you want to {{ GetLockText() }} this account?</p>
+        <button type="button" class="btn btn-warning" data-dismiss="alert" (click)="ToggleLock()">Yes, {{ GetLockText() }} account</button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>   
     <ng-container *ngIf="DeletedDomains">
         <h3>Deleted Domains</h3>
         <table class="table">
