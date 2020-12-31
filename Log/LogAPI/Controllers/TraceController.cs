@@ -124,7 +124,7 @@ namespace LogAPI.Controllers
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(trace.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccountWriteAccess(trace.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }

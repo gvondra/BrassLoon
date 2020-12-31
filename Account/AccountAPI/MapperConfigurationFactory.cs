@@ -19,6 +19,7 @@ namespace AccountAPI
                 config.CreateMap<IClient, Client>();
                 config.CreateMap<Domain, IDomain>();
                 config.CreateMap<IDomain, Domain>();
+                config.CreateMap<IDomain, AccountDomain>();
                 config.CreateMap<IUser, User>();
                 config.CreateMap<UserInvitation, IUserInvitation>()
                 .ForMember(ui => ui.ExpirationTimestamp, options => options.MapFrom<DateTime>(ui => (ui.ExpirationTimestamp ?? default).ToUniversalTime()))

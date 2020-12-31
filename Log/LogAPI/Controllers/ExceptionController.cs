@@ -152,6 +152,17 @@ namespace LogAPI.Controllers
         }
 
         [NonAction]
+        protected override Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
+        {
+            if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && Guid.Parse(settings.ExceptionLoggingDomainId).Equals(domainId))
+                return Task.FromResult(true);
+            else
+            {
+                return base.VerifyDomainAccountWriteAccess(domainId, settingsFactory, settings, domainService);
+            }
+        }
+
+        [NonAction]
         private IException Map(
             LogModels.Exception exception, 
             Guid domainId, 

@@ -33,5 +33,21 @@ namespace BrassLoon.Interface.Account
             _restUtil.CheckSuccess(response);
             return response.Value;
         }
+
+        public async Task<AccountDomain> GetAccountDomain(ISettings settings, Guid id)
+        {
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath("AccountDomain/{id}")
+                .AddPathParameter("id", id.ToString())
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            IResponse<AccountDomain> response = await Policy
+                .HandleResult<IResponse<AccountDomain>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                .ExecuteAsync(() => _service.Send<AccountDomain>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+            return response.Value;
+        }
     }
 }

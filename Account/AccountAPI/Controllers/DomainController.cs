@@ -84,15 +84,57 @@ namespace AccountAPI.Controllers
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                     CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
                     IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain domain = await domainFactory.Get(settings, id.Value);
-                    if (domain == null)
+                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
+                        innerDomain = null;
+                    if (innerDomain == null)
                         result = NotFound();
-                    if (result == null && !UserCanAccessAccount(domain.AccountId))
-                        result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
+                    else
                     {
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                        result = Ok(mapper.Map<Domain>(domain));
+                        result = Ok(mapper.Map<Domain>(innerDomain));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpGet("/api/AccountDomain/{id}")]
+        [ProducesResponseType(typeof(AccountDomain), 200)]
+        [Authorize("READ:ACCOUNT")]
+        public async Task<IActionResult> GetAccountDomain([FromRoute] Guid? id)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                    result = BadRequest("Missing domain id value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
+                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
+                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
+                        innerDomain = null;
+                    if (innerDomain == null)
+                        result = NotFound();
+                    else
+                    {
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        AccountDomain accountDomain = mapper.Map<AccountDomain>(innerDomain);
+                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
+                        accountDomain.Account = mapper.Map<Account>(await accountFactory.Get(settings, innerDomain.AccountId));
+                        result = Ok(accountDomain);
                     }
                 }
             }

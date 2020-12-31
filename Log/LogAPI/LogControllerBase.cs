@@ -22,21 +22,16 @@ namespace LogAPI
         private static Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
 
         [NonAction]
-        protected async Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
-        {
-            if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && Guid.Parse(settings.ExceptionLoggingDomainId).Equals(domainId))
-                return true;
-            else
-            {
-                Domain domain = await GetDomain(
-                domainId,
-                settingsFactory,
-                settings,
-                GetAccessToken(),
-                domainService
-                );
-                return VerifyDomainAccount(domain);
-            }            
+        protected virtual async Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
+        {            
+            AccountDomain domain = await GetDomain(
+            domainId,
+            settingsFactory,
+            settings,
+            GetAccessToken(),
+            domainService
+            );
+            return !domain.Account.Locked && VerifyDomainAccount(domain);
         }
 
         [NonAction]
@@ -52,13 +47,13 @@ namespace LogAPI
             return VerifyDomainAccount(domain);
         }
 
-        private async Task<Domain> GetDomain(Guid domainId, SettingsFactory settingsFactory, Settings settings, string accessToken, IDomainService domainService)
+        private async Task<AccountDomain> GetDomain(Guid domainId, SettingsFactory settingsFactory, Settings settings, string accessToken, IDomainService domainService)
         {
             HashAlgorithm hashAlgorithm = SHA256.Create();
             string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
-            return await m_cache.Execute<Task<Domain>>(async context =>
+            return await m_cache.Execute<Task<AccountDomain>>(async context =>
             {
-                return await domainService.Get(
+                return await domainService.GetAccountDomain(
                 settingsFactory.CreateAccount(settings, accessToken),
                 domainId
                 );
