@@ -1,10 +1,8 @@
 ﻿using BrassLoon.DataClient;
-using BrassLoon.Log.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Data
@@ -42,6 +40,7 @@ namespace BrassLoon.Log.Data
                 {
                     command.CommandText = procedureName;
                     command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = 150;
                     command.Parameters.Add(parameter);
                     await command.ExecuteNonQueryAsync();
                 }
