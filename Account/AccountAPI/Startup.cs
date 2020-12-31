@@ -22,6 +22,7 @@ namespace AccountAPI
         internal const string POLICY_EDIT_USER = "EDIT:USER";
         internal const string POLICY_READ_ACCOUNT = "READ:ACCOUNT";
         internal const string POLICY_EDIT_ACCOUNT = "EDIT:ACCOUNT";
+        internal const string POLICY_ADMIN_ACCOUNT = "ADMIN:ACCOUNT";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -162,6 +163,13 @@ namespace AccountAPI
                     configure =>
                     {
                         configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, Configuration["Issuer"]))
+                        .AddAuthenticationSchemes("BrassLoon")
+                        .Build();
+                    });
+                o.AddPolicy(POLICY_ADMIN_ACCOUNT,
+                    configure =>
+                    {
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_ACCOUNT, Configuration["Issuer"], "actadmin"))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
