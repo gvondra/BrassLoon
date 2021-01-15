@@ -9,7 +9,7 @@ namespace BrassLoon.Config.Data
 {
     public interface ILookupDataFactory
     {
-        Task<IEnumerable<string>> GetCode(ISqlSettings settings, Guid domainId);
+        Task<IEnumerable<string>> GetCodes(ISqlSettings settings, Guid domainId);
         Task<LookupData> GetByCode(ISqlSettings settings, Guid domainId, string code);
     }
 }

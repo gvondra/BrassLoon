@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Log.Core
+namespace BrassLoon.Config.Core
 {
     public class DataSettings : ISqlSettings
     {
@@ -17,9 +17,6 @@ namespace BrassLoon.Log.Core
 
         public Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
 
-        public Task<string> GetConnectionString()
-        {
-            return _settings.GetConnetionString();
-        }
+        public Task<string> GetConnectionString() => _settings.GetConnetionString();
     }
 }

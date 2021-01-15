@@ -37,7 +37,7 @@ namespace BrassLoon.Config.Data
                 )).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<string>> GetCode(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetCodes(ISqlSettings settings, Guid domainId)
         {
             List<string> result = new List<string>();
             using (DbConnection connection = await _providerFactory.OpenConnection(settings))
