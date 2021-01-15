@@ -38,6 +38,7 @@ namespace ConfigAPI
                     o.JsonSerializerOptions.PropertyNamingPolicy = null;
                 })
                 ;
+            AddCors(services);
             services.AddSwaggerGen(o =>
             {
                 o.SwaggerDoc(
@@ -68,6 +69,25 @@ namespace ConfigAPI
                 }
                 });
             });
+        }
+
+        private void AddCors(IServiceCollection services)
+        {
+            IConfigurationSection section = Configuration.GetSection("CorsOrigins");
+            string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
+            if (corsOrigins != null && corsOrigins.Length > 0)
+            {
+                services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                        builder.WithOrigins(corsOrigins);
+                    });
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
