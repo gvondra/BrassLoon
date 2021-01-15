@@ -27,6 +27,7 @@ namespace ConfigAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<Settings>(Configuration);
+            services.AddDiContainer();
             services.AddControllers()
                 .AddNewtonsoftJson(o =>
                 {
