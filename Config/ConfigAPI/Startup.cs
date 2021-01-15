@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -5,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -69,6 +73,9 @@ namespace ConfigAPI
                 }
                 });
             });
+            services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            AddAuthentication(services);
+            AddAuthorization(services);
         }
 
         private void AddCors(IServiceCollection services)
@@ -88,6 +95,50 @@ namespace ConfigAPI
                     });
                 });
             }
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
+            JsonWebKeySet keySet = JsonWebKeySet.Create(
+                documentRetriever.GetDocumentAsync(Configuration["JwkAddress"], new System.Threading.CancellationToken()).Result
+                );
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer("BrassLoon", o =>
+            {
+                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateActor = false,
+                    ValidateTokenReplay = false,
+                    RequireAudience = false,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    ValidAudience = Configuration["Issuer"],
+                    ValidIssuer = Configuration["Issuer"],
+                    IssuerSigningKey = keySet.Keys[0]
+                };
+                o.IncludeErrorDetails = true;
+            })
+            ;
+        }
+
+        private void AddAuthorization(IServiceCollection services)
+        {
+            services.AddAuthorization(o =>
+            {
+                o.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("BrassLoon")
+                .Build();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
