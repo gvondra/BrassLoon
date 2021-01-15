@@ -1,0 +1,8 @@
+﻿CREATE PROCEDURE [blc].[GetLookupCodes]
+	@domainId UNIQUEIDENTIFIER
+AS
+SELECT DISTINCT [Code]
+FROM [blc].[Lookup] WITH(READUNCOMMITTED)
+WHERE [DomainId] = @domainId
+ORDER BY [Code]
+;

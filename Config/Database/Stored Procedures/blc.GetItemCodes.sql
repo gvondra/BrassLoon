@@ -1,0 +1,8 @@
+﻿CREATE PROCEDURE [blc].[GetItemCodes]
+	@domainId UNIQUEIDENTIFIER
+AS
+SELECT DISTINCT [Code]
+FROM [blc].[Item] WITH(READUNCOMMITTED)
+WHERE [DomainId] = @domainId
+ORDER BY [Code]
+;

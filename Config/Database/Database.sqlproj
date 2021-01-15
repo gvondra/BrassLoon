@@ -74,6 +74,14 @@
     <Build Include="Stored Procedures\blc.CreateLookup.sql" />
     <Build Include="Stored Procedures\blc.UpdateItem.sql" />
     <Build Include="Stored Procedures\blc.UpdateLookup.sql" />
+    <Build Include="Stored Procedures\blc.GetItemCodes.sql" />
+    <Build Include="Stored Procedures\blc.GetLookupCodes.sql" />
+    <Build Include="Stored Procedures\blc.GetItemByCode.sql" />
+    <Build Include="Stored Procedures\blc.GetLookupByCode.sql" />
+    <Build Include="Stored Procedures\blc.DeleteItemByCode.sql" />
+    <Build Include="Stored Procedures\blc.DeleteLookupByCode.sql" />
+    <Build Include="Stored Procedures\blc.GetItemHistoryByItemId.sql" />
+    <Build Include="Stored Procedures\blc.GetLookupHistoryByLookupId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
