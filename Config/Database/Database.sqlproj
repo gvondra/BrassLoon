@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{9a488867-cbe3-4e46-92d4-896f405e9427}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -25,6 +25,8 @@
     <DefaultSchema>blc</DefaultSchema>
     <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
     <TargetFrameworkProfile />
+    <QueryStoreCaptureMode>Auto</QueryStoreCaptureMode>
+    <QueryStoreDesiredState>ReadWrite</QueryStoreDesiredState>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -60,10 +62,20 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="blc.sql" />
     <Build Include="Tables\blc.Item.sql" />
     <Build Include="Tables\blc.Lookup.sql" />
+    <Build Include="Tables\blc.ItemHistory.sql" />
+    <Build Include="Tables\blc.LookupHistory.sql" />
+    <Build Include="Stored Procedures\blc.CreateItem.sql" />
+    <Build Include="Stored Procedures\blc.CreateLookup.sql" />
+    <Build Include="Stored Procedures\blc.UpdateItem.sql" />
+    <Build Include="Stored Procedures\blc.UpdateLookup.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LocalSqlSchemaCompare.scmp" />
   </ItemGroup>
 </Project>
