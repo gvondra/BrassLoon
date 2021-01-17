@@ -1,0 +1,13 @@
+﻿using BrassLoon.CommonCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BrassLoon.Config.Framework
+{
+    public interface ILookupHistoryFactory
+    {
+        Task<IEnumerable<ILookupHistory>> GetByLookupId(ISettings settings, Guid lookupId);
+    }
+}

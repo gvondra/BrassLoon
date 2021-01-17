@@ -1,0 +1,15 @@
+﻿CREATE TABLE [blc].[ItemHistory]
+(
+	[ItemHistoryId] UNIQUEIDENTIFIER CONSTRAINT [DF_ItemHistory_Id] DEFAULT NEWID() NOT NULL,
+	[ItemId] UNIQUEIDENTIFIER NOT NULL,
+	[DomainId] UNIQUEIDENTIFIER NOT NULL,
+	[Code] VARCHAR(256) NOT NULL,
+	[Data] NVARCHAR(MAX) NOT NULL,
+	[CreateTimestamp] DATETIME2(4) DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	CONSTRAINT [PK_ItemHistory] PRIMARY KEY CLUSTERED ([ItemHistoryId]), 
+    CONSTRAINT [FK_ItemHistory_To_Item] FOREIGN KEY ([ItemId]) REFERENCES [blc].[Item]([ItemId])
+)
+
+GO
+
+CREATE INDEX [IX_ItemHistory_ItemId] ON [blc].[ItemHistory] ([ItemId])
