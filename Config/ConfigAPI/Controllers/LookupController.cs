@@ -115,6 +115,52 @@ namespace ConfigAPI.Controllers
             return result;
         }
 
+        [HttpGet("{domainId}/{code}/History")]
+        [ProducesResponseType(typeof(LookupHistory[]), 200)]
+        [Authorize()]
+        public async Task<IActionResult> GetHistoryByCode([FromRoute] Guid? domainId, [FromRoute] string code)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && string.IsNullOrEmpty(code))
+                    result = BadRequest("Missing lookup code parameter value");
+                if (result == null)
+                {
+                    using ILifetimeScope scope = _container.BeginLifetimeScope();
+                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
+                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    else
+                    {
+                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        if (lookup == null)
+                            result = NotFound();
+                        else
+                        {
+                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                            result = Ok(
+                                (await lookup.GetHistory(settingsFactory.CreateCore(_settings.Value)))
+                                .Select<ILookupHistory, LookupHistory>(hist => mapper.Map<LookupHistory>(hist))
+                                );
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                {
+                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
+                }
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [HttpGet("/api/[controller]Code/{domainId}")]
         [ProducesResponseType(typeof(Lookup), 200)]
         [Authorize()]
