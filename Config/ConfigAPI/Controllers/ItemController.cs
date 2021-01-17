@@ -17,12 +17,12 @@ namespace ConfigAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LookupController : ConfigControllerBase
+    public class ItemController : ConfigControllerBase
     {
         private readonly IOptions<Settings> _settings;
         private readonly IContainer _container;
 
-        public LookupController(IOptions<Settings> settings,
+        public ItemController(IOptions<Settings> settings,
             IContainer container)
         {
             _settings = settings;
@@ -30,7 +30,7 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpGet("{domainId}/{code}")]
-        [ProducesResponseType(typeof(Lookup), 200)]
+        [ProducesResponseType(typeof(Item), 200)]
         [Authorize()]
         public async Task<IActionResult> GetByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
@@ -40,23 +40,23 @@ namespace ConfigAPI.Controllers
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null && string.IsNullOrEmpty(code))
-                    result = BadRequest("Missing lookup code parameter value");
+                    result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
+                    IItemFactory factory = scope.Resolve<IItemFactory>();
                     if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
-                        if (lookup == null)
+                        IItem item = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        if (item == null)
                             result = NotFound();
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                            result = Ok(mapper.Map<Lookup>(lookup));
+                            result = Ok(mapper.Map<Item>(item));
                         }
                     }
                 }
@@ -73,7 +73,6 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpGet("{domainId}/{code}/Data")]
-        [ProducesResponseType(typeof(Dictionary<string, string>), 200)]
         [Authorize()]
         public async Task<IActionResult> GetDataByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
@@ -83,23 +82,22 @@ namespace ConfigAPI.Controllers
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null && string.IsNullOrEmpty(code))
-                    result = BadRequest("Missing lookup code parameter value");
+                    result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
+                    IItemFactory factory = scope.Resolve<IItemFactory>();
                     if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
-                        if (lookup == null)
+                        IItem item = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        if (item == null)
                             result = NotFound();
                         else
                         {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                            result = Ok(mapper.Map<Dictionary<string, string>>(lookup.Data));
+                            result = Ok(item.Data);
                         }
                     }
                 }
@@ -116,7 +114,7 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpGet("/api/[controller]Code/{domainId}")]
-        [ProducesResponseType(typeof(Lookup), 200)]
+        [ProducesResponseType(typeof(Item), 200)]
         [Authorize()]
         public async Task<IActionResult> GetCodes([FromRoute] Guid? domainId)
         {
@@ -129,7 +127,7 @@ namespace ConfigAPI.Controllers
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
+                    IItemFactory factory = scope.Resolve<IItemFactory>();
                     if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
@@ -152,41 +150,41 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpPut("{domainId}/{code}/Data")]
-        [ProducesResponseType(typeof(Lookup), 200)]
+        [ProducesResponseType(typeof(Item), 200)]
         [Authorize()]
-        public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] Dictionary<string, string> lookupData)
+        public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] dynamic itemData)
         {
             IActionResult result = null;
-            try 
+            try
             {
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null && string.IsNullOrEmpty(code))
-                    result = BadRequest("Missing lookup code parameter value");
+                    result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
                     SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                     CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
-                    ILookup innerLookup = null;
-                    Func<CoreSettings, ILookupSaver, ILookup, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
+                    IItemFactory factory = scope.Resolve<IItemFactory>();
+                    IItem innerItem = null;
+                    Func<CoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
                     if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
-                        innerLookup = await factory.GetByCode(settings, domainId.Value, code);
-                    if (result == null && innerLookup == null)
+                        innerItem = await factory.GetByCode(settings, domainId.Value, code);
+                    if (result == null && innerItem == null)
                     {
-                        innerLookup = factory.Create(domainId.Value, code);
+                        innerItem = factory.Create(domainId.Value, code);
                         save = (sttngs, svr, lkup) => svr.Create(sttngs, lkup);
                     }
-                    if (result == null && innerLookup != null)
+                    if (result == null && innerItem != null)
                     {
-                        innerLookup.Data = lookupData;
-                        await save(settings, scope.Resolve<ILookupSaver>(), innerLookup);
+                        innerItem.Data = itemData;
+                        await save(settings, scope.Resolve<IItemSaver>(), innerItem);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
-                            mapper.Map<Lookup>(innerLookup)
+                            mapper.Map<Item>(innerItem)
                             );
                     }
                 }
@@ -207,12 +205,12 @@ namespace ConfigAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result = null;
-            try 
+            try
             {
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null && string.IsNullOrEmpty(code))
-                    result = BadRequest("Missing lookup code parameter value");
+                    result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
                     using ILifetimeScope scope = _container.BeginLifetimeScope();
@@ -221,7 +219,7 @@ namespace ConfigAPI.Controllers
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookupSaver saver = scope.Resolve<ILookupSaver>();
+                        IItemSaver saver = scope.Resolve<IItemSaver>();
                         await saver.DeleteByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         result = Ok();
                     }

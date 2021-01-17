@@ -27,6 +27,11 @@ namespace BrassLoon.Config.Core
             _itemHistoryFactory = itemHistoryFactory;
         }
 
+        public IItem Create(Guid domainId, string code)
+        {
+            return new Item(new ItemData() { DomainId = domainId, Code = code }, _dataSaver, _itemHistoryFactory);
+        }
+
         public async Task<IItem> GetByCode(ISettings settings, Guid domainId, string code)
         {
             Item result = null;
