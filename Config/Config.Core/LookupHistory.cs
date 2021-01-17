@@ -23,14 +23,14 @@ namespace BrassLoon.Config.Core
 
         public string Code => _data.Code;
 
-        public dynamic Data
+        public Dictionary<string, string> Data
         {
             get
             {
                 if (string.IsNullOrEmpty(_data.Data))
                     return null;
                 else
-                    return JsonConvert.DeserializeObject(_data.Data, new JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
+                    return JsonConvert.DeserializeObject<Dictionary<string, string>>(_data.Data, new JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
             }
         }
 

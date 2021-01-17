@@ -11,7 +11,7 @@ namespace BrassLoon.Config.Framework
         Guid LookupId { get; }
         Guid DomainId { get; }
         string Code { get; set; }
-        dynamic Data { get; set; }
+        Dictionary<string, string> Data { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
