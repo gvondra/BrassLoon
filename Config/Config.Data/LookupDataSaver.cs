@@ -67,7 +67,7 @@ namespace BrassLoon.Config.Data
 
         public async Task Update(ISqlTransactionHandler transactionHandler, LookupData lookupData)
         {
-            if (lookupData.Manager.GetState(lookupData) == DataState.New)
+            if (lookupData.Manager.GetState(lookupData) == DataState.Updated)
             {
                 await _providerFactory.EstablishTransaction(transactionHandler, lookupData);
                 using (DbCommand command = transactionHandler.Connection.CreateCommand())
