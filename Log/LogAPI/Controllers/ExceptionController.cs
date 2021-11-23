@@ -1,5 +1,4 @@
 ﻿using LogModels = BrassLoon.Interface.Log.Models;
-using Autofac;
 using AutoMapper;
 using BrassLoon.Interface.Account;
 using BrassLoon.Log.Framework;
@@ -19,19 +18,28 @@ namespace LogAPI.Controllers
     public class ExceptionController : LogControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly IDomainService _domainService;
+        private readonly IExceptionFactory _exceptionFactory;
+        private readonly IExceptionSaver _exceptionSaver;
 
         public ExceptionController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            IDomainService domainService,
+            IExceptionFactory exceptionFactory,
+            IExceptionSaver exceptionSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _domainService = domainService;
+            _exceptionFactory = exceptionFactory;
+            _exceptionSaver = exceptionSaver;
         }
 
 
         [HttpGet("{domainId}")]
         [ProducesResponseType(typeof(LogModels.Exception[]), 200)]
-        [Authorize()]
+        [Authorize(ServiceCollectionExtensions.POLICY_SYS_ADMIN)]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null)
         {
             IActionResult result = null;
@@ -43,18 +51,15 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing max timestamp parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                        IExceptionFactory exceptionFactory = scope.Resolve<IExceptionFactory>();
+                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         return Ok(  
                             await Task.WhenAll<LogModels.Exception>(
-                            (await exceptionFactory.GetTopBeforeTimestamp(settings, domainId.Value, maxTimestamp.Value))
+                            (await _exceptionFactory.GetTopBeforeTimestamp(settings, domainId.Value, maxTimestamp.Value))
                             .Select<IException, Task<LogModels.Exception>>(async innerException => await Map(innerException, settings, mapper))
                             ));
                     }
@@ -82,14 +87,11 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain id prameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    IExceptionFactory exceptionFactory = scope.Resolve<IExceptionFactory>();
-                    IException exception = await exceptionFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    IException exception = await _exceptionFactory.Get(settings, id.Value);
                     if (exception != null && !exception.DomainId.Equals(domainId.Value))
                         exception = null;
-                    if (result == null && !(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (result == null && !(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null && exception == null)
                         result = NotFound();
@@ -122,21 +124,17 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain guid value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccountWriteAccess(exception.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccountWriteAccess(exception.DomainId.Value, _settingsFactory, _settings.Value, _domainService)))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
                     {
-                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                        IExceptionFactory factory = scope.Resolve<IExceptionFactory>();
+                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         List<IException> allExceptions = new List<IException>();
-                        IException innerException = Map(exception, exception.DomainId.Value, exception.CreateTimestamp, factory, mapper, allExceptions);
-                        IExceptionSaver saver = scope.Resolve<IExceptionSaver>();
-                        await saver.Create(settings, allExceptions.ToArray());
+                        IException innerException = Map(exception, exception.DomainId.Value, exception.CreateTimestamp, _exceptionFactory, mapper, allExceptions);
+                        await _exceptionSaver.Create(settings, allExceptions.ToArray());
                         result = Ok(
                             await Map(innerException, settings, mapper)
                             );

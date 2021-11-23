@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Interface.Log;
 using BrassLoon.Interface.Log.Models;
 using BrassLoon.Log.Framework;
@@ -21,13 +20,22 @@ namespace LogAPI.Controllers
     public class PurgeWorkerController : LogControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IPurgeWorkerFactory _purgeWorkerFactory;
+        private readonly IPurgeWorkerSaver _purgeWorkerSaver;
 
         public PurgeWorkerController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IPurgeWorkerFactory purgeWorkerFactory,
+            IPurgeWorkerSaver purgeWorkerSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService; 
+            _purgeWorkerFactory = purgeWorkerFactory;
+            _purgeWorkerSaver = purgeWorkerSaver;
         }
 
         [HttpGet()]
@@ -37,22 +45,16 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                using ILifetimeScope scope = _container.BeginLifetimeScope();
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                IPurgeWorkerFactory factory = scope.Resolve<IPurgeWorkerFactory>();
+                CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IMapper mapper = MapperConfigurationFactory.CreateMapper();
                 result = Ok(
-                    (await factory.GetAll(settings))
+                    (await _purgeWorkerFactory.GetAll(settings))
                     .Select<IPurgeWorker, PurgeWorker>(innerPurgeWorker => mapper.Map<PurgeWorker>(innerPurgeWorker))
                     );
             }
             catch (System.Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -69,11 +71,8 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing id parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    IPurgeWorkerFactory factory = scope.Resolve<IPurgeWorkerFactory>();
-                    IPurgeWorker innerPurgeWorker = await factory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
                         result = NotFound();
                     else
@@ -85,10 +84,7 @@ namespace LogAPI.Controllers
             }
             catch (System.Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -107,19 +103,15 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing patch data");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    IPurgeWorkerFactory factory = scope.Resolve<IPurgeWorkerFactory>();
-                    IPurgeWorker innerPurgeWorker = await factory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
                         result = NotFound();
                     else
                     {
                         if (patch.ContainsKey("Status"))
                             innerPurgeWorker.Status = (PurgeWorkerStatus)Convert.ChangeType(patch["Status"], typeof(short));
-                        IPurgeWorkerSaver saver = scope.Resolve<IPurgeWorkerSaver>();
-                        await saver.Update(settings, innerPurgeWorker);
+                        await _purgeWorkerSaver.Update(settings, innerPurgeWorker);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(mapper.Map<PurgeWorker>(innerPurgeWorker));
                     }
@@ -127,10 +119,7 @@ namespace LogAPI.Controllers
             }
             catch (System.Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

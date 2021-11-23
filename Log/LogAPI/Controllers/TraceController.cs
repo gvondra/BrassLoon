@@ -1,5 +1,4 @@
 ﻿using LogModels = BrassLoon.Interface.Log.Models;
-using Autofac;
 using AutoMapper;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log;
@@ -20,13 +19,25 @@ namespace LogAPI.Controllers
     public class TraceController : LogControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly IDomainService _domainService;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ITraceFactory _traceFactory;
+        private readonly ITraceSaver _traceSaver;
 
         public TraceController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            IDomainService domainService,
+            Lazy<IExceptionService> exceptionService,
+            ITraceFactory traceFactory,
+            ITraceSaver traceSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _domainService = domainService;
+            _exceptionService = exceptionService;
+            _traceFactory = traceFactory;
+            _traceSaver = traceSaver;
         }
 
         [HttpGet("{domainId}")]
@@ -45,17 +56,14 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing event code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                        ITraceFactory traceFactory = scope.Resolve<ITraceFactory>();
+                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
-                            (await traceFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
+                            (await _traceFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
                             .Select<ITrace, LogModels.Trace>(innerTrace => mapper.Map<LogModels.Trace>(innerTrace))
                             );
                     }
@@ -63,10 +71,7 @@ namespace LogAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -85,26 +90,20 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                        ITraceFactory traceFactory = scope.Resolve<ITraceFactory>();
+                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                         result = Ok(
-                            await traceFactory.GetEventCodes(settings, domainId.Value)
+                            await _traceFactory.GetEventCodes(settings, domainId.Value)
                             );
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -122,31 +121,24 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain guid value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccountWriteAccess(trace.DomainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccountWriteAccess(trace.DomainId.Value, _settingsFactory, _settings.Value, _domainService)))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
                     {
-                        CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                        ITraceFactory factory = scope.Resolve<ITraceFactory>();
-                        ITrace innerTrace = factory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode);
+                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                        ITrace innerTrace = _traceFactory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
-                        ITraceSaver saver = scope.Resolve<ITraceSaver>();
-                        await saver.Create(settings, innerTrace);
+                        await _traceSaver.Create(settings, innerTrace);
                         result = Ok(mapper.Map<LogModels.Trace>(innerTrace));
                     }
                 }
             }    
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }    
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
