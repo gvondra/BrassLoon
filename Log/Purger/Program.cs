@@ -3,7 +3,6 @@ using BrassLoon.Log.Framework;
 using BrassLoon.Log.Framework.Enumerations;
 using BrassLoon.Interface.Log;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Binder;
 using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;

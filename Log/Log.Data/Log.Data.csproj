@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>disable</Nullable>
+	<ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>BrassLoon.Log.Data</AssemblyName>
     <RootNamespace>BrassLoon.Log.Data</RootNamespace>
     <Authors>Greg Vondra</Authors>
@@ -21,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="BrassLoon.DataClient" Version="1.0.0" />
   </ItemGroup>
 

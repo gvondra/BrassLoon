@@ -1,7 +1,7 @@
-﻿FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime:6.0-bullseye-slim AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "Log/Purger/nuget.config"

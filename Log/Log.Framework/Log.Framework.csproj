@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>disable</Nullable>
+	<ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>BrassLoon.Log.Framework</AssemblyName>
     <RootNamespace>BrassLoon.Log.Framework</RootNamespace>
     <Authors>Greg Vondra</Authors>
