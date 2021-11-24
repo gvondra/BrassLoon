@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Config.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Config.Models;
@@ -20,13 +19,25 @@ namespace ConfigAPI.Controllers
     public class ItemController : ConfigControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IDomainService _domainService;
+        private readonly IItemFactory _itemFactory;
+        private readonly IItemSaver _itemSaver;
 
         public ItemController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IDomainService domainService,
+            IItemFactory itemFactory,
+            IItemSaver itemSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _domainService = domainService;
+            _itemFactory = itemFactory;
+            _itemSaver = itemSaver;
         }
 
         [HttpGet("{domainId}/{code}")]
@@ -43,14 +54,11 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    IItemFactory factory = scope.Resolve<IItemFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        IItem item = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
                             result = NotFound();
                         else
@@ -63,10 +71,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -85,14 +90,11 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    IItemFactory factory = scope.Resolve<IItemFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        IItem item = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
                             result = NotFound();
                         else
@@ -104,10 +106,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -127,21 +126,18 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    IItemFactory factory = scope.Resolve<IItemFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        IItem item = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
                             result = NotFound();
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(
-                                (await item.GetHistory(settingsFactory.CreateCore(_settings.Value)))
+                                (await item.GetHistory(_settingsFactory.CreateCore(_settings.Value)))
                                 .Select<IItemHistory, ItemHistory>(hist => mapper.Map<ItemHistory>(hist))
                                 );
                         }
@@ -150,10 +146,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -171,25 +164,19 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    IItemFactory factory = scope.Resolve<IItemFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
                         result = Ok(
-                            await factory.GetCodes(settingsFactory.CreateCore(_settings.Value), domainId.Value)
+                            await _itemFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value)
                             );
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -209,25 +196,22 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    IItemFactory factory = scope.Resolve<IItemFactory>();
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IItem innerItem = null;
                     Func<CoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
-                        innerItem = await factory.GetByCode(settings, domainId.Value, code);
+                        innerItem = await _itemFactory.GetByCode(settings, domainId.Value, code);
                     if (result == null && innerItem == null)
                     {
-                        innerItem = factory.Create(domainId.Value, code);
+                        innerItem = _itemFactory.Create(domainId.Value, code);
                         save = (sttngs, svr, lkup) => svr.Create(sttngs, lkup);
                     }
                     if (result == null && innerItem != null)
                     {
                         innerItem.Data = itemData;
-                        await save(settings, scope.Resolve<IItemSaver>(), innerItem);
+                        await save(settings, _itemSaver, innerItem);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
                             mapper.Map<Item>(innerItem)
@@ -237,10 +221,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -259,24 +240,18 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        IItemSaver saver = scope.Resolve<IItemSaver>();
-                        await saver.DeleteByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        await _itemSaver.DeleteByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         result = Ok();
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Config.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Config.Models;
@@ -20,13 +19,25 @@ namespace ConfigAPI.Controllers
     public class LookupController : ConfigControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IDomainService _domainService;
+        private readonly ILookupFactory _lookupFactory;
+        private readonly ILookupSaver _lookupSaver;
 
         public LookupController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IDomainService domainService,
+            ILookupFactory lookupFactory,
+            ILookupSaver lookupSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _domainService = domainService;
+            _lookupFactory = lookupFactory;
+            _lookupSaver = lookupSaver;
         }
 
         [HttpGet("{domainId}/{code}")]
@@ -43,14 +54,11 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
                             result = NotFound();
                         else
@@ -63,10 +71,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -86,14 +91,11 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
                             result = NotFound();
                         else
@@ -106,10 +108,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -129,21 +128,18 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookup lookup = await factory.GetByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
                             result = NotFound();
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(
-                                (await lookup.GetHistory(settingsFactory.CreateCore(_settings.Value)))
+                                (await lookup.GetHistory(_settingsFactory.CreateCore(_settings.Value)))
                                 .Select<ILookupHistory, LookupHistory>(hist => mapper.Map<LookupHistory>(hist))
                                 );
                         }
@@ -152,10 +148,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -173,25 +166,19 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
                         result = Ok(
-                            await factory.GetCodes(settingsFactory.CreateCore(_settings.Value), domainId.Value)
+                            await _lookupFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value)
                             );
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -211,25 +198,22 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateCore(_settings.Value);
-                    ILookupFactory factory = scope.Resolve<ILookupFactory>();
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     ILookup innerLookup = null;
                     Func<CoreSettings, ILookupSaver, ILookup, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
-                        innerLookup = await factory.GetByCode(settings, domainId.Value, code);
+                        innerLookup = await _lookupFactory.GetByCode(settings, domainId.Value, code);
                     if (result == null && innerLookup == null)
                     {
-                        innerLookup = factory.Create(domainId.Value, code);
+                        innerLookup = _lookupFactory.Create(domainId.Value, code);
                         save = (sttngs, svr, lkup) => svr.Create(sttngs, lkup);
                     }
                     if (result == null && innerLookup != null)
                     {
                         innerLookup.Data = lookupData;
-                        await save(settings, scope.Resolve<ILookupSaver>(), innerLookup);
+                        await save(settings, _lookupSaver, innerLookup);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
                             mapper.Map<Lookup>(innerLookup)
@@ -239,10 +223,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -261,24 +242,18 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    if (!(await VerifyDomainAccount(domainId.Value, settingsFactory, _settings.Value, scope.Resolve<IDomainService>())))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        ILookupSaver saver = scope.Resolve<ILookupSaver>();
-                        await saver.DeleteByCode(settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
+                        await _lookupSaver.DeleteByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         result = Ok();
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
