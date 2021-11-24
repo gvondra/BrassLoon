@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
@@ -19,13 +18,25 @@ namespace AccountAPI.Controllers
     public class DomainController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IAccountFactory _accountFactory;
+        private readonly IDomainFactory _domainFactory;
+        private readonly IDomainSaver _domainSaver;
 
         public DomainController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IAccountFactory accountFactory,
+            IDomainFactory domainFactory,
+            IDomainSaver domainSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _accountFactory = accountFactory;
+            _domainFactory = domainFactory;
+            _domainSaver = domainSaver;
         }
 
         [HttpGet("/api/Account/{id}/Domain")]
@@ -42,15 +53,12 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
                     IEnumerable<IDomain> domains;
                     if (deleted)
-                        domains = await domainFactory.GetDeletedByAccountId(settings, id.Value);
+                        domains = await _domainFactory.GetDeletedByAccountId(settings, id.Value);
                     else
-                        domains = await domainFactory.GetByAccountId(settings, id.Value);
+                        domains = await _domainFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
                         domains.Select<IDomain, Domain>(d => mapper.Map<Domain>(d))
@@ -59,10 +67,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }            
             return result;
@@ -80,11 +85,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain id value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
                     if (innerDomain == null)
@@ -98,10 +100,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -119,11 +118,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain id value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
                     if (innerDomain == null)
@@ -132,18 +128,14 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         AccountDomain accountDomain = mapper.Map<AccountDomain>(innerDomain);
-                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                        accountDomain.Account = mapper.Map<Account>(await accountFactory.Get(settings, innerDomain.AccountId));
+                        accountDomain.Account = mapper.Map<Account>(await _accountFactory.Get(settings, innerDomain.AccountId));
                         result = Ok(accountDomain);
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -167,24 +159,17 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain innerDomain = await domainFactory.Create(domain.AccountId.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IDomain innerDomain = await _domainFactory.Create(domain.AccountId.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     mapper.Map<Domain, IDomain>(domain, innerDomain);
-                    IDomainSaver saver = scope.Resolve<IDomainSaver>();
-                    await saver.Create(settings, innerDomain);
+                    await _domainSaver.Create(settings, innerDomain);
                     result = Ok(mapper.Map<Domain>(innerDomain));
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -206,11 +191,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain name value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
-                    IDomain innerDomain = await domainFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (result == null && innerDomain == null)
                         result = NotFound();
                     if (result == null && !UserCanAccessAccount(innerDomain.AccountId))
@@ -219,18 +201,14 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<Domain, IDomain>(domain, innerDomain);
-                        IDomainSaver saver = scope.Resolve<IDomainSaver>();
-                        await saver.Update(settings, innerDomain);
+                        await _domainSaver.Update(settings, innerDomain);
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -255,15 +233,12 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid deleted patch value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IDomainFactory domainFactory = scope.Resolve<IDomainFactory>();
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
                     IDomain innerDomain;
                     if (!deleted)
-                        innerDomain = await domainFactory.GetDeleted(settings, id.Value);
+                        innerDomain = await _domainFactory.GetDeleted(settings, id.Value);
                     else
-                        innerDomain = await domainFactory.Get(settings, id.Value);
+                        innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (result == null && innerDomain == null)
                         result = NotFound();
                     if (result == null && !UserCanAccessAccount(innerDomain.AccountId))
@@ -271,8 +246,7 @@ namespace AccountAPI.Controllers
                     if (result == null)
                     {
                         innerDomain.Deleted = deleted;
-                        IDomainSaver saver = scope.Resolve<IDomainSaver>();
-                        await saver.Update(settings, innerDomain);
+                        await _domainSaver.Update(settings, innerDomain);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
@@ -280,10 +254,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

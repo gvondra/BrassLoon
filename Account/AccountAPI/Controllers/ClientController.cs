@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
@@ -19,23 +18,31 @@ namespace AccountAPI.Controllers
     public class ClientController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IClientFactory _clientFactory;
+        private readonly IClientSaver _clientSaver;
+        private readonly ISecretProcessor _secretProcessor;
 
         public ClientController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IClientFactory clientFactory,
+            IClientSaver clientSaver,
+            ISecretProcessor secretProcessor)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _clientFactory = clientFactory;
+            _clientSaver = clientSaver;
+            _secretProcessor = secretProcessor;
         }
 
         [HttpGet("/api/ClientSecret")]
         public IActionResult CreateSecret()
         {
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
-            {
-                ISecretProcessor secretProcessor = scope.Resolve<ISecretProcessor>();
-                return Ok(new { Secret = secretProcessor.Create() });
-            }
+            return Ok(new { Secret = _secretProcessor.Create() });
         }
 
         [HttpGet("/api/Account/{id}/Client")]
@@ -52,11 +59,8 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                    IEnumerable<IClient> clients = await clientFactory.GetByAccountId(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IEnumerable<IClient> clients = await _clientFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
                         clients.Select<IClient, Client>(d => mapper.Map<Client>(d))
@@ -65,10 +69,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }            
             return result;
@@ -86,11 +87,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing client id value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                    IClient client = await clientFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IClient client = await _clientFactory.Get(settings, id.Value);
                     if (client == null)
                         result = NotFound();
                     if (result == null && !UserCanAccessAccount(client.AccountId))
@@ -106,10 +104,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -137,24 +132,17 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                    IClient innerClient = await clientFactory.Create(client.AccountId.Value, client.Secret);
+                    IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IClientSaver saver = scope.Resolve<IClientSaver>();
-                    await saver.Create(settings, innerClient);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    await _clientSaver.Create(settings, innerClient);
                     result = Ok(mapper.Map<Client>(innerClient));
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -178,11 +166,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IClient innerClient = await clientFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IClient innerClient = await _clientFactory.Get(settings, id.Value);
                     if (innerClient == null)
                         result = NotFound();
                     if (result == null && !UserCanAccessAccount(innerClient.AccountId))
@@ -191,18 +176,14 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<Client, IClient>(client, innerClient);
-                        IClientSaver saver = scope.Resolve<IClientSaver>();
-                        await saver.Update(settings, innerClient, client.Secret);
+                        await _clientSaver.Update(settings, innerClient, client.Secret);
                         result = Ok(mapper.Map<Client>(innerClient));
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

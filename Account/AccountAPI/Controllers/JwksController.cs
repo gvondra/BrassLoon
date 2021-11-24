@@ -1,5 +1,4 @@
-﻿using Autofac;
-using BrassLoon.Interface.Log;
+﻿using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -24,13 +23,16 @@ namespace AccountAPI.Controllers
     public class JwksController : AccountControllerBase
     {
         private IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
 
         public JwksController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
         }
 
         [HttpGet]
@@ -47,10 +49,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }            
         }

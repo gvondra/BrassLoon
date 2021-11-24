@@ -1,5 +1,4 @@
-﻿using Autofac;
-using BrassLoon.Account.Framework;
+﻿using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
@@ -26,13 +25,37 @@ namespace AccountAPI.Controllers
     public class TokenController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IAccountFactory _accountFactory;
+        private readonly IClientFactory _clientFactory;
+        private readonly IEmailAddressFactory _emailAddressFactory;
+        private readonly IEmailAddressSaver _emailAddressSaver;
+        private readonly ISecretProcessor _secretProcessor;
+        private readonly IUserFactory _userFactory;
+        private readonly IUserSaver _userSaver;
 
         public TokenController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IAccountFactory accountFactory,
+            IClientFactory clientFactory,
+            IEmailAddressFactory emailAddressFactory,
+            IEmailAddressSaver emailAddressSaver,
+            ISecretProcessor secretProcessor,
+            IUserFactory userFactory,
+            IUserSaver userSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _accountFactory = accountFactory;
+            _clientFactory = clientFactory;
+            _emailAddressFactory = emailAddressFactory;
+            _emailAddressSaver = emailAddressSaver;
+            _secretProcessor = secretProcessor;
+            _userFactory = userFactory;
+            _userSaver = userSaver;
         }
 
         [HttpPost]
@@ -46,10 +69,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }            
         }
@@ -68,17 +88,13 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing secret value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IClientFactory clientFactory = scope.Resolve<IClientFactory>();
-                    IClient client = await clientFactory.Get(settings, clientCredential.ClientId.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IClient client = await _clientFactory.Get(settings, clientCredential.ClientId.Value);
                     if (client == null)
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
-                        ISecretProcessor secretProcessor = scope.Resolve<ISecretProcessor>();
-                        if (!secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
+                        if (!_secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
                             result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
@@ -89,7 +105,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -100,36 +116,28 @@ namespace AccountAPI.Controllers
         {
             IUser user;
             IEmailAddress emailAddress = null;
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
+            string subscriber = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            CoreSettings coreSettings = _settingsFactory.CreateAccount(_settings.Value);
+            user = await _userFactory.GetByReferenceId(coreSettings, subscriber);
+            if (user == null)
             {
-                string subscriber = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-                IUserFactory userFactory = scope.Resolve<IUserFactory>();
-                IEmailAddressFactory emailAddressFactory = scope.Resolve<IEmailAddressFactory>();
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                user = await userFactory.GetByReferenceId(settingsFactory.CreateAccount(_settings.Value), subscriber);
-                if (user == null)
+                string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+                emailAddress = await _emailAddressFactory.GetByAddress(coreSettings, email);
+                if (emailAddress == null)
                 {
-                    string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
-                    emailAddress = await emailAddressFactory.GetByAddress(settingsFactory.CreateAccount(_settings.Value), email);
-                    if (emailAddress == null)
-                    {
-                        emailAddress = emailAddressFactory.Create(email);
-                        IEmailAddressSaver emailAddressSaver = scope.Resolve<IEmailAddressSaver>();
-                        await emailAddressSaver.Create(settingsFactory.CreateAccount(_settings.Value), emailAddress);
-                    }
-                    user = userFactory.Create(subscriber, emailAddress);
-                    user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
-                    SetSuperUser(user);
-                    IUserSaver userSaver = scope.Resolve<IUserSaver>();
-                    await userSaver.Create(settingsFactory.CreateAccount(_settings.Value), user);
+                    emailAddress = _emailAddressFactory.Create(email);
+                    await _emailAddressSaver.Create(coreSettings, emailAddress);
                 }
-                else
-                {
-                    user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
-                    SetSuperUser(user);
-                    IUserSaver userSaver = scope.Resolve<IUserSaver>();
-                    await userSaver.Update(settingsFactory.CreateAccount(_settings.Value), user);
-                }
+                user = _userFactory.Create(subscriber, emailAddress);
+                user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
+                SetSuperUser(user);
+                await _userSaver.Create(coreSettings, user);
+            }
+            else
+            {
+                user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase)).Value;
+                SetSuperUser(user);
+                await _userSaver.Update(coreSettings, user);
             }
             return user;
         }
@@ -150,38 +158,34 @@ namespace AccountAPI.Controllers
         [NonAction]
         private async Task<string> CreateToken(IUser user)
         {
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
-            {
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                RSAParameters rsaParameters = CreateRSAParameter();
-                //RSA rsa = new RSACryptoServiceProvider(2048);
-                //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));
-                RsaSecurityKey securityKey = new RsaSecurityKey(rsaParameters);
-                //JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
-                //Debug.WriteLine(JsonConvert.SerializeObject(jsonWebKey));
-                SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
-                List<Claim> claims = new List<Claim>
+            RSAParameters rsaParameters = CreateRSAParameter();
+            //RSA rsa = new RSACryptoServiceProvider(2048);
+            //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));
+            RsaSecurityKey securityKey = new RsaSecurityKey(rsaParameters);
+            //JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
+            //Debug.WriteLine(JsonConvert.SerializeObject(jsonWebKey));
+            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
+            List<Claim> claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))
                 };
-                Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.IdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
-                if (claim != null)
-                    claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
-                claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(settingsFactory.CreateAccount(_settings.Value))).Address));
-                claims.Add(new Claim("accounts", await GetAccountIdClaim(scope.Resolve<IAccountFactory>(), settingsFactory, user.UserId)));
-                if ((user.Roles & UserRole.SystemAdministrator) == UserRole.SystemAdministrator)
-                    claims.Add(new Claim("role", "sysadmin"));
-                if ((user.Roles & UserRole.AccountAdministrator) == UserRole.AccountAdministrator)
-                    claims.Add(new Claim("role", "actadmin"));
-                JwtSecurityToken token = new JwtSecurityToken(
-                    "urn:brassloon",
-                    "urn:brassloon",
-                    claims,
-                    expires: DateTime.Now.AddHours(6),
-                    signingCredentials: credentials
-                    );
-                return new JwtSecurityTokenHandler().WriteToken(token);
-            }                        
+            Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.IdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
+            if (claim != null)
+                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateAccount(_settings.Value))).Address));
+            claims.Add(new Claim("accounts", await GetAccountIdClaim(_accountFactory, _settingsFactory, user.UserId)));
+            if ((user.Roles & UserRole.SystemAdministrator) == UserRole.SystemAdministrator)
+                claims.Add(new Claim("role", "sysadmin"));
+            if ((user.Roles & UserRole.AccountAdministrator) == UserRole.AccountAdministrator)
+                claims.Add(new Claim("role", "actadmin"));
+            JwtSecurityToken token = new JwtSecurityToken(
+                "urn:brassloon",
+                "urn:brassloon",
+                claims,
+                expires: DateTime.Now.AddHours(6),
+                signingCredentials: credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         [NonAction]
@@ -197,8 +201,6 @@ namespace AccountAPI.Controllers
         [NonAction]
         private Task<string> CreateToken(IClient client)
         {
-            using ILifetimeScope scope = _container.BeginLifetimeScope();
-            SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             RSAParameters rsaParameters = CreateRSAParameter();
             //RSA rsa = new RSACryptoServiceProvider(2048);
             //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));

@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
@@ -21,13 +20,25 @@ namespace AccountAPI.Controllers
     public class AccountController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IAccountFactory _accountFactory;
+        private readonly IAccountSaver _accountSaver;
+        private readonly IUserFactory _userFactory;
 
         public AccountController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IAccountFactory accountFactory,
+            IAccountSaver accountSaver,
+            IUserFactory userFactory)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _accountFactory = accountFactory;
+            _accountSaver = accountSaver;
+            _userFactory = userFactory;
         }
 
         [HttpGet()]
@@ -45,10 +56,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -58,18 +66,13 @@ namespace AccountAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             IActionResult result = null;
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
-            {
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                IUser user = await GetUser(scope.Resolve<IUserFactory>(), settings);
-                IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                IEnumerable<IAccount> accounts = await accountFactory.GetByUserId(settings, user.UserId);
-                IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                result = Ok(
-                    accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
-                    );
-            }
+            CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+            IUser user = await GetUser(_userFactory, settings);
+            IEnumerable<IAccount> accounts = await _accountFactory.GetByUserId(settings, user.UserId);
+            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+            result = Ok(
+                accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                );
             return result;
         }
 
@@ -77,24 +80,18 @@ namespace AccountAPI.Controllers
         public async Task<IActionResult> GetByEmailAddress(string emailAddress)
         {
             IActionResult result = null;
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
-            {
-                SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                IUserFactory userFactory = scope.Resolve<IUserFactory>();
-                IEnumerable<IUser> users = await userFactory.GetByEmailAddress(settings, emailAddress);                
-                IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                ConcurrentBag<Task<IEnumerable<IAccount>>> accounts = new ConcurrentBag<Task<IEnumerable<IAccount>>>();                
-                users.AsParallel().ForAll(user => accounts.Add(accountFactory.GetByUserId(settings, user.UserId)));
-                IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                result = Ok(
-                    (await Task.WhenAll<IEnumerable<IAccount>>(accounts))
-                    .SelectMany(results => results)
-                    .Where(a => UserCanAccessAccount(a.AccountId))
-                    .Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
-                    .ToList()
-                    );
-            }
+            CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+            IEnumerable<IUser> users = await _userFactory.GetByEmailAddress(settings, emailAddress);
+            ConcurrentBag<Task<IEnumerable<IAccount>>> accounts = new ConcurrentBag<Task<IEnumerable<IAccount>>>();
+            users.AsParallel().ForAll(user => accounts.Add(_accountFactory.GetByUserId(settings, user.UserId)));
+            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+            result = Ok(
+                (await Task.WhenAll<IEnumerable<IAccount>>(accounts))
+                .SelectMany(results => results)
+                .Where(a => UserCanAccessAccount(a.AccountId))
+                .Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                .ToList()
+                );
             return result;
         }
 
@@ -113,28 +110,20 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IAccount account = await _accountFactory.Get(settings, id);
+                    if (account == null)
+                        result = NotFound();
+                    else
                     {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                        IAccount account = await accountFactory.Get(settings, id);
-                        if (account == null)
-                            result = NotFound();
-                        else
-                        {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                            result = Ok(mapper.Map<Account>(account));
-                        }
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(mapper.Map<Account>(account));
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -154,29 +143,20 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing account name");
                 if (result == null)
                 {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                    {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IUser user = await GetUser(scope.Resolve<IUserFactory>(), settings);
-                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                        IAccount innerAccount = accountFactory.Create();
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                        mapper.Map<Account, IAccount>(account, innerAccount);
-                        IAccountSaver saver = scope.Resolve<IAccountSaver>();
-                        await saver.Create(settings, user.UserId, innerAccount);
-                        result = Ok(
-                            mapper.Map<Account>(innerAccount)
-                            );
-                    }
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IUser user = await GetUser(_userFactory, settings);
+                    IAccount innerAccount = _accountFactory.Create();
+                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    mapper.Map<Account, IAccount>(account, innerAccount);
+                    await _accountSaver.Create(settings, user.UserId, innerAccount);
+                    result = Ok(
+                        mapper.Map<Account>(innerAccount)
+                        );
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -200,33 +180,24 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IAccount innerAccount = await _accountFactory.Get(settings, id);
+                    if (innerAccount == null)
+                        result = NotFound();
+                    else
                     {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                        IAccount innerAccount = await accountFactory.Get(settings, id);
-                        if (innerAccount == null)
-                            result = NotFound();
-                        else
-                        {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                            mapper.Map<Account, IAccount>(account, innerAccount);
-                            IAccountSaver saver = scope.Resolve<IAccountSaver>();
-                            await saver.Update(settings, innerAccount);
-                            result = Ok(
-                                mapper.Map<Account>(innerAccount)
-                                );
-                        }
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        mapper.Map<Account, IAccount>(account, innerAccount);
+                        await _accountSaver.Update(settings, innerAccount);
+                        result = Ok(
+                            mapper.Map<Account>(innerAccount)
+                            );
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -252,29 +223,20 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid locked value.  Expecting 'True' or 'False'");
                 if (result == null)
                 {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IAccount innerAccount = await _accountFactory.Get(settings, id);
+                    if (innerAccount == null)
+                        result = NotFound();
+                    else
                     {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                        IAccount innerAccount = await accountFactory.Get(settings, id);
-                        if (innerAccount == null)
-                            result = NotFound();
-                        else
-                        {
-                            IAccountSaver saver = scope.Resolve<IAccountSaver>();
-                            await saver.UpdateLocked(settings, innerAccount.AccountId, locked);
-                            result = Ok();
-                        }
+                        await _accountSaver.UpdateLocked(settings, innerAccount.AccountId, locked);
+                        result = Ok();
                     }
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -295,22 +257,14 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                    {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IAccountSaver accountSaver = scope.Resolve<IAccountSaver>();
-                        await accountSaver.RemoveUser(settings, userId.Value, accountId.Value);
-                        result = Ok();
-                    }
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    await _accountSaver.RemoveUser(settings, userId.Value, accountId.Value);
+                    result = Ok();
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -328,26 +282,18 @@ namespace AccountAPI.Controllers
                 if (result == null && !UserCanAccessAccount(accountId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
-                {
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                    {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                        IUserFactory userFactory = scope.Resolve<IUserFactory>();
-                        IEnumerable<IUser> innerUsers = await userFactory.GetByAccountId(settings, accountId.Value);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                        result = Ok(
-                            innerUsers.Select<IUser, User>(innerUser => mapper.Map<User>(innerUser))
-                            );
-                    }
+                {         
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
+                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    result = Ok(
+                        innerUsers.Select<IUser, User>(innerUser => mapper.Map<User>(innerUser))
+                        );
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

@@ -1,5 +1,4 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.Interface.Account.Models;
@@ -22,13 +21,37 @@ namespace AccountAPI.Controllers
     public class UserInvitationController : AccountControllerBase
     {
         private readonly IOptions<Settings> _settings;
-        private readonly IContainer _container;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly IAccountFactory _accountFactory;
+        private readonly IAccountSaver _accountSaver;
+        private readonly IEmailAddressFactory _emailAddressFactory;
+        private readonly IEmailAddressSaver _emailAddressSaver;
+        private readonly IUserFactory _userFactory;
+        private readonly IUserInvitationFactory _userInvitationFactory;
+        private readonly IUserInvitationSaver _userInvitationSaver;
 
         public UserInvitationController(IOptions<Settings> settings,
-            IContainer container)
+            SettingsFactory settingsFactory,
+            Lazy<IExceptionService> exceptionService,
+            IAccountFactory accountFactory,
+            IAccountSaver accountSaver,
+            IEmailAddressFactory emailAddressFactory,
+            IEmailAddressSaver emailAddressSaver,
+            IUserFactory userFactory,
+            IUserInvitationFactory userInvitationFactory,
+            IUserInvitationSaver userInvitationSaver)
         {
             _settings = settings;
-            _container = container;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _accountFactory = accountFactory;
+            _accountSaver = accountSaver;
+            _emailAddressFactory = emailAddressFactory;
+            _emailAddressSaver = emailAddressSaver;
+            _userFactory = userFactory;
+            _userInvitationFactory = userInvitationFactory;
+            _userInvitationSaver = userInvitationSaver;
         }
 
         [NonAction]
@@ -53,11 +76,8 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IUserInvitationFactory factory = scope.Resolve<IUserInvitationFactory>();
-                    IEnumerable<IUserInvitation> innerInvitations = await factory.GetByAccountId(settings, accountId.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IEnumerable<IUserInvitation> innerInvitations = await _userInvitationFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
                         await Task.WhenAll(
@@ -67,10 +87,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -101,11 +118,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing invitation id parameter value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IUserInvitationFactory factory = scope.Resolve<IUserInvitationFactory>();
-                    IUserInvitation innerInvitation = await factory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
                     if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
                         innerInvitation = null;
                     if (innerInvitation == null)
@@ -121,10 +135,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -167,38 +178,30 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid expiration timestamp in the past");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                    IAccount account = await accountFactory.Get(settings, accountId.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IAccount account = await _accountFactory.Get(settings, accountId.Value);
                     if (account == null)
                         result = NotFound();
                     else
                     {
                         IEmailAddress emailAddress = await GetEmailAddress(
                             settings,
-                            scope.Resolve<IEmailAddressFactory>(),
-                            scope.Resolve<IEmailAddressSaver>(),
+                            _emailAddressFactory,
+                            _emailAddressSaver,
                             userInvitation.EmailAddress
                             );
-                        IUserInvitationFactory invitationFactory = scope.Resolve<IUserInvitationFactory>();
-                        IUserInvitation innerInvitation = invitationFactory.Create(account, emailAddress);
+                        IUserInvitation innerInvitation = _userInvitationFactory.Create(account, emailAddress);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
                         innerInvitation.Status = UserInvitationStatus.Created;
-                        IUserInvitationSaver saver = scope.Resolve<IUserInvitationSaver>();
-                        await saver.Create(settings, innerInvitation);
+                        await _userInvitationSaver.Create(settings, innerInvitation);
                         result = Ok(await Map(mapper, settings, innerInvitation));
                     }                   
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -222,12 +225,8 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing status value");
                 if (result == null)
                 {
-                    using ILifetimeScope scope = _container.BeginLifetimeScope();
-                    SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                    CoreSettings settings = settingsFactory.CreateAccount(_settings.Value);
-                    IAccountFactory accountFactory = scope.Resolve<IAccountFactory>();
-                    IUserInvitationFactory invitationFactory = scope.Resolve<IUserInvitationFactory>();
-                    IUserInvitation innerInvitation = await invitationFactory.Get(settings, id.Value);
+                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
                     if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
                         innerInvitation = null;
                     if (innerInvitation == null)
@@ -239,22 +238,18 @@ namespace AccountAPI.Controllers
                             userInvitation.Status == (short)UserInvitationStatus.Completed &&
                             !UserTokenHasAccount(innerInvitation.AccountId))
                         {
-                            await AddAccountUser(scope.Resolve<IUserFactory>(), scope.Resolve<IAccountSaver>(), settings, innerInvitation.AccountId);
+                            await AddAccountUser(_userFactory, _accountSaver, settings, innerInvitation.AccountId);
                         }
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
-                        IUserInvitationSaver saver = scope.Resolve<IUserInvitationSaver>();
-                        await saver.Update(settings, innerInvitation);
+                        await _userInvitationSaver.Update(settings, innerInvitation);
                         result = Ok(await Map(mapper, settings, innerInvitation));
                     }                    
                 }
             }
             catch (Exception ex)
             {
-                using (ILifetimeScope scope = _container.BeginLifetimeScope())
-                {
-                    await LogException(ex, scope.Resolve<IExceptionService>(), scope.Resolve<SettingsFactory>(), _settings.Value);
-                }
+                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

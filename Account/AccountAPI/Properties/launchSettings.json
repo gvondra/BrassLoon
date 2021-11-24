@@ -1,27 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:63746/",
-      "sslPort": 44331
+      "applicationUrl": "http://localhost:61408",
+      "sslPort": 0
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "AccountAPI": {
       "commandName": "Project",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "TknCsp": "eyAicCI6ICIxWlJ2QVFRQmhlZFhEcWh6MV9VSXBvcDQ5SEhxdjFMTjZ1X0lTd1BvZFBSaGZ2U04wVEtjMDFUSXlFS0gwcDFjZC1fLWdBQkFwd2dZU2doV25faU1qbzRucEZseDlSV3dvZVlYUnZfM0VNWUVyUjlZZzFGNWVQTmNPOVF2cWJwaWozclJtT0xpUXIyaDhIczJLQXhWZVgtLVVYaElwM0dkRGsxQ0MxbmZ3aWsiLCAia3R5IjogIlJTQSIsICJxIjogInpqdWYzX2k3aUdrNTBsSG8xYzNKSzh4UlNTZGcxMlVQMlc3T2NrQ3J2T1V1UWw5R2tfMGRVSXQwUVYtY2lWZ2t6amlsQXBhdHIzQmF4M001cUlNS0RhSTI1QS16eWd0d3BpWVBjMjIteF9OcHg1aWhNcnIzSms0LU1VOWhuS1JGcnZjUFVTd2F6cjNLRHBhcUpiSENDODdMZmtBVi12aDN0VUlpMWpnaktsMCIsICJkIjogIlFXS1FHZTlwQ1F5Z3o2aGhfN2dXRVdMTWoyanRNYmtrS25pUkJrUVRuRjlIc2tPdThTYXBxYmEwS1FNNE56ZUNLbW1KVVFzWTNnSkc1dG40OTVGVUJwU3l4Z200d1J0ZFZidGtYZ3BhcWFYanlWSnpQTW9wREZ6TXJvbjV3NXZ5YWxnejhhQnZVT0NxRXlXcjVpM3JDWDJOTEV6RmM4elJQVGNweWQtaEwzdGhkX0g2bG4zRE5EenFyamtxQ2JyNXFGbDBnWjByaDg0TGVEZlB5RjJwMzFHM0dnN3Fac3JjZkllX3BRMlFKTXZZeTZlNXNpYUVhOFYwb2tMaE9hSlpwYVY0dVJ2cmpfQzhnSllxZWJERVJFRUxOV3liQjJRSV9BMG9abmtqZ2I0a0pKTGxOTjRWeGtRcjhOdG91NDdQNlY4c0p0d2h3RnUwSjZRbmhnNEJZUSIsICJlIjogIkFRQUIiLCAidXNlIjogInNpZyIsICJraWQiOiAiS0JDdERIM3c0elVZQ3FqQi1tcEpkaDhTRVVlbzFmVl9sbkdadVA0WTF0OCIsICJxaSI6ICJVZmUxNHRVN2JSbEhZUHpSYi1XS0JVVnRMcy1LQVY1SHZCZkwtRGtONWEwdEY2VGZsRmZNYWllREgzcHFRZS1MbzNnb2JhZFY1bmEyQTNQaHQ2aDNYOVRWMlk0WF9haE82bjNkQmFDb1JOcElxSXdSMFo1TUdLYmxmaGUzZHVOcXJET3VJODRLc1B6Y29pV2F6VFFQcU0zQS1feUJSMkF1Y2xacmdzT2ppM00iLCAiZHAiOiAic2xkVHFZRnkxQ0VzYkt6MHJtdUpZYWRYQUtidTRmdC12cUtpbVNFV1JqS2FCcXltanZ5NFB5OFl5VF9rc2xWOEZScHRaT3pSRDZpT3Y2TGUwbzEwc01TN0RWMHk3dmZCbWk3TFdSbjdjQ0lwWFhaRExzUWxybjFua3YzSEh1N254ZTlFZldsV2pXeFRnTDhocGFkRzZFRm01aGlPY21OSVJkejFQUTA2N3FFIiwgImFsZyI6ICJSUzUxMiIsICJkcSI6ICJwd2JYUnZnV09qYXU0ODMtLXhvOXNjRTZuRHJPVGVURjMxM0V5ZmZpbjR3bDJROTlBLUpkMlp2NFBmSUh2NXlwd25OU0FUU3oyb0R1cE5hSGZoa1REVk94alNmQ2Z3S2c2NC1ydDlyTVJ2aTNWVFlpYUFuUW5TLUZZejVkV2hZWmNja2FtSzFWME5jWlRKTnRualhIYVBURkRxMHNvQ1NZSHk4X002d25udWsiLCAibiI6ICJyQTh2Nm5NM3VqNHFsQ3kxMjdINjBGMlBPR1ZibFRRNkRWbUpKRGwxYkIweGQtdGZQbnQ2X2ludjhQSHd5cDQxZmMxblYyTDBvZWd1dURyMWRaQ00zUUhhbDM5MVRZbEN4aFhBWXlqRGdmd0JnMkVNNUhUSl9TbFNnTkx0NzNmaWl3LTlmaU5qNVNhZzB3R0ZreW5XaHplQTR6cDBXQ0tyOHM1S1hvLTJUNEt1eGdmRmJ4WWNUZlRQbmpxdHBaaXNqbmtMZXBQLTlUcFgxZWs2a2tzTkowYjcyQVRBc0FoMWpBNHF1dHJpOG9PQUcySlM3SjZVQVFGcXVQbmFwV0RzNjYtUkJUQ3d2MkVUN1BpekFXN21hcEE4MkxPNXhRTHE0X1pqTDF6MFNrMFJScFZrUzNGVXdIeF9FMFI0Q21EZDNOLVRNb29KOWR4R2hOYzAzNzlDNVEiIH0=",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:5000",
+      "dotnetRunMessages": true
     }
   }
 }
