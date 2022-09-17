@@ -9,7 +9,7 @@
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-prerelease.10</Version>
+    <Version>1.0.0-prerelease.11</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="BrassLoon.RestClient" Version="1.0.0" />
-    <PackageReference Include="Polly" Version="7.2.2" />
+    <PackageReference Include="BrassLoon.RestClient" Version="1.1.0" />
+    <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Polly.Caching.Memory" Version="3.0.2" />
   </ItemGroup>
 
