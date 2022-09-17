@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
     this.ShowActAdmin = false;
     this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
       this.ShowSysAdmin = false;
-      if (isAuthenticated) {
+      if (isAuthenticated.isAuthenticated) {
         this.httpClientUtil.GetRoles(this.tokenService)
         .then(role => {
           if (role && role.length > 0 && role.some(r => r === 'sysadmin')) {

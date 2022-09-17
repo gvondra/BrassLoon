@@ -83,7 +83,7 @@ export class AccountComponent implements OnInit {
   private RoleCheck() {
     this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
       this.ShowAdmin = false;
-      if (isAuthenticated) {
+      if (isAuthenticated.isAuthenticated) {
         this.httpClientUtil.GetRoles(this.tokenService)
         .then(role => {
           if (role && role.length > 0 && role.some(r => r === 'actadmin')) {

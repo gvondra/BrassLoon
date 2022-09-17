@@ -20,11 +20,11 @@ constructor (private oidcSecurityService: OidcSecurityService,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       return this.oidcSecurityService.isAuthenticated$.pipe(
         flatMap(isAuthenticated => {
-          if (isAuthenticated && next && next.data && next.data.Role && next.data.Role != "") {
+          if (isAuthenticated.isAuthenticated && next && next.data && next.data.Role && next.data.Role != "") {
             return this.RoleCheck(next.data.Role);
           }
           else {
-            return Promise.resolve(isAuthenticated);
+            return Promise.resolve(isAuthenticated.isAuthenticated);
           }          
         })
       );

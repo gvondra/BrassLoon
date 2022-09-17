@@ -24,7 +24,7 @@ export class AccountsComponent implements OnInit {
   ngOnInit(): void {
     this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
       this.Accounts = null;
-      if (isAuthenticated) {
+      if (isAuthenticated.isAuthenticated) {
         this.LoadAccounts();
       }
     });    

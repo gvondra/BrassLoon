@@ -23,7 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.oidcSecurityService
         .checkAuth()
         .subscribe((isAuthenticated) => {
-            if (!isAuthenticated) {
+            if (!isAuthenticated.isAuthenticated) {
                 this.UserImageSource = null;
                 this.httpClientUtilService.DropCache();
                 if (!window.location.pathname.endsWith('autologin')) {
@@ -31,13 +31,13 @@ export class AppComponent implements OnInit, OnDestroy {
                     this.router.navigate(['/autologin']);
                 }
             }
-            if (isAuthenticated) {
+            if (isAuthenticated.isAuthenticated) {
                 this.navigateToStoredEndpoint();
             } 
         });
         this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
-            this.IsLoggedIn = isAuthenticated;
-            if (isAuthenticated) {
+            this.IsLoggedIn = isAuthenticated.isAuthenticated;
+            if (isAuthenticated.isAuthenticated) {
                 this.UserImageSource = this.GetUserImageSource();
             }
             else {
