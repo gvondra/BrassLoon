@@ -7,15 +7,16 @@ import { environment } from 'src/environments/environment';
 })
 export class AppSettingsService {
 
-  private AppSettings;
+  private AppSettings: any;
 
   constructor(private httpClient: HttpClient) { }
 
-  LoadSettings() {
+  LoadSettings() : Promise<any> {
     return this.httpClient.get(environment["AppSettingsPath"])
     .toPromise()
     .then(res => {
       this.AppSettings = res;
+      return res;
     });
   }
 
