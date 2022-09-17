@@ -1,8 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { AuthModule, LogLevel, OidcConfigService, OidcSecurityService } from 'angular-auth-oidc-client';
+import { NgModule } from '@angular/core';
+import { AuthModule, LogLevel, OidcSecurityService, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from './app-routing.module';
@@ -30,33 +30,34 @@ import { CreateInvitationComponent } from './create-invitation/create-invitation
 import { UserInvitationComponent } from './user-invitation/user-invitation.component';
 import { AcceptInvitationComponent } from './accept-invitation/accept-invitation.component';
 
-const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsService: AppSettingsService) => {
-  return () => {
-      return appSettingsService.LoadSettings()
-      .then(() =>       
-      oidcConfigService.withConfig({
-          stsServer: appSettingsService.GetSettings().GoogleStsServer,
-          redirectUrl: window.location.origin + appSettingsService.GetSettings().BaseHref + "/",
-          clientId: appSettingsService.GetSettings().GoogleClientId,
-          responseType: 'id_token token',
-          scope: 'openid email profile',
-          triggerAuthorizationResultEvent: true,
-          postLogoutRedirectUri: window.location.origin + '/unauthorized',
-          startCheckSession: false,
-          silentRenew: false,
-          silentRenewUrl: window.location.origin + '/silent-renew.html',
-          postLoginRoute: '/home',
-          forbiddenRoute: '/forbidden',
-          unauthorizedRoute: '/unauthorized',
-          logLevel: LogLevel.Debug,
-          historyCleanupOff: true,
-          autoUserinfo: false
-          // iss_validation_off: false
-          // disable_iat_offset_validation: true
-      })
-      );
-  }
-}
+export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
+  const settings$: any = appSettingsService.LoadSettings()
+  .then((settings) => 
+  {    
+    return {
+      authority: settings.GoogleStsServer,
+      redirectUrl: window.location.origin + settings.BaseHref + "/",
+      clientId: settings.GoogleClientId,
+      responseType: 'id_token token',
+      scope: 'openid email profile',
+      triggerAuthorizationResultEvent: true,
+      postLogoutRedirectUri: window.location.origin + '/unauthorized',
+      startCheckSession: false,
+      silentRenew: false,
+      silentRenewUrl: window.location.origin + '/silent-renew.html',
+      postLoginRoute: '/home',
+      forbiddenRoute: '/forbidden',
+      unauthorizedRoute: '/unauthorized',
+      logLevel: LogLevel.Debug,
+      historyCleanupOff: true,
+      autoUserinfo: false
+      // iss_validation_off: false
+      // disable_iat_offset_validation: true
+    }
+  });
+
+  return new StsConfigHttpLoader(settings$);
+};
 
 @NgModule({
   declarations: [
@@ -89,18 +90,17 @@ const InitializeConfig = (oidcConfigService: OidcConfigService, appSettingsServi
     FontAwesomeModule,
     AppRoutingModule,
     HttpClientModule,
-    AuthModule.forRoot()
+    AuthModule.forRoot({
+      loader: {
+        provide: StsConfigLoader,
+        useFactory: httpLoaderFactory,
+        deps: [AppSettingsService],
+      }
+    })
   ],
   providers: [    
     AppSettingsService,
-    OidcSecurityService,
-    OidcConfigService,
-    {
-        provide: APP_INITIALIZER,
-        useFactory: InitializeConfig,
-        deps: [OidcConfigService, AppSettingsService],
-        multi: true,
-    }
+    OidcSecurityService
   ],
   bootstrap: [AppComponent]
 })
