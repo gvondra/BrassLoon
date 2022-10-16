@@ -1,5 +1,5 @@
 ### STAGE 1: Build ###
-FROM node:12.20-alpine AS build
+FROM node:16.18-alpine AS build
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install
@@ -7,7 +7,7 @@ ARG baseHref=/
 RUN npm run build -- --configuration production --baseHref=$baseHref
 
 ### STAGE 2: Run ###
-FROM nginx:1.19.5-alpine
+FROM nginx:1.23-alpine
 ## Remove default Nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
