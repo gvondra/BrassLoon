@@ -18,12 +18,14 @@ export class AppComponent implements OnInit, OnDestroy {
         private httpClientUtilService: HttpClientUtilService) { }
 
     ngOnInit(): void {
+        console.log("Start app component init")
         this.IsLoggedIn = false;
         this.UserImageSource = null;
         this.oidcSecurityService
         .checkAuth()
         .subscribe((isAuthenticated) => {
-            if (!isAuthenticated.isAuthenticated) {
+            console.log(`app init is authenticated ${isAuthenticated.isAuthenticated}`)
+            /*if (!isAuthenticated.isAuthenticated) {
                 this.UserImageSource = null;
                 this.httpClientUtilService.DropCache();
                 if (!window.location.pathname.endsWith('autologin')) {
@@ -33,7 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
             }
             if (isAuthenticated.isAuthenticated) {
                 this.navigateToStoredEndpoint();
-            } 
+            }*/ 
         });
         this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
             this.IsLoggedIn = isAuthenticated.isAuthenticated;
