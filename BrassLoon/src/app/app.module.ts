@@ -35,7 +35,8 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
   .then((settings) => 
   {    
     return {
-      authority: settings.GoogleStsServer,
+      authority: settings.GoogleStsServer,     
+      authWellknownEndpointUrl: settings.AuthWellknownEndpointUrl,
       redirectUrl: window.location.origin + settings.BaseHref + "/",
       clientId: settings.GoogleClientId,
       responseType: 'id_token token',
