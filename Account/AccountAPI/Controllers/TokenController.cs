@@ -129,13 +129,19 @@ namespace AccountAPI.Controllers
                     await _emailAddressSaver.Create(coreSettings, emailAddress);
                 }
                 user = _userFactory.Create(subscriber, emailAddress);
-                user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)).Value;
+                user.Name = User.Claims
+                    .First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))
+                    .Value;
                 SetSuperUser(user);
                 await _userSaver.Create(coreSettings, user);
             }
             else
             {
-                user.Name = User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase)).Value;
+                user.Name = User.Claims
+                    .First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) 
+                    || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))
+                    .Value;
                 SetSuperUser(user);
                 await _userSaver.Update(coreSettings, user);
             }
