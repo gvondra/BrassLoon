@@ -60,7 +60,7 @@ namespace AccountAPI
                     RequireSignedTokens = true,
                     ValidAudience = configuration["Issuer"],
                     ValidIssuer = configuration["Issuer"],
-                    IssuerSigningKey = Controllers.JwksController.GetSecurityKey(configuration["TknCsp"])
+                    IssuerSigningKey = RsaSecurityKeySerializer.GetSecurityKey(configuration["TknCsp"])
                 };
                 o.IncludeErrorDetails = true;
             })
