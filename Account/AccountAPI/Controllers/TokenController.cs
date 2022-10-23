@@ -164,12 +164,7 @@ namespace AccountAPI.Controllers
         [NonAction]
         private async Task<string> CreateToken(IUser user)
         {
-            RSAParameters rsaParameters = CreateRSAParameter();
-            //RSA rsa = new RSACryptoServiceProvider(2048);
-            //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));
-            RsaSecurityKey securityKey = new RsaSecurityKey(rsaParameters);
-            //JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
-            //Debug.WriteLine(JsonConvert.SerializeObject(jsonWebKey));
+            RsaSecurityKey securityKey = RsaSecurityKeySerializer.GetSecurityKey(_settings.Value.TknCsp, true);
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
             List<Claim> claims = new List<Claim>
                 {
@@ -207,12 +202,7 @@ namespace AccountAPI.Controllers
         [NonAction]
         private Task<string> CreateToken(IClient client)
         {
-            RSAParameters rsaParameters = CreateRSAParameter();
-            //RSA rsa = new RSACryptoServiceProvider(2048);
-            //Debug.WriteLine(Convert.ToBase64String(rsa.ExportRSAPublicKey()));
-            RsaSecurityKey securityKey = new RsaSecurityKey(rsaParameters);
-            JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
-            //Debug.WriteLine(JsonConvert.SerializeObject(jsonWebKey));
+            RsaSecurityKey securityKey = RsaSecurityKeySerializer.GetSecurityKey(_settings.Value.TknCsp, true);
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
             List<Claim> claims = new List<Claim>
             {
@@ -228,23 +218,6 @@ namespace AccountAPI.Controllers
                 signingCredentials: credentials
                 );
             return Task.FromResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
-        }
-
-        [NonAction]
-        private RSAParameters CreateRSAParameter()
-        {
-            dynamic tknCsp = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(_settings.Value.TknCsp)));
-            return new RSAParameters
-            {
-                D = Base64UrlEncoder.DecodeBytes((string)tknCsp.d),
-                DP = Base64UrlEncoder.DecodeBytes((string)tknCsp.dp),
-                DQ = Base64UrlEncoder.DecodeBytes((string)tknCsp.dq),
-                Exponent = Base64UrlEncoder.DecodeBytes((string)tknCsp.e),
-                InverseQ = Base64UrlEncoder.DecodeBytes((string)tknCsp.qi),
-                Modulus = Base64UrlEncoder.DecodeBytes((string)tknCsp.n),
-                P = Base64UrlEncoder.DecodeBytes((string)tknCsp.p),
-                Q = Base64UrlEncoder.DecodeBytes((string)tknCsp.q)
-            };
         }
     }
 }
