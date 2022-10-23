@@ -89,8 +89,10 @@ export class AccountComponent implements OnInit {
           if (role && role.length > 0 && role.some(r => r === 'actadmin')) {
             this.ShowAdmin = true;
           }
-          this.LoadDeletedDomains(this.AccountId);
-          this.LoadUsers(this.AccountId);
+          if (this.AccountId) {
+            this.LoadDeletedDomains(this.AccountId);
+            this.LoadUsers(this.AccountId);
+          }
         })
         .catch(err => {
           console.error(err);
