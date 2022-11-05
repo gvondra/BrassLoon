@@ -1,6 +1,8 @@
 ﻿using BrassLoon.Interface.Log.Models;
 using BrassLoon.RestClient;
+using Microsoft.Extensions.Caching.Memory;
 using Polly;
+using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -10,6 +12,7 @@ namespace BrassLoon.Interface.Log
 {
     public class MetricService : IMetricService
     {
+        private static readonly Polly.Policy _eventCodeCache = Polly.Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -51,6 +54,34 @@ namespace BrassLoon.Interface.Log
                     Data = data,
                     CreateTimestamp = createTimestamp
                 });
+        }
+
+        public async Task<List<string>> GetEventCodes(ISettings settings, Guid domainId)
+        {
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath("MetricEventCode/{domainId}")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            IResponse<List<string>> response = await _eventCodeCache.Execute(
+                (context) => _service.Send<List<string>>(request),
+                new Context(domainId.ToString("N"))
+            );
+            _restUtil.CheckSuccess(response);
+            return response.Value;
+        }
+
+        public async Task<List<Metric>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode)
+        {
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath(domainId.ToString("N"))
+                .AddQueryParameter("maxTimestamp", maxTimestamp.ToString("o"))
+                .AddQueryParameter("eventCode", eventCode ?? string.Empty)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            IResponse<List<Metric>> response = await _service.Send<List<Metric>>(request);
+            _restUtil.CheckSuccess(response);
+            return response.Value;
         }
     }
 }
