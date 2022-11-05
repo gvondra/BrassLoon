@@ -15,7 +15,6 @@ namespace BrassLoon.Interface.Log
             builder.RegisterInstance<IService>(new Service());
             builder.RegisterType<ExceptionService>().As<IExceptionService>();
             builder.RegisterType<MetricService>().As<IMetricService>();
-            builder.RegisterType<Service>().As<IService>();
             builder.RegisterType<TraceService>().As<ITraceService>();
         }
     }
