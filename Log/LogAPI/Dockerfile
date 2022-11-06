@@ -5,7 +5,6 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
-RUN ls
 RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "Log/LogAPI/nuget.config"
 RUN dotnet restore "Log/LogAPI/LogAPI.csproj" --configfile "Log/LogAPI/nuget.config"
 WORKDIR "/src/Log/LogAPI"
