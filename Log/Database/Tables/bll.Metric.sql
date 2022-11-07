@@ -6,7 +6,9 @@
 	[Magnitude] FLOAT NULL, -- in seconds
 	[Data] NVARCHAR(MAX) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Metric_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_Metric] PRIMARY KEY CLUSTERED ([MetricId])
+	[Status] VARCHAR(500) NOT NULL DEFAULT (''), 
+    [Requestor] VARCHAR(200) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_Metric] PRIMARY KEY CLUSTERED ([MetricId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 

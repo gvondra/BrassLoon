@@ -12,5 +12,7 @@ namespace BrassLoon.Interface.Log.Models
         public double? Magnitude { get; set; }
         public dynamic Data { get; set; }
         public DateTime? CreateTimestamp { get; set; }
+        public string Status { get; set; }
+        public string Requestor { get; set; }
     }
 }

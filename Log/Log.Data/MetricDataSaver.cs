@@ -38,6 +38,8 @@ namespace BrassLoon.Log.Data
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "magnitude", DbType.Double, DataUtil.GetParameterValue(metricData.Magnitude));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "data", DbType.String, DataUtil.GetParameterValue(metricData.Data));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "timestamp", DbType.DateTime2, DataUtil.GetParameterValue(metricData.CreateTimestamp));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.AnsiString, DataUtil.GetParameterValue(metricData.Status));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "requestor", DbType.AnsiString, DataUtil.GetParameterValue(metricData.Requestor));
 
                     await command.ExecuteNonQueryAsync();
                     metricData.MetricId = (long)id.Value;

@@ -25,6 +25,9 @@ namespace BrassLoon.Log.Core
         }
 
         public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode)
+            => Create(domainId, createTimestamp, eventCode, string.Empty, string.Empty);
+
+        public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode, string status, string requestor)
         {
             if (!createTimestamp.HasValue)
                 createTimestamp = DateTime.UtcNow;
@@ -34,7 +37,9 @@ namespace BrassLoon.Log.Core
                 { 
                     DomainId = domainId,
                     EventCode = eventCode,
-                    CreateTimestamp = createTimestamp.Value
+                    CreateTimestamp = createTimestamp.Value,
+                    Status = status ?? string.Empty,
+                    Requestor = requestor ?? string.Empty
                 },
                 _dataSaver
                 );

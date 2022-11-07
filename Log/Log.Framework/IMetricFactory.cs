@@ -9,6 +9,7 @@ namespace BrassLoon.Log.Framework
     public interface IMetricFactory
     {
         IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode);
+        IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode, string status, string requestor);
         Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId);
         Task<IEnumerable<IMetric>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp);
     }

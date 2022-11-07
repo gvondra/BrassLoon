@@ -13,5 +13,7 @@ namespace BrassLoon.Log.Data.Models
         [ColumnMapping("Magnitude")] public double? Magnitude { get; set; }
         [ColumnMapping("Data")] public string Data { get; set; }
         [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping("Status")] public string Status { get; set; }
+        [ColumnMapping("Requestor")] public string Requestor { get; set; }
     }
 }

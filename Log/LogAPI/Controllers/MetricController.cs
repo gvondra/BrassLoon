@@ -128,7 +128,7 @@ namespace LogAPI.Controllers
                     if (result == null)
                     {
                         CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
-                        IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode);
+                        IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode, metric.Status, metric.Requestor);
                         IMapper mapper = MapperConfigurationFactory.CreateMapper();
                         mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
                         await _metricSaver.Create(settings, innerMetric);

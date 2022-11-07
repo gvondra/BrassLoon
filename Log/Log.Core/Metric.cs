@@ -49,6 +49,10 @@ namespace BrassLoon.Log.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
+        public string Status => _data.Status;
+
+        public string Requestor => _data.Requestor;
+
         public async Task Create(ITransactionHandler transactionHandler)
         {
             await _dataSaver.Create(transactionHandler, _data);
