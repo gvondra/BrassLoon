@@ -74,6 +74,7 @@ namespace BrassLoon.Interface.Log
         public async Task<List<Metric>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath("Metric")
                 .AddPath(domainId.ToString("N"))
                 .AddQueryParameter("maxTimestamp", maxTimestamp.ToString("o"))
                 .AddQueryParameter("eventCode", eventCode ?? string.Empty)
