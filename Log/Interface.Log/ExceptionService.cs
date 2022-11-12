@@ -49,6 +49,32 @@ namespace BrassLoon.Interface.Log
                 );
         }
 
+        public async Task<LogModels.Exception> Get(ISettings settings, Guid domainId, long id)
+        {
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+            .AddPath("Exception")
+            .AddPath(domainId.ToString("N"))
+            .AddPath(id.ToString())
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            IResponse<LogModels.Exception> response = await _service.Send<LogModels.Exception>(request);
+            _restUtil.CheckSuccess(response);
+            return response.Value;
+        }
+
+        public async Task<List<LogModels.Exception>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp)
+        {
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+            .AddPath("Exception")
+            .AddPath(domainId.ToString("N"))
+            .AddQueryParameter("maxTimestamp", maxTimestamp.ToString("o"))
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            IResponse<List<LogModels.Exception>> response = await _service.Send<List<LogModels.Exception>>(request);
+            _restUtil.CheckSuccess(response);
+            return response.Value;
+        }
+
         private LogModels.Exception CreateException(Guid domainId, DateTime? createTimestamp, System.Exception exception)
         {
             LogModels.Exception innerException = null;
