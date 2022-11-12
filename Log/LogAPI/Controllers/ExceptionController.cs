@@ -39,7 +39,7 @@ namespace LogAPI.Controllers
 
         [HttpGet("{domainId}")]
         [ProducesResponseType(typeof(LogModels.Exception[]), 200)]
-        [Authorize(ServiceCollectionExtensions.POLICY_SYS_ADMIN)]
+        [Authorize()]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null)
         {
             IActionResult result = null;
