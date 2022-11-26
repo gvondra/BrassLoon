@@ -2,19 +2,17 @@
 using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
+using BrassLoon.JwtUtility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +22,10 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class TokenController : AccountControllerBase
     {
+
+        private const string JWT_ISSUER = "urn:brassloon";
+        private const string JWT_AUDIENCE = "urn:brassloon";
+
         private readonly IOptions<Settings> _settings;
         private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
@@ -164,13 +166,8 @@ namespace AccountAPI.Controllers
         [NonAction]
         private async Task<string> CreateToken(IUser user)
         {
-            RsaSecurityKey securityKey = RsaSecurityKeySerializer.GetSecurityKey(_settings.Value.TknCsp, true);
-            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
-            List<Claim> claims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))
-                };
-            Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.IdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
+            List<Claim> claims = new List<Claim>();
+            Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.ExternalIdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
             if (claim != null)
                 claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateAccount(_settings.Value))).Address));
@@ -179,14 +176,9 @@ namespace AccountAPI.Controllers
                 claims.Add(new Claim("role", "sysadmin"));
             if ((user.Roles & UserRole.AccountAdministrator) == UserRole.AccountAdministrator)
                 claims.Add(new Claim("role", "actadmin"));
-            JwtSecurityToken token = new JwtSecurityToken(
-                "urn:brassloon",
-                "urn:brassloon",
-                claims,
-                expires: DateTime.Now.AddHours(6),
-                signingCredentials: credentials
-                );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return JwtSecurityTokenUtility.Write(
+                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
+                ); 
         }
 
         [NonAction]
@@ -202,22 +194,16 @@ namespace AccountAPI.Controllers
         [NonAction]
         private Task<string> CreateToken(IClient client)
         {
-            RsaSecurityKey securityKey = RsaSecurityKeySerializer.GetSecurityKey(_settings.Value.TknCsp, true);
-            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha512);
             List<Claim> claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))
+                new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N")),
+                new Claim("accounts", client.AccountId.ToString("N"))
             };
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N")));
-            claims.Add(new Claim("accounts", client.AccountId.ToString("N")));
-            JwtSecurityToken token = new JwtSecurityToken(
-                "urn:brassloon",
-                "urn:brassloon",
-                claims,
-                expires: DateTime.Now.AddHours(6),
-                signingCredentials: credentials
-                );
-            return Task.FromResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
+            return Task.FromResult<string>(JwtSecurityTokenUtility.Write(
+                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
+                ));
         }
+
+        private static DateTime GetJwtExpiration() => DateTime.Now.AddHours(6);
     }
 }
