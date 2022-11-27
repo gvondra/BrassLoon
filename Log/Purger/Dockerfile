@@ -1,16 +1,15 @@
 ﻿FROM mcr.microsoft.com/dotnet/runtime:6.0-bullseye-slim AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/runtime:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "Log/Purger/nuget.config"
 WORKDIR "/src/Log/Purger"
-RUN dotnet restore "Purger.csproj" --configfile "nuget.config"
+RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "nuget.config"
 RUN dotnet build "Purger.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Purger.csproj" -c Release -o /app/publish
+RUN dotnet publish "Purger.csproj" --no-restore -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
