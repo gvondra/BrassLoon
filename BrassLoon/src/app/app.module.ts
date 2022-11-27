@@ -29,6 +29,8 @@ import { AccountSearchComponent } from './account-search/account-search.componen
 import { CreateInvitationComponent } from './create-invitation/create-invitation.component';
 import { UserInvitationComponent } from './user-invitation/user-invitation.component';
 import { AcceptInvitationComponent } from './accept-invitation/accept-invitation.component';
+import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
+import { ItemCodesComponent } from './item-codes/item-codes.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -83,7 +85,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     AccountSearchComponent,
     CreateInvitationComponent,
     UserInvitationComponent,
-    AcceptInvitationComponent
+    AcceptInvitationComponent,
+    LookupCodesComponent,
+    ItemCodesComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,12 @@
+<a *ngIf="Domain" [routerLink]="['/a', Domain.AccountId]">back</a>
+<h2>Domain</h2>
+<app-domain-nav *ngIf="Domain" CurrentTab="Metrics" [DomainId]="Domain.DomainId"></app-domain-nav>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="Codes">
+    <h3>All Codes</h3>
+    <ul style="list-style: none inside; padding-left: 0">
+        <li *ngFor="let code of Codes">{{ code }}</li>
+    </ul>
+</div>

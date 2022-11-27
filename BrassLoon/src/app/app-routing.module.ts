@@ -17,6 +17,8 @@ import { AccountSearchComponent } from './account-search/account-search.componen
 import { CreateInvitationComponent } from './create-invitation/create-invitation.component';
 import { UserInvitationComponent } from './user-invitation/user-invitation.component';
 import { AcceptInvitationComponent } from './accept-invitation/accept-invitation.component';
+import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
+import { ItemCodesComponent } from './item-codes/item-codes.component';
 
 const routes: Routes = [
   {
@@ -86,6 +88,16 @@ const routes: Routes = [
   {
     path: "d/:domainId/Metric",
     component: MetricsComponent
+  },
+  {
+    path: "d/:domainId/LUPC",
+    component: LookupCodesComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/ITMC",
+    component: ItemCodesComponent,
+    canActivate: [ AuthGuard ]
   },
   {
     path: 'sa/PurgeWorker',

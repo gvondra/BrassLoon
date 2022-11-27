@@ -4,6 +4,8 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HttpHeaders } from '@angular/common/http';
 import { TokenService } from './services/token.service';
 import jwt_decode from 'jwt-decode';
+import { Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,9 @@ export class HttpClientUtilService {
   GetLogBaseAddress() : string {
     return this.appSettings.GetSettings().LogBaseAddress;
   }
+  GetConfigBaseAddress() : string {
+    return this.appSettings.GetSettings().ConfigBaseAddress;
+  }
 
   CreateUserTokenAuthHeader() : HttpHeaders {
     let tkn: string = this.oidcSecurityService.getIdToken().trim();
@@ -31,6 +36,13 @@ export class HttpClientUtilService {
     ;
   }
 
+  CreateAuthHeader2(tokenService: TokenService) : Observable<HttpHeaders> {
+    return this.GetToken2(tokenService)
+    .pipe(
+      map(tkn => this.CreateAuthorizationHeader(tkn))      
+      );
+  }
+
   GetToken(tokenService: TokenService) : Promise<string> {
     if (this.IsCachedTokenAvailable()) {
       return Promise.resolve(this.GetCachedToken());
@@ -38,13 +50,29 @@ export class HttpClientUtilService {
     else {
       return tokenService.GetToken()
       .then(tkn => {
-        sessionStorage.setItem("AccessToken", tkn);
-        let expiration: Date = new Date();
-        expiration.setMinutes(expiration.getMinutes() + 59);
-        sessionStorage.setItem("AccessToknExpiration", expiration.valueOf().toString());
+        this.TapAccessToken(tkn);
         return tkn;
       });
     }
+  }
+
+  GetToken2(tokenService: TokenService) : Observable<string> {
+    if (this.IsCachedTokenAvailable()) {
+      return of(this.GetCachedToken());
+    }
+    else {
+      return tokenService.GetToken2()
+      .pipe(
+        tap(tkn => this.TapAccessToken(tkn))
+      );
+    }
+  }
+
+  private TapAccessToken(tkn: string): void {
+    sessionStorage.setItem("AccessToken", tkn);
+    let expiration: Date = new Date();
+    expiration.setMinutes(expiration.getMinutes() + 59);
+    sessionStorage.setItem("AccessToknExpiration", expiration.valueOf().toString());
   }
 
   GetRoles(tokenService: TokenService) : Promise<Array<string>> {
