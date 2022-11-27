@@ -13,7 +13,7 @@ namespace BrassLoon.Account.Core
         {
             if (string.IsNullOrEmpty(secret))
                 throw new ArgumentNullException(nameof(secret));
-            using (HashAlgorithm algorithm = new SHA512Managed())
+            using (HashAlgorithm algorithm = SHA512.Create())
             {
                 return algorithm.ComputeHash(
                     Encoding.Unicode.GetBytes(string.Concat(PADDING, secret.Trim()))
