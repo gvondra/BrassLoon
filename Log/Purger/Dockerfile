@@ -6,10 +6,10 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src/Log/Purger"
 RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "nuget.config"
-RUN dotnet build "Purger.csproj" -c Release -o /app/build
+RUN dotnet build "Purger.csproj" -r linux-x64 -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Purger.csproj" --no-restore -c Release -o /app/publish
+RUN dotnet publish "Purger.csproj" --no-restore -r linux-x64 -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
