@@ -9,8 +9,9 @@
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
-	<AssemblyVersion>1.0.0.22</AssemblyVersion>
+    <Version>2.0.0</Version>
+	<AssemblyVersion>2.0.0.0</AssemblyVersion>
+	<PackageReleaseNotes>- 2.0 upgrade to RestUtil v3</PackageReleaseNotes>	
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="[6.1.0,7)" />
-    <PackageReference Include="BrassLoon.RestClient" Version="[2.0.1,2.1)" />
+    <PackageReference Include="BrassLoon.RestClient" Version="3.0.0" />
     <PackageReference Include="Polly" Version="[7.2.3,7.3)" />
     <PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4)" />
   </ItemGroup>
