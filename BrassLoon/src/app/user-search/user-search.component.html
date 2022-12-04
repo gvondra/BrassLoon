@@ -1,1 +1,26 @@
-<p>user-search works!</p>
+<h2>User Search</h2>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <label>Email</label>
+            <input type="text" class="form-control" placeholder="Address" [value]="Address" (change)="Address=$event.target.value" />            
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" (click)="Load()">Load</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="ShowBusy" class="spinner-border text-primary" role="status">
+<span class="sr-only">Loading...</span>
+</div>
+<div *ngIf="Users && Users.length > 0" class="container">
+    <p>Be wary of sharing information and updating accounts.  Assume the person for whom you are administering changes has malicious intent.  Require them to name the account they need changed.  Don't enumerate the list of accounts.</p>
+</div>
+<table *ngIf="Users" class="table">    
+    <tr *ngFor="let user of Users">
+        <td><a [routerLink]="['/sa/User', user.UserId]">{{ user.Name }}</a></td>
+    </tr>
+</table>    
