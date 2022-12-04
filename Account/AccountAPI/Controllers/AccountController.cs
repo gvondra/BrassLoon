@@ -19,8 +19,6 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class AccountController : AccountControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IAccountFactory _accountFactory;
         private readonly IAccountSaver _accountSaver;
@@ -32,9 +30,8 @@ namespace AccountAPI.Controllers
             IAccountFactory accountFactory,
             IAccountSaver accountSaver,
             IUserFactory userFactory)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
             _accountFactory = accountFactory;
             _accountSaver = accountSaver;

@@ -17,8 +17,6 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class ClientController : AccountControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
@@ -30,9 +28,8 @@ namespace AccountAPI.Controllers
             IClientFactory clientFactory,
             IClientSaver clientSaver,
             ISecretProcessor secretProcessor)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;

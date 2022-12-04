@@ -9,11 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,16 +19,13 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class JwksController : AccountControllerBase
     {
-        private IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
 
         public JwksController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Lazy<IExceptionService> exceptionService)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
         }
 
