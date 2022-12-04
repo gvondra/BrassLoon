@@ -20,6 +20,7 @@ import { AcceptInvitationComponent } from './accept-invitation/accept-invitation
 import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
 import { ItemCodesComponent } from './item-codes/item-codes.component';
 import { UserSearchComponent } from './user-search/user-search.component';
+import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   {
@@ -115,6 +116,12 @@ const routes: Routes = [
   {
     path: 'sa/Users',
     component: UserSearchComponent,
+    data: { "Role": "sysadmin" },
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: 'sa/User/:userId',
+    component: UserComponent,
     data: { "Role": "sysadmin" },
     canActivate: [ AuthGuard ]
   }

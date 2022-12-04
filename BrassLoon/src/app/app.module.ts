@@ -32,6 +32,7 @@ import { AcceptInvitationComponent } from './accept-invitation/accept-invitation
 import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
 import { ItemCodesComponent } from './item-codes/item-codes.component';
 import { UserSearchComponent } from './user-search/user-search.component';
+import { UserComponent } from './user/user.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -89,7 +90,8 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     AcceptInvitationComponent,
     LookupCodesComponent,
     ItemCodesComponent,
-    UserSearchComponent
+    UserSearchComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
