@@ -24,7 +24,7 @@ namespace AccountAPI
         }
 
         [NonAction]
-        protected async Task<IUser> GetUser(IUserFactory userFactory, CoreSettings settings)
+        protected async Task<IUser> GetUser(IUserFactory userFactory, BrassLoon.CommonCore.ISettings settings)
         {
             string referenceId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             return await userFactory.GetByReferenceId(settings, referenceId);
