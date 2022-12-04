@@ -20,8 +20,6 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class UserInvitationController : AccountControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IAccountFactory _accountFactory;
         private readonly IAccountSaver _accountSaver;
@@ -41,9 +39,8 @@ namespace AccountAPI.Controllers
             IUserFactory userFactory,
             IUserInvitationFactory userInvitationFactory,
             IUserInvitationSaver userInvitationSaver)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
             _accountFactory = accountFactory;
             _accountSaver = accountSaver;

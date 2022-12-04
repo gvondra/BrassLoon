@@ -15,6 +15,7 @@ namespace AccountAPI
         internal const string POLICY_READ_ACCOUNT = "READ:ACCOUNT";
         internal const string POLICY_EDIT_ACCOUNT = "EDIT:ACCOUNT";
         internal const string POLICY_ADMIN_ACCOUNT = "ADMIN:ACCOUNT";
+        internal const string POLICY_ADMIN_SYS = "ADMIN:SYS";
 
         public static IServiceCollection AddCors(this IServiceCollection services, IConfiguration configuration)
         {
@@ -122,6 +123,13 @@ namespace AccountAPI
                     configure =>
                     {
                         configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_ACCOUNT, configuration["Issuer"], "actadmin"))
+                        .AddAuthenticationSchemes("BrassLoon")
+                        .Build();
+                    });
+                o.AddPolicy(POLICY_ADMIN_SYS,
+                    configure =>
+                    {
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_SYS, configuration["Issuer"], "sysadmin"))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });

@@ -26,8 +26,6 @@ namespace AccountAPI.Controllers
         private const string JWT_ISSUER = "urn:brassloon";
         private const string JWT_AUDIENCE = "urn:brassloon";
 
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IAccountFactory _accountFactory;
         private readonly IClientFactory _clientFactory;
@@ -47,9 +45,8 @@ namespace AccountAPI.Controllers
             ISecretProcessor secretProcessor,
             IUserFactory userFactory,
             IUserSaver userSaver)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
             _accountFactory = accountFactory;
             _clientFactory = clientFactory;

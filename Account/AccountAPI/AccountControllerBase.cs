@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Account.Framework;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,18 @@ namespace AccountAPI
 {
     public abstract class AccountControllerBase : ControllerBase
     {
+        protected readonly IOptions<Settings> _settings;
+        protected readonly SettingsFactory _settingsFactory;
+
+        protected AccountControllerBase(IOptions<Settings> settings,
+            SettingsFactory settingsFactory)
+        {
+            _settings = settings;
+            _settingsFactory = settingsFactory;
+        }
+
         [NonAction]
-        protected async Task<IUser> GetUser(IUserFactory userFactory, CoreSettings settings)
+        protected async Task<IUser> GetUser(IUserFactory userFactory, BrassLoon.CommonCore.ISettings settings)
         {
             string referenceId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             return await userFactory.GetByReferenceId(settings, referenceId);

@@ -1,12 +1,21 @@
 <h2>System Administration</h2>
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-dark" style="width: 18rem;">
+        <div class="col-md-4">
+            <div class="card text-white bg-dark" >
                 <div class="card-body">
                     <h5 class="card-title">Purge Workers</h5>
                     <p class="card-text">Automated log, exception, and metric purge workers.</p>
                     <a class="btn btn-primary" [routerLink]="['/sa/PurgeWorker']">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Search Users</h5>
+                    <p class="card-text">Find users and update roles.</p>
+                    <a class="btn btn-primary" [routerLink]="['/sa/Users']">View</a>
                 </div>
             </div>
         </div>

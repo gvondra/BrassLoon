@@ -1,0 +1,33 @@
+<h2>User</h2>
+<h3 *ngIf="User">{{ User.Name }}</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="ShowBusy" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+<div *ngIf="UserMessage" class="alert alert-primary" role="alert">
+    {{ UserMessage }}
+</div>
+<table *ngIf="User" class="table" style="width: unset;">
+    <tbody>
+        <tr>
+            <td>Is System Admin:</td>
+            <td>
+                <input type="checkbox" [checked]="IsSystemAdmin" (change)="IsSystemAdmin = $event.target.checked;" />
+            </td>
+        </tr>
+        <tr>
+            <td>Is Account Admin:</td>
+            <td>
+                <input type="checkbox" [checked]="IsAccountAdmin" (change)="IsAccountAdmin = $event.target.checked;" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <button class="btn btn-primary" (click)="Save()">Save</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
