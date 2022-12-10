@@ -23,8 +23,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Framework\" />
-		<Folder Include="Models\" />
+	  <PackageReference Include="Autofac" Version="[6.5.0,7.0)" />
+	  <PackageReference Include="BrassLoon.DataClient" Version="[2.1.0,3.0)" />
 	</ItemGroup>
 
 </Project>

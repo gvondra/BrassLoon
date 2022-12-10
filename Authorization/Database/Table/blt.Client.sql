@@ -5,9 +5,9 @@
 	[Name] NVARCHAR(1024) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Client_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Client_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED ([ClientId])
+	CONSTRAINT [PK_Client] PRIMARY KEY NONCLUSTERED ([ClientId])
 )
 
 GO
 
-CREATE INDEX [IX_Client_DomainId] ON [blt].[Client] ([DomainId])
+CREATE CLUSTERED INDEX [IX_Client_DomainId] ON [blt].[Client] ([DomainId])

@@ -7,7 +7,7 @@
 	[Name] VARCHAR(1024) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_User_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_User_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([UserId]), 
+	CONSTRAINT [PK_User] PRIMARY KEY NONCLUSTERED ([UserId]), 
     CONSTRAINT [FK_User_To_EmailAddress] FOREIGN KEY ([EmailAddressId]) REFERENCES [blt].[EmailAddress]([EmailAddressId])
 )
 
@@ -21,4 +21,4 @@ CREATE UNIQUE INDEX [IX_User_EmailAddressId] ON [blt].[User] ([EmailAddressId])
 
 GO
 
-CREATE INDEX [IX_User_DomainId] ON [blt].[User] ([DomainId])
+CREATE CLUSTERED INDEX [IX_User_DomainId] ON [blt].[User] ([DomainId])

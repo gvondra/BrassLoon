@@ -73,6 +73,10 @@
     <Build Include="Table\blt.EmailAddress.sql" />
     <Build Include="Table\blt.User.sql" />
     <Build Include="Table\blt.SigningKey.sql" />
+    <Build Include="Stored Procedure\blt.GetRole_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blt.CreateRole.sql" />
+    <Build Include="Stored Procedure\blt.UpdateRole.sql" />
+    <Build Include="Stored Procedure\blt.GetRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
