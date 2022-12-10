@@ -1,0 +1,13 @@
+﻿CREATE TABLE [blt].[Client]
+(
+	[ClientId] UNIQUEIDENTIFIER NOT NULL,
+	[DomainId] UNIQUEIDENTIFIER NOT NULL,
+	[Name] NVARCHAR(1024) NOT NULL,
+	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Client_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Client_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED ([ClientId])
+)
+
+GO
+
+CREATE INDEX [IX_Client_DomainId] ON [blt].[Client] ([DomainId])
