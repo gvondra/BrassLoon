@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ConfigAPI
+namespace BrassLoon.CommonAPI
 {
     public class AuthorizationRequirement : IAuthorizationRequirement
     {
@@ -15,11 +10,11 @@ namespace ConfigAPI
             this.Roles = new string[] { };
         }
 
-        public AuthorizationRequirement(string policyName, string issuer, string role)
+        public AuthorizationRequirement(string policyName, string issuer, params string[] roles)
         {
             this.PolicyName = policyName;
             this.Issuer = issuer;
-            this.Roles = new string[] { role };
+            this.Roles = roles;
         }
 
         public string PolicyName { get; set; }

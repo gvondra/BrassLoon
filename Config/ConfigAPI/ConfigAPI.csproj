@@ -36,6 +36,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\CommonAPI\CommonAPI.csproj" />
 		<ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
 		<ProjectReference Include="..\Config.Core\Config.Core.csproj" />
 		<ProjectReference Include="..\Config.Framework\Config.Framework.csproj" />

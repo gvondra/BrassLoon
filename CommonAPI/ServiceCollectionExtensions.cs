@@ -4,9 +4,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ConfigAPI
+namespace BrassLoon.CommonAPI
 {
     public static class ServiceCollectionExtensions
     {
@@ -15,7 +19,7 @@ namespace ConfigAPI
             IConfigurationSection section = configuration.GetSection("CorsOrigins");
             string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
             if (corsOrigins != null && corsOrigins.Length > 0)
-            {
+            {                
                 services.AddCors(options =>
                 {
                     options.AddDefaultPolicy(builder =>
@@ -61,7 +65,7 @@ namespace ConfigAPI
                 o.IncludeErrorDetails = true;
             })
             ;
-            return services; 
+            return services;
         }
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)

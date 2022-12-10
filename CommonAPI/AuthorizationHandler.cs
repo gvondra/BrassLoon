@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace ConfigAPI
+namespace BrassLoon.CommonAPI
 {
     public class AuthorizationHandler : Microsoft.AspNetCore.Authorization.AuthorizationHandler<AuthorizationRequirement>, IAuthorizationHandler
     {
@@ -28,7 +29,7 @@ namespace ConfigAPI
                     c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals(role, c.Value, StringComparison.OrdinalIgnoreCase)
                     ));
             }
-            return false;
+            return true;
         }
 
         private bool IssuerMatches(ClaimsPrincipal user, string issuer)

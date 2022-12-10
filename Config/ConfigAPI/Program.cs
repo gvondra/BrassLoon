@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using BrassLoon.CommonAPI;
 using ConfigAPI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

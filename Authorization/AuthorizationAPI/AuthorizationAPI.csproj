@@ -22,7 +22,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageReference Include="Autofac" Version="6.5.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.11" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,6 +34,10 @@
 		<ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
 		<ProjectReference Include="..\Authorization.Core\Authorization.Core.csproj" />
 		<ProjectReference Include="..\Authorization.Framework\Authorization.Framework.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Controllers\" />
 	</ItemGroup>
 
 </Project>
