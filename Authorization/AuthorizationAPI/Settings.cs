@@ -1,6 +1,8 @@
-﻿namespace AuthorizationAPI
+﻿using BrassLoon.CommonAPI;
+
+namespace AuthorizationAPI
 {
-    public class Settings
+    public class Settings : CommonApiSettings
     {
     }
 }

@@ -36,8 +36,4 @@
 		<ProjectReference Include="..\Authorization.Framework\Authorization.Framework.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
-
 </Project>

@@ -12,14 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConfigAPI
+namespace BrassLoon.CommonAPI
 {
     public class CoreSettings : ISettings
     {
         private static Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
-        private readonly Settings _settings;
+        private readonly CommonApiSettings _settings;
 
-        public CoreSettings(Settings settings)
+        public CoreSettings(CommonApiSettings settings)
         {
             _settings = settings;
         }

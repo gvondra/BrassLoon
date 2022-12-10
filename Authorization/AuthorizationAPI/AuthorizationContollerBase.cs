@@ -1,22 +1,17 @@
 ﻿using BrassLoon.CommonAPI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConfigAPI
+namespace AuthorizationAPI
 {
-    public abstract class ConfigControllerBase : CommonControllerBase
+    public abstract class AuthorizationContollerBase : CommonControllerBase
     {
         protected readonly IOptions<Settings> _settings;
         protected readonly SettingsFactory _settingsFactory;
         private BrassLoon.Interface.Log.ISettings _loggSettings;
         private BrassLoon.Interface.Account.ISettings _accountSettings;
 
-        protected ConfigControllerBase(IOptions<Settings> settings, SettingsFactory settingsFactory)
+        protected AuthorizationContollerBase(IOptions<Settings> settings, SettingsFactory settingsFactory)
         {
             _settings = settings;
             _settingsFactory = settingsFactory;

@@ -6,6 +6,7 @@ namespace AuthorizationAPI
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+            builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
 }

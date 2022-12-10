@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConfigAPI
+namespace BrassLoon.CommonAPI
 {
     public class LogSettings : ISettings
     {
