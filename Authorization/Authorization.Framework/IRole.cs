@@ -15,6 +15,7 @@ namespace BrassLoon.Authorization.Framework
         string Name { get; set; }
         string PolicyName { get; }
         bool IsActive { get; set; }
+        string Comment { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 

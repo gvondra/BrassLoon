@@ -2,6 +2,7 @@
 	@id UNIQUEIDENTIFIER,
 	@name VARCHAR(1024),
 	@isActive BIT = 1,
+	@comment NVARCHAR(1024) = '',
 	@timestamp DATETIME2(4) OUT
 AS
 BEGIN 
@@ -10,6 +11,7 @@ BEGIN
 	SET 
 		[Name] = @name,
 		[IsActive] = @isActive,
+		[Comment] = @comment,
 		[UpdateTimestamp] = @timestamp
 	WHERE [RoleId] = @id
 	;

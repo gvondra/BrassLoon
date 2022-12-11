@@ -25,7 +25,7 @@ namespace BrassLoon.Authorization.Core
 
         public Guid DomainId => _data.DomainId;
 
-        public string Name { get => _data.Name; set => _data.Name = value; }
+        public string Name { get => _data.Name ?? string.Empty; set => _data.Name = (value ?? string.Empty).Trim(); }
 
         public string PolicyName => _data.PolicyName;
 
@@ -34,6 +34,7 @@ namespace BrassLoon.Authorization.Core
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
         public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
+        public string Comment { get => _data.Comment ?? string.Empty; set => _data.Comment = (value ?? string.Empty).TrimEnd(); }
 
         public Task Create(ITransactionHandler transactionHandler)
         => _dataSaver.Create(transactionHandler, _data);

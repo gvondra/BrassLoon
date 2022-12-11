@@ -4,4 +4,5 @@ export class Role {
     Name: string;
     PolicyName: string;
     IsActive: boolean;
+    Comment: string;
 }

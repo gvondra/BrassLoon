@@ -14,6 +14,7 @@ namespace BrassLoon.Interface.Authorization.Models
         public string Name { get; set; }
         public string PolicyName { get; set; }
         public bool? IsActive { get; set; }
+        public string Comment { get; set; }
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
     }

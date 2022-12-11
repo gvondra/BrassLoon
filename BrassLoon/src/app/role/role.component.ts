@@ -21,7 +21,7 @@ export class RoleComponent implements OnInit {
   @Output() OnSave = new EventEmitter<Role>();
 
   LabelColumnClass: string = "col-md-2";
-  InputColumnClass: string = "col-md-4";
+  InputColumnClass: string = "col-md-6";
   ErrorMessage: string = null;
   NotificationMessage: string = null;
 

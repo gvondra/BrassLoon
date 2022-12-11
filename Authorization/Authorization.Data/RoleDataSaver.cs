@@ -74,6 +74,7 @@ namespace BrassLoon.Authorization.Data
         {
             DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.AnsiString, DataUtil.GetParameterValue(data.Name));
             DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "comment", DbType.String, DataUtil.GetParameterValue(data.Comment));
         }
     }
 }
