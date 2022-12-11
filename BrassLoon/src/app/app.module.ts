@@ -33,6 +33,8 @@ import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
 import { ItemCodesComponent } from './item-codes/item-codes.component';
 import { UserSearchComponent } from './user-search/user-search.component';
 import { UserComponent } from './user/user.component';
+import { RolesComponent } from './roles/roles.component';
+import { RoleComponent } from './role/role.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -91,7 +93,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     LookupCodesComponent,
     ItemCodesComponent,
     UserSearchComponent,
-    UserComponent
+    UserComponent,
+    RolesComponent,
+    RoleComponent
   ],
   imports: [
     BrowserModule,

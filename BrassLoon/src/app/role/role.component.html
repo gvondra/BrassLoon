@@ -1,0 +1,70 @@
+<h3>Role</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="NotificationMessage" class="alert alert-info" role="alert">
+    {{ NotificationMessage }}
+</div>
+<form *ngIf="Role" (ngSubmit)="Save()" #clientForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Name:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="roleName" name="roleName" #roleName="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    maxlength="2000" 
+                    placeholder="Name" 
+                    [(ngModel)]="Role.Name"/>
+                <div *ngIf="roleName.invalid && (roleName.dirty || roleName.touched)" class="alert alert-danger">
+                    <div *ngIf="roleName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Policy:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="rolePolicy" name="rolePolicy" #rolePolicy="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    maxlength="2000" 
+                    placeholder="Name"
+                    [attr.readonly]="IsPolicyReadOnly()"
+                    [(ngModel)]="Role.PolicyName"/>
+                <div *ngIf="rolePolicy.invalid && (rolePolicy.dirty || rolePolicy.touched)" class="alert alert-danger">
+                    <div *ngIf="rolePolicy.errors.required">
+                        Policy is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Is Active:</label>
+            </div>
+            <div [class]="InputColumnClass" style="justify-content: left;">
+                <input id="roleIsActive" name="roleIsActive" #roleIsActive="ngModel"
+                    class="form-control"
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="Role.IsActive"/>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1em;">
+            <div class="offset-md-1 col-md-4">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div style="padding-top: 2em;">
+    <p style="font-size: small;">The policy name cannot be changed after creating a role.</p>
+</div>
