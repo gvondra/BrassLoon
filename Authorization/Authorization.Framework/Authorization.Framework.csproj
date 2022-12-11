@@ -22,4 +22,8 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
+	</ItemGroup>
+
 </Project>

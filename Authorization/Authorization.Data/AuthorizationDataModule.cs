@@ -16,7 +16,7 @@ namespace BrassLoon.Authorization.Data
             base.Load(builder);
             builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
             builder.RegisterType<RoleDataFactory>().As<IRoleDataFactory>();
-            builder.RegisterType<RoleDataSaver>().As<IRoleDataFactory>();
+            builder.RegisterType<RoleDataSaver>().As<IRoleDataSaver>();
         }
     }
 }

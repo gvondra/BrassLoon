@@ -1,4 +1,17 @@
-﻿{
+{
+  "profiles": {
+    "AuthorizationAPI": {
+      "commandName": "Project",
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ExceptionLoggingDomainId": "f9f65985-461b-4e69-9afd-201a9312d6c9"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5003",
+      "hotReloadEnabled": false
+    }
+  },
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
@@ -6,26 +19,6 @@
     "iisExpress": {
       "applicationUrl": "http://localhost:52343",
       "sslPort": 0
-    }
-  },
-  "profiles": {
-    "AuthorizationAPI": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5275",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
     }
   }
 }

@@ -10,6 +10,8 @@
 		<Company />
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<AssemblyVersion>1.0.0.2</AssemblyVersion>
+		<Version>1.0.0-prerelease.2</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,11 +25,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Models\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="[6.4.0,7.0)" />
+	  <PackageReference Include="BrassLoon.RestClient" Version="[3.0.0,4.0)" />
 	</ItemGroup>
 
 </Project>

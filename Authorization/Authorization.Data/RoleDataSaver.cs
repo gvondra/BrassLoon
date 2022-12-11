@@ -73,6 +73,7 @@ namespace BrassLoon.Authorization.Data
         private void AddCommonParameters(IList commandParameters, RoleData data)
         {
             DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.AnsiString, DataUtil.GetParameterValue(data.Name));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
         }
     }
 }
