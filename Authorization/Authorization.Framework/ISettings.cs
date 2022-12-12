@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
 {
-    public interface IRoleSaver
+    public interface ISettings : BrassLoon.CommonCore.ISettings
     {
-        Task Create(ISettings settings, IRole role);
-        Task Update(ISettings settings, IRole role);
+        string SigningKeyVaultAddress { get; }
     }
 }

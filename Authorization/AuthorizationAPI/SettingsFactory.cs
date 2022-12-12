@@ -4,9 +4,12 @@ namespace AuthorizationAPI
 {
     public class SettingsFactory
     {
-        public CoreSettings CreateCore(CommonApiSettings settings)
+        public CoreSettings CreateCore(Settings settings)
         {
-            return new CoreSettings(settings);
+            return new AuthorizationAPI.CoreSettings(settings)
+            {
+                SigningKeyVaultAddress = settings.SigningKeyVaultAddress
+            };
         }
 
         public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)

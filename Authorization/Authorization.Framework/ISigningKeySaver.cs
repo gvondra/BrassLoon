@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
 {
-    public interface IRoleSaver
+    public interface ISigningKeySaver
     {
-        Task Create(ISettings settings, IRole role);
-        Task Update(ISettings settings, IRole role);
+        Task Create(ISettings settings, ISigningKey signingKey);
+        Task Update(ISettings settings, ISigningKey signingKey);
     }
 }

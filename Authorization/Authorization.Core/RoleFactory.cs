@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +40,7 @@ namespace BrassLoon.Authorization.Core
         public async Task<IRole> Get(ISettings settings, Guid id)
         {
             Role role = null;
-            RoleData data = await _dataFactory.Get(new DataSettings(settings), id);
+            RoleData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
             if (data != null) 
                 role = Create(data);
             return role;
@@ -49,7 +48,7 @@ namespace BrassLoon.Authorization.Core
 
         public async Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
         {
-            return (await _dataFactory.GetByDomainId(new DataSettings(settings), domainId))
+            return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
                 .Select<RoleData, IRole>(Create);
         }
     }
