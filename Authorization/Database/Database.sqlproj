@@ -77,6 +77,10 @@
     <Build Include="Stored Procedure\blt.CreateRole.sql" />
     <Build Include="Stored Procedure\blt.UpdateRole.sql" />
     <Build Include="Stored Procedure\blt.GetRole.sql" />
+    <Build Include="Stored Procedure\blt.CreateSigningKey.sql" />
+    <Build Include="Stored Procedure\blt.UpdateSigningKey.sql" />
+    <Build Include="Stored Procedure\blt.GetSigningKey.sql" />
+    <Build Include="Stored Procedure\blt.GetSigningKey_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
