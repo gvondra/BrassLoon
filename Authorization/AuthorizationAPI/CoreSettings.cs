@@ -8,5 +8,7 @@ namespace AuthorizationAPI
         public CoreSettings(Settings settings) : base(settings) { }
 
         public string SigningKeyVaultAddress { get; set; }
+
+        public string ClientSecretVaultAddress { get; set; }
     }
 }

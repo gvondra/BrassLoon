@@ -69,7 +69,6 @@
     <Build Include="Table\blt.UserRole.sql" />
     <Build Include="Table\blt.Client.sql" />
     <Build Include="Table\blt.ClientRole.sql" />
-    <Build Include="Table\blt.ClientCredential.sql" />
     <Build Include="Table\blt.EmailAddress.sql" />
     <Build Include="Table\blt.User.sql" />
     <Build Include="Table\blt.SigningKey.sql" />
@@ -81,6 +80,10 @@
     <Build Include="Stored Procedure\blt.UpdateSigningKey.sql" />
     <Build Include="Stored Procedure\blt.GetSigningKey.sql" />
     <Build Include="Stored Procedure\blt.GetSigningKey_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blt.CreateClient.sql" />
+    <Build Include="Stored Procedure\blt.UpdateClient.sql" />
+    <Build Include="Stored Procedure\blt.GetClient.sql" />
+    <Build Include="Stored Procedure\blt.GetClient_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

@@ -8,6 +8,7 @@ namespace AuthorizationAPI
         {
             return new AuthorizationAPI.CoreSettings(settings)
             {
+                ClientSecretVaultAddress = settings.ClientSecretVaultAddress,
                 SigningKeyVaultAddress = settings.SigningKeyVaultAddress
             };
         }
