@@ -37,11 +37,11 @@ namespace BrassLoon.Authorization.Core
             });
         }
 
-        public async Task<ISigningKey> Get(ISettings settings, Guid id)
+        public async Task<ISigningKey> Get(ISettings settings, Guid domainId, Guid id)
         {
             SigningKey signingKey = null;
             SigningKeyData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
-            if (data != null)
+            if (data != null && data.DomainId.Equals(domainId))
                 signingKey = Create(data);
             return signingKey;
         }

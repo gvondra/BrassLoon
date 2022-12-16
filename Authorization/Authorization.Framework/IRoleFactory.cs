@@ -10,6 +10,6 @@ namespace BrassLoon.Authorization.Framework
     {
         IRole Create(Guid domainId, string policyName);
         Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId);
-        Task<IRole> Get(ISettings settings, Guid id);
+        Task<IRole> Get(ISettings settings, Guid domainId, Guid id);
     }
 }

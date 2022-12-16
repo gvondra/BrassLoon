@@ -9,7 +9,7 @@ namespace BrassLoon.Authorization.Framework
     public interface ISigningKeyFactory
     {
         ISigningKey Create(Guid domainId);
-        Task<ISigningKey> Get(ISettings settings, Guid id);
+        Task<ISigningKey> Get(ISettings settings, Guid domainId, Guid id);
         Task<IEnumerable<ISigningKey>> GetByDomainId(ISettings settings, Guid domainId);
     }
 }

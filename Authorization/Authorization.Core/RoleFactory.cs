@@ -37,11 +37,11 @@ namespace BrassLoon.Authorization.Core
                 });
         }
 
-        public async Task<IRole> Get(ISettings settings, Guid id)
+        public async Task<IRole> Get(ISettings settings, Guid domainId, Guid id)
         {
             Role role = null;
             RoleData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
-            if (data != null) 
+            if (data != null && data.DomainId.Equals(domainId)) 
                 role = Create(data);
             return role;
         }

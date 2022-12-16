@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BrassLoon.Authorization.Framework;
-using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
@@ -148,7 +147,7 @@ namespace AuthorizationAPI.Controllers
                     result = Validate(role);
                 if (result == null)
                 {
-                    innerRole = await _roleFactory.Get(coreSettings, id.Value);
+                    innerRole = await _roleFactory.Get(coreSettings, domainId.Value, id.Value);
                     if (innerRole == null)
                         result = NotFound();
                 }

@@ -40,11 +40,11 @@ namespace BrassLoon.Authorization.Core
             return client;
         }
 
-        public async Task<IClient> Get(ISettings settings, Guid id)
+        public async Task<IClient> Get(ISettings settings, Guid domainId, Guid id)
         {
             Client client = null;
             ClientData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
-            if (data != null)
+            if (data != null && data.DomainId.Equals(domainId))
                 client = Create(data);
             return client;
         }
