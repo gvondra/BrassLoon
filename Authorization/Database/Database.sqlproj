@@ -87,6 +87,11 @@
     <Build Include="Stored Procedure\blt.CreateEmailAddress.sql" />
     <Build Include="Stored Procedure\blt.GetEmailAddress.sql" />
     <Build Include="Stored Procedure\blt.GetEmailAddress_by_AddressHash.sql" />
+    <Build Include="Stored Procedure\blt.CreateUser.sql" />
+    <Build Include="Stored Procedure\blt.UpdateUser.sql" />
+    <Build Include="Stored Procedure\blt.GetUser.sql" />
+    <Build Include="Stored Procedure\blt.GetUser_by_ReferenceId.sql" />
+    <Build Include="Stored Procedure\blt.GetUser_by_EmailAddressHash.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
