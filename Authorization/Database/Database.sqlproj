@@ -92,6 +92,12 @@
     <Build Include="Stored Procedure\blt.GetUser.sql" />
     <Build Include="Stored Procedure\blt.GetUser_by_ReferenceId.sql" />
     <Build Include="Stored Procedure\blt.GetUser_by_EmailAddressHash.sql" />
+    <Build Include="Stored Procedure\blt.GetRole_by_ClientId.sql" />
+    <Build Include="Stored Procedure\blt.GetRole_by_UserId.sql" />
+    <Build Include="Stored Procedure\blt.AddUserRole.sql" />
+    <Build Include="Stored Procedure\blt.AddClientRole.sql" />
+    <Build Include="Stored Procedure\blt.RemoveUserRole.sql" />
+    <Build Include="Stored Procedure\blt.RemoveClientRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

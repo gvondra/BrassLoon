@@ -16,25 +16,61 @@ namespace BrassLoon.Authorization.Data
 
         public async Task<RoleData> Get(ISqlSettings settings, Guid id)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
+            };
             return (await _genericDataFactory.GetData(settings,
                 _providerFactory,
                 "[blt].[GetRole]",
                 Create,
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }))
+                parameters))
                 .FirstOrDefault();
         }
 
         public async Task<IEnumerable<RoleData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
+            };
             return await _genericDataFactory.GetData(settings,
                 _providerFactory,
                 "[blt].[GetRole_by_DomainId]",
                 Create,
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter })
+                parameters)
+                ;
+        }
+
+        public async Task<IEnumerable<RoleData>> GetByClientId(ISqlSettings settings, Guid clientId)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "clientId", DbType.Guid, clientId)
+            };
+            return await _genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blt].[GetRole_by_ClientId]",
+                Create,
+                DataUtil.AssignDataStateManager,
+                parameters)
+                ;
+        }
+
+        public async Task<IEnumerable<RoleData>> GetByUserId(ISqlSettings settings, Guid userId)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "userId", DbType.Guid, userId)
+            };
+            return await _genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blt].[GetRole_by_UserId]",
+                Create,
+                DataUtil.AssignDataStateManager,
+                parameters)
                 ;
         }
     }
