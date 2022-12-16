@@ -84,6 +84,9 @@
     <Build Include="Stored Procedure\blt.UpdateClient.sql" />
     <Build Include="Stored Procedure\blt.GetClient.sql" />
     <Build Include="Stored Procedure\blt.GetClient_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blt.CreateEmailAddress.sql" />
+    <Build Include="Stored Procedure\blt.GetEmailAddress.sql" />
+    <Build Include="Stored Procedure\blt.GetEmailAddress_by_AddressHash.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
