@@ -1,4 +1,5 @@
-﻿using BrassLoon.Authorization.Data.Framework;
+﻿using Azure.Security.KeyVault.Keys;
+using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
@@ -40,6 +41,11 @@ namespace BrassLoon.Authorization.Core
         {
             await _keyVault.CreateKey(settings, KeyVaultKey.ToString("D"));
             await _dataSaver.Create(transactionHandler, _data);
+        }
+
+        public async Task<JsonWebKey> GetKey(ISettings settings)
+        {
+            return (await _keyVault.GetKey(settings, KeyVaultKey.ToString("D"))).Key;
         }
 
         public Task Update(CommonCore.ITransactionHandler transactionHandler)

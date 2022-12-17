@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Azure.Security.KeyVault.Keys;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -18,5 +19,7 @@ namespace BrassLoon.Authorization.Framework
 
         Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
         Task Update(CommonCore.ITransactionHandler transactionHandler);
+
+        Task<JsonWebKey> GetKey(ISettings settings);
     }
 }

@@ -1,18 +1,19 @@
-﻿using Azure.Core;
-using Azure.Identity;
+﻿using Azure.Identity;
 using Azure.Security.KeyVault.Keys;
 using Azure.Security.KeyVault.Secrets;
 using BrassLoon.Authorization.Framework;
+using Microsoft.Extensions.Caching.Memory;
+using Polly;
+using Polly.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
     public sealed class KeyVault
     {
+        private static Policy m_keyCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+
         public async Task CreateKey(ISettings settings, string keyName, int keySize = 2048)
         {
             KeyClient keyClient = new KeyClient(new Uri(settings.SigningKeyVaultAddress), new DefaultAzureCredential());
@@ -22,11 +23,15 @@ namespace BrassLoon.Authorization.Core
             });            
         }
 
-        public async Task<KeyVaultKey> GetKey(ISettings settings, string keyName)
+        public Task<KeyVaultKey> GetKey(ISettings settings, string keyName)
         {
-            KeyClient keyClient = new KeyClient(new Uri(settings.SigningKeyVaultAddress), new DefaultAzureCredential());
-            Azure.Response<KeyVaultKey> response = await keyClient.GetKeyAsync(keyName);
-            return response.Value;
+            return m_keyCache.Execute(async context =>
+            {
+                KeyClient keyClient = new KeyClient(new Uri(settings.SigningKeyVaultAddress), new DefaultAzureCredential());
+                Azure.Response<KeyVaultKey> response = await keyClient.GetKeyAsync(keyName);
+                return response.Value;
+            },
+            new Context(keyName));            
         }
 
         public async Task<KeyVaultSecret> SetSecret(ISettings settings, string name, string value)
