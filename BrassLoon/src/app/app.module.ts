@@ -35,6 +35,8 @@ import { UserSearchComponent } from './user-search/user-search.component';
 import { UserComponent } from './user/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { RoleComponent } from './role/role.component';
+import { DomainClientComponent } from './domain-client/domain-client.component';
+import { DomainClientsComponent } from './domain-clients/domain-clients.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -95,7 +97,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     UserSearchComponent,
     UserComponent,
     RolesComponent,
-    RoleComponent
+    RoleComponent,
+    DomainClientComponent,
+    DomainClientsComponent
   ],
   imports: [
     BrowserModule,
