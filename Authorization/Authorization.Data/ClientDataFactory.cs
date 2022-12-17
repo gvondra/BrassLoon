@@ -31,7 +31,7 @@ namespace BrassLoon.Authorization.Data
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
             return await _genericDataFactory.GetData(settings,
                 _providerFactory,
-                "[blt].[GetRole_by_DomainId]",
+                "[blt].[GetClient_by_DomainId]",
                 Create,
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter })
