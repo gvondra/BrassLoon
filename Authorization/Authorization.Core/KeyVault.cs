@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
-    public sealed class KeyVault
+    public sealed class KeyVault : IKeyVault
     {
         private static Policy m_keyCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static Policy m_secretCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
 
         public async Task CreateKey(ISettings settings, string keyName, int keySize = 2048)
         {
@@ -41,11 +42,15 @@ namespace BrassLoon.Authorization.Core
             return kevaultSecret.Value;
         }
 
-        public async Task<KeyVaultSecret> GetSecret(ISettings settings, string name)
+        public Task<KeyVaultSecret> GetSecret(ISettings settings, string name)
         {
-            SecretClient secretClient = new SecretClient(new Uri(settings.ClientSecretVaultAddress), new DefaultAzureCredential());
-            Azure.Response<KeyVaultSecret> kevaultSecret = await secretClient.GetSecretAsync(name);
-            return kevaultSecret.Value;
+            return m_secretCache.Execute(async context =>
+            {
+                SecretClient secretClient = new SecretClient(new Uri(settings.ClientSecretVaultAddress), new DefaultAzureCredential());
+                Azure.Response<KeyVaultSecret> kevaultSecret = await secretClient.GetSecretAsync(name);
+                return kevaultSecret.Value;
+            },
+            new Context(name));            
         }
     }
 }
