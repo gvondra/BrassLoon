@@ -14,6 +14,9 @@ namespace AuthorizationAPI
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
+            config.CreateMap<Client, IClient>()
+                .ForMember(c => c.IsActive, exp => exp.MapFrom(c => c.IsActive ?? true));
+            config.CreateMap<IClient, Client>();
             config.CreateMap<Role, IRole>();
             config.CreateMap<IRole, Role>();
         }

@@ -15,7 +15,7 @@ namespace AuthorizationAPI
         protected readonly SettingsFactory _settingsFactory;
         protected readonly IExceptionService _exceptionService;
         protected readonly IDomainService _domainService;
-        protected readonly MapperFactory _mapperFactory;
+        private readonly MapperFactory _mapperFactory;
         private BrassLoon.Interface.Log.ISettings _loggSettings;
         private BrassLoon.Interface.Account.ISettings _accountSettings;
         private CoreSettings _coreSettings;
