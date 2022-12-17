@@ -56,7 +56,7 @@ namespace AuthorizationAPI.Controllers
                     else
                     {
                         IMapper mapper = CreateMapper();
-                        result = Ok(mapper.Map<Client>(innerClient));
+                        result = Ok(await MapClient(coreSettings, mapper, innerClient));
                     }   
                 }
             }
@@ -84,9 +84,9 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IEnumerable<IClient> innerClients = await _clientFactory.GetByDomainId(coreSettings, domainId.Value);
-                    result = Ok(
-                        innerClients.Select<IClient, Client>(c => mapper.Map<Client>(c))
-                        );
+                    result = Ok(await Task.WhenAll<Client>(
+                        innerClients.Select<IClient, Task<Client>>(c => MapClient(coreSettings, mapper, c))
+                        ));
                 }
             }
             catch (Exception ex)
@@ -149,9 +149,11 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
                     innerClient.SetSecret(client.Secret);
+                    if (client.Roles != null)
+                        await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Create(coreSettings, innerClient);
                     result = Ok(
-                        mapper.Map<Client>(innerClient)
+                        MapClient(coreSettings, mapper, innerClient)
                         );
                 }
             }
@@ -190,9 +192,11 @@ namespace AuthorizationAPI.Controllers
                     mapper.Map(client, innerClient);
                     if (!string.IsNullOrEmpty(client?.Secret))
                         innerClient.SetSecret(client.Secret);
+                    if (client.Roles != null)
+                        await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Update(coreSettings, innerClient);
                     result = Ok(
-                        mapper.Map<Client>(innerClient)
+                        MapClient(coreSettings, mapper, innerClient)
                         );
                 }
             }
@@ -202,6 +206,35 @@ namespace AuthorizationAPI.Controllers
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
+        }
+
+        [NonAction]
+        private async Task<Client> MapClient(CoreSettings coreSettings, IMapper mapper, IClient innerClient)
+        {
+            Client client = mapper.Map<Client>(innerClient);
+            client.Roles = (await innerClient.GetRoles(coreSettings))
+                .Select<IRole, ValueTuple<string, string>>(r => (r.PolicyName, r.Name))
+                .ToList();
+            return client;
+        }
+
+        [NonAction]
+        private async Task ApplyRoleChanges(CoreSettings coreSettings, IClient innerClient, List<ValueTuple<string, string>> roles)
+        {
+            if (roles != null)
+            {
+                List<IRole> currentRoles = (await innerClient.GetRoles(coreSettings)).ToList();
+                foreach (IRole currentRole in currentRoles)
+                {
+                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.Item1, StringComparison.OrdinalIgnoreCase)))
+                        await innerClient.RemoveRole(coreSettings, currentRole.PolicyName);
+                }
+                foreach (ValueTuple<string, string> role in roles)
+                {
+                    if (!currentRoles.Any(r => string.Equals(role.Item1, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                        await innerClient.AddRole(coreSettings, role.Item1);
+                }
+            }
         }
     }
 }

@@ -14,17 +14,23 @@ namespace BrassLoon.Authorization.Core
         private readonly IClientDataFactory _dataFactory;
         private readonly IClientDataSaver _dataSaver;
         private readonly KeyVault _keyVault;
+        private readonly IRoleFactory _roleFactory;
+        private readonly IRoleDataSaver _roleDataSaver;
 
         public ClientFactory(IClientDataFactory dataFactory, 
             IClientDataSaver dataSaver,
-            KeyVault keyVault)
+            KeyVault keyVault,
+            IRoleFactory roleFactory,
+            IRoleDataSaver roleDataSaver)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _keyVault = keyVault;
+            _roleFactory = roleFactory;
+            _roleDataSaver = roleDataSaver;
         }
 
-        private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault);
+        private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault, _roleFactory, _roleDataSaver);
 
         public IClient Create(Guid domainId, string secret)
         {

@@ -14,15 +14,23 @@ namespace BrassLoon.Authorization.Core
         private readonly IUserDataFactory _dataFactory;
         private readonly IUserDataSaver _dataSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
+        private readonly IRoleFactory _roleFactory;
+        private readonly IRoleDataSaver _roleDataSaver;
 
-        public UserFactory(IUserDataFactory dataFactory, IUserDataSaver dataSaver, IEmailAddressFactory emailAddressFactory)
+        public UserFactory(IUserDataFactory dataFactory, 
+            IUserDataSaver dataSaver, 
+            IEmailAddressFactory emailAddressFactory,
+            IRoleFactory roleFactory,
+            IRoleDataSaver roleDataSaver)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _emailAddressFactory = emailAddressFactory;
+            _roleFactory = roleFactory;
+            _roleDataSaver = roleDataSaver;
         }
 
-        private User Create(UserData data) => new User(data, _dataSaver, _emailAddressFactory);
+        private User Create(UserData data) => new User(data, _dataSaver, _emailAddressFactory, _roleFactory, _roleDataSaver);
 
         public IUser Create(Guid domainId, string referenceId, IEmailAddress emailAddress)
         {

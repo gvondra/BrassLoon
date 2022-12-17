@@ -1,6 +1,9 @@
 ﻿using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using Microsoft.Extensions.Caching.Memory;
+using Polly;
+using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +14,7 @@ namespace BrassLoon.Authorization.Core
 {
     public class RoleFactory : IRoleFactory
     {
+        private static Policy m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly IRoleDataFactory _dataFactory;
         private readonly IRoleDataSaver _dataSaver;
 
@@ -46,9 +50,25 @@ namespace BrassLoon.Authorization.Core
             return role;
         }
 
-        public async Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
+        public Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
         {
-            return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+            return m_domainCache.Execute(async context =>
+            {
+                return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+                .Select<RoleData, IRole>(Create);
+            },
+            new Context(domainId.ToString("D")));            
+        }
+
+        public async Task<IEnumerable<IRole>> GetByClientId(ISettings settings, Guid clientId)
+        {
+            return (await _dataFactory.GetByClientId(new CommonCore.DataSettings(settings), clientId))
+                .Select<RoleData, IRole>(Create);
+        }
+
+        public async Task<IEnumerable<IRole>> GetByUserId(ISettings settings, Guid userId)
+        {
+            return (await _dataFactory.GetByUserId(new CommonCore.DataSettings(settings), userId))
                 .Select<RoleData, IRole>(Create);
         }
     }

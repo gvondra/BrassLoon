@@ -15,10 +15,15 @@ namespace AuthorizationAPI
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
             config.CreateMap<Client, IClient>()
-                .ForMember(c => c.IsActive, exp => exp.MapFrom(c => c.IsActive ?? true));
+                .ForMember(c => c.IsActive, exp => exp.MapFrom(c => c.IsActive ?? true))
+                ;
             config.CreateMap<IClient, Client>();
-            config.CreateMap<Role, IRole>();
+            config.CreateMap<Role, IRole>()
+                .ForMember(r => r.IsActive, exp => exp.MapFrom(r => r.IsActive ?? true))    
+                ;
             config.CreateMap<IRole, Role>();
+            config.CreateMap<User, IUser>();
+            config.CreateMap<IUser, User>();
         }
 
         public virtual IMapper Create() => new Mapper(_configuration);

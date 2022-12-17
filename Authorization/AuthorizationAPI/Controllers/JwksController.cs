@@ -54,6 +54,7 @@ namespace AuthorizationAPI.Controllers
                         RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(false).ExportParameters(false);
                         RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
                         JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(rsaSecurityKey);
+                        jsonWebKey.KeyId = signingKey.SigningKeyId.ToString("N");
                         jsonWebKey.Alg = "RS512";
                         jsonWebKey.Use = "sig";
                         jsonWebKeySet.Keys.Add(jsonWebKey);

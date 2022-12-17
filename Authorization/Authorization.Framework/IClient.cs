@@ -21,5 +21,8 @@ namespace BrassLoon.Authorization.Framework
         Task<bool> AuthenticateSecret(ISettings settings, string secret);
         Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
         Task Update(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
+        Task<IEnumerable<IRole>> GetRoles(ISettings settings);
+        Task AddRole(ISettings settings, string policyName);
+        Task RemoveRole(ISettings settings, string policyName);
     }
 }

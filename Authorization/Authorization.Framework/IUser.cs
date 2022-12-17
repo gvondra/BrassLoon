@@ -22,5 +22,8 @@ namespace BrassLoon.Authorization.Framework
         Task<IEmailAddress> GetEmailAddress(ISettings settings);
         IEmailAddress SetEmailAddress(IEmailAddress emailAddress);
         Task<IEmailAddress> SetEmailAddress(ISettings settings, string address);
+        Task<IEnumerable<IRole>> GetRoles(ISettings settings);
+        Task AddRole(ISettings settings, string policyName);
+        Task RemoveRole(ISettings settings, string policyName);
     }
 }
