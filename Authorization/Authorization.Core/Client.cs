@@ -7,10 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
-using System.Text.Encodings;
 using System.Threading.Tasks;
-using System.Text.Unicode;
 using System.Text;
+using Azure.Security.KeyVault.Secrets;
 
 namespace BrassLoon.Authorization.Core
 {
@@ -18,12 +17,12 @@ namespace BrassLoon.Authorization.Core
     {
         private readonly ClientData _data;
         private readonly IClientDataSaver _dataSaver;
-        private readonly KeyVault _keyVault;
+        private readonly IKeyVault _keyVault;
         private string _newSecret;
 
         public Client(ClientData data,
             IClientDataSaver dataSaver,
-            KeyVault keyVault)
+            IKeyVault keyVault)
         {
             _data = data;
             _dataSaver = dataSaver;
@@ -46,10 +45,15 @@ namespace BrassLoon.Authorization.Core
 
         private void SetSalt()
         {
+            SecrectSalt = CreateSalt();
+        }
+
+        public static byte[] CreateSalt()
+        {
             RandomNumberGenerator random = RandomNumberGenerator.Create();
             byte[] salt = new byte[16];
             random.GetBytes(salt);
-            SecrectSalt = salt;
+            return salt;
         }
 
         public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
@@ -70,6 +74,17 @@ namespace BrassLoon.Authorization.Core
 
         private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt)
         {
+            await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
+        }
+
+        private async Task<byte[]> GetSecret(Framework.ISettings settings, Guid key)
+        {
+            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings, key.ToString("D"));
+            return Convert.FromBase64String(keyVaultSecret.Value);
+        }
+
+        public static byte[] HashSecret(string value, byte[] salt)
+        {
             Argon2i argon = new Argon2i(
                 Encoding.UTF8.GetBytes(value)
                 )
@@ -79,12 +94,24 @@ namespace BrassLoon.Authorization.Core
                 Iterations = 16,
                 Salt = salt
             };
-            await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(argon.GetBytes(512)));
+            return argon.GetBytes(512);
         }
 
         public void SetSecret(string secret)
         {
             _newSecret = secret;
+        }
+
+        public async Task<bool> AuthenticateSecret(Framework.ISettings settings, string secret)
+        {
+            bool isAuthentic = false;
+            if (IsActive)
+            {
+                Task<byte[]> storedHash = GetSecret(settings, SecretKey); // hash of the stored secrect to verify against
+                byte[] parameterHash = HashSecret(secret, SecrectSalt); // hash of the incoming secrect to be verified
+                isAuthentic = parameterHash.SequenceEqual(await storedHash);
+            }
+            return isAuthentic;
         }
     }
 }
