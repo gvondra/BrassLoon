@@ -79,7 +79,7 @@ namespace BrassLoon.Authorization.Core
                 Iterations = 16,
                 Salt = salt
             };
-            await _keyVault.SetSecret(settings, SecretKey.ToString("D"), Convert.ToBase64String(argon.GetBytes(512)));
+            await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(argon.GetBytes(512)));
         }
 
         public void SetSecret(string secret)
