@@ -1,0 +1,86 @@
+<h3>Client</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="NotificationMessage" class="alert alert-info" role="alert">
+    {{ NotificationMessage }}
+</div>
+<form *ngIf="Client" (ngSubmit)="Save()" #clientForm="ngForm">
+    <div class="container">
+        <div *ngIf="Client.ClientId" class="row">
+            <div [class]="LabelColumnClass">
+                <label>Client Id:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="clientId" name="clientId" #clientName="ngModel" 
+                    class="form-control" 
+                    type="text"  
+                    placeholder="Name" 
+                    readonly="true"
+                    [(ngModel)]="Client.ClientId"/>
+                <div *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)" class="alert alert-danger">
+                    <div *ngIf="clientName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Name:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="clientName" name="clientName" #clientName="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    maxlength="2000" 
+                    placeholder="Name" 
+                    [(ngModel)]="Client.Name"/>
+                <div *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)" class="alert alert-danger">
+                    <div *ngIf="clientName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Is Active:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="clientIsActive" name="clientIsActive" #clientIsActive="ngModel"
+                    class="form-control"
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="Client.IsActive"/>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Secret:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="clientSecret" name="clientSecret" #clientName="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    placeholder="Secret" 
+                    readonly="true"
+                    [(ngModel)]="Client.Secret"/>                
+                <button class="btn btn-secondary" type="button" (click)="GenerateSecret();">Generate Secret</button>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1.25rem;">
+            <div class="offset-md-2 col-md-8">
+                <button class="btn btn-primary" type="submit">                    
+                    <div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<p style="font-size: small;">Client secrects cannot be read after they're created. Be sure to document secrects for future use, and handle them with care.</p>
+<p *ngIf="Secret && Secret !== ''" style="font-size: small;">Capture this secret: {{ Secret }}</p>

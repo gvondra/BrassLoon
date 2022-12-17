@@ -1,0 +1,22 @@
+<a *ngIf="Domain" [routerLink]="['/a', Domain.AccountId]">back</a>
+<h2>Domain</h2>
+<app-domain-nav *ngIf="Domain" CurrentTab="Roles" [DomainId]="Domain.DomainId"></app-domain-nav>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+<div *ngIf="Clients" class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <button class="btn btn-secondary" (click)="OnNewClient();">New</button>
+            <ul style="list-style-type: none; list-style-position: inside; padding: 0; margin-top: 1em;">
+                <li *ngFor="let client of Clients"><button class="btn btn-link" style="margin: 0; padding: 0;" (click)="SelectedClient = client">{{ client.Name }}</button></li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <app-domain-client [Client]="SelectedClient" (OnSave)="OnSaveClient($event);"></app-domain-client>
+        </div>
+    </div>
+</div>
