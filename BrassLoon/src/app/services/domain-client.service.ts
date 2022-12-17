@@ -16,9 +16,18 @@ export class DomainClientService {
   Get(domainId: string, id: string) : Promise<DomainClient> {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${domainId}/${id}`, {headers: headers}).toPromise()
-        .then(res => res as DomainClient);
+        return this.httpClient.get<DomainClient>(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${domainId}/${id}`, {headers: headers}).toPromise();
     });    
+  }
+
+  GetClientCredentialSecret() : Promise<string> {
+    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
+    .then(headers => {
+        return this.httpClient.get(`${this.httpClientUtil.GetAuthorizationBaseAddress()}ClientCredentialSecret`, {headers: headers, responseType: "text"}).toPromise()
+        .then(s => {
+          return s as string;
+        })
+    });   
   }
   
   GetByDomainId(domainId: string) : Promise<DomainClient[]> {
@@ -29,10 +38,10 @@ export class DomainClientService {
     });    
   }
 
-  Create(domainId: string, client: DomainClient): Promise<DomainClient> {
+  Create(client: DomainClient): Promise<DomainClient> {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
     .then(headers => {
-        return this.httpClient.post(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${domainId}`, client, {headers: headers}).toPromise()
+        return this.httpClient.post(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${client.DomainId}`, client, {headers: headers}).toPromise()
         .then(res => res as DomainClient);
     });    
   }
