@@ -102,7 +102,6 @@ namespace AuthorizationAPI.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> GetClientCredentialSecret()
         {
-            DateTime start = DateTime.UtcNow;
             IActionResult result;
             try
             {
