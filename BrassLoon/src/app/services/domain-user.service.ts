@@ -31,14 +31,6 @@ export class DomainUserService {
       });    
     }
   
-    Create(user: DomainUser): Promise<DomainUser> {
-      return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-      .then(headers => {
-          return this.httpClient.post(`${this.httpClientUtil.GetAuthorizationBaseAddress()}User/${user.DomainId}`, user, {headers: headers}).toPromise()
-          .then(res => res as DomainUser);
-      });    
-    }
-  
     Update(user: DomainUser): Promise<DomainUser> {
       return this.httpClientUtil.CreateAuthHeader(this.tokenService)
       .then(headers => {
