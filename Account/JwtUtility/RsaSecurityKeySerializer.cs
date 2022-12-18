@@ -1,7 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,7 +8,7 @@ namespace BrassLoon.JwtUtility
 {
     public static class RsaSecurityKeySerializer
     {
-        public static RsaSecurityKey GetSecurityKey(string tknCsp, bool includePublicKey = false)
+        public static RsaSecurityKey GetSecurityKey(string tknCsp, bool includePrivateKey = false)
         {
             dynamic tknCspData = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(Convert.FromBase64String(tknCsp)), CreateJsonSerializerSettings());
             RSAParameters rsaParameters = new RSAParameters
@@ -24,11 +23,16 @@ namespace BrassLoon.JwtUtility
                 Q = Base64UrlEncoder.DecodeBytes((string)tknCspData.q)
             };
 #if (NETSTANDARD2_0)
-            RSA rsa = RSA.Create();
-            rsa.ImportParameters(rsaParameters);
-            return new RsaSecurityKey(rsa.ExportParameters(includePublicKey));
+            using (RSA rsa = RSA.Create())
+            {
+                rsa.ImportParameters(rsaParameters);
+                return new RsaSecurityKey(rsa.ExportParameters(includePrivateKey));
+            }  
 #else
-            return new RsaSecurityKey(RSA.Create(rsaParameters).ExportParameters(includePublicKey));
+            using (RSA rsa = RSA.Create(rsaParameters))
+            {
+                return new RsaSecurityKey(rsa.ExportParameters(includePrivateKey));
+            }            
 #endif
         }
 
