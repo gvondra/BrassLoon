@@ -14,11 +14,11 @@ namespace BrassLoon.Authorization.Core
     {
         private readonly SigningKeyData _data;
         private readonly ISigningKeyDataSaver _dataSaver;
-        private readonly KeyVault _keyVault;
+        private readonly IKeyVault _keyVault;
 
         public SigningKey(SigningKeyData data, 
             ISigningKeyDataSaver dataSaver,
-            KeyVault keyVault)
+            IKeyVault keyVault)
         {
             _data = data;
             _dataSaver = dataSaver;
