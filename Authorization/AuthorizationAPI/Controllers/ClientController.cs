@@ -10,6 +10,9 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Encodings;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
@@ -105,10 +108,18 @@ namespace AuthorizationAPI.Controllers
             IActionResult result;
             try
             {
-                result = Ok(string.Concat(
-                Guid.NewGuid().ToString("N"),
-                Guid.NewGuid().ToString("N")
-                ));
+                RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
+                byte firstCharacter = 33;
+                byte characterRange = 94;
+                byte[] values = new byte[32];
+                randomNumberGenerator.GetBytes(values);
+                for (int i = 0; i < values.Length; i += 1)
+                {
+                    values[i] = (byte)((values[i] % characterRange) + firstCharacter);                    
+                }
+                result = Ok(
+                    Encoding.ASCII.GetString(values)
+                    );
             }
             catch (Exception ex)
             {
@@ -124,6 +135,8 @@ namespace AuthorizationAPI.Controllers
             IActionResult result = null;
             if (result == null && string.IsNullOrEmpty(client?.Name))
                 result = BadRequest("Client name is required.");
+            if (result == null && client?.Secret != null && client.Secret.Length < 32)
+                result = BadRequest("Client secret must be at least 32 characters in length");
             return result;
         }
 
