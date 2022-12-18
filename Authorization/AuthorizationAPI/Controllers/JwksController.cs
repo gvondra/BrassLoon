@@ -52,8 +52,7 @@ namespace AuthorizationAPI.Controllers
                     var jsonWebKeySet = new { Keys = new List<object>() };
                     foreach (ISigningKey signingKey in signingKeys.Where(sk => sk.IsActive))
                     {
-                        RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(false).ExportParameters(false);
-                        RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
+                        RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, false);
                         JsonWebKey jsonWebKey = JsonWebKeyConverter.ConvertFromRSASecurityKey(rsaSecurityKey);
                         jsonWebKey.KeyId = signingKey.SigningKeyId.ToString("N");
                         jsonWebKey.Alg = "RS512";

@@ -177,8 +177,7 @@ namespace AuthorizationAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Name, user.Name)
             };
             AddRoleClaims(claims, await GetRoles(coreSettings, user));
-            RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(true).ExportParameters(true);
-            RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
+            RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
                 );
@@ -192,8 +191,7 @@ namespace AuthorizationAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N"))
             };
             AddRoleClaims(claims, await GetRoles(coreSettings, client));
-            RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(true).ExportParameters(true);
-            RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
+            RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
                 );

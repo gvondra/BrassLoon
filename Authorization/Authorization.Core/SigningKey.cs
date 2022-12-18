@@ -1,10 +1,13 @@
-﻿using Azure.Security.KeyVault.Keys;
+﻿using Azure.Security.KeyVault.Secrets;
 using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.JwtUtility;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,15 +40,25 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
+        private async Task CreateKey(ISettings settings)
+        {
+            using (RSA serviceProvider = RSA.Create(2048))
+            {
+                RSAParameters rsaParameters = serviceProvider.ExportParameters(true);
+                await _keyVault.SetSecret(settings, KeyVaultKey.ToString("D"), RsaSecurityKeySerializer.Serialize(rsaParameters));
+            }
+        }
+
         public async Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings)
         {
-            await _keyVault.CreateKey(settings, KeyVaultKey.ToString("D"));
+            await CreateKey(settings);
             await _dataSaver.Create(transactionHandler, _data);
         }
 
-        public async Task<JsonWebKey> GetKey(ISettings settings)
+        public async Task<RsaSecurityKey> GetKey(ISettings settings, bool includePrivateKey = false)
         {
-            return (await _keyVault.GetKey(settings, KeyVaultKey.ToString("D"))).Key;
+            KeyVaultSecret secret = await _keyVault.GetSecret(settings, KeyVaultKey.ToString("D"));
+            return RsaSecurityKeySerializer.GetSecurityKey(secret.Value, includePrivateKey);
         }
 
         public Task Update(CommonCore.ITransactionHandler transactionHandler)

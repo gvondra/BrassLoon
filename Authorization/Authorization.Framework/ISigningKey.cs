@@ -1,9 +1,5 @@
-﻿using Azure.Security.KeyVault.Keys;
+﻿using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
@@ -20,6 +16,6 @@ namespace BrassLoon.Authorization.Framework
         Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
         Task Update(CommonCore.ITransactionHandler transactionHandler);
 
-        Task<JsonWebKey> GetKey(ISettings settings);
+        Task<RsaSecurityKey> GetKey(ISettings settings, bool includePrivateKey = false);
     }
 }
