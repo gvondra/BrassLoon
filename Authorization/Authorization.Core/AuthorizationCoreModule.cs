@@ -16,6 +16,7 @@ namespace BrassLoon.Authorization.Core
             builder.RegisterType<ClientSaver>().As<IClientSaver>();
             builder.RegisterType<RoleFactory>().As<IRoleFactory>();
             builder.RegisterType<RoleSaver>().As<IRoleSaver>();
+            builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
             builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
         }
     }
