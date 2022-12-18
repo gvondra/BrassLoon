@@ -9,6 +9,7 @@ using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -93,6 +94,11 @@ namespace BrassLoon.CommonAPI
             }
             return result;
         }
+
+        [NonAction]
+        protected string GetCurrentUserReferenceId()
+            => User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
 
         [NonAction]
         protected abstract BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken);
