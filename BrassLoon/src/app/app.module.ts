@@ -37,6 +37,8 @@ import { RolesComponent } from './roles/roles.component';
 import { RoleComponent } from './role/role.component';
 import { DomainClientComponent } from './domain-client/domain-client.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
+import { SigningKeyComponent } from './signing-key/signing-key.component';
+import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -99,7 +101,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     RolesComponent,
     RoleComponent,
     DomainClientComponent,
-    DomainClientsComponent
+    DomainClientsComponent,
+    SigningKeyComponent,
+    SigningKeysComponent
   ],
   imports: [
     BrowserModule,

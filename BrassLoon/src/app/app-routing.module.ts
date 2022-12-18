@@ -23,6 +23,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
 import { UserComponent } from './user/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
+import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 
 const routes: Routes = [
   {
@@ -111,6 +112,11 @@ const routes: Routes = [
   {
     path: "d/:domainId/Clients",
     component: DomainClientsComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/SigningKeys",
+    component: SigningKeysComponent,
     canActivate: [ AuthGuard ]
   },
   {
