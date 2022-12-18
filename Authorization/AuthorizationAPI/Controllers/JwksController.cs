@@ -4,13 +4,14 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Serialization;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
+using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
 {
@@ -49,7 +50,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && signingKeys != null)
                 {
                     var jsonWebKeySet = new { Keys = new List<object>() };
-                    foreach (ISigningKey signingKey in signingKeys)
+                    foreach (ISigningKey signingKey in signingKeys.Where(sk => sk.IsActive))
                     {
                         RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(false).ExportParameters(false);
                         RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
