@@ -24,6 +24,7 @@ import { UserComponent } from './user/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
+import { DomainUsersComponent } from './domain-users/domain-users.component';
 
 const routes: Routes = [
   {
@@ -112,6 +113,11 @@ const routes: Routes = [
   {
     path: "d/:domainId/Clients",
     component: DomainClientsComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/Users",
+    component: DomainUsersComponent,
     canActivate: [ AuthGuard ]
   },
   {

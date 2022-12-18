@@ -39,6 +39,8 @@ import { DomainClientComponent } from './domain-client/domain-client.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
 import { SigningKeyComponent } from './signing-key/signing-key.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
+import { DomainUserComponent } from './domain-user/domain-user.component';
+import { DomainUsersComponent } from './domain-users/domain-users.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -103,7 +105,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     DomainClientComponent,
     DomainClientsComponent,
     SigningKeyComponent,
-    SigningKeysComponent
+    SigningKeysComponent,
+    DomainUserComponent,
+    DomainUsersComponent
   ],
   imports: [
     BrowserModule,
