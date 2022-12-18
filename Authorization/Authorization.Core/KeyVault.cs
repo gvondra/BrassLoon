@@ -18,10 +18,14 @@ namespace BrassLoon.Authorization.Core
         public async Task CreateKey(ISettings settings, string keyName, int keySize = 2048)
         {
             KeyClient keyClient = new KeyClient(new Uri(settings.SigningKeyVaultAddress), new DefaultAzureCredential());
-            await keyClient.CreateRsaKeyAsync(new CreateRsaKeyOptions(keyName)
+            CreateRsaKeyOptions options = new CreateRsaKeyOptions(keyName)
             {
                 KeySize = keySize
-            });            
+            };
+            options.KeyOperations.Clear();
+            options.KeyOperations.Add(KeyOperation.Sign);
+            options.KeyOperations.Add(KeyOperation.Verify);
+            await keyClient.CreateRsaKeyAsync(options);            
         }
 
         public Task<KeyVaultKey> GetKey(ISettings settings, string keyName)
