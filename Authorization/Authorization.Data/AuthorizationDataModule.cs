@@ -17,6 +17,8 @@ namespace BrassLoon.Authorization.Data
             builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
             builder.RegisterType<ClientDataFactory>().As<IClientDataFactory>();
             builder.RegisterType<ClientDataSaver>().As<IClientDataSaver>();
+            builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
+            builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
             builder.RegisterType<RoleDataFactory>().As<IRoleDataFactory>();
             builder.RegisterType<RoleDataSaver>().As<IRoleDataSaver>();
             builder.RegisterType<SigningKeyDataFactory>().As<ISigningKeyDataFactory>();

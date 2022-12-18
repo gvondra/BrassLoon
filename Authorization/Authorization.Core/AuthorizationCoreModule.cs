@@ -14,10 +14,13 @@ namespace BrassLoon.Authorization.Core
             builder.RegisterType<KeyVault>().As<IKeyVault>().SingleInstance();
             builder.RegisterType<ClientFactory>().As<IClientFactory>();
             builder.RegisterType<ClientSaver>().As<IClientSaver>();
+            builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
             builder.RegisterType<RoleFactory>().As<IRoleFactory>();
             builder.RegisterType<RoleSaver>().As<IRoleSaver>();
             builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
             builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
+            builder.RegisterType<UserFactory>().As<IUserFactory>();
+            builder.RegisterType<UserSaver>().As<IUserSaver>();
         }
     }
 }
