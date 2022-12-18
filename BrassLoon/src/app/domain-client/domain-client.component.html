@@ -12,17 +12,12 @@
                 <label>Client Id:</label>
             </div>
             <div [class]="InputColumnClass">
-                <input id="clientId" name="clientId" #clientName="ngModel" 
+                <input id="clientId" name="clientId" #clientId="ngModel" 
                     class="form-control" 
                     type="text"  
                     placeholder="Name" 
                     readonly="true"
                     [(ngModel)]="Client.ClientId"/>
-                <div *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)" class="alert alert-danger">
-                    <div *ngIf="clientName.errors.required">
-                        Name is required.
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row">
