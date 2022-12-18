@@ -4,6 +4,7 @@ export class DomainClient {
     Name: string;
     IsActive: boolean;
     Secret: string;
+    Roles: Array<any>;
     CreateTimestamp: string;
     UpdateTimestamp: string;
 }

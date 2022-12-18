@@ -13,8 +13,7 @@ namespace BrassLoon.Interface.Authorization.Models
         public string Name { get; set; }
         public bool? IsActive { get; set; }
         public string Secret { get; set; }
-        // Roles as list of tuples (policy name, name)
-        public List<ValueTuple<string, string>> Roles { get; set; }
+        public List<AppliedRole> Roles { get; set; }
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
     }

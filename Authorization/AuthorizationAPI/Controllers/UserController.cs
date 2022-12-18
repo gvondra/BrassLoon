@@ -196,26 +196,26 @@ namespace AuthorizationAPI.Controllers
             IEmailAddress emailAddress = await innerUser.GetEmailAddress(coreSettings);
             user.EmailAddress = emailAddress?.Address ?? string.Empty;
             user.Roles = (await innerUser.GetRoles(coreSettings))
-                .Select<IRole, ValueTuple<string, string>>(r => (r.PolicyName, r.Name))
+                .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
                 .ToList();
             return user;
         }
 
         [NonAction]
-        private async Task ApplyRoleChanges(CoreSettings coreSettings, IUser innerUser, List<ValueTuple<string, string>> roles)
+        private async Task ApplyRoleChanges(CoreSettings coreSettings, IUser innerUser, List<AppliedRole> roles)
         {
             if (roles != null)
             {
                 List<IRole> currentRoles = (await innerUser.GetRoles(coreSettings)).ToList();
                 foreach (IRole currentRole in currentRoles)
                 {
-                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.Item1, StringComparison.OrdinalIgnoreCase)))
+                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.RemoveRole(coreSettings, currentRole.PolicyName);
                 }
-                foreach (ValueTuple<string, string> role in roles)
+                foreach (AppliedRole role in roles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.Item1, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
-                        await innerUser.AddRole(coreSettings, role.Item1);
+                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                        await innerUser.AddRole(coreSettings, role.PolicyName);
                 }
             }
         }
