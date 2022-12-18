@@ -180,7 +180,7 @@ namespace AuthorizationAPI.Controllers
             RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(false).ExportParameters(false);
             RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration)
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
                 );
         }
 
@@ -194,9 +194,9 @@ namespace AuthorizationAPI.Controllers
             AddRoleClaims(claims, await GetRoles(coreSettings, client));
             RSAParameters rsaParameters = (await signingKey.GetKey(coreSettings)).ToRSA(false).ExportParameters(false);
             RsaSecurityKey rsaSecurityKey = new RsaSecurityKey(rsaParameters);
-            return Task.FromResult<string>(JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration)
-                ));
+            return JwtSecurityTokenUtility.Write(
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
+                );
         }
 
         private static DateTime CreateExpiration() => DateTime.UtcNow.AddHours(6);
