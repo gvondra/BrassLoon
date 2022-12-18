@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BrassLoon.Authorization.Core;
 using BrassLoon.Authorization.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log;
@@ -11,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using BrassLoon.Interface.Authorization.Models;
 
 namespace AuthorizationAPI.Controllers
 {
