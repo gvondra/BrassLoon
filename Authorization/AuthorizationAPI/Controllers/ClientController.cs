@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
@@ -38,7 +39,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
             IActionResult result = null;
@@ -72,7 +73,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> GetByDomain([FromRoute] Guid? domainId)
         {
             IActionResult result = null;
@@ -101,7 +102,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("/api/ClientCredentialSecret")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> GetClientCredentialSecret()
         {
@@ -141,7 +142,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPost("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, Client client)
         {
             IActionResult result = null;
@@ -179,7 +180,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPut("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, Client client)
         {
             IActionResult result = null;

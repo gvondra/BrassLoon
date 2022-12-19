@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
@@ -35,7 +36,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<User>), 200)]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] string emailAddress)
         {
@@ -71,7 +72,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(User), 200)]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
@@ -110,7 +111,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}/{id}/Name")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> GetName([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
@@ -146,7 +147,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPut("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(User), 200)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromBody] User user)
         {

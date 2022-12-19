@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using BrassLoon.CommonAPI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,7 +63,14 @@ namespace AuthorizationAPI
                 }
                 });
             });
-            builder.Services.AddAuthentication(builder.Configuration);
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddBrassLoonAuthentication(builder.Configuration)
+            .AddGoogleAuthentication(builder.Configuration)
+            ;
             builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
             builder.Services.AddAuthorization(builder.Configuration);
 

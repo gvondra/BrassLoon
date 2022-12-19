@@ -1,4 +1,5 @@
 ﻿using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
@@ -48,7 +49,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPost("{domainId}")]
-        [Authorize("Create:Token")]
+        [Authorize(Constants.POLICY_CREATE_TOKEN)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId)
         {
             IActionResult result = null;

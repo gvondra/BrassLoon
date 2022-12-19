@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
@@ -35,7 +36,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<Role>), 200)]
         public async Task<IActionResult> GetByDomainId([FromRoute] Guid? domainId)
         {
@@ -94,7 +95,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPost("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(Role), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromBody] Role role)
         {
@@ -128,7 +129,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPut("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(Role), 200)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromBody] Role role)
         {

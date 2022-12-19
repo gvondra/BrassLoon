@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,18 +35,13 @@ namespace BrassLoon.CommonAPI
             return services;
         }
 
-        public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static AuthenticationBuilder AddBrassLoonAuthentication(this AuthenticationBuilder builder, IConfiguration configuration)
         {
             HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
             JsonWebKeySet keySet = JsonWebKeySet.Create(
                 documentRetriever.GetDocumentAsync(configuration["JwkAddress"], new System.Threading.CancellationToken()).Result
                 );
-            services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer("BrassLoon", o =>
+            builder.AddJwtBearer(Constants.AUTH_SCHEME_BRASSLOON, o =>
             {
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
@@ -60,24 +56,104 @@ namespace BrassLoon.CommonAPI
                     RequireSignedTokens = true,
                     ValidAudience = configuration["Issuer"],
                     ValidIssuer = configuration["Issuer"],
-                    IssuerSigningKey = keySet.Keys[0]
+                    IssuerSigningKeys = keySet.GetSigningKeys(),
+                    TryAllIssuerSigningKeys = true
                 };
                 o.IncludeErrorDetails = true;
             })
             ;
-            return services;
+            return builder;
+        }
+
+        public static AuthenticationBuilder AddGoogleAuthentication(this AuthenticationBuilder builder, IConfiguration configuration)
+        {
+            HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
+            JsonWebKeySet keySet = JsonWebKeySet.Create(
+                documentRetriever.GetDocumentAsync(configuration["GoogleJwksUrl"], new System.Threading.CancellationToken()).Result
+                );
+            builder.AddJwtBearer(Constants.AUTH_SCHEME_GOOGLE, o =>
+            {
+                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateActor = false,
+                    ValidateTokenReplay = false,
+                    RequireAudience = false,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    ValidAudience = configuration["GoogleIdAudience"],
+                    ValidIssuer = configuration["GoogleIdIssuer"],
+                    IssuerSigningKeys = keySet.GetSigningKeys(),
+                    TryAllIssuerSigningKeys = true
+                };
+                o.IncludeErrorDetails = true;
+            })
+            ;
+            return builder;
         }
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
+            string googleIdIssuer = configuration["GoogleIdIssuer"];
+            string brassLoonIdIssuer = configuration["Issuer"];
+            List<string> authenticationSchemes = new List<string>()
+            {
+                Constants.AUTH_SCHEME_BRASSLOON
+            };
+            if (!string.IsNullOrEmpty(googleIdIssuer)) 
+                authenticationSchemes.Add(Constants.AUTH_SCHEME_GOOGLE);
+
             services.AddAuthorization(o =>
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .AddAuthenticationSchemes("BrassLoon")
+                .AddAuthenticationSchemes(authenticationSchemes.ToArray())
                 .Build();
+                if (!string.IsNullOrEmpty(googleIdIssuer))
+                {
+                    o.AddPolicyWithoutRoles(Constants.POLICY_CREATE_TOKEN, Constants.AUTH_SCHEME_GOOGLE, googleIdIssuer);
+                }
+                if (!string.IsNullOrEmpty(brassLoonIdIssuer))
+                {
+                    o.AddPolicyWithoutRoles(Constants.POLICY_BL_AUTH, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
+                }
             });
             return services;
+        }
+
+        public static AuthorizationOptions AddPolicy(this AuthorizationOptions authorizationOptions, string policyName, string schema, string issuer, IEnumerable<string> additinalPolicies = null)
+        {
+            if (additinalPolicies == null)
+            {
+                additinalPolicies = new List<string> { policyName };
+            }
+            else if (!additinalPolicies.Contains(policyName))
+            {
+                additinalPolicies = additinalPolicies.Concat(new List<string> { policyName });
+            }
+            authorizationOptions.AddPolicy(policyName,
+                configure =>
+                {
+                    configure.AddRequirements(new AuthorizationRequirement(policyName, issuer, additinalPolicies.ToArray()))
+                    .AddAuthenticationSchemes(schema)
+                    .Build();
+                });
+            return authorizationOptions;
+        }
+
+        public static AuthorizationOptions AddPolicyWithoutRoles(this AuthorizationOptions authorizationOptions, string policyName, string schema, string issuer)
+        {
+            authorizationOptions.AddPolicy(policyName,
+                configure =>
+                {
+                    configure.AddRequirements(new AuthorizationRequirement(policyName, issuer))
+                    .AddAuthenticationSchemes(schema)
+                    .Build();
+                });
+            return authorizationOptions;
         }
     }
 }

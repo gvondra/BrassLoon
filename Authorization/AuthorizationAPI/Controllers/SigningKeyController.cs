@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using BrassLoon.Interface.Authorization.Models;
+using BrassLoon.CommonAPI;
 
 namespace AuthorizationAPI.Controllers
 {
@@ -34,7 +35,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> GetByDomain([FromRoute] Guid? domainId)
         {
             IActionResult result = null;
@@ -61,7 +62,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPost("{domainId}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, SigningKey signingKey)
         {
             IActionResult result = null;
@@ -92,7 +93,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpPut("{domainId}/{id}")]
-        [Authorize()]
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, SigningKey signingKey)
         {
             IActionResult result = null;
