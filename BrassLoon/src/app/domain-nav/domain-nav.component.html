@@ -18,5 +18,17 @@
         <li class="nav-item">
           <a class="nav-link" [class.active]="IsActive('Item Codes')" [routerLink]="['/d', DomainId, 'ITMC']">Item Codes</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Roles')" [routerLink]="['/d', DomainId, 'Roles']">Roles</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Clients')" [routerLink]="['/d', DomainId, 'Clients']">Clients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Users')" [routerLink]="['/d', DomainId, 'Users']">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="IsActive('Signing Keys')" [routerLink]="['/d', DomainId, 'SigningKeys']">Signing Keys</a>
+        </li>
       </ul>
 </nav>

@@ -21,6 +21,10 @@ import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
 import { ItemCodesComponent } from './item-codes/item-codes.component';
 import { UserSearchComponent } from './user-search/user-search.component';
 import { UserComponent } from './user/user.component';
+import { RolesComponent } from './roles/roles.component';
+import { DomainClientsComponent } from './domain-clients/domain-clients.component';
+import { SigningKeysComponent } from './signing-keys/signing-keys.component';
+import { DomainUsersComponent } from './domain-users/domain-users.component';
 
 const routes: Routes = [
   {
@@ -99,6 +103,26 @@ const routes: Routes = [
   {
     path: "d/:domainId/ITMC",
     component: ItemCodesComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/Roles",
+    component: RolesComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/Clients",
+    component: DomainClientsComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/Users",
+    component: DomainUsersComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/SigningKeys",
+    component: SigningKeysComponent,
     canActivate: [ AuthGuard ]
   },
   {

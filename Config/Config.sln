@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigAPI", "ConfigAPI\Conf
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{9A488867-CBE3-4E46-92D4-896F405E9427}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "..\CommonAPI\CommonAPI.csproj", "{8810D5CF-58FC-4E72-8732-EB7FDA65E861}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{9A488867-CBE3-4E46-92D4-896F405E9427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A488867-CBE3-4E46-92D4-896F405E9427}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9A488867-CBE3-4E46-92D4-896F405E9427}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8810D5CF-58FC-4E72-8732-EB7FDA65E861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8810D5CF-58FC-4E72-8732-EB7FDA65E861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8810D5CF-58FC-4E72-8732-EB7FDA65E861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8810D5CF-58FC-4E72-8732-EB7FDA65E861}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

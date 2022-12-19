@@ -1,0 +1,55 @@
+<h3>User</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="NotificationMessage" class="alert alert-info" role="alert">
+    {{ NotificationMessage }}
+</div>
+<form *ngIf="User && Roles" (ngSubmit)="Save()" #userForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Name:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="userName" name="userName" #userName="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    maxlength="2000" 
+                    placeholder="Name" 
+                    [(ngModel)]="User.Name"/>
+                <div *ngIf="userName.invalid && (userName.dirty || userName.touched)" class="alert alert-danger">
+                    <div *ngIf="userName.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Roles:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <ul style="list-style: none inside none; padding: 0;">
+                    <li *ngFor="let role of Roles" style="white-space: nowrap;"><input 
+                        class="form-control"
+                        type="checkbox"
+                        style="height: 1.25em; width: 1.25em; display: inline;"
+                        [checked]="IsActiveRole(role)"
+                        (change)="OnChangeActiveRole(role, $event)"/> {{ role.Name }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1.25rem;">
+            <div class="offset-md-2 col-md-8">
+                <button class="btn btn-primary" type="submit" [disabled]="!userForm.form.valid">                    
+                    <div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

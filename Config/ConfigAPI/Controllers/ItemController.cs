@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BrassLoon.CommonAPI;
 using BrassLoon.Config.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Config.Models;
@@ -18,8 +19,6 @@ namespace ConfigAPI.Controllers
     [ApiController]
     public class ItemController : ConfigControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
         private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IDomainService _domainService;
         private readonly IItemFactory _itemFactory;
@@ -31,9 +30,8 @@ namespace ConfigAPI.Controllers
             IDomainService domainService,
             IItemFactory itemFactory,
             IItemSaver itemSaver)
+            : base(settings, settingsFactory)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
             _domainService = domainService;
             _itemFactory = itemFactory;
@@ -54,7 +52,7 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
@@ -71,7 +69,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -90,7 +88,7 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
@@ -106,7 +104,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -126,7 +124,7 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
@@ -146,7 +144,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -164,7 +162,7 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
@@ -176,7 +174,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -199,7 +197,7 @@ namespace ConfigAPI.Controllers
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IItem innerItem = null;
                     Func<CoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                         innerItem = await _itemFactory.GetByCode(settings, domainId.Value, code);
@@ -221,7 +219,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -240,7 +238,7 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
@@ -251,7 +249,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex, _exceptionService.Value, _settings.Value);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

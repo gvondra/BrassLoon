@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<AssemblyName>BrassLoon.CommonAPI</AssemblyName>
+		<RootNamespace>BrassLoon.CommonAPI</RootNamespace>
+		<Authors>Greg Vondra</Authors>
+		<Company />
+		<Product>Brass Loon</Product>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Identity" Version="[1.8.0,2.0)" />
+		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="[4.4.0,5.0)" />
+		<PackageReference Include="BrassLoon.Interface.Account" Version="[2.0.0,3.0)" />
+		<PackageReference Include="BrassLoon.Interface.Log" Version="[2.0.0,3.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[6.0.11,7.0)" />
+		<PackageReference Include="Polly" Version="[7.2.3,8.0)" />
+		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\CommonCore\CommonCore.csproj" />
+	</ItemGroup>
+</Project>

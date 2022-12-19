@@ -4,6 +4,7 @@
  *  1) a json file showing the full web key
  *  2) a txt file contianing the same except encode in base 64
  */
+using BrassLoon.JwtUtility;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -48,12 +49,11 @@ namespace RsaSecurityKeyGenerator
                     }
                 }
             }
-            string json = JsonConvert.SerializeObject(rsaParameters, new JsonSerializerSettings { Formatting = Formatting.None, ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });
             using (FileStream fileStream = new FileStream("tknCsp.txt", FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 using (StreamWriter streamWriter = new StreamWriter(fileStream, new UTF8Encoding(false)))
                 {
-                    streamWriter.Write(Convert.ToBase64String(Encoding.UTF8.GetBytes(json)));
+                    streamWriter.Write(RsaSecurityKeySerializer.Serialize(rsaParameters));
                 }
             }
             return 0;

@@ -30,12 +30,13 @@
 	<PackageReference Include="BrassLoon.Interface.Account" Version="2.0.0" />
 	<PackageReference Include="BrassLoon.Interface.Config" Version="2.0.0" />
 	<PackageReference Include="BrassLoon.Interface.Log" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\CommonAPI\CommonAPI.csproj" />
 		<ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
 		<ProjectReference Include="..\Config.Core\Config.Core.csproj" />
 		<ProjectReference Include="..\Config.Framework\Config.Framework.csproj" />

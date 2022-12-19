@@ -33,6 +33,14 @@ import { LookupCodesComponent } from './lookup-codes/lookup-codes.component';
 import { ItemCodesComponent } from './item-codes/item-codes.component';
 import { UserSearchComponent } from './user-search/user-search.component';
 import { UserComponent } from './user/user.component';
+import { RolesComponent } from './roles/roles.component';
+import { RoleComponent } from './role/role.component';
+import { DomainClientComponent } from './domain-client/domain-client.component';
+import { DomainClientsComponent } from './domain-clients/domain-clients.component';
+import { SigningKeyComponent } from './signing-key/signing-key.component';
+import { SigningKeysComponent } from './signing-keys/signing-keys.component';
+import { DomainUserComponent } from './domain-user/domain-user.component';
+import { DomainUsersComponent } from './domain-users/domain-users.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -91,7 +99,15 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     LookupCodesComponent,
     ItemCodesComponent,
     UserSearchComponent,
-    UserComponent
+    UserComponent,
+    RolesComponent,
+    RoleComponent,
+    DomainClientComponent,
+    DomainClientsComponent,
+    SigningKeyComponent,
+    SigningKeysComponent,
+    DomainUserComponent,
+    DomainUsersComponent
   ],
   imports: [
     BrowserModule,

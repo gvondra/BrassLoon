@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrassLoon.CommonAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,12 +8,12 @@ namespace ConfigAPI
 {
     public class SettingsFactory
     {
-        public CoreSettings CreateCore(Settings settings)
+        public CoreSettings CreateCore(CommonApiSettings settings)
         {
             return new CoreSettings(settings);
         }
 
-        public AccountSettings CreateAccount(Settings settings, string accessToken)
+        public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)
         {
             return new AccountSettings(accessToken)
             {
@@ -20,7 +21,7 @@ namespace ConfigAPI
             };
         }
 
-        public LogSettings CreateLog(Settings settings, string accessToken)
+        public LogSettings CreateLog(CommonApiSettings settings, string accessToken)
         {
             return new LogSettings(accessToken)
             {

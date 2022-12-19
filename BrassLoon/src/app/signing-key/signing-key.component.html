@@ -1,0 +1,46 @@
+<h3>Signing Key</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="NotificationMessage" class="alert alert-info" role="alert">
+    {{ NotificationMessage }}
+</div>
+<form *ngIf="SigningKey" (ngSubmit)="Save()" #signingKeyForm="ngForm">
+    <div class="container">
+        <div *ngIf="SigningKey.SigningKeyId" class="row">
+            <div [class]="LabelColumnClass">
+                <label>Signing Key Id:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="signingKeyId" name="signingKeyId" #signingKeyId="ngModel" 
+                    class="form-control" 
+                    type="text"  
+                    placeholder="Name" 
+                    readonly="true"
+                    [(ngModel)]="SigningKey.SigningKeyId"/>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>Is Active:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="signingKeyIsActive" name="signingKeyIsActive" #signingKeyIsActive="ngModel"
+                    class="form-control"
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="SigningKey.IsActive"/>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1.25rem;">
+            <div class="offset-md-2 col-md-8">
+                <button class="btn btn-primary" type="submit" [disabled]="!signingKeyForm.form.valid">                    
+                    <div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
