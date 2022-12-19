@@ -11,7 +11,8 @@ namespace BrassLoon.Interface.Authorization
     {
         Task<List<Role>> GetByDomainId(ISettings settings, Guid domainId);
         Task<Role> Create(ISettings settings, Guid domainId, Role role);
-        Task<Role> Update(ISettings settings, Guid domainId, Role role);
+        Task<Role> Create(ISettings settings, Role role);
+        Task<Role> Update(ISettings settings, Role role);
         Task<Role> Update(ISettings settings, Guid domainId, Guid roleId, Role role);
     }
 }
