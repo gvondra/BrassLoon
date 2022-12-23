@@ -28,6 +28,14 @@ namespace BrassLoon.Interface.Authorization
             return _restUtil.Send<User>(_service, request);
         }
 
+        public Task<User> Get(ISettings settings, Guid domainId)
+        {
+            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
+            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"));
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get);
+            return _restUtil.Send<User>(_service, request);
+        }
+
         public Task<string> GetName(ISettings settings, Guid domainId, Guid userId)
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
