@@ -18,19 +18,22 @@ namespace BrassLoon.CommonAPI
         public static IServiceCollection AddCors(this IServiceCollection services, IConfiguration configuration)
         {
             IConfigurationSection section = configuration.GetSection("CorsOrigins");
-            string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
-            if (corsOrigins != null && corsOrigins.Length > 0)
-            {                
-                services.AddCors(options =>
+            if (section != null)
+            {
+                string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
+                if (corsOrigins != null && corsOrigins.Length > 0)
                 {
-                    options.AddDefaultPolicy(builder =>
+                    services.AddCors(options =>
                     {
-                        builder
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                        builder.WithOrigins(corsOrigins);
+                        options.AddDefaultPolicy(builder =>
+                        {
+                            builder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                            builder.WithOrigins(corsOrigins);
+                        });
                     });
-                });
+                }
             }
             return services;
         }
@@ -71,6 +74,7 @@ namespace BrassLoon.CommonAPI
             JsonWebKeySet keySet = JsonWebKeySet.Create(
                 documentRetriever.GetDocumentAsync(configuration["GoogleJwksUrl"], new System.Threading.CancellationToken()).Result
                 );
+            List<string> audiences = GetGoogleAudiences(configuration);
             builder.AddJwtBearer(Constants.AUTH_SCHEME_GOOGLE, o =>
             {
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -84,7 +88,7 @@ namespace BrassLoon.CommonAPI
                     RequireAudience = false,
                     RequireExpirationTime = true,
                     RequireSignedTokens = true,
-                    ValidAudience = configuration["GoogleIdAudience"],
+                    ValidAudiences = audiences,
                     ValidIssuer = configuration["GoogleIdIssuer"],
                     IssuerSigningKeys = keySet.GetSigningKeys(),
                     TryAllIssuerSigningKeys = true
@@ -93,6 +97,24 @@ namespace BrassLoon.CommonAPI
             })
             ;
             return builder;
+        }
+
+        private static List<string> GetGoogleAudiences(IConfiguration configuration)
+        {
+            string googleIdAudience = configuration["GoogleIdAudience"];
+            List<string> googleIdAudiences = null;
+            IConfigurationSection section = configuration.GetSection("GoogleIdAudiences");
+            if (section != null)
+            {
+                googleIdAudiences = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToList();
+            }
+            if (googleIdAudiences == null)
+            {
+                googleIdAudiences = new List<string>();
+            }
+            if (!string.IsNullOrEmpty(googleIdAudience) && !googleIdAudiences.Contains(googleIdAudience)) 
+                googleIdAudiences.Add(googleIdAudience);
+            return googleIdAudiences;
         }
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
