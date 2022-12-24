@@ -19,9 +19,6 @@ GO
 
 CREATE UNIQUE INDEX [IX_User_DomainIdEmailAddressId] ON [blt].[User] ([DomainId], [EmailAddressId])
 
-GO
-
-CREATE UNIQUE INDEX [IX_User_EmailAddressId] ON [blt].[User] ([EmailAddressId])
 
 GO
 
