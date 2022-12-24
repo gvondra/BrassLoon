@@ -86,10 +86,10 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task<IActionResult> ValidatePolicyNameNotExists(CoreSettings coreSettings, Role role)
+        private async Task<IActionResult> ValidatePolicyNameNotExists(CoreSettings coreSettings, Guid domainId, Role role)
         {
             IActionResult result = null;
-            if ((await _roleFactory.GetByDomainId(coreSettings, role.DomainId.Value)).Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+            if ((await _roleFactory.GetByDomainId(coreSettings, domainId)).Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                 result = BadRequest($"A role with policy name \"{role.PolicyName}\" already exists");
             return result;
         }
@@ -110,7 +110,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null)
                     result = ValidateCreate(role);
                 if (result == null)
-                    result = await ValidatePolicyNameNotExists(coreSettings, role);
+                    result = await ValidatePolicyNameNotExists(coreSettings, domainId.Value, role);
                 if (result == null)
                 {
                     IRole innerRole = _roleFactory.Create(domainId.Value, role.PolicyName);
