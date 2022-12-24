@@ -51,7 +51,7 @@ namespace BrassLoon.Interface.Authorization
             return _restUtil.Send<string>(_service, request);
         }
 
-        public Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress, string referenceId)
+        public Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"));
