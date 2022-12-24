@@ -38,7 +38,10 @@ namespace AuthorizationAPI.Controllers
         [HttpGet("{domainId}")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<User>), 200)]
-        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] string emailAddress)
+        public async Task<IActionResult> Search(
+            [FromRoute] Guid? domainId, 
+            [FromQuery] string emailAddress,
+            [FromQuery] string referenceId)
         {
             IActionResult result = null;
             try
@@ -52,7 +55,11 @@ namespace AuthorizationAPI.Controllers
                     result = Unauthorized();
                 if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(emailAddress))
                 {                    
-                    innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);                    
+                    innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);
+                }
+                if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(referenceId))
+                {
+                    innerUser = await _userFactory.GetByReferenceId(coreSettings, domainId.Value, referenceId);
                 }
                 if (result == null && innerUser == null && innerUsers == null)
                 {
