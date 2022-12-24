@@ -43,61 +43,38 @@ namespace AuthorizationAPI.Controllers
             IActionResult result = null;
             try
             {
+                IUser innerUser = null;
+                List<IUser> innerUsers = null;                
                 CoreSettings coreSettings = CreateCoreSettings();
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(emailAddress))
-                    result = BadRequest("Missing emailAddress parameter value");
                 if (result == null && !(await VerifyDomainAccount(domainId.Value)))
                     result = Unauthorized();
-                if (result == null)
+                if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(emailAddress))
+                {                    
+                    innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);                    
+                }
+                if (result == null && innerUser == null && innerUsers == null)
+                {
+                    innerUser = await _userFactory.GetByReferenceId(coreSettings, domainId.Value, GetCurrentUserReferenceId());
+                }
+                if (result == null && innerUser != null && innerUsers == null)
+                {
+                    innerUsers = new List<IUser>();
+                    if (innerUser != null)
+                        innerUsers.Add(innerUser);                    
+                }
+                if (result == null && innerUsers != null)
                 {
                     IMapper mapper = CreateMapper();
-                    IUser innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);
-                    List<IUser> innerUsers = new List<IUser>();
-                    if (innerUser != null)
-                        innerUsers.Add(innerUser);
                     IEnumerable<Task<User>> users = innerUsers.Select<IUser, Task<User>>(u => MapUser(coreSettings, mapper, u));
                     result = Ok(
                         await Task.WhenAll<User>(users)
                         );
                 }
-            }
-            catch (Exception ex)
-            {
-                await LogException(ex);
-                result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
-            }
-            return result;
-        }
-
-        [HttpGet("{domainId}")]
-        [Authorize(Constants.POLICY_BL_AUTH)]
-        [ProducesResponseType(typeof(User), 200)]
-        public async Task<IActionResult> GetCurrentUser([FromRoute] Guid? domainId)
-        {
-            IActionResult result = null;
-            try
-            {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
-                    result = Unauthorized();
                 if (result == null)
                 {
-                    CoreSettings coreSettings = CreateCoreSettings();
-                    IUser innerUser = await _userFactory.GetByReferenceId(coreSettings, domainId.Value, GetCurrentUserReferenceId());
-                    if (innerUser == null)
-                    {
-                        result = NotFound();
-                    }
-                    else
-                    {
-                        IMapper mapper = CreateMapper();
-                        result = Ok(
-                            await MapUser(coreSettings, mapper, innerUser)
-                            );
-                    }
+                    result = Ok(new List<User>());
                 }
             }
             catch (Exception ex)
