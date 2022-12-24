@@ -24,7 +24,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Token", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<string>(_service, request);
         }
 

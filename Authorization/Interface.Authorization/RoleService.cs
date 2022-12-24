@@ -24,7 +24,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Role", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post, role);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post, role)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<Role>(_service, request);
         }
 
@@ -39,7 +41,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Role", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<List<Role>>(_service, request);
         }
 
@@ -47,7 +51,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Role", domainId.ToString("D"), roleId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, role);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, role)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<Role>(_service, request);
         }
 

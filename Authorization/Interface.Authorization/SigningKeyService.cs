@@ -24,7 +24,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post, signingKey);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post, signingKey)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<SigningKey>(_service, request);
         }
 
@@ -39,7 +41,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<List<SigningKey>>(_service, request);
         }
 
@@ -47,7 +51,9 @@ namespace BrassLoon.Interface.Authorization
         {
             UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
             uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"), signingKeyId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, signingKey);
+            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, signingKey)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<SigningKey>(_service, request);
         }
 
