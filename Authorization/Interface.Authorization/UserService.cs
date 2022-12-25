@@ -1,16 +1,19 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.RestClient;
+using Microsoft.Extensions.Caching.Memory;
+using Polly;
+using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Authorization
 {
     public class UserService : IUserService
     {
+        private static Policy _userNameCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+
         private readonly IService _service;
         private readonly RestUtil _restUtil;
 
@@ -43,12 +46,16 @@ namespace BrassLoon.Interface.Authorization
 
         public Task<string> GetName(ISettings settings, Guid domainId, Guid userId)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"), userId.ToString("D"), "Name");
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<string>(_service, request);
+            return _userNameCache.Execute(context =>
+            {
+                UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
+                uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"), userId.ToString("D"), "Name");
+                IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
+                    .AddJwtAuthorizationToken(settings.GetToken)
+                    ;
+                return _restUtil.Send<string>(_service, request);
+            },
+            new Context(string.Concat(domainId.ToString("N"), " ", userId.ToString("N"))));            
         }
 
         public Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)
