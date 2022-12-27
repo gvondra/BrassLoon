@@ -141,6 +141,7 @@ namespace BrassLoon.CommonAPI
                 if (!string.IsNullOrEmpty(brassLoonIdIssuer))
                 {
                     o.AddPolicyWithoutRoles(Constants.POLICY_BL_AUTH, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
+                    o.AddPolicy(Constants.POLICY_SYS_ADMIN, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
                 }
             });
             return services;

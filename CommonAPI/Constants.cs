@@ -12,5 +12,6 @@ namespace BrassLoon.CommonAPI
         public const string AUTH_SCHEME_GOOGLE = "GoogleAuthentication";
         public const string POLICY_CREATE_TOKEN = "Create:Token"; // can exchange google user token for access token
         public const string POLICY_BL_AUTH = "BL:AUTH"; // ensures the requestor used a brass loon token
+        public const string POLICY_SYS_ADMIN = "SysAdmin";
     }
 }
