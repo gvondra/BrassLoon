@@ -6,9 +6,9 @@
 	[Data] NVARCHAR(MAX) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Item_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Item_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAiNT [PK_Item] PRIMARY KEY CLUSTERED ([ItemId])
+	CONSTRAiNT [PK_Item] PRIMARY KEY NONCLUSTERED ([ItemId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 GO
 
-CREATE UNIQUE INDEX [IX_Item_DomainId_Code] ON [blc].[Item] ([DomainId], [Code])
+CREATE UNIQUE CLUSTERED INDEX [IX_Item_DomainId_Code] ON [blc].[Item] ([DomainId], [Code])

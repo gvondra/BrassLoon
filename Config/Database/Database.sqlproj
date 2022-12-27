@@ -85,5 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
+    <None Include="LocalDatabase.publish.xml" />
   </ItemGroup>
 </Project>
