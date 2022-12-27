@@ -10,8 +10,9 @@
 		<Company />
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-		<AssemblyVersion>1.0.0.18</AssemblyVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Version>1.0.0-prerelease.18</Version>
+		<AssemblyVersion>1.0.0.18</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
