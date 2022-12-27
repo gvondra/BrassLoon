@@ -11,7 +11,7 @@
 	[StackTrace] NVARCHAR(MAX) NOT NULL,
 	[Data] NVARCHAR(MAX) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Exception_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_Exception] PRIMARY KEY CLUSTERED ([ExceptionId]), 
+	CONSTRAINT [PK_Exception] PRIMARY KEY NONCLUSTERED ([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_Exception] FOREIGN KEY ([ParentExceptionId]) REFERENCES [bll].[Exception]([ExceptionId])
 )
 WITH (DATA_COMPRESSION = PAGE)
@@ -22,4 +22,5 @@ CREATE UNIQUE INDEX [IX_Exception_ParentExceptionId] ON [bll].[Exception] ([Pare
 
 GO
 
-CREATE INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId]) INCLUDE ([ParentExceptionId], [CreateTimestamp])
+CREATE CLUSTERED INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId])
+

@@ -7,13 +7,13 @@
 	[ExpirationTimestamp] DATETIME2(4) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_MerticPurge_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_MetricPurge_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_MerticPurge] PRIMARY KEY CLUSTERED ([PurgeId])
+	CONSTRAINT [PK_MerticPurge] PRIMARY KEY NONCLUSTERED ([PurgeId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE INDEX [IX_MerticPurge_DomainId] ON [bll].[MetricPurge] ([DomainId]) INCLUDE ([Status]);
+CREATE CLUSTERED INDEX [IX_MerticPurge_DomainId] ON [bll].[MetricPurge] ([DomainId]);
 
 GO
 

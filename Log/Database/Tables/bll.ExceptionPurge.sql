@@ -7,13 +7,13 @@
 	[ExpirationTimestamp] DATETIME2(4) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_ExceptionPurge_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_ExceptionPurge_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_ExceptionPurge] PRIMARY KEY CLUSTERED ([PurgeId])
+	CONSTRAINT [PK_ExceptionPurge] PRIMARY KEY NONCLUSTERED ([PurgeId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE INDEX [IX_ExceptionPurge_DomainId] ON [bll].[ExceptionPurge] ([DomainId]) INCLUDE ([Status]);
+CREATE CLUSTERED INDEX [IX_ExceptionPurge_DomainId] ON [bll].[ExceptionPurge] ([DomainId]);
 
 GO
 

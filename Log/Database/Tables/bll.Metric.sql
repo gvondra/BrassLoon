@@ -8,10 +8,10 @@
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Metric_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[Status] VARCHAR(500) NOT NULL DEFAULT (''), 
     [Requestor] VARCHAR(200) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_Metric] PRIMARY KEY CLUSTERED ([MetricId])
+    CONSTRAINT [PK_Metric] PRIMARY KEY NONCLUSTERED ([MetricId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE INDEX [IX_Metric_DomainId] ON [bll].[Metric] ([DomainId], [EventCode]) INCLUDE ([CreateTimestamp])
+CREATE CLUSTERED INDEX [IX_Metric_DomainId] ON [bll].[Metric] ([DomainId], [EventCode])
