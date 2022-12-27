@@ -83,7 +83,7 @@ namespace BrassLoon.Interface.Log
             return response.Value;
         }
 
-        public async Task<List<Metric>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode)
+        public Task<List<Metric>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("Metric")
@@ -92,9 +92,7 @@ namespace BrassLoon.Interface.Log
                 .AddQueryParameter("eventCode", eventCode ?? string.Empty)
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            IResponse<List<Metric>> response = await _service.Send<List<Metric>>(request);
-            _restUtil.CheckSuccess(response);
-            return response.Value;
+            return _restUtil.Send<List<Metric>>(_service, request);
         }
     }
 }

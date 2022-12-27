@@ -1,12 +1,11 @@
-﻿using LogModels = BrassLoon.Interface.Log.Models;
-using BrassLoon.RestClient;
+﻿using BrassLoon.RestClient;
 using Polly;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using LogModels = BrassLoon.Interface.Log.Models;
 
 namespace BrassLoon.Interface.Log
 {
@@ -49,7 +48,7 @@ namespace BrassLoon.Interface.Log
                 );
         }
 
-        public async Task<LogModels.Exception> Get(ISettings settings, Guid domainId, long id)
+        public Task<LogModels.Exception> Get(ISettings settings, Guid domainId, long id)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
             .AddPath("Exception")
@@ -57,12 +56,10 @@ namespace BrassLoon.Interface.Log
             .AddPath(id.ToString())
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            IResponse<LogModels.Exception> response = await _service.Send<LogModels.Exception>(request);
-            _restUtil.CheckSuccess(response);
-            return response.Value;
+            return _restUtil.Send<LogModels.Exception>(_service, request);
         }
 
-        public async Task<List<LogModels.Exception>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp)
+        public Task<List<LogModels.Exception>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
             .AddPath("Exception")
@@ -70,9 +67,7 @@ namespace BrassLoon.Interface.Log
             .AddQueryParameter("maxTimestamp", maxTimestamp.ToString("o"))
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            IResponse<List<LogModels.Exception>> response = await _service.Send<List<LogModels.Exception>>(request);
-            _restUtil.CheckSuccess(response);
-            return response.Value;
+            return _restUtil.Send<List<LogModels.Exception>>(_service, request);
         }
 
         private LogModels.Exception CreateException(Guid domainId, DateTime? createTimestamp, System.Exception exception)

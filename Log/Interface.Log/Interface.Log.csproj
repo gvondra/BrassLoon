@@ -9,8 +9,8 @@
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0-prerelease.1</Version>
-    <AssemblyVersion>2.1.0.1</AssemblyVersion>
+    <Version>2.1.0-prerelease.2</Version>
+    <AssemblyVersion>2.1.0.2</AssemblyVersion>
     <PackageReleaseNotes>- v2.1 Upgrade RestUtil v3.1
 		- v2.0 upgrade RestUtil v3</PackageReleaseNotes>
   </PropertyGroup>
