@@ -1,16 +1,15 @@
-﻿using LogModels = BrassLoon.Interface.Log.Models;
-using AutoMapper;
+﻿using AutoMapper;
 using BrassLoon.Interface.Account;
-using BrassLoon.Interface.Log;
 using BrassLoon.Log.Framework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Log = BrassLoon.Interface.Log;
+using LogModels = BrassLoon.Interface.Log.Models;
 
 namespace LogAPI.Controllers
 {
@@ -18,26 +17,20 @@ namespace LogAPI.Controllers
     [ApiController]
     public class MetricController : LogControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
-        private readonly IDomainService _domainService;
         private readonly IMetricFactory _metricFactory;
         private readonly IMetricSaver _metricSaver;
-        private readonly Lazy<IExceptionService> _exceptionService;
 
         public MetricController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
+            Log.IExceptionService exceptionService,
+            MapperFactory mapperFactory,
             IDomainService domainService,
             IMetricFactory metricFactory,
-            IMetricSaver metricSaver,
-            Lazy<IExceptionService> exceptionService)
+            IMetricSaver metricSaver)
+            : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
-            _domainService = domainService;
             _metricFactory = metricFactory;
             _metricSaver = metricSaver;
-            _exceptionService = exceptionService;
         }
 
         [HttpGet("{domainId}")]
@@ -56,12 +49,12 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing event code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        CoreSettings settings = CreateCoreSettings();
+                        IMapper mapper = CreateMapper();
                         result = Ok(
                             (await _metricFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
                             .Select<IMetric, LogModels.Metric>(innerMetric => mapper.Map<LogModels.Metric>(innerMetric))
@@ -71,7 +64,7 @@ namespace LogAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -90,11 +83,11 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccount(domainId.Value)))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     else
                     {
-                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                        CoreSettings settings = CreateCoreSettings();
                         result = Ok(
                             await _metricFactory.GetEventCodes(settings, domainId.Value)
                             );
@@ -103,7 +96,7 @@ namespace LogAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -121,15 +114,15 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing domain guid value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(metric.DomainId.Value, _settingsFactory, _settings.Value, _domainService)))
+                    if (!(await VerifyDomainAccountWriteAccess(metric.DomainId.Value, _settings.Value, _domainService)))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
                     {
-                        CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                        CoreSettings settings = CreateCoreSettings();
                         IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode, metric.Status, metric.Requestor);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
                         await _metricSaver.Create(settings, innerMetric);
                         result = Ok(mapper.Map<LogModels.Metric>(innerMetric));
@@ -138,7 +131,7 @@ namespace LogAPI.Controllers
             }    
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

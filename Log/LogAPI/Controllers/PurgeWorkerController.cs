@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using BrassLoon.Interface.Log;
+using BrassLoon.CommonAPI;
+using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log.Models;
 using BrassLoon.Log.Framework;
 using BrassLoon.Log.Framework.Enumerations;
@@ -11,29 +12,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Log = BrassLoon.Interface.Log;
 
 namespace LogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("SysAdmin")]
+    [Authorize(Constants.POLICY_SYS_ADMIN)]
     public class PurgeWorkerController : LogControllerBase
     {
-        private readonly IOptions<Settings> _settings;
-        private readonly SettingsFactory _settingsFactory;
-        private readonly Lazy<IExceptionService> _exceptionService;
         private readonly IPurgeWorkerFactory _purgeWorkerFactory;
         private readonly IPurgeWorkerSaver _purgeWorkerSaver;
 
         public PurgeWorkerController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            Log.IExceptionService exceptionService,
+            MapperFactory mapperFactory,
+            IDomainService domainService,
             IPurgeWorkerFactory purgeWorkerFactory,
             IPurgeWorkerSaver purgeWorkerSaver)
+            : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
-            _settings = settings;
-            _settingsFactory = settingsFactory;
-            _exceptionService = exceptionService; 
             _purgeWorkerFactory = purgeWorkerFactory;
             _purgeWorkerSaver = purgeWorkerSaver;
         }
@@ -45,8 +44,8 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
-                IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                CoreSettings settings = CreateCoreSettings();
+                IMapper mapper = CreateMapper();
                 result = Ok(
                     (await _purgeWorkerFactory.GetAll(settings))
                     .Select<IPurgeWorker, PurgeWorker>(innerPurgeWorker => mapper.Map<PurgeWorker>(innerPurgeWorker))
@@ -54,7 +53,7 @@ namespace LogAPI.Controllers
             }
             catch (System.Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -71,20 +70,20 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing id parameter value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    CoreSettings settings = CreateCoreSettings();
                     IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<PurgeWorker>(innerPurgeWorker));
                     }                    
                 }
             }
             catch (System.Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -103,7 +102,7 @@ namespace LogAPI.Controllers
                     result = BadRequest("Missing patch data");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    CoreSettings settings = CreateCoreSettings();
                     IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
                         result = NotFound();
@@ -112,14 +111,14 @@ namespace LogAPI.Controllers
                         if (patch.ContainsKey("Status"))
                             innerPurgeWorker.Status = (PurgeWorkerStatus)Convert.ChangeType(patch["Status"], typeof(short));
                         await _purgeWorkerSaver.Update(settings, innerPurgeWorker);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<PurgeWorker>(innerPurgeWorker));
                     }
                 }
             }
             catch (System.Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                await LogException(ex);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

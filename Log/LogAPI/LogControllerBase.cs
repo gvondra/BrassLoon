@@ -1,118 +1,75 @@
-﻿using BrassLoon.Interface.Account;
-using BrassLoon.Interface.Account.Models;
+﻿using AutoMapper;
+using BrassLoon.CommonAPI;
+using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Polly;
-using Polly.Caching;
-using Polly.Caching.Memory;
+using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LogAPI
 {
-    public abstract class LogControllerBase : ControllerBase
+    public abstract class LogControllerBase : CommonControllerBase
     {
-        private static Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
+        protected readonly IOptions<Settings> _settings;
+        protected readonly SettingsFactory _settingsFactory;
+        protected readonly IExceptionService _exceptionService;
+        protected readonly IDomainService _domainService;
+        private readonly MapperFactory _mapperFactory;
+        private BrassLoon.Interface.Log.ISettings _loggSettings;
+        private BrassLoon.Interface.Account.ISettings _accountSettings;
+        private CoreSettings _coreSettings;
 
-        [NonAction]
-        protected virtual async Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
-        {            
-            AccountDomain domain = await GetDomain(
-            domainId,
-            settingsFactory,
-            settings,
-            GetAccessToken(),
-            domainService
-            );
-            return !domain.Account.Locked && VerifyDomainAccount(domain);
-        }
-
-        [NonAction]
-        protected async Task<bool> VerifyDomainAccount(Guid domainId, SettingsFactory settingsFactory, Settings settings, IDomainService domainService)
+        protected LogControllerBase(IOptions<Settings> settings,
+            SettingsFactory settingsFactory,
+            IExceptionService exceptionService,
+            MapperFactory mapperFactory,
+            IDomainService domainService)
         {
-            Domain domain = await GetDomain(
-                domainId,
-                settingsFactory,
-                settings,
-                GetAccessToken(),
-                domainService
-                );
-            return VerifyDomainAccount(domain);
-        }
-
-        private async Task<AccountDomain> GetDomain(Guid domainId, SettingsFactory settingsFactory, Settings settings, string accessToken, IDomainService domainService)
-        {
-            HashAlgorithm hashAlgorithm = SHA256.Create();
-            string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
-            return await m_cache.Execute<Task<AccountDomain>>(async context =>
-            {
-                return await domainService.GetAccountDomain(
-                settingsFactory.CreateAccount(settings, accessToken),
-                domainId
-                );
-            },
-            new Context(string.Format("{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
-            );
+            _settings = settings;
+            _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
+            _mapperFactory = mapperFactory;
+            _domainService = domainService;
         }
 
         [NonAction]
-        protected bool VerifyDomainAccount(Domain domain)
+        protected IMapper CreateMapper() => _mapperFactory.Create();
+
+        [NonAction]
+        protected BrassLoon.Interface.Log.ISettings CreateLogSettings() => CreateLogSettings(_settings.Value, GetAccessToken());
+
+        [NonAction]
+        protected override BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings, string accessToken)
         {
-            bool result = false;
-            if (domain != null)
-            {
-                result = UserCanAccessAccount(domain.AccountId.Value);
-            }            
-            return result;
+            if (_loggSettings == null)
+                _loggSettings = _settingsFactory.CreateLog(settings, accessToken);
+            return _loggSettings;
         }
 
         [NonAction]
-        protected bool UserCanAccessAccount(Guid accountId)
+        protected BrassLoon.Interface.Account.ISettings CreateAccountSettings() => CreateAccountSettings(_settings.Value, GetAccessToken());
+
+        [NonAction]
+        protected override BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken)
         {
-            string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
-            return accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
+            if (_accountSettings == null)
+                _accountSettings = _settingsFactory.CreateAccount(settings, accessToken);
+            return _accountSettings;
         }
 
         [NonAction]
-        protected string GetAccessToken()
+        protected CoreSettings CreateCoreSettings()
         {
-            string token = this.Request.Headers.Where(h => string.Equals("Authorization", h.Key, StringComparison.OrdinalIgnoreCase))
-                .Select(h => h.Value.FirstOrDefault())
-                .FirstOrDefault();
-            token = (token ?? string.Empty).Trim();
-            if (!string.IsNullOrEmpty(token))
-            {
-                Match match = Regex.Match(token, @"(?<=^Bearer\s+).+$", RegexOptions.IgnoreCase);
-                if (match.Success)
-                    token = match.Value;
-            }
-            return token;
+            if (_coreSettings == null)
+                _coreSettings = _settingsFactory.CreateCore(_settings.Value);
+            return _coreSettings;
         }
 
         [NonAction]
-        protected async Task LogException(Exception ex, IExceptionService exceptionService, SettingsFactory settingsFactory, Settings settings)
-        {
-            try
-            {
-                Console.WriteLine(ex.ToString());
-                if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
-                    await exceptionService.Create(
-                        settingsFactory.CreateLog(settings, GetAccessToken()),
-                        Guid.Parse(settings.ExceptionLoggingDomainId),
-                        ex
-                        );                
-            }
-            catch (Exception innerException)
-            {
-                Console.Write(innerException.ToString());
-            }
-        }
+        protected Task LogException(Exception ex) => LogException(ex, _exceptionService, _settings.Value);
+
+        [NonAction]
+        protected Task<bool> VerifyDomainAccount(Guid domainId) => VerifyDomainAccount(domainId, _settings.Value, _domainService);
     }
 }
