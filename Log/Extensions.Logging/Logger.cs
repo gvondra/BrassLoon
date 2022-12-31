@@ -44,7 +44,7 @@ namespace BrassLoon.Extensions.Logging
                 }
                 if (stringBuilder.Length > 0)
                 {
-                    _loggerProcessor.Enque(new LogMessageEntry(_name, stringBuilder.ToString(), DateTime.UtcNow));
+                    _loggerProcessor.Enque(new LogMessageEntry(_name, stringBuilder.ToString(), DateTime.UtcNow, eventId, exception, logLevel));
                 }                
             }
         }

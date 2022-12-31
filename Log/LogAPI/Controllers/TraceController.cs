@@ -159,12 +159,14 @@ namespace LogAPI.Controllers
                     {
                         CoreSettings settings = CreateCoreSettings();
                         IMapper mapper = CreateMapper();
+                        List<Task> createTasks = new List<Task>();
                         foreach (LogModels.Trace trace in traces)
                         {
                             ITrace innerTrace = _traceFactory.Create(domainId.Value, trace.CreateTimestamp, trace.EventCode);
                             mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
-                            await _traceSaver.Create(settings, innerTrace);
+                            createTasks.Add(_traceSaver.Create(settings, innerTrace));
                         }
+                        await Task.WhenAll(createTasks);
                         result = Ok();
                     }
                 }

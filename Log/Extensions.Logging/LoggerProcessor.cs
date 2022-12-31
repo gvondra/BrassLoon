@@ -82,11 +82,23 @@ namespace BrassLoon.Extensions.Logging
                 {
                     Monitor.Wait(_logEntries);
                 }
-                if (_logEntries.Count > 0)
+                if (_logEntries.Count > 16)
+                {
+                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 128)];
+                    for (int i = 0; i < entries.Length; i += 1)
+                    {
+                        entries[i] = _logEntries.Dequeue(); 
+                    }
+                    result = true;
+                }
+                else if (_logEntries.Count > 0)
                 {
                     entries = new LogMessageEntry[] { _logEntries.Dequeue() };
-                    result = true;  
-                    if (_logEntries.Count >= MAX_QUEUE_LENGTH - 1)
+                    result = true;                      
+                }
+                if (result)
+                {
+                    if (_logEntries.Count >= MAX_QUEUE_LENGTH - entries.Length)
                     {
                         Monitor.PulseAll(_logEntries);
                     }
@@ -101,19 +113,30 @@ namespace BrassLoon.Extensions.Logging
             {
                 if (entries != null && entries.Length > 0)
                 {
+                    LoggerConfiguration configuration = _options.CurrentValue;
+                    LogSettings settings = new LogSettings(_tokenService, configuration);
+                    List<Trace> traces = new List<Trace>();                     
                     for (int i = 0; i < entries.Length; i += 1)
                     {
-                        LoggerConfiguration configuration = _options.CurrentValue;
-                        LogSettings settings = new LogSettings(_tokenService, configuration);
-                        Trace trace = new Trace
+                        if (!string.IsNullOrEmpty(entries[i].Message))
                         {
-                            DomainId = configuration.LogDomainId,
-                            EventCode = entries[i].Category,
-                            Message = entries[i].Message,
-                            CreateTimestamp = entries[i].Timestamp
-                        };
-                        trace = _traceService.Create(settings, trace).Result;
+                            traces.Add(new Trace
+                            {
+                                DomainId = configuration.LogDomainId,
+                                EventCode = entries[i].Category,
+                                Message = entries[i].Message,
+                                CreateTimestamp = entries[i].Timestamp
+                            }
+                            );
+                        }
                     }
+                    if (traces.Count > 0 ) 
+                        _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
+                    foreach (LogMessageEntry exceptionEntry in entries.Where(e => e.Exception != null))
+                    {
+                        _exceptionService.Create(settings, configuration.LogDomainId, exceptionEntry.Timestamp, exceptionEntry.Exception).Wait();
+                    }
+                        
                 }
             }
             catch (System.Exception ex)

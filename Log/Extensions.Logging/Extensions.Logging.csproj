@@ -32,6 +32,8 @@
 	  <PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
 	  <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="[6.0.0,6.1)" />
+	  <PackageReference Include="Polly" Version="[7.2.3,7.3)" />
+	  <PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,3.1)" />
 	</ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 ﻿using BrassLoon.Interface.Log;
+using Microsoft.Extensions.Caching.Memory;
+using Polly;
+using Polly.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
 
@@ -10,9 +10,9 @@ namespace BrassLoon.Extensions.Logging
 {
     public class LogSettings : ISettings
     {
+        private static Policy _tokenCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(25));
         private readonly LoggerConfiguration _loggerConfiguration;
         private readonly Account.ITokenService _tokenService;
-        private string _token;
 
         public LogSettings(Account.ITokenService tokenService, LoggerConfiguration loggerConfiguration)
         {
@@ -24,9 +24,8 @@ namespace BrassLoon.Extensions.Logging
 
         public async Task<string> GetToken()
         {
-            if (string.IsNullOrEmpty(_token))
-                _token = await _tokenService.CreateClientCredentialToken(new AccountSettings(_loggerConfiguration), _loggerConfiguration.LogClientId, _loggerConfiguration.LogClientSecret);
-            return _token;
+            return await _tokenCache.Execute(context => _tokenService.CreateClientCredentialToken(new AccountSettings(_loggerConfiguration), _loggerConfiguration.LogClientId, _loggerConfiguration.LogClientSecret),
+                new Context(string.Concat(_loggerConfiguration.LogClientId.ToString("N"), BaseAddress)));
         }
     }
 }
