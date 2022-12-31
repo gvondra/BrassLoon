@@ -21,7 +21,7 @@ namespace BrassLoon.Extensions.Logging
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
         private bool _disposedValue;
         private Queue<LogMessageEntry> _logEntries;
-        private bool _exit;        
+        private bool _exit; 
 
         public LoggerProcessor(ITraceService traceService,
             IExceptionService exceptionService,
@@ -63,13 +63,18 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
+        private Task StartWriteMessage(LogMessageEntry[] entries)
+        {
+            return Task.Run(() => WriteMessages(in entries));
+        }
+
         private void ProcessQueue()
         {
             LogMessageEntry[] entries;
             Queue<Task> tasks = new Queue<Task>();
             while (TryDeque(out entries))
             {
-                tasks.Enqueue(Task.Run(() => WriteMessages(entries)));
+                tasks.Enqueue(StartWriteMessage(entries));
                 while (tasks.Count >= 4)
                 {
                     tasks.Dequeue().Wait();
@@ -90,7 +95,7 @@ namespace BrassLoon.Extensions.Logging
                 }
                 if (_logEntries.Count > 16)
                 {
-                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 64)];
+                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 128)];
                     for (int i = 0; i < entries.Length; i += 1)
                     {
                         entries[i] = _logEntries.Dequeue(); 
@@ -113,7 +118,7 @@ namespace BrassLoon.Extensions.Logging
             return result;
         }
 
-        private void WriteMessages(LogMessageEntry[] entries)
+        private void WriteMessages(in LogMessageEntry[] entries)
         {
             try
             {
@@ -160,9 +165,9 @@ namespace BrassLoon.Extensions.Logging
                     Shutdown();
                     try
                     {
-                        _outputThread.Join(5000);
+                        _outputThread.Join(60000);
                     }
-                    catch (ThreadStateException) { }
+                    catch (ThreadStateException) { }                    
                 }
 
                 _disposedValue = true;
@@ -182,15 +187,6 @@ namespace BrassLoon.Extensions.Logging
             {
                 _exit = true;
                 Monitor.PulseAll(_logEntries);
-            }
-            bool done = false;
-            while (!done)
-            {
-                Thread.Sleep(250);
-                lock(_logEntries)
-                {
-                    done = (_logEntries.Count == 0);
-                }
             }
         }
     }
