@@ -2,6 +2,7 @@
 using BrassLoon.RestClient;
 using Polly;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -51,6 +52,23 @@ namespace BrassLoon.Interface.Log
                     CreateTimestamp = createTimestamp
                 }
                 );
+        }
+
+        public async Task Create(ISettings settings, Guid domainId, List<Trace> traces)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, traces)
+            .AddPath("TraceBatch/{domainId}")
+            .AddPathParameter("domainId", domainId.ToString("D"))
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            IResponse response = await Policy
+                .HandleResult<IResponse<Trace>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(0.2) })
+                .ExecuteAsync(() => _service.Send<Trace>(request))
+                ;
+            _restUtil.CheckSuccess(response);
         }
     }
 }

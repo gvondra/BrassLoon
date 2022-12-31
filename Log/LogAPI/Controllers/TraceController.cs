@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Log = BrassLoon.Interface.Log;
@@ -129,6 +130,45 @@ namespace LogAPI.Controllers
                     }
                 }
             }    
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpPost("/api/TraceBatch/{domainId}")]
+        [Authorize()]
+        public async Task<IActionResult> CreateBatch([FromRoute] Guid? domainId, [FromBody] List<LogModels.Trace> traces)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain guid value");
+                if (result == null && traces == null)
+                    result = BadRequest("Missing trace list message body");
+                if (result == null)
+                {
+                    if (!(await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService)))
+                    {
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
+                    if (result == null)
+                    {
+                        CoreSettings settings = CreateCoreSettings();
+                        IMapper mapper = CreateMapper();
+                        foreach (LogModels.Trace trace in traces)
+                        {
+                            ITrace innerTrace = _traceFactory.Create(domainId.Value, trace.CreateTimestamp, trace.EventCode);
+                            mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
+                            await _traceSaver.Create(settings, innerTrace);
+                        }
+                        result = Ok();
+                    }
+                }
+            }
             catch (Exception ex)
             {
                 await LogException(ex);

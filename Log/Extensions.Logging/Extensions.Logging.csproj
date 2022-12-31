@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<AssemblyName>BrassLoon.Extensions.Logging</AssemblyName>
+		<RootNamespace>BrassLoon.Extensions.Logging</RootNamespace>
+		<Authors>Greg Vondra</Authors>
+		<Company />
+		<Product>Brass Loon</Product>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<LangVersion>10</LangVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>1.0.0-alpha.1</Version>
+		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<PackageReleaseNotes></PackageReleaseNotes>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="BrassLoon.Interface.Account" Version="2.2.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
+	  <PackageReference Include="Microsoft.Extensions.Logging" Version="[6.0.0,6.1)" />
+	</ItemGroup>
+
+</Project>

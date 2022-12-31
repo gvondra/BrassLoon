@@ -1,35 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-    <AssemblyName>BrassLoon.Interface.Log</AssemblyName>
-    <RootNamespace>BrassLoon.Interface.Log</RootNamespace>
-    <Authors>Greg Vondra</Authors>
-    <Company />
-    <Product>Brass Loon</Product>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0</Version>
-    <AssemblyVersion>2.1.0.3</AssemblyVersion>
-    <PackageReleaseNotes>- v2.1 Upgrade RestUtil v3.1
-		- v2.0 upgrade RestUtil v3</PackageReleaseNotes>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<AssemblyName>BrassLoon.Interface.Log</AssemblyName>
+		<RootNamespace>BrassLoon.Interface.Log</RootNamespace>
+		<Authors>Greg Vondra</Authors>
+		<Company />
+		<Product>Brass Loon</Product>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>2.2.0-prerelease.1</Version>
+		<AssemblyVersion>2.2.0.1</AssemblyVersion>
+		<PackageReleaseNotes>
+			- v2.2 Added create batch traces method
+			- v2.1 Upgrade RestUtil v3.1
+			- v2.0 upgrade RestUtil v3
+		</PackageReleaseNotes>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="[6.3.0,7.0)" />
-    <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
-    <PackageReference Include="Polly" Version="[7.2.3,7.3)" />
-    <PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,3.1)" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="[6.3.0,7.0)" />
+		<PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
+		<PackageReference Include="Polly" Version="[7.2.3,7.3)" />
+		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,3.1)" />
+	</ItemGroup>
 
 </Project>
