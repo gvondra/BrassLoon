@@ -66,10 +66,16 @@ namespace BrassLoon.Extensions.Logging
         private void ProcessQueue()
         {
             LogMessageEntry[] entries;
+            Queue<Task> tasks = new Queue<Task>();
             while (TryDeque(out entries))
             {
-                WriteMessages(entries);
+                tasks.Enqueue(Task.Run(() => WriteMessages(entries)));
+                while (tasks.Count >= 4)
+                {
+                    tasks.Dequeue().Wait();
+                }
             }
+            Task.WaitAll(tasks.ToArray());
         }
 
         private bool TryDeque(out LogMessageEntry[] entries)
@@ -84,7 +90,7 @@ namespace BrassLoon.Extensions.Logging
                 }
                 if (_logEntries.Count > 16)
                 {
-                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 128)];
+                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 64)];
                     for (int i = 0; i < entries.Length; i += 1)
                     {
                         entries[i] = _logEntries.Dequeue(); 
@@ -107,7 +113,7 @@ namespace BrassLoon.Extensions.Logging
             return result;
         }
 
-        private void WriteMessages(in LogMessageEntry[] entries)
+        private void WriteMessages(LogMessageEntry[] entries)
         {
             try
             {

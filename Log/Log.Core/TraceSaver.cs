@@ -13,14 +13,38 @@ namespace BrassLoon.Log.Core
         {
             if (traces != null && traces.Length > 0)
             {
-                Saver saver = new Saver();
-                await saver.Save(new TransactionHandler(settings), async th =>
+                TransactionHandler transactionHandler = new TransactionHandler(settings);
+                try
                 {
                     for (int i = 0; i < traces.Length; i += 1)
                     {
-                        await traces[i].Create(th);
+                        await traces[i].Create(transactionHandler);
+                        if (transactionHandler.Transaction != null)
+                        {
+                            transactionHandler.Transaction.Commit();
+                            transactionHandler.Transaction.Dispose();
+                            transactionHandler.Transaction = null;
+                        }
                     }
-                });
+                }
+                catch
+                {
+                    if (transactionHandler.Transaction != null)
+                    {
+                        transactionHandler.Transaction.Rollback();
+                        transactionHandler.Transaction.Dispose();
+                        transactionHandler.Transaction = null;
+                    }
+                    throw;
+                }
+                finally
+                {
+                    if (transactionHandler.Connection != null)
+                    {
+                        transactionHandler.Connection.Dispose();
+                        transactionHandler.Connection = null;
+                    }
+                }
             }            
         }
     }
