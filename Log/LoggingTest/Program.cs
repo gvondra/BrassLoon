@@ -14,7 +14,7 @@ namespace BrassLoon.LoggingTest
 
         public static async Task<int> Main(string[] args)
         {
-            Console.WriteLine($"start {DateTime.Now.ToString("hh:mm:ss ff")}");
+            Console.WriteLine($"start {DateTime.Now.ToString("hh:mm:ss tt")}");
             _settings = LoadSettings(args);
             using (ILoggerFactory loggerFactory = LoadLogger(_settings))
             {
