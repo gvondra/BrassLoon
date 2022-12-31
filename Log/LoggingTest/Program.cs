@@ -14,7 +14,8 @@ namespace BrassLoon.LoggingTest
 
         public static async Task<int> Main(string[] args)
         {
-            Console.WriteLine($"start {DateTime.Now.ToString("hh:mm:ss tt")}");
+            DateTime start = DateTime.Now;
+            Console.WriteLine($"start    {start:hh:mm:ss tt}");
             _settings = LoadSettings(args);
             using (ILoggerFactory loggerFactory = LoadLogger(_settings))
             {
@@ -28,13 +29,17 @@ namespace BrassLoon.LoggingTest
                     logger.LogError(new EventId(2, "test error event"), ex, "alt error message");
                 }
                 List<Task> tasks = new List<Task>();
-                foreach (int i in Enumerable.Range(0, 1000))
+                foreach (int i in Enumerable.Range(0, 2500))
                 {
                     tasks.Add(Task.Run(() => logger.LogInformation(new EventId(1, "test info log"), $"The current time is {DateTime.Now:hh:mm:ss}")));
                 }
                 await Task.WhenAll(tasks);
-                return 0;
             }
+            DateTime finish = DateTime.Now;
+            TimeSpan duration = finish.Subtract(start);
+            Console.WriteLine($"finish   {finish:hh:mm:ss tt}");
+            Console.WriteLine($"duration {Math.Round(duration.TotalMinutes, 3)} minute");
+            return 0;
         }
 
         private static void RaiseException()
