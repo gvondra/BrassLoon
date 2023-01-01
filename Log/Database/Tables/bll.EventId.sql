@@ -1,0 +1,13 @@
+﻿CREATE TABLE [bll].[EventId]
+(
+	[EventId] UNIQUEIDENTIFIER NOT NULL,
+	[DomainId] UNIQUEIDENTIFIER NOT NULL,
+	[Id] INT NOT NULL,
+	[Name] NVARCHAR(512) NOT NULL,
+	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_EventId_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	CONSTRAINT [PK_EventId] PRIMARY KEY NONCLUSTERED ([EventId])
+)
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [IX_EventId_DomainId] ON [bll].[EventId] ([DomainId], [Id], [Name])

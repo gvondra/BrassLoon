@@ -9,7 +9,10 @@ SELECT TOP 10000
 	[EventCode],
 	[Message],
 	[Data],
-	[CreateTimestamp]
+	[CreateTimestamp],
+	[EventId], 
+	[Category], 
+	[Level]
 FROM [bll].[Trace] WITH(READUNCOMMITTED)
 WHERE [DomainId] = @domainId
 	AND [EventCode] = @eventCode

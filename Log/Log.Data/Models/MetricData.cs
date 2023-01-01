@@ -7,13 +7,16 @@ namespace BrassLoon.Log.Data.Models
 {
     public class MetricData : DataManagedStateBase
     {
-        [ColumnMapping("MetricId", IsPrimaryKey = true)] public long MetricId { get; set; }
-        [ColumnMapping("DomainId")] public Guid DomainId { get; set; }
-        [ColumnMapping("EventCode")] public string EventCode { get; set; }
-        [ColumnMapping("Magnitude")] public double? Magnitude { get; set; }
-        [ColumnMapping("Data")] public string Data { get; set; }
-        [ColumnMapping("CreateTimestamp", IsUtc = true)] public DateTime CreateTimestamp { get; set; }
-        [ColumnMapping("Status")] public string Status { get; set; }
-        [ColumnMapping("Requestor")] public string Requestor { get; set; }
+        [ColumnMapping(IsPrimaryKey = true)] public long MetricId { get; set; }
+        [ColumnMapping()] public Guid DomainId { get; set; }
+        [ColumnMapping()] public string EventCode { get; set; }
+        [ColumnMapping()] public double? Magnitude { get; set; }
+        [ColumnMapping()] public string Data { get; set; }
+        [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping()] public string Status { get; set; }
+        [ColumnMapping()] public string Requestor { get; set; }
+        [ColumnMapping()] public Guid? EventId { get; set; }
+        [ColumnMapping()] public string Category { get; set; }
+        [ColumnMapping()] public string Level { get; set; }
     }
 }

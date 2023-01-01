@@ -13,7 +13,10 @@ SELECT TOP 10000
 	[TargetSite],
 	[StackTrace],
 	[Data],
-	[CreateTimestamp]
+	[CreateTimestamp],
+	[EventId], 
+	[Category], 
+	[Level]
 FROM [bll].[Exception] WITH(READUNCOMMITTED)
 WHERE [DomainId] = @domainId
 	AND [ParentExceptionId] IS NULL

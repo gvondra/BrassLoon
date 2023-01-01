@@ -11,7 +11,10 @@ SELECT TOP 10000
 	[Data],
 	[CreateTimestamp],
 	[Status],
-	[Requestor]
+	[Requestor],
+	[EventId], 
+	[Category], 
+	[Level]
 FROM [bll].[Metric] WITH(READUNCOMMITTED)
 WHERE [DomainId] = @domainId
 	AND [EventCode] = @eventCode

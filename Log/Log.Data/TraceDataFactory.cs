@@ -22,25 +22,11 @@ namespace BrassLoon.Log.Data
 
         public async Task<IEnumerable<string>> GetEventCodes(ISqlSettings settings, Guid domainId)
         {
-            List<string> result = new List<string>();
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
+            IDataParameter[] parameters = new IDataParameter[]
             {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "[bll].[GetAllTraceEventCode]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId));
-                    using (DbDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            result.Add(await reader.GetFieldValueAsync<string>(0));
-                        }                        
-                    }
-                }
-                connection.Close();
-            }
-            return result;
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
+            };
+            return await DataUtil.ReadList<string>(_providerFactory, settings, "[bll].[GetAllTraceEventCode]", parameters);
         }
 
         public async Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)

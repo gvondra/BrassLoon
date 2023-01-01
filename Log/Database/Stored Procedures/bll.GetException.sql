@@ -12,7 +12,10 @@ SELECT
 	[TargetSite],
 	[StackTrace],
 	[Data],
-	[CreateTimestamp]
+	[CreateTimestamp],
+	[EventId], 
+	[Category], 
+	[Level]
 FROM [bll].[Exception]
 WHERE [ExceptionId] = @exceptionId
 ;

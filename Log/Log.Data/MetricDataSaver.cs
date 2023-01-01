@@ -40,6 +40,9 @@ namespace BrassLoon.Log.Data
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "timestamp", DbType.DateTime2, DataUtil.GetParameterValue(metricData.CreateTimestamp));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.AnsiString, DataUtil.GetParameterValue(metricData.Status));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "requestor", DbType.AnsiString, DataUtil.GetParameterValue(metricData.Requestor));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "eventId", DbType.Guid, DataUtil.GetParameterValue(metricData.EventId));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "category", DbType.String, DataUtil.GetParameterValue(metricData.Category));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "level", DbType.String, DataUtil.GetParameterValue(metricData.Level));
 
                     await command.ExecuteNonQueryAsync();
                     metricData.MetricId = (long)id.Value;

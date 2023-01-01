@@ -12,6 +12,8 @@ namespace BrassLoon.Log.Data
         {
             base.Load(builder);
             builder.RegisterInstance<ISqlDbProviderFactory>(new SqlClientProviderFactory());
+            builder.RegisterType<EventIdDataFactory>().As<IEventIdDataFactory>();
+            builder.RegisterType<EventIdDataSaver>().As<IEventIdDataSaver>();
             builder.RegisterType<ExceptionDataFactory>().As<IExceptionDataFactory>();
             builder.RegisterType<ExceptionDataSaver>().As<IExceptionDataSaver>();
             builder.RegisterType<MetricDataFactory>().As<IMetricDataFactory>();

@@ -97,6 +97,10 @@
     <Build Include="Stored Procedures\bll.PurgeMetric.sql" />
     <Build Include="Stored Procedures\bll.PurgeException.sql" />
     <Build Include="Stored Procedures\bll.PurgeTrace.sql" />
+    <Build Include="Tables\bll.EventId.sql" />
+    <Build Include="Stored Procedures\bll.CreateEventId.sql" />
+    <Build Include="Stored Procedures\bll.GetEventId.sql" />
+    <Build Include="Stored Procedures\bll.GetEventId_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />

@@ -8,10 +8,18 @@
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Metric_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[Status] VARCHAR(500) NOT NULL DEFAULT (''), 
     [Requestor] VARCHAR(200) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_Metric] PRIMARY KEY NONCLUSTERED ([MetricId])
+	[EventId] UNIQUEIDENTIFIER NULL,
+	[Category] NVARCHAR(512) CONSTRAINT [DF_Metric_Category] DEFAULT ('') NOT NULL,
+	[Level] NVARCHAR(512) CONSTRAINT [DF_Metric_Level] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Metric] PRIMARY KEY NONCLUSTERED ([MetricId]), 
+    CONSTRAINT [FK_Metric_To_EventId] FOREIGN KEY ([EventId]) REFERENCES [bll].[EventId]([EventId])
 )
 WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
 CREATE CLUSTERED INDEX [IX_Metric_DomainId] ON [bll].[Metric] ([DomainId], [EventCode])
+
+GO
+
+CREATE INDEX [IX_Metric_EventId] ON [bll].[Metric] ([EventId])
