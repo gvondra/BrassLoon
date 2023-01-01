@@ -73,7 +73,7 @@ namespace BrassLoon.Interface.Log
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, metrics)
-            .AddPath("Metric/{domainId}")
+            .AddPath("MetricBatch/{domainId}")
             .AddPathParameter("domainId", domainId.ToString("N"))
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
