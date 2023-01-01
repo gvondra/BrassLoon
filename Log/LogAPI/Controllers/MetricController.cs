@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Log = BrassLoon.Interface.Log;
@@ -129,6 +130,47 @@ namespace LogAPI.Controllers
                     }
                 }
             }    
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpPost("/api/MetricBatch/{domainId}")]
+        [Authorize()]
+        public async Task<IActionResult> CreateBatch([FromRoute] Guid? domainId, [FromBody] List<LogModels.Metric> metrics)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain guid value");
+                if (result == null && metrics == null)
+                    result = BadRequest("Missing metric list message body");
+                if (result == null)
+                {
+                    if (!(await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService)))
+                    {
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
+                    if (result == null)
+                    {
+                        CoreSettings settings = CreateCoreSettings();
+                        IMapper mapper = CreateMapper();
+                        List<IMetric> innerMetrics = new List<IMetric>(metrics.Count);
+                        foreach (LogModels.Metric metric in metrics)
+                        {
+                            IMetric innerMetric = _metricFactory.Create(domainId.Value, metric.CreateTimestamp, metric.EventCode, metric.Status, metric.Requestor);
+                            mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
+                            innerMetrics.Add(innerMetric);
+                        }
+                        await _metricSaver.Create(settings, innerMetrics.ToArray());
+                        result = Ok();
+                    }
+                }
+            }
             catch (Exception ex)
             {
                 await LogException(ex);

@@ -1,8 +1,5 @@
 ﻿using BrassLoon.CommonCore;
 using BrassLoon.Log.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core
@@ -13,14 +10,38 @@ namespace BrassLoon.Log.Core
         {
             if (metrics != null && metrics.Length > 0)
             {
-                Saver saver = new Saver();
-                await saver.Save(new TransactionHandler(settings), async th =>
+                TransactionHandler transactionHandler = new TransactionHandler(settings);
+                try
                 {
                     for (int i = 0; i < metrics.Length; i += 1)
                     {
-                        await metrics[i].Create(th);
+                        await metrics[i].Create(transactionHandler);
+                        if (transactionHandler.Transaction != null)
+                        {
+                            transactionHandler.Transaction.Commit();
+                            transactionHandler.Transaction.Dispose();
+                            transactionHandler.Transaction = null;
+                        }
                     }
-                });
+                }
+                catch
+                {
+                    if (transactionHandler.Transaction != null)
+                    {
+                        transactionHandler.Transaction.Rollback();
+                        transactionHandler.Transaction.Dispose();
+                        transactionHandler.Transaction = null;
+                    }
+                    throw;
+                }
+                finally
+                {
+                    if (transactionHandler.Connection != null)
+                    {
+                        transactionHandler.Connection.Dispose();
+                        transactionHandler.Connection = null;
+                    }
+                }
             }
         }
     }

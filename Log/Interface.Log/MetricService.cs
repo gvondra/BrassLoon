@@ -68,6 +68,23 @@ namespace BrassLoon.Interface.Log
                 });
         }
 
+        public async Task Create(ISettings settings, Guid domainId, List<Metric> metrics)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, metrics)
+            .AddPath("Metric/{domainId}")
+            .AddPathParameter("domainId", domainId.ToString("N"))
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            IResponse<Metric> response = await Policy
+                .HandleResult<IResponse<Metric>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(0.2) })
+                .ExecuteAsync(() => _service.Send<Metric>(request))
+                ;
+            _restUtil.CheckSuccess(response);
+        }
+
         public async Task<List<string>> GetEventCodes(ISettings settings, Guid domainId)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
