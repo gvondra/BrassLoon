@@ -141,7 +141,10 @@ namespace BrassLoon.Extensions.Logging
                                 DomainId = configuration.LogDomainId,
                                 EventCode = entries[i].Category,
                                 Message = entries[i].Message,
-                                CreateTimestamp = entries[i].Timestamp
+                                CreateTimestamp = entries[i].Timestamp,
+                                Category = entries[i].Category,
+                                Level = entries[i].LogLevel.ToString(),
+                                EventId = (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
                             }
                             );
                         }
@@ -152,7 +155,10 @@ namespace BrassLoon.Extensions.Logging
                                 DomainId = configuration.LogDomainId,
                                 EventCode = entries[i].Metric.EventCode,
                                 Magnitude = entries[i].Metric.Magnitude,
-                                Status = entries[i].Metric.Status
+                                Status = entries[i].Metric.Status,
+                                Category = entries[i].Category,
+                                Level = entries[i].LogLevel.ToString(),
+                                EventId = (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
                             });
                         }
                     }
@@ -162,7 +168,14 @@ namespace BrassLoon.Extensions.Logging
                         _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
                     foreach (LogMessageEntry exceptionEntry in entries.Where(e => e.Exception != null))
                     {
-                        _exceptionService.Create(settings, configuration.LogDomainId, exceptionEntry.Timestamp, exceptionEntry.Exception).Wait();
+                        _exceptionService.Create(settings, 
+                            configuration.LogDomainId, 
+                            exceptionEntry.Exception, 
+                            createTimestamp: exceptionEntry.Timestamp, 
+                            category: exceptionEntry.Category, 
+                            level: exceptionEntry.LogLevel.ToString(),
+                            eventId: (exceptionEntry.EventId.Id != default(int) || !string.IsNullOrEmpty(exceptionEntry.EventId.Name)) ? new LogModels.EventId { Id = exceptionEntry.EventId.Id, Name = exceptionEntry.EventId.Name } : default(LogModels.EventId)
+                            ).Wait();
                     }
                         
                 }

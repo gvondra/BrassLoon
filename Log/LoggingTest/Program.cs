@@ -29,9 +29,9 @@ namespace BrassLoon.LoggingTest
                     logger.LogError(new EventId(2, "test error event"), ex, "alt error message");
                 }
                 Queue<Task> tasks = new Queue<Task>();
-                foreach (int i in Enumerable.Range(0, 25000))
+                foreach (int i in Enumerable.Range(0, 25))
                 {
-                    tasks.Enqueue(Task.Run(() => logger.LogMetric(new Metric() { EventCode = "LoggingTest", Magnitude = 4.3, Status = "107" })));
+                    tasks.Enqueue(Task.Run(() => logger.LogMetric(new EventId(3, "test metric"), new Metric() { EventCode = "LoggingTest", Magnitude = 4.3, Status = "107" })));
                     while (tasks.Count > 250)
                     {
                         await tasks.Dequeue();
