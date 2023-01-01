@@ -5,14 +5,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
-RUN ls
-RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "Account/AccountAPI/nuget.config"
-RUN dotnet restore "Account/AccountAPI/AccountAPI.csproj" --configfile "Account/AccountAPI/nuget.config"
 WORKDIR "/src/Account/AccountAPI"
-RUN dotnet build "AccountAPI.csproj" -c Release -o /app/build
+RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "nuget.config"
+RUN dotnet build "AccountAPI.csproj" -c Release -o /app/build --configfile "nuget.config"
 
 FROM build AS publish
-RUN dotnet publish "AccountAPI.csproj" -c Release -o /app/publish
+RUN dotnet publish "AccountAPI.csproj" --no-restore -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
