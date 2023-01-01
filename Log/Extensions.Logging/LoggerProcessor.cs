@@ -130,7 +130,8 @@ namespace BrassLoon.Extensions.Logging
                 {
                     LoggerConfiguration configuration = _options.CurrentValue;
                     LogSettings settings = new LogSettings(_tokenService, configuration);
-                    List<Trace> traces = new List<Trace>();                     
+                    List<Trace> traces = new List<Trace>();
+                    List<LogModels.Metric> metrics = new List<LogModels.Metric>();
                     for (int i = 0; i < entries.Length; i += 1)
                     {
                         if (!string.IsNullOrEmpty(entries[i].Message) && entries[i].Metric == null)
@@ -144,20 +145,21 @@ namespace BrassLoon.Extensions.Logging
                             }
                             );
                         }
-                    }
-                    if (traces.Count > 0 ) 
-                        _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
-                    foreach (LogMessageEntry metricEntry in entries.Where(e => e.Metric != null))
-                    {
-                        _metricService.Create(settings,
-                            new LogModels.Metric
+                        else if (entries[i].Metric != null)
+                        {
+                            metrics.Add(new LogModels.Metric
                             {
                                 DomainId = configuration.LogDomainId,
-                                EventCode = metricEntry.Metric.EventCode,
-                                Magnitude = metricEntry.Metric.Magnitude,
-                                Status = metricEntry.Metric.Status
-                            }).Wait();
+                                EventCode = entries[i].Metric.EventCode,
+                                Magnitude = entries[i].Metric.Magnitude,
+                                Status = entries[i].Metric.Status
+                            });
+                        }
                     }
+                    if (traces.Count > 0) 
+                        _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
+                    if (metrics.Count > 0)
+                        _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
                     foreach (LogMessageEntry exceptionEntry in entries.Where(e => e.Exception != null))
                     {
                         _exceptionService.Create(settings, configuration.LogDomainId, exceptionEntry.Timestamp, exceptionEntry.Exception).Wait();
