@@ -44,7 +44,23 @@ namespace BrassLoon.Interface.Log
         {
             return Create(
                 settings,
-                CreateException(domainId, createTimestamp, exception)
+                domainId,
+                exception,
+                createTimestamp: createTimestamp
+                );
+        }
+
+        public Task<LogModels.Exception> Create(ISettings settings, 
+            Guid domainId, 
+            System.Exception exception, 
+            DateTime? createTimestamp = null, 
+            string category = null, 
+            string level = null,
+            LogModels.EventId? eventId = null)
+        {
+            return Create(
+                settings,
+                CreateException(domainId, exception, createTimestamp, category, level, eventId)
                 );
         }
 
@@ -70,11 +86,16 @@ namespace BrassLoon.Interface.Log
             return _restUtil.Send<List<LogModels.Exception>>(_service, request);
         }
 
-        private LogModels.Exception CreateException(Guid domainId, DateTime? createTimestamp, System.Exception exception)
+        private LogModels.Exception CreateException(Guid domainId, 
+            System.Exception exception, 
+            DateTime? createTimestamp, 
+            string category, 
+            string level,
+            LogModels.EventId? eventId)
         {
             LogModels.Exception innerException = null;
             if (exception.InnerException != null)
-                innerException = CreateException(domainId, createTimestamp, exception.InnerException);
+                innerException = CreateException(domainId, exception.InnerException, createTimestamp, category, level, eventId);
             return new LogModels.Exception
             {
                 AppDomain = AppDomain.CurrentDomain.FriendlyName,
@@ -86,7 +107,10 @@ namespace BrassLoon.Interface.Log
                 TypeName = exception.GetType().FullName,
                 InnerException = innerException,
                 Data = GetData(exception.Data),
-                CreateTimestamp = createTimestamp
+                CreateTimestamp = createTimestamp,
+                Category = category,
+                Level = level,
+                EventId = eventId
             };
         }
 

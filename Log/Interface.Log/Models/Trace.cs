@@ -12,5 +12,8 @@ namespace BrassLoon.Interface.Log.Models
         public string Message { get; set; }
         public dynamic Data { get; set; }
         public DateTime? CreateTimestamp { get; set; }
+        public EventId? EventId { get; set; }
+        public string Category { get; set; }
+        public string Level { get; set; }
     }
 }
