@@ -18,6 +18,8 @@ namespace LogAPI
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
+            config.CreateMap<EventId, IEventId>();
+            config.CreateMap<IEventId, EventId>();
             config.CreateMap<BrassLoon.Interface.Log.Models.Exception, IException>();
             config.CreateMap<IException, BrassLoon.Interface.Log.Models.Exception>();
             config.CreateMap<Metric, IMetric>();

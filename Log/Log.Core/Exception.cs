@@ -15,15 +15,24 @@ namespace BrassLoon.Log.Core
         private readonly ExceptionData _data;
         private readonly IExceptionDataSaver _dataSaver;
         private readonly IExceptionFactory _exceptionFactory;
+        private readonly IEventId _eventId;
 
         public Exception(ExceptionData data,
             IExceptionDataSaver dataSaver,
-            IExceptionFactory exceptionFactory)
+            IExceptionFactory exceptionFactory,
+            IEventId eventId)
         {
             _data = data;
             _dataSaver = dataSaver;
             _exceptionFactory = exceptionFactory;
+            _eventId = eventId;
         }
+
+        public Exception(ExceptionData data,
+            IExceptionDataSaver dataSaver,
+            IExceptionFactory exceptionFactory)
+            : this(data, dataSaver, exceptionFactory, eventId: null)
+        {}
 
         public long ExceptionId => _data.ExceptionId;
 
@@ -56,11 +65,18 @@ namespace BrassLoon.Log.Core
 
         internal IException ParentException { get; set; }
         private long? ParentExceptionId { get => _data.ParentExceptionId; set => _data.ParentExceptionId = value; }
-
         public DateTime CreateTimestamp => _data.CreateTimestamp;
+        private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+        public string Category { get => _data.Category; set => _data.Category = value; }
+        public string Level { get => _data.Level; set => _data.Level = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {
+            if (_eventId != null)
+            {
+                await _eventId.Create(transactionHandler);
+                EventId = _eventId.EventId;
+            }
             if (ParentException != null)
                 ParentExceptionId = ParentException.ExceptionId;
             await _dataSaver.Create(transactionHandler, _data);

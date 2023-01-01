@@ -21,6 +21,7 @@ namespace LogAPI.Controllers
     {
         private readonly IExceptionFactory _exceptionFactory;
         private readonly IExceptionSaver _exceptionSaver;
+        private readonly IEventIdFactory _eventIdFactory;
 
         public ExceptionController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -28,11 +29,13 @@ namespace LogAPI.Controllers
             MapperFactory mapperFactory,
             IDomainService domainService,
             IExceptionFactory exceptionFactory,
-            IExceptionSaver exceptionSaver)
+            IExceptionSaver exceptionSaver,
+            IEventIdFactory eventIdFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _exceptionFactory = exceptionFactory;
             _exceptionSaver = exceptionSaver;
+            _eventIdFactory = eventIdFactory;
         }
 
 
@@ -111,6 +114,19 @@ namespace LogAPI.Controllers
             return result;
         }
 
+        [NonAction]
+        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, LogModels.EventId? eventId)
+        {
+            IEventId innerEventId = null;
+            if (eventId.HasValue)
+            {
+                innerEventId = (await _eventIdFactory.GetByDomainId(settings, domainId))
+                                .FirstOrDefault(i => i.Id == eventId.Value.Id && string.Equals(i.Name, eventId.Value.Name, StringComparison.OrdinalIgnoreCase))
+                                ?? _eventIdFactory.Create(domainId, eventId.Value.Id, eventId.Value.Name);
+            }
+            return innerEventId;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
         [Authorize()]
@@ -129,10 +145,10 @@ namespace LogAPI.Controllers
                     }
                     if (result == null)
                     {
-                        CoreSettings settings = CreateCoreSettings();
+                        CoreSettings settings = CreateCoreSettings();                        
                         IMapper mapper = CreateMapper();
                         List<IException> allExceptions = new List<IException>();
-                        IException innerException = Map(exception, exception.DomainId.Value, exception.CreateTimestamp, _exceptionFactory, mapper, allExceptions);
+                        IException innerException = await Map(settings, exception, exception.DomainId.Value, exception.CreateTimestamp, _exceptionFactory, mapper, allExceptions);
                         await _exceptionSaver.Create(settings, allExceptions.ToArray());
                         result = Ok(
                             await Map(innerException, settings, mapper)
@@ -160,7 +176,8 @@ namespace LogAPI.Controllers
         }
 
         [NonAction]
-        private IException Map(
+        private async Task<IException> Map(
+            CoreSettings settings,
             LogModels.Exception exception, 
             Guid domainId, 
             DateTime? timestamp,
@@ -169,11 +186,12 @@ namespace LogAPI.Controllers
             List<IException> allExceptions,
             IException parentException = null)
         {
-            IException innerException = exceptionFactory.Create(domainId, timestamp, parentException);
+            IEventId innerEventId = await GetInnerEventId(settings, exception.DomainId.Value, exception.EventId);
+            IException innerException = exceptionFactory.Create(domainId, timestamp, parentException, innerEventId);
             mapper.Map<LogModels.Exception, IException>(exception, innerException);
             allExceptions.Add(innerException);
             if (exception.InnerException != null)
-                Map(exception.InnerException, domainId, timestamp, exceptionFactory, mapper, allExceptions, innerException);
+                await Map(settings, exception.InnerException, domainId, timestamp, exceptionFactory, mapper, allExceptions, innerException);
             return innerException;
         }
 

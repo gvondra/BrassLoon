@@ -24,19 +24,22 @@ namespace BrassLoon.Log.Core
             _settingFactory = settingsFactory;
         }
 
-        public ITrace Create(Guid domainId, DateTime? createTimestamp, string eventCode)
+        private Trace Create(TraceData data) => new Trace(data, _dataSaver);
+        private Trace Create(TraceData data, IEventId eventId) => new Trace(data, _dataSaver, eventId);
+
+        public ITrace Create(Guid domainId, DateTime? createTimestamp, string eventCode, IEventId eventId = null)
         {
             if (!createTimestamp.HasValue)
                 createTimestamp = DateTime.UtcNow;
             createTimestamp = createTimestamp.Value.ToUniversalTime();
-            return new Trace(
+            return Create(
                 new TraceData()
                 {
                     DomainId = domainId,
                     EventCode = (eventCode ?? string.Empty).Trim(),
                     CreateTimestamp = createTimestamp.Value
                 },
-                _dataSaver
+                eventId
                 );
         }
 
@@ -48,7 +51,7 @@ namespace BrassLoon.Log.Core
         public async Task<IEnumerable<ITrace>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
             return (await _dataFactory.GetTopBeforeTimestamp(_settingFactory.CreateData(settings), domainId, eventCode, maxTimestamp.ToUniversalTime()))
-                .Select<TraceData, ITrace>(data => new Trace(data, _dataSaver));
+                .Select<TraceData, ITrace>(Create);
                 ;
         }
     }

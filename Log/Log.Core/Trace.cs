@@ -14,13 +14,21 @@ namespace BrassLoon.Log.Core
     {
         private readonly TraceData _data;
         private readonly ITraceDataSaver _dataSaver;
+        private IEventId _eventId;
 
         public Trace(TraceData data,
-            ITraceDataSaver dataSaver)
+            ITraceDataSaver dataSaver,
+            IEventId eventId)
         {
             _data = data;
             _dataSaver = dataSaver;
+            _eventId = eventId;
         }
+
+        public Trace(TraceData data,
+            ITraceDataSaver dataSaver)
+            : this(data, dataSaver, eventId: null)
+        {}
 
         public long TraceId => _data.TraceId;
 
@@ -48,9 +56,17 @@ namespace BrassLoon.Log.Core
         }
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
+        private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+        public string Category { get => _data.Category; set => _data.Category = value; }
+        public string Level { get => _data.Level; set => _data.Level = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {
+            if (_eventId != null)
+            {
+                await  _eventId.Create(transactionHandler);
+                EventId = _eventId.EventId;
+            }
             await _dataSaver.Create(transactionHandler, _data);
         }
     }

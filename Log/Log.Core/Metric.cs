@@ -14,13 +14,21 @@ namespace BrassLoon.Log.Core
     {
         private readonly MetricData _data;
         private readonly IMetricDataSaver _dataSaver;
+        private IEventId _eventId;
 
         public Metric(MetricData data,
-            IMetricDataSaver dataSaver)
+            IMetricDataSaver dataSaver,
+            IEventId eventId)
         {
             _data = data;
             _dataSaver = dataSaver;
+            _eventId = eventId;
         }
+
+        public Metric(MetricData data,
+            IMetricDataSaver dataSaver)
+            : this(data, dataSaver, eventId: null)
+        {}
 
         public long MetricId => _data.MetricId;
 
@@ -49,12 +57,19 @@ namespace BrassLoon.Log.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public string Status => _data.Status;
-
-        public string Requestor => _data.Requestor;
+        public string Status { get => _data.Status; set => _data.Status = value; }
+        public string Requestor { get => _data.Requestor; set => _data.Requestor = value; }
+        private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+        public string Category { get => _data.Category; set => _data.Category = value; }
+        public string Level { get => _data.Level; set => _data.Level = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {
+            if (_eventId != null)
+            {
+                await _eventId.Create(transactionHandler);
+                EventId = _eventId.EventId;
+            }
             await _dataSaver.Create(transactionHandler, _data);
         }
     }

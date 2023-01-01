@@ -4,16 +4,13 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Framework
 {
-    public interface ITrace
+    public interface IEventId
     {
-        long TraceId { get; }
+        Guid EventId { get; }
         Guid DomainId { get; }
-        string EventCode { get; }
-        string Message { get; set; }
-        dynamic Data { get; set; }
+        int Id { get; }
+        string Name { get; }
         DateTime CreateTimestamp { get; }
-        string Category { get; set; }
-        string Level { get; set; }
 
         Task Create(ITransactionHandler transactionHandler);
     }

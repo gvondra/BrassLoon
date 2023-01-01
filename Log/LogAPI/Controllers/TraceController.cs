@@ -20,6 +20,7 @@ namespace LogAPI.Controllers
     {
         private readonly ITraceFactory _traceFactory;
         private readonly ITraceSaver _traceSaver;
+        private readonly IEventIdFactory _eventIdFactory;
 
         public TraceController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -27,11 +28,13 @@ namespace LogAPI.Controllers
             MapperFactory mapperFactory,
             IDomainService domainService,
             ITraceFactory traceFactory,
-            ITraceSaver traceSaver)
+            ITraceSaver traceSaver,
+            IEventIdFactory eventIdFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _traceFactory = traceFactory;
             _traceSaver = traceSaver;
+            _eventIdFactory = eventIdFactory;
         }
 
         [HttpGet("{domainId}")]
@@ -103,6 +106,19 @@ namespace LogAPI.Controllers
             return result;
         }
 
+        [NonAction]
+        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, LogModels.EventId? eventId)
+        {
+            IEventId innerEventId = null;
+            if (eventId.HasValue)
+            {
+                innerEventId = (await _eventIdFactory.GetByDomainId(settings, domainId))
+                                .FirstOrDefault(i => i.Id == eventId.Value.Id && string.Equals(i.Name, eventId.Value.Name, StringComparison.OrdinalIgnoreCase))
+                                ?? _eventIdFactory.Create(domainId, eventId.Value.Id, eventId.Value.Name);
+            }
+            return innerEventId;
+        }
+
         [HttpPost()]
         [ProducesResponseType(typeof(LogModels.Trace), 200)]
         [Authorize()]
@@ -122,7 +138,8 @@ namespace LogAPI.Controllers
                     if (result == null)
                     {
                         CoreSettings settings = CreateCoreSettings();
-                        ITrace innerTrace = _traceFactory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode);
+                        IEventId innerEventId = await GetInnerEventId(settings, trace.DomainId.Value, trace.EventId);
+                        ITrace innerTrace = _traceFactory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode, innerEventId);
                         IMapper mapper = CreateMapper();
                         mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
                         await _traceSaver.Create(settings, innerTrace);
@@ -162,7 +179,8 @@ namespace LogAPI.Controllers
                         List<ITrace> innerTraces = new List<ITrace>(traces.Count);
                         foreach (LogModels.Trace trace in traces)
                         {
-                            ITrace innerTrace = _traceFactory.Create(domainId.Value, trace.CreateTimestamp, trace.EventCode);
+                            IEventId innerEventId = await GetInnerEventId(settings, domainId.Value, trace.EventId);
+                            ITrace innerTrace = _traceFactory.Create(domainId.Value, trace.CreateTimestamp, trace.EventCode, innerEventId);
                             mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
                             innerTraces.Add(innerTrace);
                         }

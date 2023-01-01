@@ -10,6 +10,7 @@ namespace BrassLoon.Log.Core
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Log.Data.LogDataModule());
             builder.RegisterInstance(new SettingsFactory());
+            builder.RegisterType<EventIdFactory>().As<IEventIdFactory>();
             builder.RegisterType<ExceptionFactory>().As<IExceptionFactory>();
             builder.RegisterType<ExceptionSaver>().As<IExceptionSaver>();
             builder.RegisterType<MetricFactory>().As<IMetricFactory>();

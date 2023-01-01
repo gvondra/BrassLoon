@@ -24,24 +24,22 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode)
-            => Create(domainId, createTimestamp, eventCode, string.Empty, string.Empty);
+        private Metric Create(MetricData data) => new Metric(data, _dataSaver);
+        private Metric Create(MetricData data, IEventId eventId) => new Metric(data, _dataSaver, eventId);
 
-        public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode, string status, string requestor)
+        public IMetric Create(Guid domainId, DateTime? createTimestamp, string eventCode, IEventId eventId = null)
         {
             if (!createTimestamp.HasValue)
                 createTimestamp = DateTime.UtcNow;
             createTimestamp = createTimestamp.Value.ToUniversalTime();
-            return new Metric(
+            return Create(
                 new MetricData()
                 { 
                     DomainId = domainId,
                     EventCode = eventCode,
-                    CreateTimestamp = createTimestamp.Value,
-                    Status = status ?? string.Empty,
-                    Requestor = requestor ?? string.Empty
+                    CreateTimestamp = createTimestamp.Value
                 },
-                _dataSaver
+                eventId
                 );
         }
 
@@ -53,7 +51,7 @@ namespace BrassLoon.Log.Core
         public async Task<IEnumerable<IMetric>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
             return (await _dataFactory.GetTopBeforeTimestamp(_settingsFactory.CreateData(settings), domainId, eventCode, maxTimestamp.ToUniversalTime()))
-                .Select<MetricData, IMetric>(data => new Metric(data, _dataSaver))
+                .Select<MetricData, IMetric>(Create)
                 ;
         }
     }

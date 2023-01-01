@@ -20,6 +20,7 @@ namespace LogAPI.Controllers
     {
         private readonly IMetricFactory _metricFactory;
         private readonly IMetricSaver _metricSaver;
+        private readonly IEventIdFactory _eventIdFactory;
 
         public MetricController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -27,11 +28,13 @@ namespace LogAPI.Controllers
             MapperFactory mapperFactory,
             IDomainService domainService,
             IMetricFactory metricFactory,
-            IMetricSaver metricSaver)
+            IMetricSaver metricSaver,
+            IEventIdFactory eventIdFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _metricFactory = metricFactory;
             _metricSaver = metricSaver;
+            _eventIdFactory = eventIdFactory;
         }
 
         [HttpGet("{domainId}")]
@@ -122,7 +125,8 @@ namespace LogAPI.Controllers
                     if (result == null)
                     {
                         CoreSettings settings = CreateCoreSettings();
-                        IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode, metric.Status, metric.Requestor);
+                        IEventId eventId = await GetInnerEventId(settings, metric.DomainId.Value, metric.EventId);
+                        IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode, eventId);
                         IMapper mapper = CreateMapper();
                         mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
                         await _metricSaver.Create(settings, innerMetric);
@@ -136,6 +140,19 @@ namespace LogAPI.Controllers
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
+        }
+
+        [NonAction]
+        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, LogModels.EventId? eventId)
+        {
+            IEventId innerEventId = null;
+            if (eventId.HasValue)
+            {
+                innerEventId = (await _eventIdFactory.GetByDomainId(settings, domainId))
+                                .FirstOrDefault(i => i.Id == eventId.Value.Id && string.Equals(i.Name, eventId.Value.Name, StringComparison.OrdinalIgnoreCase))
+                                ?? _eventIdFactory.Create(domainId, eventId.Value.Id, eventId.Value.Name);
+            }
+            return innerEventId;
         }
 
         [HttpPost("/api/MetricBatch/{domainId}")]
@@ -162,7 +179,8 @@ namespace LogAPI.Controllers
                         List<IMetric> innerMetrics = new List<IMetric>(metrics.Count);
                         foreach (LogModels.Metric metric in metrics)
                         {
-                            IMetric innerMetric = _metricFactory.Create(domainId.Value, metric.CreateTimestamp, metric.EventCode, metric.Status, metric.Requestor);
+                            IEventId eventId = await GetInnerEventId(settings,domainId.Value, metric.EventId);
+                            IMetric innerMetric = _metricFactory.Create(domainId.Value, metric.CreateTimestamp, metric.EventCode, eventId);
                             mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
                             innerMetrics.Add(innerMetric);
                         }

@@ -14,8 +14,10 @@ namespace BrassLoon.Log.Framework
         double? Magnitude { get; set; }
         dynamic Data { get; set; }
         DateTime CreateTimestamp { get; }
-        string Status { get; }
-        string Requestor { get; }
+        string Status { get; set; }
+        string Requestor { get; set; }
+        string Category { get; set; }
+        string Level { get; set; }
 
         Task Create(ITransactionHandler transactionHandler);
     }

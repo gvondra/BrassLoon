@@ -25,21 +25,25 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public IException Create(Guid domainId, DateTime? createTimestamp)
+        private Exception Create(ExceptionData data) => new Exception(data, _dataSaver, this);
+        private Exception Create(ExceptionData data, IEventId eventId) => new Exception(data, _dataSaver, this, eventId);
+
+        public IException Create(Guid domainId, DateTime? createTimestamp, IEventId eventId = null)
         {
-            return Create(domainId, createTimestamp, null);
+            return Create(domainId, createTimestamp, parentException: null, eventId: eventId);
         }
 
-        public IException Create(Guid domainId, DateTime? createTimestamp, IException parentException)
+        public IException Create(Guid domainId, DateTime? createTimestamp, IException parentException, IEventId eventId = null)
         {
             if (!createTimestamp.HasValue)
                 createTimestamp = DateTime.UtcNow;
             createTimestamp = createTimestamp.Value.ToUniversalTime();
-            return new Exception(
+            Exception result = Create(
                 new ExceptionData() { DomainId = domainId, CreateTimestamp = createTimestamp.Value },
-                _dataSaver,
-                this
+                eventId
                 );
+            result.ParentException = parentException;
+            return result;
         }
 
         public async Task<IException> Get(ISettings settings, long id)
@@ -47,7 +51,7 @@ namespace BrassLoon.Log.Core
             IException result = null;
             ExceptionData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
             if (data != null)
-                result = new Exception(data, _dataSaver, this);
+                result = Create(data);
             return result;
         }
 
@@ -56,14 +60,14 @@ namespace BrassLoon.Log.Core
             IException exception = null;
             ExceptionData data = await _dataFactory.GetInnerException(_settingsFactory.CreateData(settings), id);
             if (data != null)
-                exception = new Exception(data, _dataSaver, this);
+                exception = Create(data);
             return exception;
         }
 
         public async Task<IEnumerable<IException>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, DateTime maxTimestamp)
         {
             return (await _dataFactory.GetTopBeforeTimestamp(_settingsFactory.CreateData(settings), domainId, maxTimestamp.ToUniversalTime()))
-                .Select<ExceptionData, IException>(data => new Exception(data, _dataSaver, this))
+                .Select<ExceptionData, IException>(Create)
                 ;
         }
     }

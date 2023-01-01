@@ -1,7 +1,5 @@
 ﻿using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Framework
@@ -18,6 +16,8 @@ namespace BrassLoon.Log.Framework
         string StackTrace { get; set; }
         dynamic Data { get; set; }
         DateTime CreateTimestamp { get; }
+        string Category { get; set; }
+        string Level { get; set; }
 
         Task<IException> GetInnerException(ISettings settings);
         Task Create(ITransactionHandler transactionHandler);
