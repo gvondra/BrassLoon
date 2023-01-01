@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
+using LogModels = BrassLoon.Interface.Log.Models;
 
 namespace BrassLoon.Extensions.Logging
 {
@@ -17,6 +18,7 @@ namespace BrassLoon.Extensions.Logging
         private readonly Thread _outputThread;
         private readonly ITraceService _traceService;
         private readonly IExceptionService _exceptionService;
+        private readonly IMetricService _metricService;
         private readonly Account.ITokenService _tokenService;
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
         private bool _disposedValue;
@@ -25,11 +27,13 @@ namespace BrassLoon.Extensions.Logging
 
         public LoggerProcessor(ITraceService traceService,
             IExceptionService exceptionService,
+            IMetricService metricService,
             Account.ITokenService tokenService,
             IOptionsMonitor<LoggerConfiguration> options)
         {
             _traceService = traceService;
             _exceptionService = exceptionService;
+            _metricService = metricService;
             _tokenService = tokenService;
             _options = options;
             _exit = false;
@@ -129,7 +133,7 @@ namespace BrassLoon.Extensions.Logging
                     List<Trace> traces = new List<Trace>();                     
                     for (int i = 0; i < entries.Length; i += 1)
                     {
-                        if (!string.IsNullOrEmpty(entries[i].Message))
+                        if (!string.IsNullOrEmpty(entries[i].Message) && entries[i].Metric == null)
                         {
                             traces.Add(new Trace
                             {
@@ -143,6 +147,17 @@ namespace BrassLoon.Extensions.Logging
                     }
                     if (traces.Count > 0 ) 
                         _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
+                    foreach (LogMessageEntry metricEntry in entries.Where(e => e.Metric != null))
+                    {
+                        _metricService.Create(settings,
+                            new LogModels.Metric
+                            {
+                                DomainId = configuration.LogDomainId,
+                                EventCode = metricEntry.Metric.EventCode,
+                                Magnitude = metricEntry.Metric.Magnitude,
+                                Status = metricEntry.Metric.Status
+                            }).Wait();
+                    }
                     foreach (LogMessageEntry exceptionEntry in entries.Where(e => e.Exception != null))
                     {
                         _exceptionService.Create(settings, configuration.LogDomainId, exceptionEntry.Timestamp, exceptionEntry.Exception).Wait();

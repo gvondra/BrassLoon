@@ -16,6 +16,7 @@ namespace BrassLoon.Extensions.Logging
 
         public LoggerProvider(ITraceService traceService,
             IExceptionService exceptionService,
+            IMetricService metricService,
             Account.ITokenService tokenService,
             IOptionsMonitor<LoggerConfiguration> options, 
             MessageFormatter messageFormatter)
@@ -23,7 +24,7 @@ namespace BrassLoon.Extensions.Logging
             _options = options;
             _loggers = new ConcurrentDictionary<string, Logger>();
             _messageFormatter = messageFormatter;
-            _loggerProcessor = new LoggerProcessor(traceService, exceptionService, tokenService, options);
+            _loggerProcessor = new LoggerProcessor(traceService, exceptionService, metricService, tokenService, options);
         }
 
         public ILogger CreateLogger(string categoryName)

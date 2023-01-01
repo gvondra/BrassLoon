@@ -20,18 +20,18 @@ namespace BrassLoon.LoggingTest
             using (ILoggerFactory loggerFactory = LoadLogger(_settings))
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
-                try
-                {
-                    RaiseException();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(new EventId(2, "test error event"), ex, "alt error message");
-                }
+                //try
+                //{
+                //    RaiseException();
+                //}
+                //catch (Exception ex)
+                //{
+                //    logger.LogError(new EventId(2, "test error event"), ex, "alt error message");
+                //}
                 List<Task> tasks = new List<Task>();
                 foreach (int i in Enumerable.Range(0, 2500))
                 {
-                    tasks.Add(Task.Run(() => logger.LogInformation(new EventId(1, "test info log"), $"The current time is {DateTime.Now:hh:mm:ss}")));
+                    tasks.Add(Task.Run(() => logger.LogMetric(new Metric() { EventCode = "LoggingTest", Magnitude = 4.3, Status = "107" })));
                 }
                 await Task.WhenAll(tasks);
             }

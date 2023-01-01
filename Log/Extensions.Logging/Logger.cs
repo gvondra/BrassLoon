@@ -42,9 +42,14 @@ namespace BrassLoon.Extensions.Logging
                     _messageFormatter.Write(logEntry, writer);
                     stringBuilder = writer.GetStringBuilder();
                 }
+                Metric metric = null;
+                if (typeof(Metric).IsAssignableFrom(typeof(TState)))
+                {
+                    metric = state as Metric;
+                }
                 if (stringBuilder.Length > 0)
                 {
-                    _loggerProcessor.Enque(new LogMessageEntry(_name, stringBuilder.ToString(), DateTime.UtcNow, eventId, exception, logLevel));
+                    _loggerProcessor.Enque(new LogMessageEntry(_name, stringBuilder.ToString(), DateTime.UtcNow, eventId, exception, logLevel, metric));
                 }                
             }
         }

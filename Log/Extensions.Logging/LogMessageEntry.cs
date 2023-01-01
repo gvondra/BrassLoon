@@ -15,6 +15,7 @@ namespace BrassLoon.Extensions.Logging
         private readonly EventId _eventId;
         private readonly Exception _exception;
         private readonly LogLevel _logLevel;
+        private readonly Metric _metric;
 
         public LogMessageEntry(
             string category,
@@ -22,7 +23,8 @@ namespace BrassLoon.Extensions.Logging
             DateTime timestamp,
             EventId eventId,
             Exception exception,
-            LogLevel logLevel)
+            LogLevel logLevel,
+            Metric metric)
         {
             _category = category;
             _message = message;
@@ -30,6 +32,7 @@ namespace BrassLoon.Extensions.Logging
             _eventId = eventId;
             _exception = exception;
             _logLevel = logLevel;
+            _metric = metric;
         }
 
         public string Category => _category;
@@ -38,5 +41,6 @@ namespace BrassLoon.Extensions.Logging
         public EventId EventId => _eventId;
         public Exception Exception => _exception;
         public LogLevel LogLevel => _logLevel;
+        public Metric Metric => _metric;
     }
 }
