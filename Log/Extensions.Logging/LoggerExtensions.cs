@@ -16,7 +16,13 @@ namespace BrassLoon.Extensions.Logging
     {
         public static ILogger LogMetric(this ILogger logger, Metric metric)
         {
-            logger.Log(LogLevel.Information, 0, metric, null, formatter: LoggerExtensions.FormatMetric);
+            logger.LogMetric(0, metric);
+            return logger;
+        }
+
+        public static ILogger LogMetric(this ILogger logger, EventId eventId, Metric metric)
+        {
+            logger.Log(LogLevel.Information, eventId, metric, null, formatter: LoggerExtensions.FormatMetric);
             return logger;
         }
 
