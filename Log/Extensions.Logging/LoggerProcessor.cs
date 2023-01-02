@@ -178,7 +178,7 @@ namespace BrassLoon.Extensions.Logging
                 Category = entry.Category,
                 Level = entry.LogLevel.ToString(),
                 Requestor = entry.Metric.Requestor,
-                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId)
+                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId?)
             };
         }
 
@@ -191,7 +191,7 @@ namespace BrassLoon.Extensions.Logging
                 Message = entry.Message,
                 Category = entry.Category,
                 Level = entry.LogLevel.ToString(),
-                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId)
+                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId?)
             };
         }
 
