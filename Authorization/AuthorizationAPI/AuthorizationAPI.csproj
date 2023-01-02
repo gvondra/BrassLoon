@@ -22,16 +22,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="6.5.0" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="AutoMapper" Version="12.0.0" />
-		<PackageReference Include="BrassLoon.Interface.Account" Version="2.1.0-prerelease.*" />
+		<PackageReference Include="Autofac" Version="6.5.*" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.*" />
+		<PackageReference Include="AutoMapper" Version="12.0.*" />
+		<PackageReference Include="BrassLoon.Interface.Account" Version="2.2.*" />
 		<PackageReference Include="BrassLoon.Interface.Authorization" Version="1.0.0-prerelease.*" />
-		<PackageReference Include="BrassLoon.Interface.Log" Version="2.1.0-prerelease.*" />
-		<PackageReference Include="BrassLoon.JwtUtility" Version="1.2.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.12" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
+		<PackageReference Include="BrassLoon.JwtUtility" Version="1.2.*" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.*" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.*" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.*" />
 	</ItemGroup>
 
 	<ItemGroup>

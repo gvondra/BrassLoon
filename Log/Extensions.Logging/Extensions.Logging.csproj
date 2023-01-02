@@ -12,8 +12,8 @@
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<LangVersion>10</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-alpha.7</Version>
-		<AssemblyVersion>1.0.0.7</AssemblyVersion>
+		<Version>1.0.0-beta.8</Version>
+		<AssemblyVersion>1.0.0.8</AssemblyVersion>
 		<PackageReleaseNotes></PackageReleaseNotes>
 	</PropertyGroup>
 
@@ -28,7 +28,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="BrassLoon.Interface.Account" Version="2.2.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.Interface.Account" Version="[2.2.0,2.3)" />
 	  <PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
 	  <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="[6.0.0,6.1)" />
