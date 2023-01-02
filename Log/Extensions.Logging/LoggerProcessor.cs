@@ -136,30 +136,11 @@ namespace BrassLoon.Extensions.Logging
                     {
                         if (!string.IsNullOrEmpty(entries[i].Message) && entries[i].Metric == null)
                         {
-                            traces.Add(new Trace
-                            {
-                                DomainId = configuration.LogDomainId,
-                                EventCode = entries[i].Category,
-                                Message = entries[i].Message,
-                                CreateTimestamp = entries[i].Timestamp,
-                                Category = entries[i].Category,
-                                Level = entries[i].LogLevel.ToString(),
-                                EventId = (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
-                            }
-                            );
+                            traces.Add(CreateLogTrace(configuration.LogDomainId, entries[i]));
                         }
                         else if (entries[i].Metric != null)
                         {
-                            metrics.Add(new LogModels.Metric
-                            {
-                                DomainId = configuration.LogDomainId,
-                                EventCode = entries[i].Metric.EventCode,
-                                Magnitude = entries[i].Metric.Magnitude,
-                                Status = entries[i].Metric.Status,
-                                Category = entries[i].Category,
-                                Level = entries[i].LogLevel.ToString(),
-                                EventId = (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
-                            });
+                            metrics.Add(CreateLogMetric(configuration.LogDomainId, entries[i]));
                         }
                     }
                     if (traces.Count > 0) 
@@ -184,6 +165,34 @@ namespace BrassLoon.Extensions.Logging
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private LogModels.Metric CreateLogMetric(Guid domainId, LogMessageEntry entry)
+        {
+            return new LogModels.Metric
+            {
+                DomainId = domainId,
+                EventCode = entry.Metric.EventCode,
+                Magnitude = entry.Metric.Magnitude,
+                Status = entry.Metric.Status,
+                Category = entry.Category,
+                Level = entry.LogLevel.ToString(),
+                Requestor = entry.Metric.Requestor,
+                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId)
+            };
+        }
+
+        private LogModels.Trace CreateLogTrace(Guid domainId, LogMessageEntry entry)
+        {
+            return new LogModels.Trace
+            {
+                DomainId = domainId,
+                EventCode = entry.Metric.EventCode,
+                Message = entry.Message,
+                Category = entry.Category,
+                Level = entry.LogLevel.ToString(),
+                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId)
+            };
         }
 
         protected virtual void Dispose(bool disposing)
