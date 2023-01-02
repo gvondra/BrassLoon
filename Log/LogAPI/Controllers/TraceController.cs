@@ -110,7 +110,7 @@ namespace LogAPI.Controllers
         private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, LogModels.EventId? eventId)
         {
             IEventId innerEventId = null;
-            if (eventId.HasValue)
+            if (eventId.HasValue && (eventId.Value.Id != 0 || !string.IsNullOrEmpty(eventId.Value.Name)))
             {
                 innerEventId = (await _eventIdFactory.GetByDomainId(settings, domainId))
                                 .FirstOrDefault(i => i.Id == eventId.Value.Id && string.Equals(i.Name, eventId.Value.Name, StringComparison.OrdinalIgnoreCase))
