@@ -12,8 +12,8 @@
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<LangVersion>10</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-alpha.5</Version>
-		<AssemblyVersion>1.0.0.5</AssemblyVersion>
+		<Version>1.0.0-alpha.6</Version>
+		<AssemblyVersion>1.0.0.6</AssemblyVersion>
 		<PackageReleaseNotes></PackageReleaseNotes>
 	</PropertyGroup>
 

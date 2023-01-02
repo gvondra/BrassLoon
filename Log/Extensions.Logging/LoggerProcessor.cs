@@ -187,7 +187,7 @@ namespace BrassLoon.Extensions.Logging
             return new LogModels.Trace
             {
                 DomainId = domainId,
-                EventCode = entry.Metric.EventCode,
+                EventCode = entry.Category,
                 Message = entry.Message,
                 Category = entry.Category,
                 Level = entry.LogLevel.ToString(),
