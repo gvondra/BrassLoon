@@ -12,9 +12,6 @@ namespace BrassLoon.Extensions.Logging
 
         public static NullScope Instance { get; } = new NullScope();
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() {}
     }
 }
