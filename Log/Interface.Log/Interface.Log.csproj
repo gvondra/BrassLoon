@@ -18,6 +18,8 @@
 			- v2.1 Upgrade RestUtil v3.1
 			- v2.0 upgrade RestUtil v3
 		</PackageReleaseNotes>
+		<PackageProjectUrl>https://github.com/gvondra/BrassLoon</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gvondra/BrassLoon.git</RepositoryUrl>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
