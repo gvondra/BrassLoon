@@ -19,6 +19,7 @@ WITH (DATA_COMPRESSION = PAGE)
 GO
 
 CREATE CLUSTERED INDEX [IX_Metric_DomainId] ON [bll].[Metric] ([DomainId], [EventCode])
+WITH (DATA_COMPRESSION = PAGE)
 
 GO
 

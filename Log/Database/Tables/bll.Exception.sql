@@ -18,7 +18,6 @@
     CONSTRAINT [FK_Exception_To_Exception] FOREIGN KEY ([ParentExceptionId]) REFERENCES [bll].[Exception]([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_EventId] FOREIGN KEY ([EventId]) REFERENCES [bll].[EventId]([EventId])
 )
-WITH (DATA_COMPRESSION = PAGE)
 
 GO
 

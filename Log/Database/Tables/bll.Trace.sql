@@ -16,7 +16,8 @@ WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
-CREATE CLUSTERED INDEX [IX_Trace_DomainId] ON [bll].[Trace] ([DomainId], [EventCode]);
+CREATE CLUSTERED INDEX [IX_Trace_DomainId] ON [bll].[Trace] ([DomainId], [EventCode])
+WITH (DATA_COMPRESSION = PAGE)
 
 GO
 
