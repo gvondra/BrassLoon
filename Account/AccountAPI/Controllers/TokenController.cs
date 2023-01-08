@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using BrassLoon.JwtUtility;
@@ -87,7 +88,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing secret value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient client = await _clientFactory.Get(settings, clientCredential.ClientId.Value);
                     if (client == null)
                         result = StatusCode(StatusCodes.Status401Unauthorized);
@@ -116,7 +117,7 @@ namespace AccountAPI.Controllers
             IUser user;
             IEmailAddress emailAddress = null;
             string subscriber = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            CoreSettings coreSettings = _settingsFactory.CreateAccount(_settings.Value);
+            CoreSettings coreSettings = _settingsFactory.CreateCore(_settings.Value);
             user = await _userFactory.GetByReferenceId(coreSettings, subscriber);
             if (user == null)
             {
@@ -167,7 +168,7 @@ namespace AccountAPI.Controllers
             Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.ExternalIdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
             if (claim != null)
                 claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateAccount(_settings.Value))).Address));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateCore(_settings.Value))).Address));
             claims.Add(new Claim("accounts", await GetAccountIdClaim(_accountFactory, _settingsFactory, user.UserId)));
             if ((user.Roles & UserRole.SystemAdministrator) == UserRole.SystemAdministrator)
                 claims.Add(new Claim("role", "sysadmin"));
@@ -183,7 +184,7 @@ namespace AccountAPI.Controllers
         {
             return string.Join(
                 ' ',
-                (await accountFactory.GetAccountIdsByUserId(settingsFactory.CreateAccount(_settings.Value), userId))
+                (await accountFactory.GetAccountIdsByUserId(settingsFactory.CreateCore(_settings.Value), userId))
                 .Select<Guid, string>(g => g.ToString("N"))
                 );
         }

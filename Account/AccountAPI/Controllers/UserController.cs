@@ -46,7 +46,7 @@ namespace AccountAPI.Controllers
                 IEnumerable<User> users = null;
                 if (result == null && !string.IsNullOrEmpty(emailAddress))
                 {
-                    ISettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    ISettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     users = (await _userFactory.GetByEmailAddress(settings, emailAddress))
                         .Select<IUser, User>(u => mapper.Map<User>(u));                    
@@ -73,7 +73,7 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                ISettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                ISettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing id parameter value");
@@ -104,7 +104,7 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                ISettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                ISettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing id parameter value");
@@ -140,7 +140,7 @@ namespace AccountAPI.Controllers
             try
             {
                 roles = roles ?? new List<string>();
-                ISettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                ISettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing id parameter value");                

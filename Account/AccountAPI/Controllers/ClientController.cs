@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
@@ -56,7 +57,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IClient> clients = await _clientFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
@@ -84,7 +85,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing client id value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient client = await _clientFactory.Get(settings, id.Value);
                     if (client == null)
                         result = NotFound();
@@ -132,7 +133,7 @@ namespace AccountAPI.Controllers
                     IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     await _clientSaver.Create(settings, innerClient);
                     result = Ok(mapper.Map<Client>(innerClient));
                 }
@@ -163,7 +164,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient innerClient = await _clientFactory.Get(settings, id.Value);
                     if (innerClient == null)
                         result = NotFound();

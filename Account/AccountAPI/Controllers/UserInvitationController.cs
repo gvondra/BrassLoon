@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
@@ -73,7 +74,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUserInvitation> innerInvitations = await _userInvitationFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(
@@ -115,7 +116,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing invitation id parameter value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
                     if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
                         innerInvitation = null;
@@ -175,7 +176,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid expiration timestamp in the past");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount account = await _accountFactory.Get(settings, accountId.Value);
                     if (account == null)
                         result = NotFound();
@@ -222,7 +223,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing status value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
                     if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
                         innerInvitation = null;

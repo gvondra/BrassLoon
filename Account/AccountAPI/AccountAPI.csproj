@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonAPI\CommonAPI.csproj" />
     <ProjectReference Include="..\Account.Core\Account.Core.csproj" />
     <ProjectReference Include="..\Account.Framework\Account.Framework.csproj" />
   </ItemGroup>

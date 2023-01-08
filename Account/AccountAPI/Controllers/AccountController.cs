@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authentication;
@@ -63,7 +64,7 @@ namespace AccountAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             IActionResult result = null;
-            CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+            CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
             IUser user = await GetUser(_userFactory, settings);
             IEnumerable<IAccount> accounts = await _accountFactory.GetByUserId(settings, user.UserId);
             IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -77,7 +78,7 @@ namespace AccountAPI.Controllers
         public async Task<IActionResult> GetByEmailAddress(string emailAddress)
         {
             IActionResult result = null;
-            CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+            CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
             IEnumerable<IUser> users = await _userFactory.GetByEmailAddress(settings, emailAddress);
             ConcurrentBag<Task<IEnumerable<IAccount>>> accounts = new ConcurrentBag<Task<IEnumerable<IAccount>>>();
             users.AsParallel().ForAll(user => accounts.Add(_accountFactory.GetByUserId(settings, user.UserId)));
@@ -107,7 +108,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount account = await _accountFactory.Get(settings, id);
                     if (account == null)
                         result = NotFound();
@@ -140,7 +141,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing account name");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUser user = await GetUser(_userFactory, settings);
                     IAccount innerAccount = _accountFactory.Create();
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -177,7 +178,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount innerAccount = await _accountFactory.Get(settings, id);
                     if (innerAccount == null)
                         result = NotFound();
@@ -220,7 +221,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid locked value.  Expecting 'True' or 'False'");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount innerAccount = await _accountFactory.Get(settings, id);
                     if (innerAccount == null)
                         result = NotFound();
@@ -254,7 +255,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     await _accountSaver.RemoveUser(settings, userId.Value, accountId.Value);
                     result = Ok();
                 }
@@ -280,7 +281,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {         
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     result = Ok(

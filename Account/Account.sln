@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountAPI", "AccountAPI\Ac
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{745871BF-1E6E-4309-AA6B-05F7C436C772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RsaSecurityKeyGenerator", "RsaSecurityKeyGenerator\RsaSecurityKeyGenerator.csproj", "{8BEEA502-52A1-4636-81C7-4608094410B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RsaSecurityKeyGenerator", "RsaSecurityKeyGenerator\RsaSecurityKeyGenerator.csproj", "{8BEEA502-52A1-4636-81C7-4608094410B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtUtility", "JwtUtility\JwtUtility.csproj", "{30C67D7C-CF1C-495E-B438-A4E30EC90EBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtUtility", "JwtUtility\JwtUtility.csproj", "{30C67D7C-CF1C-495E-B438-A4E30EC90EBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "..\CommonAPI\CommonAPI.csproj", "{95461DDC-4381-4DF6-A4CD-6C7AC59B8EB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,10 @@ Global
 		{30C67D7C-CF1C-495E-B438-A4E30EC90EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30C67D7C-CF1C-495E-B438-A4E30EC90EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30C67D7C-CF1C-495E-B438-A4E30EC90EBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95461DDC-4381-4DF6-A4CD-6C7AC59B8EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95461DDC-4381-4DF6-A4CD-6C7AC59B8EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95461DDC-4381-4DF6-A4CD-6C7AC59B8EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95461DDC-4381-4DF6-A4CD-6C7AC59B8EB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

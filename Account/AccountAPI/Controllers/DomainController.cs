@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IDomain> domains;
                     if (deleted)
                         domains = await _domainFactory.GetDeletedByAccountId(settings, id.Value);
@@ -82,7 +83,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain id value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
@@ -115,7 +116,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain id value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
@@ -156,7 +157,7 @@ namespace AccountAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Create(domain.AccountId.Value);
                     IMapper mapper = MapperConfigurationFactory.CreateMapper();
                     mapper.Map<Domain, IDomain>(domain, innerDomain);
@@ -188,7 +189,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing domain name value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (result == null && innerDomain == null)
                         result = NotFound();
@@ -230,7 +231,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Invalid deleted patch value");
                 if (result == null)
                 {
-                    CoreSettings settings = _settingsFactory.CreateAccount(_settings.Value);
+                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain;
                     if (!deleted)
                         innerDomain = await _domainFactory.GetDeleted(settings, id.Value);
