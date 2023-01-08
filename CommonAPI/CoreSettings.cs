@@ -8,8 +8,6 @@ using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.CommonAPI
@@ -23,6 +21,8 @@ namespace BrassLoon.CommonAPI
         {
             _settings = settings;
         }
+
+        public bool UserDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
 
         public async Task<string> GetConnetionString()
         {
@@ -66,25 +66,7 @@ namespace BrassLoon.CommonAPI
 
         public Func<Task<string>> GetDatabaseAccessToken()
         {
-            Func<Task<string>> result = null;
-            if (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser))
-            {
-                result = async () =>
-                {
-                    TokenRequestContext context = new TokenRequestContext(new[] { "https://database.windows.net//.default" });
-                    AccessToken token = await new DefaultAzureCredential(
-                        new DefaultAzureCredentialOptions()
-                        {
-                            ExcludeSharedTokenCacheCredential = true,
-                            ExcludeEnvironmentCredential = true,
-                            ExcludeVisualStudioCodeCredential = true,
-                            ExcludeVisualStudioCredential = true
-                        })
-                        .GetTokenAsync(context);
-                    return token.Token;
-                };
-            }
-            return result;
+            return null;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
@@ -19,6 +17,8 @@ namespace BrassLoon.CommonCore
         public DataClient.IDbTransaction Transaction { get; set; }
 
         public Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
+
+        public bool UseDefaultAzureToken => _settings.UserDefaultAzureSqlToken;
 
         public Task<string> GetConnectionString() => _settings.GetConnetionString();
     }

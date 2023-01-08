@@ -24,6 +24,8 @@ namespace BrassLoon.Log.Purger
             _settings = settings;
         }
 
+        public bool UserDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
+
         public async Task<string> GetConnetionString()
         {
             string result = _settings.ConnectionString;
@@ -66,25 +68,7 @@ namespace BrassLoon.Log.Purger
 
         public Func<Task<string>> GetDatabaseAccessToken()
         {
-            Func<Task<string>> result = null;
-            if (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser))
-            {
-                result = async () =>
-                {
-                    TokenRequestContext context = new TokenRequestContext(new[] { "https://database.windows.net//.default" });
-                    AccessToken token = await new DefaultAzureCredential(
-                        new DefaultAzureCredentialOptions()
-                        {
-                            ExcludeSharedTokenCacheCredential = true,
-                            ExcludeEnvironmentCredential = true,
-                            ExcludeVisualStudioCodeCredential = true,
-                            ExcludeVisualStudioCredential = true
-                        })
-                        .GetTokenAsync(context);
-                    return token.Token;
-                };
-            }
-            return result;
+            return null;
         }
     }
 }

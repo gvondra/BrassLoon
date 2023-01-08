@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BrassLoon.CommonCore;
 
 namespace BrassLoon.Log.Core
 {
