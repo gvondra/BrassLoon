@@ -9,7 +9,7 @@
 	CONSTRAINT [PK_LookupHistory] PRIMARY KEY NONCLUSTERED ([LookupHistoryId]), 
     CONSTRAINT [FK_LookupHistory_To_Lookup] FOREIGN KEY ([LookupId]) REFERENCES [blc].[Lookup]([LookupId])
 )
-WITH (DATA_COMPRESSION = PAGE)
+
 GO
 
 CREATE INDEX [IX_LookupHistory_LookupId] ON [blc].[LookupHistory] ([LookupId])

@@ -8,7 +8,7 @@
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Item_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	CONSTRAiNT [PK_Item] PRIMARY KEY NONCLUSTERED ([ItemId])
 )
-WITH (DATA_COMPRESSION = PAGE)
+
 GO
 
 CREATE UNIQUE CLUSTERED INDEX [IX_Item_DomainId_Code] ON [blc].[Item] ([DomainId], [Code])

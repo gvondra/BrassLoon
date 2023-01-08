@@ -8,7 +8,7 @@
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Lookup_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	CONSTRAiNT [PK_Lookup] PRIMARY KEY NONCLUSTERED ([LookupId])
 )
-WITH (DATA_COMPRESSION = PAGE)
+
 GO
 
 CREATE UNIQUE CLUSTERED INDEX [IX_Lookup_DomainId_Code] ON [blc].[Lookup] ([DomainId], [Code])
