@@ -7,7 +7,7 @@
 	[Roles] SMALLINT NOT NULL CONSTRAINT [DF_User_Roles] DEFAULT (0),
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_User_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_User_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([UserGuid]), 
+	CONSTRAINT [PK_User] PRIMARY KEY NONCLUSTERED ([UserGuid]), 
     CONSTRAINT [FK_User_To_EmailAddress] FOREIGN KEY ([EmailAddressGuid]) REFERENCES [bla].[EmailAddress]([EmailAddressGuid])
 )
 

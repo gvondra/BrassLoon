@@ -5,5 +5,5 @@
 	[Locked] BIT NOT NULL CONSTRAINT [DF_Account_Locked] DEFAULT (0),
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Account_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Account_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_Account] PRIMARY KEY CLUSTERED ([AccountGuid])
+	CONSTRAINT [PK_Account] PRIMARY KEY NONCLUSTERED ([AccountGuid])
 )

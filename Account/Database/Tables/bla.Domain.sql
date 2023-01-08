@@ -6,10 +6,10 @@
 	[Deleted] BIT NOT NULL CONSTRAINT [DF_Domain_Deleted] DEFAULT (0),
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_Domain_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_Domain_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
-	CONSTRAINT [PK_Domain] PRIMARY KEY CLUSTERED ([DomainGuid]), 
+	CONSTRAINT [PK_Domain] PRIMARY KEY NONCLUSTERED ([DomainGuid]), 
     CONSTRAINT [FK_Domain_To_Account] FOREIGN KEY ([AccountGuid]) REFERENCES [bla].[Account]([AccountGuid])
 )
 
 GO
 
-CREATE INDEX [IX_Domain_AccountGuid] ON [bla].[Domain] ([AccountGuid])
+CREATE CLUSTERED INDEX [IX_Domain_AccountGuid] ON [bla].[Domain] ([AccountGuid])
