@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Core
+namespace BrassLoon.WorkTask.Framework
 {
     public interface IWorkTaskStatus
     {

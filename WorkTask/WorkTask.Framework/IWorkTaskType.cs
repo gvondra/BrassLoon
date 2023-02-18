@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Core
+namespace BrassLoon.WorkTask.Framework
 {
     public interface IWorkTaskType
     {

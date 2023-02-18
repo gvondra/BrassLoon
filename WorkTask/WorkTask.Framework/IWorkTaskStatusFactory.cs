@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Core
+namespace BrassLoon.WorkTask.Framework
 {
     public interface IWorkTaskStatusFactory
     {

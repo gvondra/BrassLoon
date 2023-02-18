@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Core;
+using BrassLoon.WorkTask.Framework;
 
-namespace BrassLoon.WorkTask.Framework
+namespace BrassLoon.WorkTask.Core
 {
     public class WorkTaskCoreModule : Module
     {

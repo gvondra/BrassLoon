@@ -1,11 +1,11 @@
 ﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Core;
+using BrassLoon.WorkTask.Framework;
 using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Framework
+namespace BrassLoon.WorkTask.Core
 {
     public class WorkTaskStatus : IWorkTaskStatus
     {

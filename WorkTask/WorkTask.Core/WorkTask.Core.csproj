@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<AssemblyName>BrassLoon.WorkTask.Framework</AssemblyName>
-		<RootNamespace>BrassLoon.WorkTask.Framework</RootNamespace>
+		<AssemblyName>BrassLoon.WorkTask.Core</AssemblyName>
+		<RootNamespace>BrassLoon.WorkTask.Core</RootNamespace>
 		<Authors>Greg Vondra</Authors>
 		<Company />
 		<Product>Brass Loon</Product>

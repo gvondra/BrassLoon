@@ -1,11 +1,7 @@
 ﻿using BrassLoon.CommonCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Core
+namespace BrassLoon.WorkTask.Framework
 {
     public interface IWorkTaskTypeSaver
     {
