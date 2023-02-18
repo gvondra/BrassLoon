@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+	  <Nullable>disable</Nullable>
+	  <ImplicitUsings>disable</ImplicitUsings>
+	  <AssemblyName>BrassLoon.Interface.WorkTask</AssemblyName>
+	  <RootNamespace>BrassLoon.Interface.WorkTask</RootNamespace>
+	  <Authors>Greg Vondra</Authors>
+	  <Company />
+	  <Product>Brass Loon</Product>
+	  <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Version>1.0.0-alpha.1</Version>
+	  <AssemblyVersion>1.0.0.1</AssemblyVersion>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Autofac" Version="6.5.0" />
+	</ItemGroup>
+
+</Project>

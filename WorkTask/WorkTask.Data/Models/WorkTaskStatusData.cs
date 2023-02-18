@@ -15,5 +15,6 @@ namespace BrassLoon.WorkTask.Data.Models
         [ColumnMapping()] public bool IsClosedStatus { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
+        [ColumnMapping()] public int WorkTaskCount { get; set; }
     }
 }
