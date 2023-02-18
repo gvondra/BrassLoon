@@ -1,0 +1,14 @@
+﻿CREATE TABLE [blwt].[WorkGroup]
+(
+	[WorkGroupId] UNIQUEIDENTIFIER NOT NULL,
+	[DomainId] UNIQUEIDENTIFIER NOT NULL,
+	[Title] NVARCHAR(512) NOT NULL,
+	[Description] NVARCHAR(MAX) NOT NULL,
+	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkGroup_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkGroup_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	CONSTRAINT [PK_WorkGroup] PRIMARY KEY NONCLUSTERED ([WorkGroupId])
+)
+
+GO
+
+CREATE CLUSTERED INDEX [IX_WorkGroup_DomainId] ON [blwt].[WorkGroup] ([DomainId])
