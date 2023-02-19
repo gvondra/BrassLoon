@@ -14,14 +14,17 @@ namespace BrassLoon.WorkTask.Core
     {
         private readonly IWorkTaskTypeDataFactory _dataFactory;
         private readonly IWorkTaskTypeDataSaver _dataSaver;
+        private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
 
-        public WorkTaskTypeFactory(IWorkTaskTypeDataFactory dataFactory, IWorkTaskTypeDataSaver dataSaver)
+        public WorkTaskTypeFactory(IWorkTaskTypeDataFactory dataFactory, IWorkTaskTypeDataSaver dataSaver, IWorkTaskStatusFactory workTaskStatusFactory)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
+            _workTaskStatusFactory = workTaskStatusFactory;
+
         }
 
-        private WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver);
+        private WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
 
         public IWorkTaskType Create(Guid domainId)
         {
@@ -46,5 +49,7 @@ namespace BrassLoon.WorkTask.Core
             return (await _dataFactory.GetByDomainId(new DataSettings(settings), domainId))
                 .Select(Create);
         }
+
+        public IWorkTaskStatusFactory GetWorkTaskStatusFactory() => _workTaskStatusFactory;
     }
 }

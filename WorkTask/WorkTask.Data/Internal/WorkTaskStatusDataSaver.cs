@@ -31,8 +31,8 @@ namespace BrassLoon.WorkTask.Data.Internal
                     timestamp.Direction = ParameterDirection.Output;
                     command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "workTaskTypeId", DbType.Guid, DataUtil.GetParameterValue(data.WorkTaskTypeId));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));                    
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(data.Code));
                     AddCommonParameters(command.Parameters, data);
 
                     await command.ExecuteNonQueryAsync();
@@ -69,6 +69,7 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         private void AddCommonParameters(IList commandParameters, WorkTaskStatusData data)
         {
+            DataUtil.AddParameter(_providerFactory, commandParameters, "workTaskTypeId", DbType.Guid, DataUtil.GetParameterValue(data.WorkTaskTypeId));
             DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));
             DataUtil.AddParameter(_providerFactory, commandParameters, "description", DbType.String, DataUtil.GetParameterValue(data.Description));
             DataUtil.AddParameter(_providerFactory, commandParameters, "isDefaultStatus", DbType.Boolean, DataUtil.GetParameterValue(data.IsDefaultStatus));

@@ -14,12 +14,16 @@ namespace BrassLoon.WorkTask.Core
     {
         private readonly WorkTaskTypeData _data;
         private readonly IWorkTaskTypeDataSaver _dataSaver;
+        private readonly IWorkTaskTypeFactory _factory;
 
         public WorkTaskType(WorkTaskTypeData data,
-            IWorkTaskTypeDataSaver dataSaver)
+            IWorkTaskTypeDataSaver dataSaver,
+            IWorkTaskTypeFactory factory)
         {
             _data = data;
             _dataSaver = dataSaver;
+            _factory = factory;
+
         }
 
         public Guid WorkTaskTypeId => _data.WorkTaskTypeId;
@@ -36,6 +40,11 @@ namespace BrassLoon.WorkTask.Core
         public int WorkTaskCount => _data.WorkTaskCount;
 
         public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
+
+        public IWorkTaskStatus CreateWorkTaskStatus(string code)
+        {
+            return _factory.GetWorkTaskStatusFactory().Create(this, code);
+        }
 
         public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }

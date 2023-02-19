@@ -20,5 +20,7 @@ namespace BrassLoon.WorkTask.Framework
 
         Task Create(ITransactionHandler transactionHandler);
         Task Update(ITransactionHandler transactionHandler);
+
+        IWorkTaskStatus CreateWorkTaskStatus(string code);
     }
 }

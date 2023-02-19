@@ -12,6 +12,20 @@ AS
 BEGIN
 	SET @id = NEWID();
 	SET @timestamp = SYSUTCDATETIME();
+
+	-- only want 1 status record to be default
+	IF @isDefaultStatus = 1
+	BEGIN -- The new status will become the default, so remove default setting from others
+		UPDATE [blwt].[WorkTaskStatus]
+		SET [IsDefaultStatus] = 0,
+		[UpdateTimestamp] = @timestamp
+		WHERE [WorkTaskTypeId] = @workTaskTypeId
+	END
+	ELSE IF 0 = (SELECT COUNT(1) FROM [blwt].[WorkTaskStatus] WHERE [WorkTaskTypeId] = @workTaskTypeId)
+	BEGIN -- if new status is first status is must be default
+		SET @isDefaultStatus = 1;
+	END
+
 	INSERT INTO [blwt].[WorkTaskStatus] ([WorkTaskStatusId], [WorkTaskTypeId], [DomainId], 
 	[Code], [Name], [Description], [IsDefaultStatus], [IsClosedStatus], 
 	[CreateTimestamp], [UpdateTimestamp]) 

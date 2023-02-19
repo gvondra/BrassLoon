@@ -16,7 +16,9 @@ namespace WorkTaskAPI
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
             config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
-            config.CreateMap<WorkTaskStatus, IWorkTaskStatus>();
+            config.CreateMap<WorkTaskStatus, IWorkTaskStatus>()
+                .ForMember(s => s.IsDefaultStatus, exp => exp.MapFrom(s => s.IsDefaultStatus ?? false))
+                ;
             config.CreateMap<IWorkTaskType, WorkTaskType>();
             config.CreateMap<WorkTaskType, IWorkTaskType>();
         }
