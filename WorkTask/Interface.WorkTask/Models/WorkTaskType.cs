@@ -10,6 +10,6 @@ namespace BrassLoon.Interface.WorkTask.Models
         public string Description { get; set; }
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
-        public int WorkTaskCount { get; set; }
+        public int? WorkTaskCount { get; set; }
     }
 }
