@@ -57,6 +57,7 @@ namespace BrassLoon.WorkTask.Data.Internal
                     timestamp.Direction = ParameterDirection.Output;
                     command.Parameters.Add(timestamp);
 
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.WorkTaskTypeId));
                     AddCommonParameters(command.Parameters, data);
 
                     await command.ExecuteNonQueryAsync();
