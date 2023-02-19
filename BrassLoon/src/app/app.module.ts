@@ -41,6 +41,8 @@ import { SigningKeyComponent } from './signing-key/signing-key.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 import { DomainUserComponent } from './domain-user/domain-user.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
+import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
+import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -107,7 +109,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     SigningKeyComponent,
     SigningKeysComponent,
     DomainUserComponent,
-    DomainUsersComponent
+    DomainUsersComponent,
+    WorkTaskTypesComponent,
+    WorkTaskTypeComponent
   ],
   imports: [
     BrowserModule,

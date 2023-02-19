@@ -25,6 +25,8 @@ import { RolesComponent } from './roles/roles.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
+import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
+import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
 
 const routes: Routes = [
   {
@@ -123,6 +125,21 @@ const routes: Routes = [
   {
     path: "d/:domainId/SigningKeys",
     component: SigningKeysComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTTypes",
+    component: WorkTaskTypesComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType",
+    component: WorkTaskTypeComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType/:id",
+    component: WorkTaskTypeComponent,
     canActivate: [ AuthGuard ]
   },
   {
