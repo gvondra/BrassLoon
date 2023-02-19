@@ -27,6 +27,9 @@ export class HttpClientUtilService {
   GetAuthorizationBaseAddress() : string {
     return this.appSettings.GetSettings().AuthoriaztionBaseAddress;
   }
+  GetWorkTaskBaseAddress() : string {
+    return this.appSettings.GetSettings().WorkTaskBaseAddress;
+  }
 
   CreateUserTokenAuthHeader() : HttpHeaders {
     let tkn: string = this.oidcSecurityService.getIdToken().trim();
