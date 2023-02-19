@@ -9,6 +9,7 @@ using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -47,17 +48,27 @@ namespace BrassLoon.CommonAPI
         [NonAction]
         protected async Task<AccountDomain> GetDomain(Guid domainId, CommonApiSettings settings, string accessToken, IDomainService domainService)
         {
-            HashAlgorithm hashAlgorithm = SHA256.Create();
-            string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
-            return await m_cache.Execute<Task<AccountDomain>>(async context =>
+            try
             {
-                return await domainService.GetAccountDomain(
-                CreateAccountSettings(settings, accessToken),
-                domainId
+                HashAlgorithm hashAlgorithm = SHA256.Create();
+                string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
+                return await m_cache.Execute<Task<AccountDomain>>(async context =>
+                {
+                    return await domainService.GetAccountDomain(
+                    CreateAccountSettings(settings, accessToken),
+                    domainId
+                    );
+                },
+                new Context(string.Format("{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
                 );
-            },
-            new Context(string.Format("{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
-            );
+            }
+            catch (BrassLoon.RestClient.Exceptions.RequestError ex)
+            {
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                    return null;
+                else
+                    throw;
+            }
         }
 
         [NonAction]
