@@ -65,6 +65,43 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
+        [HttpGet("{domainId}/{id}")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        [ProducesResponseType(typeof(List<WorkTaskType>), 200)]
+        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing id parameter value");
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    CoreSettings settings = CreateCoreSettings();
+                    IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, id.Value);
+                    if (innerWorkTaskType == null)
+                        result = NotFound();
+                    if (result == null)
+                    {
+                        IMapper mapper = CreateMapper();
+                        result = Ok(
+                            mapper.Map<WorkTaskType>(innerWorkTaskType)
+                            );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
         [NonAction]
         private IActionResult ValidateRequest(WorkTaskType workTaskType)
         {
