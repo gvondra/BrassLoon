@@ -43,6 +43,8 @@ import { DomainUserComponent } from './domain-user/domain-user.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
 import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
 import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
+import { WorkTaskStatusesComponent } from './work-task-statuses/work-task-statuses.component';
+import { WorkTaskStatusComponent } from './work-task-status/work-task-status.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -111,7 +113,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     DomainUserComponent,
     DomainUsersComponent,
     WorkTaskTypesComponent,
-    WorkTaskTypeComponent
+    WorkTaskTypeComponent,
+    WorkTaskStatusesComponent,
+    WorkTaskStatusComponent
   ],
   imports: [
     BrowserModule,
