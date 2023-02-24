@@ -53,3 +53,7 @@
         </div>
     </div>
 </form>
+<ng-container *ngIf="Domain && WorkTaskType && WorkTaskType.WorkTaskTypeId">
+    <h3>Statuses</h3>
+    <app-work-task-statuses [WorkTaskType]="WorkTaskType"></app-work-task-statuses>
+</ng-container>

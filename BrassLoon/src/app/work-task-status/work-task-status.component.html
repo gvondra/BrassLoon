@@ -1,0 +1,103 @@
+<a *ngIf="Domain && WorkTaskStatus" [routerLink]="['/d', Domain.DomainId, 'WTType', WorkTaskStatus.WorkTaskTypeId]">back</a>
+<h2>Domain</h2>
+<h3>Work Task Type</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+<ng-container *ngIf="Domain && WorkTaskStatus">
+<p>Found {{ WorkTaskStatus.WorkTaskCount }} work tasks in this status.</p>
+<form (ngSubmit)="Save()" #taskStatusForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="code">Code</label>
+            </div>
+            <div class="col-md-6">
+                <input id="code" name="code" #code="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    placeholder="Code" 
+                    [readOnly]="CanEditCode()"
+                    [(ngModel)]="WorkTaskStatus.Code"/>
+                <div *ngIf="code.invalid && (code.dirty || code.touched)" class="alert alert-danger">
+                    <div *ngIf="code.errors.required">
+                        Code is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="title">Name</label>
+            </div>
+            <div class="col-md-6">
+                <input id="title" name="title" #title="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    placeholder="Name" 
+                    [(ngModel)]="WorkTaskStatus.Name"/>
+                <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger">
+                    <div *ngIf="title.errors.required">
+                        Name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="description">Description</label>
+            </div>
+            <div class="col-md-6">
+                <textarea id="description" name="description" #description="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    rows="4"
+                    placeholder="Description" 
+                    [(ngModel)]="WorkTaskStatus.Description"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="isDefault">Is Default Status</label>
+            </div>
+            <div class="col-md-6">
+                <input id="isDefault" name="isDefault" #isDefault="ngModel"
+                    class="form-control"
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="WorkTaskStatus.IsDefaultStatus"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="isClosed">Is Closed Status</label>
+            </div>
+            <div class="col-md-6">
+                <input id="isClosed" name="isClosed" #isClosed="ngModel"
+                    class="form-control"
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="WorkTaskStatus.IsClosedStatus"/>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1em;">
+            <div class="offset-md-3 col-md-4">
+                <button class="btn btn-primary" type="submit" [disabled]="!taskStatusForm.form.valid">
+                    <div *ngIf="Saving && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+        <p style="font-size:  small; margin-top: 1rem;">Note, once saved, the code value cannot be changed.</p>
+        <p style="font-size: small">Each work task type must have 1 and only 1 default status. If a type has only 1 status it will automatically be set as default.
+            When saving a status with the default value set, any other status will have the default status removed.</p>
+    </div>
+</form>
+</ng-container>

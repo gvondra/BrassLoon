@@ -1,0 +1,28 @@
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<table *ngIf="WorkTaskType && WorkTaskStatuses" class="table table-sm">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Work Task Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let status of WorkTaskStatuses">
+            <td><a [routerLink]="['/d', WorkTaskType.DomainId, 'WTType', WorkTaskType.WorkTaskTypeId, 'Status', status.WorkTaskStatusId ]">{{ status.Code }}</a></td>
+            <td>{{ status.Name }}</td>
+            <td style="text-overflow: ellipsis; white-space: nowrap;">{{ status.Description }}</td>
+            <td>{{ status.WorkTaskCount }}</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td rowspan="99">
+                <button class="btn btn-sm btn-secondary" (click)="OnNewStatus()">New</button>
+            </td>
+        </tr>
+    </tfoot>
+</table>
