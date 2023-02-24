@@ -11,6 +11,8 @@ namespace BrassLoon.WorkTask.Core
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.WorkTask.Data.WorkTaskDataModule());
             builder.RegisterType<Saver>().SingleInstance();
+            builder.RegisterType<WorkGroupFactory>().As<IWorkGroupFactory>();
+            builder.RegisterType<WorkGroupSaver>().As<IWorkGroupSaver>();
             builder.RegisterType<WorkTaskStatusFactory>().As<IWorkTaskStatusFactory>();
             builder.RegisterType<WorkTaskTypeFactory>().As<IWorkTaskTypeFactory>();
             builder.RegisterType<WorkTaskTypeSaver>().As<IWorkTaskTypeSaver>();

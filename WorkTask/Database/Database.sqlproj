@@ -82,6 +82,10 @@
     <Build Include="Stored Procedure\blwt.UpdateWorkTaskStatus.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskTypeId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorkGroup.sql" />
+    <Build Include="Stored Procedure\blwt.UpdateWorkGroup.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkGroup_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkGroup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
