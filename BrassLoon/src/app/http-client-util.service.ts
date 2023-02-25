@@ -31,9 +31,10 @@ export class HttpClientUtilService {
     return this.appSettings.GetSettings().WorkTaskBaseAddress;
   }
 
-  CreateUserTokenAuthHeader() : HttpHeaders {
-    let tkn: string = this.oidcSecurityService.getIdToken().trim();
-    return new HttpHeaders({"Authorization": `bearer ${tkn}`});    
+  CreateUserTokenAuthHeader() : Observable<HttpHeaders> {
+    return this.oidcSecurityService.getIdToken()
+    .pipe(map(tkn => new HttpHeaders({"Authorization": `bearer ${tkn.trim()}`})))
+    ;
   }
 
   CreateAuthHeader(tokenService: TokenService) : Promise<HttpHeaders> {

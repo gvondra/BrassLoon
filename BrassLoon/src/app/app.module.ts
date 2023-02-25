@@ -45,6 +45,7 @@ import { WorkTaskTypesComponent } from './work-task-types/work-task-types.compon
 import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
 import { WorkTaskStatusesComponent } from './work-task-statuses/work-task-statuses.component';
 import { WorkTaskStatusComponent } from './work-task-status/work-task-status.component';
+import { from } from 'rxjs';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -73,7 +74,7 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     }
   });
 
-  return new StsConfigHttpLoader(settings$);
+  return new StsConfigHttpLoader(from(settings$));
 };
 
 @NgModule({
