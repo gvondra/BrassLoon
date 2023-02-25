@@ -2,7 +2,7 @@
 using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log;
-using BrassLoon.WorkTask.Core;
+using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.WorkTask.Framework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -116,7 +116,7 @@ namespace WorkTaskAPI.Controllers
         [HttpPost("{domainId}")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(WorkGroup), 200)]
-        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromBody] WorkGroup workGroup)
+        public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromBody] WorkGroup workGroup)
         {
             IActionResult result = null;
             try

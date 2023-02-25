@@ -28,6 +28,8 @@ import { DomainUsersComponent } from './domain-users/domain-users.component';
 import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
 import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
 import { WorkTaskStatusComponent } from './work-task-status/work-task-status.component';
+import { WorkGroupsComponent } from './work-groups/work-groups.component';
+import { WorkGroupComponent } from './work-group/work-group.component';
 
 const routes: Routes = [
   {
@@ -126,6 +128,21 @@ const routes: Routes = [
   {
     path: "d/:domainId/SigningKeys",
     component: SigningKeysComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroups",
+    component: WorkGroupsComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroup",
+    component: WorkGroupComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroup/:id",
+    component: WorkGroupComponent,
     canActivate: [ AuthGuard ]
   },
   {

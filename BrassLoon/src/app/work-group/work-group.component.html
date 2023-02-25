@@ -1,0 +1,54 @@
+<a *ngIf="Domain" [routerLink]="['/d', Domain.DomainId, 'WGroups']">back</a>
+<h2>Domain</h2>
+<h3>Work Group</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+<form *ngIf="Domain && WorkGroup" (ngSubmit)="Save()" #taskTypeForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="title">Title</label>
+            </div>
+            <div class="col-md-6">
+                <input id="title" name="title" #title="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    placeholder="Title" 
+                    [(ngModel)]="WorkGroup.Title"/>
+                <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger">
+                    <div *ngIf="title.errors.required">
+                        Title is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="description">Description</label>
+            </div>
+            <div class="col-md-6">
+                <textarea id="description" name="description" #description="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    rows="4"
+                    placeholder="Description" 
+                    [(ngModel)]="WorkGroup.Description"></textarea>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1em;">
+            <div class="offset-md-3 col-md-4">
+                <button class="btn btn-primary" type="submit" [disabled]="!taskTypeForm.form.valid">
+                    <div *ngIf="Saving && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
