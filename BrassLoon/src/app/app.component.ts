@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.oidcSecurityService.isAuthenticated$.subscribe(isAuthenticated => {
             this.IsLoggedIn = isAuthenticated.isAuthenticated;
             if (isAuthenticated.isAuthenticated) {
-                this.UserImageSource = this.GetUserImageSource();
+                this.SetUserImageSource();
             }
             else {
                 this.UserImageSource = null;
@@ -96,14 +96,15 @@ export class AppComponent implements OnInit, OnDestroy {
         this.router.navigate(["/"]);
     }
 
-    private GetUserImageSource() {
-        let tkn: any = this.oidcSecurityService.getPayloadFromIdToken();
-        if (tkn && tkn.picture) {
-            return tkn.picture;
-        }
-        else {
-            return null;
-        }
-        
+    private SetUserImageSource() {
+        this.oidcSecurityService.getPayloadFromIdToken()
+        .subscribe(tkn => {
+            if (tkn && tkn.picture) {
+                this.UserImageSource = tkn.picture;
+            }        
+            else {
+                this.UserImageSource = null;
+            }
+        });        
     }
 }
