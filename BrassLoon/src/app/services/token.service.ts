@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,10 @@ export class TokenService {
   }
 
   GetToken2() : Observable<string> {
-    return this.httpClient.post(`${this.httpClientUtil.GetAccountBaseAddress()}Token`, null, {headers: this.httpClientUtil.CreateUserTokenAuthHeader(), responseType: 'text'});
+    return this.httpClientUtil.CreateUserTokenAuthHeader()
+    .pipe(mergeMap(headers => {
+      return this.httpClient.post(`${this.httpClientUtil.GetAccountBaseAddress()}Token`, null, {headers: headers, responseType: 'text'});
+    }))
+    ;    
   }
 }

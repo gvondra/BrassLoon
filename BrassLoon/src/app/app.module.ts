@@ -41,6 +41,7 @@ import { SigningKeyComponent } from './signing-key/signing-key.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 import { DomainUserComponent } from './domain-user/domain-user.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
+import { from } from 'rxjs';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
   const settings$: any = appSettingsService.LoadSettings()
@@ -69,7 +70,7 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     }
   });
 
-  return new StsConfigHttpLoader(settings$);
+  return new StsConfigHttpLoader(from(settings$));
 };
 
 @NgModule({
