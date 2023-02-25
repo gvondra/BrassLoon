@@ -13,15 +13,19 @@ namespace BrassLoon.WorkTask.Core
     {
         private readonly IWorkGroupDataFactory _dataFactory;
         private readonly IWorkGroupDataSaver _dataSaver;
+        private readonly IWorkGroupMemberDataSaver _workGroupMemberDataSaver;
 
         public WorkGroupFactory(IWorkGroupDataFactory dataFactory,
-            IWorkGroupDataSaver dataSaver)
+            IWorkGroupDataSaver dataSaver,
+            IWorkGroupMemberDataSaver workGroupMemberDataSaver)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
+            _workGroupMemberDataSaver = workGroupMemberDataSaver;
+
         }
 
-        private WorkGroup Create(WorkGroupData data) => new WorkGroup(data, _dataSaver);
+        private WorkGroup Create(WorkGroupData data) => new WorkGroup(data, _dataSaver, _workGroupMemberDataSaver);
 
         public IWorkGroup Create(Guid domainId)
         {

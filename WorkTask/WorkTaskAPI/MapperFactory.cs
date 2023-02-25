@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.WorkTask.Framework;
+using System.Collections.Generic;
 
 namespace WorkTaskAPI
 {
@@ -15,7 +16,10 @@ namespace WorkTaskAPI
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
-            config.CreateMap<WorkGroup, IWorkGroup>();
+            config.CreateMap<IReadOnlyList<string>, List<string>>()
+                .ConvertUsing(rol => new List<string>(rol));
+            config.CreateMap<WorkGroup, IWorkGroup>()
+                .ForMember(g => g.MemberUserIds, exp => exp.Ignore());
             config.CreateMap<IWorkGroup, WorkGroup>();
             config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
             config.CreateMap<WorkTaskStatus, IWorkTaskStatus>()

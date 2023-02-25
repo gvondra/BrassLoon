@@ -1,5 +1,6 @@
 ﻿using BrassLoon.DataClient;
 using System;
+using System.Collections.Generic;
 
 namespace BrassLoon.WorkTask.Data.Models
 {
@@ -11,5 +12,6 @@ namespace BrassLoon.WorkTask.Data.Models
         [ColumnMapping()] public string Description { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
+        public List<WorkGroupMemberData> Members { get; set; }
     }
 }

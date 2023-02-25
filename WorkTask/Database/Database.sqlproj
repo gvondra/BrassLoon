@@ -86,6 +86,10 @@
     <Build Include="Stored Procedure\blwt.UpdateWorkGroup.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkGroup_by_DomainId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkGroup.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorkGroupMember.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkGroupMember_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkGroupMember_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blwt.DeleteWorkGroupMember.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

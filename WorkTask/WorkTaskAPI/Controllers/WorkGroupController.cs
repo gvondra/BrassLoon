@@ -133,6 +133,7 @@ namespace WorkTaskAPI.Controllers
                     IWorkGroup innerWorkGroup = _workGroupFactory.Create(domainId.Value);
                     IMapper mapper = CreateMapper();
                     mapper.Map(workGroup, innerWorkGroup);
+                    ApplyMemberChanges(innerWorkGroup, workGroup.MemberUserIds);
                     await _workGroupSaver.Create(settings, innerWorkGroup);
                     result = Ok(mapper.Map<WorkGroup>(innerWorkGroup));
                 }
@@ -171,6 +172,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         mapper.Map(workGroup, innerWorkGroup);
+                        ApplyMemberChanges(innerWorkGroup, workGroup.MemberUserIds);
                         await _workGroupSaver.Update(settings, innerWorkGroup);
                         result = Ok(
                             mapper.Map<WorkGroup>(innerWorkGroup)
@@ -184,6 +186,27 @@ namespace WorkTaskAPI.Controllers
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
+        }
+
+        [NonAction]
+        private void ApplyMemberChanges(IWorkGroup innerWorkGroup, List<string> memberUserIds)
+        {
+            if (memberUserIds != null)
+            {
+                foreach (string userId in memberUserIds)
+                {
+                    // iwork group will ellimate duplicates
+                    innerWorkGroup.AddMember(userId);
+                }
+                foreach (string userId in innerWorkGroup.MemberUserIds)
+                {
+                    if (!memberUserIds.Any(id => string.Equals(id, userId, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        innerWorkGroup.RemoveMember(userId);
+                    }
+                }
+            }
+
         }
     }
 }

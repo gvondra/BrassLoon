@@ -7,4 +7,6 @@ BEGIN
 	WHERE [DomainId] = @domainId
 	ORDER BY [Title], [CreateTimestamp]
 	;
+
+	EXEC [blwt].[GetWorkGroupMember_by_DomainId] @domainId;
 END

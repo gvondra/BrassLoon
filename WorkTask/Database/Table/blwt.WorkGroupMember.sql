@@ -16,3 +16,7 @@ CREATE CLUSTERED INDEX [IX_WorkGroupMember_DomainId] ON [blwt].[WorkGroupMember]
 GO
 
 CREATE INDEX [IX_WorkGroupMember_WorkGroupId] ON [blwt].[WorkGroupMember] ([WorkGroupId])
+
+GO
+
+CREATE UNIQUE INDEX [IX_WorkGroupMember_UserId] ON [blwt].[WorkGroupMember] ([UserId], [WorkGroupId], [DomainId])
