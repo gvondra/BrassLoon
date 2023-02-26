@@ -1,4 +1,5 @@
 ﻿using BrassLoon.CommonCore;
+using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,13 @@ namespace BrassLoon.WorkTask.Core
     public class WorkGroupSaver : IWorkGroupSaver
     {
         private readonly Saver _saver;
+        private readonly IWorkTaskTypeGroupDataSaver _dataSaver;
 
-        public WorkGroupSaver(Saver saver)
+        public WorkGroupSaver(Saver saver,
+            IWorkTaskTypeGroupDataSaver dataSaver)
         {
             _saver = saver;
+            _dataSaver = dataSaver;
         }
 
         public Task Create(ISettings settings, params IWorkGroup[] workGroups)
@@ -28,6 +32,16 @@ namespace BrassLoon.WorkTask.Core
                     await workGroups[i].Create(th);
                 }
             });
+        }
+
+        public Task CreateWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId)
+        {
+            return _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, workTaskTypeId, workGroupId));
+        }
+
+        public Task DeleteWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId)
+        {
+            return _saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, workTaskTypeId, workGroupId));
         }
 
         public Task Update(ISettings settings, params IWorkGroup[] workGroups)

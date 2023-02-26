@@ -10,5 +10,6 @@ namespace BrassLoon.WorkTask.Data
     {
         Task<WorkTaskTypeData> Get(ISqlSettings settings, Guid id);
         Task<IEnumerable<WorkTaskTypeData>> GetByDomainId(ISqlSettings settings, Guid domainId);
+        Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId);
     }
 }

@@ -206,7 +206,66 @@ namespace WorkTaskAPI.Controllers
                     }
                 }
             }
+        }
 
+        [HttpPost("{domainId}/{id}/WorkTaskType")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        public async Task<IActionResult> AddWorkTaskTypeLink([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromQuery] Guid? workTaskTypeId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing id parameter value");
+                if (result == null && (!workTaskTypeId.HasValue || workTaskTypeId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing work task type id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    CoreSettings settings = CreateCoreSettings();
+                    await _workGroupSaver.CreateWorkTaskTypeGroup(settings, workTaskTypeId.Value, id.Value);
+                    result = Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpDelete("{domainId}/{id}/WorkTaskType")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        public async Task<IActionResult> DeleteWorkTaskTypeLink([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromQuery] Guid? workTaskTypeId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing id parameter value");
+                if (result == null && (!workTaskTypeId.HasValue || workTaskTypeId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing work task type id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    CoreSettings settings = CreateCoreSettings();
+                    await _workGroupSaver.DeleteWorkTaskTypeGroup(settings, workTaskTypeId.Value, id.Value);
+                    result = Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
         }
     }
 }

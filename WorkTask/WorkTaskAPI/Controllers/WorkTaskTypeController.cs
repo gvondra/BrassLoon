@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
+using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.WorkTask.Framework;
@@ -92,6 +93,38 @@ namespace WorkTaskAPI.Controllers
                             mapper.Map<WorkTaskType>(innerWorkTaskType)
                             );
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [HttpGet("/api/WorkGroup/{domainId}/{workGroupId}/WorkTaskType")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        [ProducesResponseType(typeof(List<WorkTaskType>), 200)]
+        public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (result == null && (!workGroupId.HasValue || workGroupId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing work group id parameter value");
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    CoreSettings settings = CreateCoreSettings();
+                    IMapper mapper = CreateMapper();
+                    result = Ok(
+                        (await _workTaskTypeFactory.GetByWorkGroupId(settings, workGroupId.Value))
+                        .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                        );
                 }
             }
             catch (Exception ex)

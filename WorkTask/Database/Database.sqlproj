@@ -90,6 +90,9 @@
     <Build Include="Stored Procedure\blwt.GetWorkGroupMember_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkGroupMember_by_DomainId.sql" />
     <Build Include="Stored Procedure\blwt.DeleteWorkGroupMember.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorktTaskTypeGroup.sql" />
+    <Build Include="Stored Procedure\blwt.DeleteWorktTaskTypeGroup.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskType_by_WorkGroupId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

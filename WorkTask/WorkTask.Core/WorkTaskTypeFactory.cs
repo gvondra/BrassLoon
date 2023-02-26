@@ -51,5 +51,11 @@ namespace BrassLoon.WorkTask.Core
         }
 
         public IWorkTaskStatusFactory GetWorkTaskStatusFactory() => _workTaskStatusFactory;
+
+        public async Task<IEnumerable<IWorkTaskType>> GetByWorkGroupId(ISettings settings, Guid workGroupId)
+        {
+            return (await _dataFactory.GetByWorkGroupId(new DataSettings(settings), workGroupId))
+                .Select(Create);
+        }
     }
 }

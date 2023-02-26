@@ -22,6 +22,13 @@ export class WorkTaskTypeService {
     );
   }
 
+  GetByWorkGroupId(domainId: string, workGroupId: string): Observable<Array<WorkTaskType>> {
+    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
+    .pipe(
+      mergeMap(headers => this.httpClient.get<Array<WorkTaskType>>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}/${workGroupId}/WorkTaskType`, {headers: headers}))
+    );
+  }
+
   Get(domainId: string, id: string): Observable<WorkTaskType> {
     return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
     .pipe(

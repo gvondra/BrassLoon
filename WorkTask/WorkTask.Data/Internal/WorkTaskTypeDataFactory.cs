@@ -36,5 +36,17 @@ namespace BrassLoon.WorkTask.Data.Internal
                 new List<IDataParameter> { parameter })
                 ;
         }
+
+        public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId)
+        {
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "workGroupId", DbType.Guid, workGroupId);
+            return await _genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blwt].[GetWorkTaskType_by_WorkGroupId]",
+                Create,
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter })
+                ;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BrassLoon.CommonCore;
+using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Framework
@@ -7,5 +8,8 @@ namespace BrassLoon.WorkTask.Framework
     {
         Task Create(ISettings settings, params IWorkGroup[] workGroups);
         Task Update(ISettings settings, params IWorkGroup[] workGroups);
+
+        Task CreateWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId);
+        Task DeleteWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId);
     }
 }

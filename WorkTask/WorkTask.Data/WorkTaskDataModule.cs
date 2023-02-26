@@ -17,6 +17,7 @@ namespace BrassLoon.WorkTask.Data
             builder.RegisterType<WorkTaskStatusDataSaver>().As<IWorkTaskStatusDataSaver>();
             builder.RegisterType<WorkTaskTypeDataFactory>().As<IWorkTaskTypeDataFactory>();
             builder.RegisterType<WorkTaskTypeDataSaver>().As<IWorkTaskTypeDataSaver>();
+            builder.RegisterType<WorkTaskTypeGroupDataSaver>().As<IWorkTaskTypeGroupDataSaver>();
         }
     }
 }
