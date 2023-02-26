@@ -93,6 +93,16 @@
     <Build Include="Stored Procedure\blwt.CreateWorktTaskTypeGroup.sql" />
     <Build Include="Stored Procedure\blwt.DeleteWorktTaskTypeGroup.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskType_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorkTask.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorkTaskContext.sql" />
+    <Build Include="Stored Procedure\blwt.UpdateWorkTask.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskContext_by_WorkTaskId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTask.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskType_by_WorkTaskId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTask_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskContext_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkGroupId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
