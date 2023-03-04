@@ -103,6 +103,9 @@
     <Build Include="Stored Procedure\blwt.GetWorkTaskContext_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.CreateComment.sql" />
+    <Build Include="Stored Procedure\blwt.CreateWorkTaskComment.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskComment_by_WorkTaskId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
