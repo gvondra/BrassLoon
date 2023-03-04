@@ -21,8 +21,8 @@ namespace BrassLoon.WorkTask.Core
             _dataSaver = dataSaver;
         }
 
-        private WorkTaskStatus Create(WorkTaskStatusData data) => new WorkTaskStatus(data, _dataSaver);
-        private WorkTaskStatus Create(WorkTaskStatusData data, IWorkTaskType workTaskType) => new WorkTaskStatus(data, _dataSaver, workTaskType);
+        internal WorkTaskStatus Create(WorkTaskStatusData data) => new WorkTaskStatus(data, _dataSaver);
+        internal WorkTaskStatus Create(WorkTaskStatusData data, IWorkTaskType workTaskType) => new WorkTaskStatus(data, _dataSaver, workTaskType);
 
         public IWorkTaskStatus Create(IWorkTaskType workTaskType, string code)
         {

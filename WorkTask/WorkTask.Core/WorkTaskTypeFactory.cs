@@ -24,7 +24,7 @@ namespace BrassLoon.WorkTask.Core
 
         }
 
-        private WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
+        internal WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
 
         public IWorkTaskType Create(Guid domainId)
         {
