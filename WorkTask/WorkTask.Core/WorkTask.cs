@@ -80,11 +80,17 @@ namespace BrassLoon.WorkTask.Core
 
         public IWorkTaskContext AddContext(short referenceType, string referenceValue)
         {
-            if (_newContexts == null)
-                _newContexts = new List<IWorkTaskContext>();
-            IWorkTaskContext context = _factory.CreateContext(DomainId, this, referenceType, referenceValue);
-            _newContexts.Add(context);
-            return context;
+            if (referenceValue == null)
+                referenceValue = string.Empty;
+            IWorkTaskContext workTaskContext = null;
+            if (!WorkTaskContexts.Any(c => referenceType == c.ReferenceType && referenceValue.Equals(c.ReferenceValue ?? string.Empty, StringComparison.OrdinalIgnoreCase)))
+            {
+                if (_newContexts == null)
+                    _newContexts = new List<IWorkTaskContext>();
+                workTaskContext = _factory.CreateContext(DomainId, this, referenceType, referenceValue);
+                _newContexts.Add(workTaskContext);
+            }
+            return workTaskContext;
         }
 
         private async Task SaveNewContexts(ITransactionHandler transactionHandler)
