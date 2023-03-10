@@ -56,7 +56,7 @@ export class WorkTaskTypeComponent implements OnInit {
   }
 
   private LoadTaskType(domainId, id) {
-    this.workTaskTypeService.Get(domainId, id).toPromise()
+    this.workTaskTypeService.Get(domainId, id)
     .then(taskType => this.WorkTaskType = taskType)
     .catch(err => {
       console.error(err);
@@ -78,7 +78,7 @@ export class WorkTaskTypeComponent implements OnInit {
   Save() {
     this.Saving = true;
     if (this.WorkTaskType.WorkTaskTypeId) {
-      this.workTaskTypeService.Update(this.Domain.DomainId, this.WorkTaskType).toPromise()
+      this.workTaskTypeService.Update(this.Domain.DomainId, this.WorkTaskType)
       .then(workTaskType => this.WorkTaskType = workTaskType)
       .catch(err => {
         console.error(err);
@@ -88,7 +88,7 @@ export class WorkTaskTypeComponent implements OnInit {
       ;
     }
     else {
-      this.workTaskTypeService.Create(this.Domain.DomainId, this.WorkTaskType).toPromise()
+      this.workTaskTypeService.Create(this.Domain.DomainId, this.WorkTaskType)
       .then(workTaskType => this.router.navigate(['/d', this.Domain.DomainId, 'WTType', workTaskType.WorkTaskTypeId]))
       .catch(err => {
         console.error(err);

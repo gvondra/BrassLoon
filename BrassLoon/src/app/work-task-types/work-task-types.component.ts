@@ -49,7 +49,7 @@ export class WorkTaskTypesComponent implements OnInit {
   }
 
   private LoadTaskTypes(domainId) {
-    this.workTaskTypeService.GetAll(domainId).toPromise()
+    this.workTaskTypeService.GetAll(domainId)
     .then(taskTypes => this.WorkTaskTypes = taskTypes)
     .catch(err => {
       console.error(err);

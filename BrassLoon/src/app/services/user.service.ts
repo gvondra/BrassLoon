@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
-import { TokenService } from './token.service';
 import { User } from '../models/user';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,6 @@ import { User } from '../models/user';
 export class UserService {
 
   constructor(private httpClientUtil: HttpClientUtilService,
-    private httpClient: HttpClient,
     private tokenService: TokenService) { }
 
   Search(emailAddress: string) : Promise<User[]> {     
@@ -18,33 +17,32 @@ export class UserService {
     if (emailAddress && emailAddress !== '') {      
       params = params.append("emailAddress", emailAddress);
     }
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}User`, { headers: headers, params: params }).toPromise()
-        .then(res => res as Array<User>);
-    });      
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetAccountBaseAddress()
+      .then(baseAddress => `${baseAddress}User`),
+      params
+    ); 
   }
 
   Get(userId: string) : Promise<User> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}User/${userId}`, { headers: headers }).toPromise()
-        .then(res => res as User);
-    });      
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetAccountBaseAddress()
+      .then(baseAddress => `${baseAddress}User/${userId}`)
+    );   
   }
 
   GetRoles(userId: string) : Promise<string[]> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAccountBaseAddress()}User/${userId}/Role`, { headers: headers }).toPromise()
-        .then(res => res as Array<string>);
-    });      
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetAccountBaseAddress()
+      .then(baseAddress => `${baseAddress}User/${userId}/Role`)
+    );    
   }
 
   SaveRoles(userId: string, roles: string[]) : Promise<any> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.put(`${this.httpClientUtil.GetAccountBaseAddress()}User/${userId}/Role`, roles, { headers: headers }).toPromise();
-    });      
+    return this.httpClientUtil.PutRequest(this.tokenService,
+      this.httpClientUtil.GetAccountBaseAddress()
+      .then(baseAddress => `${baseAddress}User/${userId}/Role`),
+      roles
+    );      
   }
 }

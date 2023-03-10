@@ -1,10 +1,8 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
-import { TokenService } from './token.service';
 import { WorkGroup } from '../models/work-group';
-import { mergeMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,56 +10,55 @@ import { Observable } from 'rxjs';
 export class WorkGroupService {
 
   constructor(private httpClientUtil: HttpClientUtilService,
-    private httpClient: HttpClient,
     private tokenService: TokenService) { }
 
-  GetAll(domainId: string): Observable<Array<WorkGroup>> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.get<Array<WorkGroup>>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}`, {headers: headers}))
+  GetAll(domainId: string): Promise<Array<WorkGroup>> {
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}`)
     );
   }
 
-  Get(domainId: string, id: string): Observable<WorkGroup> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.get<WorkGroup>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}/${id}`, {headers: headers}))
+  Get(domainId: string, id: string): Promise<WorkGroup> {
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}/${id}`)
     );
   }
 
-  Create(domainId: string, workTaskType: WorkGroup): Observable<WorkGroup> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.post<WorkGroup>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}`, workTaskType, {headers: headers}))
+  Create(domainId: string, workTaskType: WorkGroup): Promise<WorkGroup> {
+    return this.httpClientUtil.PostRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}`),
+      workTaskType
     );
   }
 
-  Update(domainId: string, workTaskType: WorkGroup): Observable<WorkGroup> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.put<WorkGroup>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}/${workTaskType.WorkGroupId}`, workTaskType, {headers: headers}))
+  Update(domainId: string, workTaskType: WorkGroup): Promise<WorkGroup> {
+    return this.httpClientUtil.PutRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}/${workTaskType.WorkGroupId}`),
+      workTaskType
     );
   }
 
-  AddWorkTaskTypeLink(domainId: string, workGroupId: string, workTaskTypeId: string): Observable<any> {    
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => {
-        let params: HttpParams = new HttpParams()
-      .append("workTaskTypeId", workTaskTypeId);
-        return this.httpClient.post(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}/${workGroupId}/WorkTaskType`, null, {headers: headers, params: params});
-      })
-    );
+  AddWorkTaskTypeLink(domainId: string, workGroupId: string, workTaskTypeId: string): Promise<any> {  
+    let params: HttpParams = new HttpParams()
+    .append("workTaskTypeId", workTaskTypeId);
+    return this.httpClientUtil.PostRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}/${workGroupId}/WorkTaskType`),
+      params = params
+    ); 
   }
 
-  DeleteWorkTaskTypeLink(domainId: string, workGroupId: string, workTaskTypeId: string): Observable<any> {    
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => {
-        let params: HttpParams = new HttpParams()
-      .append("workTaskTypeId", workTaskTypeId);
-        return this.httpClient.delete(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkGroup/${domainId}/${workGroupId}/WorkTaskType`, {headers: headers, params: params});
-      })
+  DeleteWorkTaskTypeLink(domainId: string, workGroupId: string, workTaskTypeId: string): Promise<any> {  
+    let params: HttpParams = new HttpParams()
+    .append("workTaskTypeId", workTaskTypeId);
+    return this.httpClientUtil.DeleteRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkGroup/${domainId}/${workGroupId}/WorkTaskType`),
+      params = params
     );
   }
 }

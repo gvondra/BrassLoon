@@ -56,7 +56,7 @@ export class WorkTaskStatusComponent implements OnInit {
   }
 
   private LoadTaskStatus(domainId: string, typeId: string, statusId: string): void {
-    this.workTaskStatusService.Get(domainId, typeId, statusId).toPromise()
+    this.workTaskStatusService.Get(domainId, typeId, statusId)
     .then(workTaskStatus => this.WorkTaskStatus = workTaskStatus)
     .catch(err => {
       console.error(err);
@@ -93,7 +93,7 @@ export class WorkTaskStatusComponent implements OnInit {
     this.ErrorMessage = "";
     this.Saving = true;
     if (this.WorkTaskStatus.WorkTaskStatusId) {
-      this.workTaskStatusService.Update(this.WorkTaskStatus.DomainId, this.WorkTaskStatus.WorkTaskTypeId, this.WorkTaskStatus).toPromise()
+      this.workTaskStatusService.Update(this.WorkTaskStatus.DomainId, this.WorkTaskStatus.WorkTaskTypeId, this.WorkTaskStatus)
       .then(status => this.WorkTaskStatus = status)
       .catch(err => {
         console.error(err);
@@ -103,7 +103,7 @@ export class WorkTaskStatusComponent implements OnInit {
       ;
     }
     else {
-      this.workTaskStatusService.Create(this.WorkTaskStatus.DomainId, this.WorkTaskStatus.WorkTaskTypeId, this.WorkTaskStatus).toPromise()
+      this.workTaskStatusService.Create(this.WorkTaskStatus.DomainId, this.WorkTaskStatus.WorkTaskTypeId, this.WorkTaskStatus)
       .then(status => this.router.navigate(["/d", status.DomainId, "WTType", status.WorkTaskTypeId, "Status", status.WorkTaskStatusId]))
       .catch(err => {
         console.error(err);

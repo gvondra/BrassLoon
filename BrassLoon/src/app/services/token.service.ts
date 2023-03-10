@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
-import { Observable } from 'rxjs';
+import { firstValueFrom, from, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 @Injectable({
@@ -13,14 +13,15 @@ export class TokenService {
     private httpClient: HttpClient) { }
 
   GetToken() : Promise<string> {
-    return this.GetToken2().toPromise()
+    return firstValueFrom(this.GetToken2())
     .then(res => res as string);
   }
 
   GetToken2() : Observable<string> {
     return this.httpClientUtil.CreateUserTokenAuthHeader()
     .pipe(mergeMap(headers => {
-      return this.httpClient.post(`${this.httpClientUtil.GetAccountBaseAddress()}Token`, null, {headers: headers, responseType: 'text'});
+      return from(this.httpClientUtil.GetAccountBaseAddress()
+      .then(baseAddress => firstValueFrom(this.httpClient.post(`${baseAddress}Token`, null, {headers: headers, responseType: 'text'}))))
     }))
     ;    
   }

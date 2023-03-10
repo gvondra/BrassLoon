@@ -33,7 +33,7 @@ export class WorkTaskStatusesComponent implements OnInit {
   }
 
   private Load(workTaskType: WorkTaskType): void {
-    this.workTaskStatusService.GetAll(workTaskType.DomainId, workTaskType.WorkTaskTypeId).toPromise()
+    this.workTaskStatusService.GetAll(workTaskType.DomainId, workTaskType.WorkTaskTypeId)
     .then(statuses => {
       this.WorkTaskStatuses = statuses;
     })

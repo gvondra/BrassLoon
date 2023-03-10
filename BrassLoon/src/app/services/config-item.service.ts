@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { TokenService } from './token.service';
-import { Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,18 +8,12 @@ import { map, mergeMap } from 'rxjs/operators';
 export class ConfigItemService {
 
   constructor(private httpClientUtil: HttpClientUtilService,
-    private httpClient: HttpClient,
     private tokenService: TokenService) { }
 
-    GetCodes(domainId: string) : Observable<string[]> {
-      return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-      .pipe(
-        mergeMap(headers => {
-          return this.httpClient.get(`${this.httpClientUtil.GetConfigBaseAddress()}ItemCode/${domainId}`, {headers: headers})
-          .pipe(
-            map(value => value as string[])
-          );
-      })
-      );
+    GetCodes(domainId: string) : Promise<string[]> {
+      return this.httpClientUtil.GetRequest(this.tokenService,
+        this.httpClientUtil.GetConfigBaseAddress()
+        .then(baseAddress => `${baseAddress}ItemCode/${domainId}`)
+      ); 
     }
 }

@@ -19,6 +19,7 @@ export class SigningKeysComponent implements OnInit {
   Domain: Domain = null;
   SigningKeys: Array<SigningKey> = null;
   SelectedSigningKey: SigningKey = null; 
+  JwksLink: string | null = null;
   
   constructor(private activatedRoute: ActivatedRoute,
     private appSettings: AppSettingsService,
@@ -26,6 +27,7 @@ export class SigningKeysComponent implements OnInit {
     private signingKeyService: SigningKeyService) { }
 
   ngOnInit(): void {
+    this.JwksLink = null;
     this.activatedRoute.params.subscribe(params => {
       this.InitializeMemberVariables();
       if (params["domainId"]) { 
@@ -39,6 +41,8 @@ export class SigningKeysComponent implements OnInit {
           console.error(err);
           this.ErrorMessage = err.message || "Unexpected Error"
         }); 
+        this.appSettings.GetSettings()
+        .then(appSettings => this.JwksLink = `${appSettings.AuthoriaztionBaseAddress}jwks/${this.Domain.DomainId}`)
       }
     });
   }
@@ -99,9 +103,5 @@ export class SigningKeysComponent implements OnInit {
     const i: number = this.FindSigningKeyIndex(this.SigningKeys, signingKey);
     if (i >= 0) { this.SigningKeys[i] = signingKey; }
     else { this.SigningKeys.push(signingKey); }
-  }
-
-  JwksLink() {
-    return this.appSettings.GetSettings().AuthoriaztionBaseAddress + `jwks/${this.Domain.DomainId}`;
   }
 }

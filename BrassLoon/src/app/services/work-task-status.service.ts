@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
-import { TokenService } from './token.service';
 import { WorkTaskStatus } from '../models/work-task-status';
-import { mergeMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,34 +9,35 @@ import { Observable } from 'rxjs';
 export class WorkTaskStatusService {
 
   constructor(private httpClientUtil: HttpClientUtilService,
-    private httpClient: HttpClient,
     private tokenService: TokenService) { }
 
-  GetAll(domainId: string, workTaskTypeId: string): Observable<Array<WorkTaskStatus>> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.get<Array<WorkTaskStatus>>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkTaskType/${domainId}/${workTaskTypeId}/Status`, {headers: headers}))
+  GetAll(domainId: string, workTaskTypeId: string): Promise<Array<WorkTaskStatus>> {
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkTaskType/${domainId}/${workTaskTypeId}/Status`)
     );
   }
 
-  Get(domainId: string, workTaskTypeId: string, id: string): Observable<WorkTaskStatus> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.get<WorkTaskStatus>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkTaskType/${domainId}/${workTaskTypeId}/Status/${id}`, {headers: headers}))
+  Get(domainId: string, workTaskTypeId: string, id: string): Promise<WorkTaskStatus> {
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkTaskType/${domainId}/${workTaskTypeId}/Status/${id}`)
     );
   }
 
-  Create(domainId: string, workTaskTypeId: string, workTaskStatus: WorkTaskStatus): Observable<WorkTaskStatus> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.post<WorkTaskStatus>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkTaskType/${domainId}/${workTaskTypeId}/Status`, workTaskStatus, {headers: headers}))
+  Create(domainId: string, workTaskTypeId: string, workTaskStatus: WorkTaskStatus): Promise<WorkTaskStatus> {
+    return this.httpClientUtil.PostRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkTaskType/${domainId}/${workTaskTypeId}/Status`),
+      workTaskStatus
     );
   }
 
-  Update(domainId: string, workTaskTypeId: string, workTaskStatus: WorkTaskStatus): Observable<WorkTaskStatus> {
-    return this.httpClientUtil.CreateAuthHeader2(this.tokenService)
-    .pipe(
-      mergeMap(headers => this.httpClient.put<WorkTaskStatus>(`${this.httpClientUtil.GetWorkTaskBaseAddress()}WorkTaskType/${domainId}/${workTaskTypeId}/Status/${workTaskStatus.WorkTaskStatusId}`, workTaskStatus, {headers: headers}))
+  Update(domainId: string, workTaskTypeId: string, workTaskStatus: WorkTaskStatus): Promise<WorkTaskStatus> {
+    return this.httpClientUtil.PutRequest(this.tokenService,
+      this.httpClientUtil.GetWorkTaskBaseAddress()
+      .then(baseAddress => `${baseAddress}WorkTaskType/${domainId}/${workTaskTypeId}/Status/${workTaskStatus.WorkTaskStatusId}`),
+      workTaskStatus
     );
   }
 }

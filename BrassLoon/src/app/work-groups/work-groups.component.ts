@@ -49,7 +49,7 @@ export class WorkGroupsComponent implements OnInit {
     }
   
     private LoadWorkGroups(domainId) {
-      this.workGroupService.GetAll(domainId).toPromise()
+      this.workGroupService.GetAll(domainId)
       .then(workGroups => this.WorkGroups = workGroups)
       .catch(err => {
         console.error(err);

@@ -71,7 +71,7 @@ export class WorkGroupComponent implements OnInit {
   }
 
   private LoadWorkGroup(domainId, id) {
-    firstValueFrom(this.workGroupService.Get(domainId, id))
+    this.workGroupService.Get(domainId, id)
     .then(workGroup => this.WorkGroup = workGroup)
     .catch(err => {
       console.error(err);
@@ -90,7 +90,7 @@ export class WorkGroupComponent implements OnInit {
   }
 
   private LoadWorkTaskTypes(domain, id): void {
-    firstValueFrom(this.workTaskTypeService.GetByWorkGroupId(domain, id))
+    this.workTaskTypeService.GetByWorkGroupId(domain, id)
     .then(types => {
       this.WorkTaskTypes = types;
       this.ShowWorkTaskTypes = true;
@@ -103,7 +103,7 @@ export class WorkGroupComponent implements OnInit {
   }
 
   private LoadAllWorkTaskTypes(domain): void {
-    firstValueFrom(this.workTaskTypeService.GetAll(domain))
+    this.workTaskTypeService.GetAll(domain)
     .then(types => {
       this.AllWorkTaskTypes = types;
     })
@@ -117,7 +117,7 @@ export class WorkGroupComponent implements OnInit {
   Save() {
     this.Saving = true;
     if (this.WorkGroup.WorkGroupId) {
-      firstValueFrom(this.workGroupService.Update(this.Domain.DomainId, this.WorkGroup))
+      this.workGroupService.Update(this.Domain.DomainId, this.WorkGroup)
       .then(workGroup => this.WorkGroup = workGroup)
       .catch(err => {
         console.error(err);
@@ -127,7 +127,7 @@ export class WorkGroupComponent implements OnInit {
       ;
     }
     else {
-      firstValueFrom(this.workGroupService.Create(this.Domain.DomainId, this.WorkGroup))
+      this.workGroupService.Create(this.Domain.DomainId, this.WorkGroup)
       .then(workGroup => this.router.navigate(['/d', this.Domain.DomainId, 'WGroup', workGroup.WorkGroupId]))
       .catch(err => {
         console.error(err);
@@ -140,7 +140,7 @@ export class WorkGroupComponent implements OnInit {
 
   LinkWorkTaskType() {
     if (this.SelectedWorkTaskTypeId != null && this.SelectedWorkTaskTypeId != "") {
-      firstValueFrom(this.workGroupService.AddWorkTaskTypeLink(this.Domain.DomainId, this.WorkGroup.WorkGroupId, this.SelectedWorkTaskTypeId))
+      this.workGroupService.AddWorkTaskTypeLink(this.Domain.DomainId, this.WorkGroup.WorkGroupId, this.SelectedWorkTaskTypeId)
       .then(() => this.LoadWorkTaskTypes(this.Domain.DomainId, this.WorkGroup.WorkGroupId))
       .catch(err => {
         console.error(err);
@@ -150,7 +150,7 @@ export class WorkGroupComponent implements OnInit {
   }
 
   UnLinkWorkTaskType(workTaskTypeId) {
-    firstValueFrom(this.workGroupService.DeleteWorkTaskTypeLink(this.Domain.DomainId, this.WorkGroup.WorkGroupId, workTaskTypeId))
+    this.workGroupService.DeleteWorkTaskTypeLink(this.Domain.DomainId, this.WorkGroup.WorkGroupId, workTaskTypeId)
     .then(() => this.LoadWorkTaskTypes(this.Domain.DomainId, this.WorkGroup.WorkGroupId))
     .catch(err => {
       console.error(err);
