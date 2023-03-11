@@ -125,7 +125,7 @@ namespace WorkTaskAPI.Controllers
         [HttpPost()]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(WorkTaskStatus), 200)]
-        public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId, [FromBody] WorkTaskStatus workTaskStatus)
+        public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId, [FromBody] WorkTaskStatus workTaskStatus)
         {
             IActionResult result = null;
             try

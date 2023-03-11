@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
-using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.WorkTask.Framework;

@@ -23,6 +23,8 @@ namespace WorkTaskAPI
             config.CreateMap<IWorkGroup, WorkGroup>();
             config.CreateMap<IWorkTask, WorkTask>();
             config.CreateMap<WorkTask, IWorkTask>();
+            config.CreateMap<IComment, Comment>();
+            config.CreateMap<IWorkTaskContext, WorkTaskContext>();
             config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
             config.CreateMap<WorkTaskStatus, IWorkTaskStatus>()
                 .ForMember(s => s.IsDefaultStatus, exp => exp.MapFrom(s => s.IsDefaultStatus ?? false))

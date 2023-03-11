@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-	  <Nullable>disable</Nullable>
-	  <ImplicitUsings>disable</ImplicitUsings>
-	  <AssemblyName>BrassLoon.Interface.WorkTask</AssemblyName>
-	  <RootNamespace>BrassLoon.Interface.WorkTask</RootNamespace>
-	  <Authors>Greg Vondra</Authors>
-	  <Company />
-	  <Product>Brass Loon</Product>
-	  <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <Version>1.0.0-alpha.6</Version>
-	  <AssemblyVersion>1.0.0.6</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<AssemblyName>BrassLoon.Interface.WorkTask</AssemblyName>
+		<RootNamespace>BrassLoon.Interface.WorkTask</RootNamespace>
+		<Authors>Greg Vondra</Authors>
+		<Company />
+		<Product>Brass Loon</Product>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>1.0.0-alpha.7</Version>
+		<AssemblyVersion>1.0.0.7</AssemblyVersion>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DebugType>full</DebugType>
@@ -26,7 +26,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="6.5.0" />
+		<PackageReference Include="Autofac" Version="6.5.0" />
+		<PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
 	</ItemGroup>
 
 </Project>
