@@ -38,7 +38,7 @@ namespace WorkTaskAPI.Controllers
         [HttpGet("{domainId}")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<WorkTaskType>), 200)]
-        public async Task<IActionResult> GetAll([FromRoute] Guid? domainId)
+        public async Task<IActionResult> GetAll([FromRoute] Guid? domainId, [FromQuery] string code)
         {
             IActionResult result = null;
             try
@@ -50,11 +50,27 @@ namespace WorkTaskAPI.Controllers
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
+                    IWorkTaskType innerWorkTaskType;
                     IMapper mapper = CreateMapper();
-                    result = Ok(
-                        (await _workTaskTypeFactory.GetByDomainId(settings, domainId.Value))
-                        .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
-                        );
+                    if (!string.IsNullOrEmpty(code))
+                    {
+                        innerWorkTaskType = await _workTaskTypeFactory.GetByDomainIdCode(settings, domainId.Value, code);
+                        if (innerWorkTaskType == null)
+                            result = Ok(null);
+                        else
+                            result = Ok(
+                                mapper.Map<WorkTaskType>(innerWorkTaskType) 
+                                );
+
+                    }
+                    else
+                    {
+                        result = Ok(
+                            (await _workTaskTypeFactory.GetByDomainId(settings, domainId.Value))
+                            .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                            );
+
+                    }
                 }
             }
             catch (Exception ex)

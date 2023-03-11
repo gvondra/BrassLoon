@@ -2,9 +2,7 @@
 using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
@@ -59,6 +57,21 @@ namespace BrassLoon.Interface.WorkTask
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
             return _restUtil.Send<List<WorkTaskType>>(_service, request);
+        }
+
+        public Task<WorkTaskType> GetByCode(ISettings settings, Guid domainId, string code)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(code))
+                throw new ArgumentNullException(nameof(code));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath("WorkTaskType")
+                .AddPath(domainId.ToString("N"))
+                .AddQueryParameter("code", code)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            return _restUtil.Send<WorkTaskType>(_service, request);
         }
 
         public Task<List<WorkTaskType>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId)

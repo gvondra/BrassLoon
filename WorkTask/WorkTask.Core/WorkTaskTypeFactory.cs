@@ -58,5 +58,14 @@ namespace BrassLoon.WorkTask.Core
             return (await _dataFactory.GetByWorkGroupId(new DataSettings(settings), workGroupId))
                 .Select(Create);
         }
+
+        public async Task<IWorkTaskType> GetByDomainIdCode(ISettings settings, Guid domainId, string code)
+        {
+            WorkTaskType workTaskType = null;
+            WorkTaskTypeData data = await _dataFactory.GetByDomainIdCode(new DataSettings(settings), domainId, code);
+            if (data != null)
+                workTaskType = Create(data);
+            return workTaskType;
+        }
     }
 }

@@ -36,6 +36,22 @@ namespace BrassLoon.WorkTask.Data.Internal
                 ;
         }
 
+        public async Task<WorkTaskTypeData> GetByDomainIdCode(ISqlSettings settings, Guid domainId, string code)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
+                DataUtil.CreateParameter(_providerFactory, "code", DbType.String, code)
+            };
+            return (await _genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blwt].[GetWorkTaskType_by_DomainId_Code]",
+                Create,
+                DataUtil.AssignDataStateManager,
+                parameters))
+                .FirstOrDefault();
+        }
+
         public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "workGroupId", DbType.Guid, workGroupId);
