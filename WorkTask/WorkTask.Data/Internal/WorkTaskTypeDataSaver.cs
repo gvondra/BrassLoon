@@ -31,6 +31,7 @@ namespace BrassLoon.WorkTask.Data.Internal
                     command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.String, DataUtil.GetParameterValue(data.Code));
                     AddCommonParameters(command.Parameters, data);
 
                     await command.ExecuteNonQueryAsync();

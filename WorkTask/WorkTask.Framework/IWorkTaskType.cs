@@ -1,9 +1,5 @@
 ﻿using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Framework
@@ -12,6 +8,7 @@ namespace BrassLoon.WorkTask.Framework
     {
         Guid WorkTaskTypeId { get; }
         Guid DomainId { get; }
+        string Code { get; }
         string Title { get; set; }
         string Description { get; set; }
         DateTime CreateTimestamp { get; }

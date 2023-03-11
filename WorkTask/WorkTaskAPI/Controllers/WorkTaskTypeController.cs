@@ -159,11 +159,13 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                     result = ValidateRequest(workTaskType);
+                if (result == null && string.IsNullOrEmpty(workTaskType.Code))
+                    result = BadRequest("Missing work task type code value");
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
-                    IWorkTaskType innerWorkTaskType = _workTaskTypeFactory.Create(domainId.Value);
+                    IWorkTaskType innerWorkTaskType = _workTaskTypeFactory.Create(domainId.Value, workTaskType.Code);
                     mapper.Map(workTaskType, innerWorkTaskType);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
                     result = Ok(

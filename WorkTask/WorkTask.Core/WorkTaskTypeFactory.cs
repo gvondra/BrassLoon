@@ -1,11 +1,10 @@
 ﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Framework;
 using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
+using BrassLoon.WorkTask.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
@@ -26,12 +25,14 @@ namespace BrassLoon.WorkTask.Core
 
         internal WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
 
-        public IWorkTaskType Create(Guid domainId)
+        public IWorkTaskType Create(Guid domainId, string code)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(code))
+                throw new ArgumentNullException(nameof(code));
             return Create(
-                new WorkTaskTypeData { DomainId = domainId }
+                new WorkTaskTypeData { DomainId = domainId, Code = code }
                 );
         }
 

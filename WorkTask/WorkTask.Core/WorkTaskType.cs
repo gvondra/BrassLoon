@@ -30,6 +30,8 @@ namespace BrassLoon.WorkTask.Core
 
         public Guid DomainId => _data.DomainId;
 
+        public string Code => _data.Code;
+
         public string Title { get => _data.Title; set => _data.Title = value; }
         public string Description { get => _data.Description; set => _data.Description = value; }
 
