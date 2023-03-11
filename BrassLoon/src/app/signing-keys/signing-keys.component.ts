@@ -42,7 +42,7 @@ export class SigningKeysComponent implements OnInit {
           this.ErrorMessage = err.message || "Unexpected Error"
         }); 
         this.appSettings.GetSettings()
-        .then(appSettings => this.JwksLink = `${appSettings.AuthoriaztionBaseAddress}jwks/${this.Domain.DomainId}`)
+        .then(appSettings => this.JwksLink = `${appSettings.AuthoriaztionBaseAddress}jwks/${params["domainId"]}`)
       }
     });
   }
