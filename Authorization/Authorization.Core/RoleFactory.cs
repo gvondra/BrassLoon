@@ -3,6 +3,7 @@ using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
+using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace BrassLoon.Authorization.Core
 {
     public class RoleFactory : IRoleFactory
     {
-        private static Policy m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static CachePolicy m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly IRoleDataFactory _dataFactory;
         private readonly IRoleDataSaver _dataSaver;
 
@@ -51,7 +52,7 @@ namespace BrassLoon.Authorization.Core
         }
 
         public Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
-        {
+        {            
             return m_domainCache.Execute(async context =>
             {
                 return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
@@ -70,6 +71,11 @@ namespace BrassLoon.Authorization.Core
         {
             return (await _dataFactory.GetByUserId(new CommonCore.DataSettings(settings), userId))
                 .Select<RoleData, IRole>(Create);
+        }
+
+        public static void ClearCache()
+        {
+            m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         }
     }
 }
