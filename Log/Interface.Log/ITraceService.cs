@@ -12,5 +12,7 @@ namespace BrassLoon.Interface.Log
         Task<Trace> Create(ISettings settings, Guid domainId, string eventCode, string message, object data = null);
         Task<Trace> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, string message, object data = null);
         Task Create(ISettings settings, Guid domainId, List<Trace> traces);
+        Task<List<string>> GetEventCodes(ISettings settings, Guid domainId);
+        Task<List<Trace>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode);
     }
 }
