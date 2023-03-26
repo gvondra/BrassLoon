@@ -216,5 +216,53 @@ namespace WorkTaskAPI.Controllers
             }
             return result;
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId, [FromRoute] Guid? id)
+        {
+            IActionResult result = null;
+            try
+            {
+                CoreSettings settings = CreateCoreSettings();
+                IWorkTaskType innerWorkTaskType = null;
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing id parameter value");
+                if (result == null && (!workTaskTypeId.HasValue || workTaskTypeId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing work task type id parameter value");
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTaskTypeId.Value);
+                    if (innerWorkTaskType == null)
+                        result = NotFound();
+                }
+                if (result == null)
+                {
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    if (innerWorkTaskStatus == null)
+                        result = NotFound();
+                    else
+                    {
+                        if (innerWorkTaskStatus.WorkTaskCount > 0)
+                            result = BadRequest("Unable to delete status in use");
+                    }
+                }
+                if (result == null)
+                {
+                    await _workTaskTypeSaver.DeleteStatus(settings, id.Value);
+                    result = Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
     }
 }

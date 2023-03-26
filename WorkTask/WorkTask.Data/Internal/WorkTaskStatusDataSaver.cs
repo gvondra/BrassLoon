@@ -42,6 +42,20 @@ namespace BrassLoon.WorkTask.Data.Internal
             }
         }
 
+        public async Task Delete(ISqlTransactionHandler transactionHandler, Guid id)
+        {
+            await _providerFactory.EstablishTransaction(transactionHandler);
+            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            {
+                command.CommandText = "[blwt].[DeleteWorkTaskStatus]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
         public async Task Update(ISqlTransactionHandler transactionHandler, WorkTaskStatusData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)

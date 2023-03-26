@@ -37,6 +37,25 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<WorkTaskStatus>(_service, request);
         }
 
+        public async Task Delete(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (workTaskTypeId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workTaskTypeId));
+            if (id.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(id));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
+                .AddPath("WorkTaskType/{domainId}/{workTaskTypeId}/Status/{id}")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("workTaskTypeId", workTaskTypeId.ToString("N"))
+                .AddPathParameter("id", id.ToString("N"))
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            IResponse response = await _service.Send(request);
+            _restUtil.CheckSuccess(response);
+        }
+
         public Task<WorkTaskStatus> Get(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
         {
             if (domainId.Equals(Guid.Empty))

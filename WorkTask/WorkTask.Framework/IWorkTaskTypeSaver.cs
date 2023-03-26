@@ -1,4 +1,5 @@
 ﻿using BrassLoon.CommonCore;
+using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Framework
@@ -9,5 +10,6 @@ namespace BrassLoon.WorkTask.Framework
         Task Update(ISettings settings, params IWorkTaskStatus[] statuses);
         Task Create(ISettings settings, params IWorkTaskType[] types);
         Task Update(ISettings settings, params IWorkTaskType[] types);
+        Task DeleteStatus(ISettings settings, params Guid[] ids);
     }
 }
