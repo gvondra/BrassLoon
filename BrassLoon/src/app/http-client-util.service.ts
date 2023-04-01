@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AppSettingsService } from './app-settings.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { TokenService } from './services/token.service';
 import jwt_decode from 'jwt-decode';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -13,19 +13,28 @@ import { map, tap } from 'rxjs/operators';
 export class HttpClientUtilService {
 
   constructor(private appSettings: AppSettingsService,
-    private oidcSecurityService: OidcSecurityService) { }
+    private oidcSecurityService: OidcSecurityService,
+    private httpClient: HttpClient) { }
 
-  GetAccountBaseAddress() : string {
-    return this.appSettings.GetSettings().AccountBaseAddress;
+  GetAccountBaseAddress() : Promise<string> {
+    return this.appSettings.GetSettings()
+    .then(appSettings => appSettings.AccountBaseAddress);
   }
-  GetLogBaseAddress() : string {
-    return this.appSettings.GetSettings().LogBaseAddress;
+  GetLogBaseAddress() : Promise<string> {
+    return this.appSettings.GetSettings()
+    .then(appSettings => appSettings.LogBaseAddress);
   }
-  GetConfigBaseAddress() : string {
-    return this.appSettings.GetSettings().ConfigBaseAddress;
+  GetConfigBaseAddress() : Promise<string> {
+    return this.appSettings.GetSettings()
+    .then(appSettings => appSettings.ConfigBaseAddress);
   }
-  GetAuthorizationBaseAddress() : string {
-    return this.appSettings.GetSettings().AuthoriaztionBaseAddress;
+  GetAuthorizationBaseAddress() : Promise<string> {
+    return this.appSettings.GetSettings()
+    .then(appSettings => appSettings.AuthoriaztionBaseAddress);
+  }
+  GetWorkTaskBaseAddress() : Promise<string> {
+    return this.appSettings.GetSettings()
+    .then(appSettings => appSettings.WorkTaskBaseAddress);
   }
 
   CreateUserTokenAuthHeader() : Observable<HttpHeaders> {
@@ -120,5 +129,40 @@ export class HttpClientUtilService {
   DropCache() : void {
     sessionStorage.removeItem("AccessToken");
     sessionStorage.removeItem("AccessToknExpiration");
+  }
+
+  GetRequest<T>(tokenService: TokenService, getAddress: Promise<string>, params: HttpParams | null = null) : Promise<T> {
+    return this.CreateAuthHeader(tokenService)
+    .then(headers => getAddress
+      .then(address => firstValueFrom(this.httpClient.get<T>(address, {headers: headers, params: params}))
+      ));
+  }
+
+  DeleteRequest<T>(tokenService: TokenService, getAddress: Promise<string>, params: HttpParams | null = null) : Promise<T> {
+    return this.CreateAuthHeader(tokenService)
+    .then(headers => getAddress
+      .then(address => firstValueFrom(this.httpClient.delete<T>(address, {headers: headers, params: params}))
+      ));
+  }
+
+  PostRequest<T>(tokenService: TokenService, getAddress: Promise<string>, value: any | null = null, params: HttpParams | null = null) : Promise<T> {
+    return this.CreateAuthHeader(tokenService)
+    .then(headers => getAddress
+      .then(address => firstValueFrom(this.httpClient.post<T>(address, value, {headers: headers, params: params}))
+      ));
+  }
+
+  PutRequest<T>(tokenService: TokenService, getAddress: Promise<string>, value: any | null = null, params: HttpParams | null = null) : Promise<T> {
+    return this.CreateAuthHeader(tokenService)
+    .then(headers => getAddress
+      .then(address => firstValueFrom(this.httpClient.put<T>(address, value, {headers: headers, params: params}))
+      ));
+  }
+
+  PatchRequest<T>(tokenService: TokenService, getAddress: Promise<string>, value: any | null = null, params: HttpParams | null = null) : Promise<T> {
+    return this.CreateAuthHeader(tokenService)
+    .then(headers => getAddress
+      .then(address => firstValueFrom(this.httpClient.patch<T>(address, value, {headers: headers, params: params}))
+      ));
   }
 }

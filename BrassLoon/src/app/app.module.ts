@@ -41,11 +41,17 @@ import { SigningKeyComponent } from './signing-key/signing-key.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 import { DomainUserComponent } from './domain-user/domain-user.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
-import { from } from 'rxjs';
+import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
+import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
+import { WorkTaskStatusesComponent } from './work-task-statuses/work-task-statuses.component';
+import { WorkTaskStatusComponent } from './work-task-status/work-task-status.component';
+import { map } from 'rxjs';
+import { WorkGroupComponent } from './work-group/work-group.component';
+import { WorkGroupsComponent } from './work-groups/work-groups.component';
 
 export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {  
-  const settings$: any = appSettingsService.LoadSettings()
-  .then((settings) => 
+  const settings$ = appSettingsService.LoadSettings()
+  .pipe(map((settings) => 
   {    
     return {
       authority: settings.GoogleStsServer,     
@@ -68,9 +74,9 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
       // iss_validation_off: false
       // disable_iat_offset_validation: true
     }
-  });
+  }));
 
-  return new StsConfigHttpLoader(from(settings$));
+  return new StsConfigHttpLoader(settings$);
 };
 
 @NgModule({
@@ -108,7 +114,13 @@ export const httpLoaderFactory = (appSettingsService: AppSettingsService) => {
     SigningKeyComponent,
     SigningKeysComponent,
     DomainUserComponent,
-    DomainUsersComponent
+    DomainUsersComponent,
+    WorkTaskTypesComponent,
+    WorkTaskTypeComponent,
+    WorkTaskStatusesComponent,
+    WorkTaskStatusComponent,
+    WorkGroupComponent,
+    WorkGroupsComponent
   ],
   imports: [
     BrowserModule,

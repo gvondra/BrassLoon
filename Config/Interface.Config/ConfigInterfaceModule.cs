@@ -14,7 +14,7 @@ namespace BrassLoon.Interface.Config
         {
             base.Load(builder);
             builder.RegisterType<RestUtil>().SingleInstance();
-            builder.RegisterType<Service>().As<IService>().SingleInstance();
+            builder.RegisterType<Service>().As<IService>();
             builder.RegisterType<ItemService>().As<IItemService>();
             builder.RegisterType<LookupService>().As<ILookupService>();
         }

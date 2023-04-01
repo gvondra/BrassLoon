@@ -7,7 +7,7 @@
 <div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border text-primary" role="status">
     <span class="sr-only">Loading...</span>
 </div>
-<p>Use this key set to verify signed tokens <a *ngIf="Domain" target="_blank" [href]="JwksLink()">JWKS</a></p>
+<p *ngIf="JwksLink">Use this key set to verify signed tokens <a *ngIf="Domain" target="_blank" [href]="JwksLink">JWKS</a></p>
 <div *ngIf="SigningKeys" class="container">
     <div class="row">
         <div class="col-md-4">

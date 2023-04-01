@@ -58,12 +58,9 @@ namespace ConfigAPI.Controllers
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
-                            result = NotFound();
-                        else
-                        {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
-                            result = Ok(mapper.Map<Item>(item));
-                        }
+                            item = _itemFactory.Create(domainId.Value, code);
+                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        result = Ok(mapper.Map<Item>(item));
                     }
                 }
             }
@@ -94,11 +91,9 @@ namespace ConfigAPI.Controllers
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
-                            result = NotFound();
+                            result = Ok(null);
                         else
-                        {
                             result = Ok(item.Data);
-                        }
                     }
                 }
             }
@@ -130,7 +125,7 @@ namespace ConfigAPI.Controllers
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
-                            result = NotFound();
+                            result = Ok(new List<ItemHistory>());
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpClientUtilService } from '../http-client-util.service';
 import { TokenService } from './token.service';
 import { DomainClient } from '../models/domain-client';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,43 +15,39 @@ export class DomainClientService {
     private tokenService: TokenService) { }
 
   Get(domainId: string, id: string) : Promise<DomainClient> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get<DomainClient>(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${domainId}/${id}`, {headers: headers}).toPromise();
-    });    
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetAuthorizationBaseAddress()
+      .then(baseAddress => `${baseAddress}Client/${domainId}/${id}`)
+    );  
   }
 
   GetClientCredentialSecret() : Promise<string> {
     return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAuthorizationBaseAddress()}ClientCredentialSecret`, {headers: headers, responseType: "text"}).toPromise()
-        .then(s => {
-          return s as string;
-        })
-    });   
+    .then(headers => this.httpClientUtil.GetAuthorizationBaseAddress()
+      .then(baseAddress => firstValueFrom(this.httpClient.get(`${baseAddress}ClientCredentialSecret`, {headers: headers, responseType: "text"})))
+    );   
   }
   
   GetByDomainId(domainId: string) : Promise<DomainClient[]> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.get(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${domainId}`, {headers: headers}).toPromise()
-        .then(res => res as Array<DomainClient>);
-    });    
+    return this.httpClientUtil.GetRequest(this.tokenService,
+      this.httpClientUtil.GetAuthorizationBaseAddress()
+      .then(baseAddress => `${baseAddress}Client/${domainId}`)
+    ); 
   }
 
   Create(client: DomainClient): Promise<DomainClient> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.post(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${client.DomainId}`, client, {headers: headers}).toPromise()
-        .then(res => res as DomainClient);
-    });    
+    return this.httpClientUtil.PostRequest(this.tokenService,
+      this.httpClientUtil.GetAuthorizationBaseAddress()
+      .then(baseAddress => `${baseAddress}Client/${client.DomainId}`),
+      client
+    ); 
   }
 
   Update(client: DomainClient): Promise<DomainClient> {
-    return this.httpClientUtil.CreateAuthHeader(this.tokenService)
-    .then(headers => {
-        return this.httpClient.put(`${this.httpClientUtil.GetAuthorizationBaseAddress()}Client/${client.DomainId}/${client.ClientId}`, client, {headers: headers}).toPromise()
-        .then(res => res as DomainClient);
-    });
+    return this.httpClientUtil.PutRequest(this.tokenService,
+      this.httpClientUtil.GetAuthorizationBaseAddress()
+      .then(baseAddress => `${baseAddress}Client/${client.DomainId}/${client.ClientId}`),
+      client
+    ); 
   }
 }

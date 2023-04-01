@@ -25,6 +25,11 @@ import { RolesComponent } from './roles/roles.component';
 import { DomainClientsComponent } from './domain-clients/domain-clients.component';
 import { SigningKeysComponent } from './signing-keys/signing-keys.component';
 import { DomainUsersComponent } from './domain-users/domain-users.component';
+import { WorkTaskTypesComponent } from './work-task-types/work-task-types.component';
+import { WorkTaskTypeComponent } from './work-task-type/work-task-type.component';
+import { WorkTaskStatusComponent } from './work-task-status/work-task-status.component';
+import { WorkGroupsComponent } from './work-groups/work-groups.component';
+import { WorkGroupComponent } from './work-group/work-group.component';
 
 const routes: Routes = [
   {
@@ -123,6 +128,46 @@ const routes: Routes = [
   {
     path: "d/:domainId/SigningKeys",
     component: SigningKeysComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroups",
+    component: WorkGroupsComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroup",
+    component: WorkGroupComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WGroup/:id",
+    component: WorkGroupComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTTypes",
+    component: WorkTaskTypesComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType",
+    component: WorkTaskTypeComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType/:id",
+    component: WorkTaskTypeComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType/:typeId/Status",
+    component: WorkTaskStatusComponent,
+    canActivate: [ AuthGuard ]
+  },
+  {
+    path: "d/:domainId/WTType/:typeId/Status/:statusId",
+    component: WorkTaskStatusComponent,
     canActivate: [ AuthGuard ]
   },
   {

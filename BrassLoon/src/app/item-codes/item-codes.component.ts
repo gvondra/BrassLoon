@@ -40,13 +40,12 @@ export class ItemCodesComponent implements OnInit {
 
   private LoadCodes(domainId: string) {
     this.Codes = null;
-    this.configItemService.GetCodes(domainId).subscribe(
-      codes => this.Codes = codes,
-      err => {
+    this.configItemService.GetCodes(domainId)
+    .then(codes => this.Codes = codes)
+    .catch(err => {
         console.error(err);
         this.ErrorMessage = err.message || "Unexpected Error"
-      }
-    )
+    })
   }
 
 }

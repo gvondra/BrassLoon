@@ -1,27 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppSettingsService {
 
-  private AppSettings: any;
+  private AppSettings: any = null;
+  private SettingsObservable: Observable<any> = null;
 
   constructor(private httpClient: HttpClient) { }
 
-  LoadSettings() : Promise<any> {
-    return this.httpClient.get(environment["AppSettingsPath"])
-    .toPromise()
-    .then(res => {
+  LoadSettings() : Observable<any> {
+    this.SettingsObservable = this.httpClient.get(environment["AppSettingsPath"]);
+    this.SettingsObservable.subscribe(res => {
       this.AppSettings = res;
-      return res;
     });
+    return this.SettingsObservable;
   }
 
-  GetSettings() : any {
-    return this.AppSettings;
+  GetSettings() : Promise<any> {    
+    if (this.AppSettings) {
+      return Promise.resolve(this.AppSettings);
+    }
+    else {
+      return firstValueFrom(this.SettingsObservable);
+    }    
   }
 
 }

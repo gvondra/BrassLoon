@@ -70,5 +70,33 @@ namespace BrassLoon.Interface.Log
                 ;
             _restUtil.CheckSuccess(response);
         }
+
+        public Task<List<string>> GetEventCodes(ISettings settings, Guid domainId)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+            .AddPath("TraceEventCode/{domainId}")
+            .AddPathParameter("domainId", domainId.ToString("D"))
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            return _restUtil.Send<List<string>>(_service, request);
+        }
+
+        public Task<List<Trace>> Search(ISettings settings, Guid domainId, DateTime maxTimestamp, string eventCode)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(eventCode))
+                throw new ArgumentNullException(nameof(eventCode));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+            .AddPath("Trace/{domainId}")
+            .AddPathParameter("domainId", domainId.ToString("D"))
+            .AddQueryParameter("maxTimestamp", maxTimestamp.ToString("O"))
+            .AddQueryParameter("eventCode", eventCode)
+            .AddJwtAuthorizationToken(settings.GetToken)
+            ;
+            return _restUtil.Send<List<Trace>>(_service, request);
+        }
     }
 }

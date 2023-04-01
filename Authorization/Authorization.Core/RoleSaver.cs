@@ -12,14 +12,16 @@ namespace BrassLoon.Authorization.Core
             _saver = saver;
         }   
 
-        public Task Create(ISettings settings, IRole role)
-        {
-            return _saver.Save(new CommonCore.TransactionHandler(settings), role.Create);
+        public async Task Create(ISettings settings, IRole role)
+        {            
+            await _saver.Save(new CommonCore.TransactionHandler(settings), role.Create);
+            RoleFactory.ClearCache();
         }
 
-        public Task Update(ISettings settings, IRole role)
+        public async Task Update(ISettings settings, IRole role)
         {
-            return _saver.Save(new CommonCore.TransactionHandler(settings), role.Update);
+            await _saver.Save(new CommonCore.TransactionHandler(settings), role.Update);
+            RoleFactory.ClearCache();
         }
     }
 }

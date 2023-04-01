@@ -1,0 +1,59 @@
+<a *ngIf="Domain" [routerLink]="['/d', Domain.DomainId, 'WTTypes']">back</a>
+<h2>Domain</h2>
+<h3>Work Task Type</h3>
+<div *ngIf="ErrorMessage" class="alert alert-danger" role="alert">
+    {{ ErrorMessage }}
+</div>
+<div *ngIf="ShowBusy && !ErrorMessage" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+<p *ngIf="WorkTaskType">Found {{ WorkTaskType.WorkTaskCount }} work tasks of this type.</p>
+<form *ngIf="Domain && WorkTaskType" (ngSubmit)="Save()" #taskTypeForm="ngForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="title">Title</label>
+            </div>
+            <div class="col-md-6">
+                <input id="title" name="title" #title="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    required="true" 
+                    placeholder="Title" 
+                    [(ngModel)]="WorkTaskType.Title"/>
+                <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger">
+                    <div *ngIf="title.errors.required">
+                        Title is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="description">Description</label>
+            </div>
+            <div class="col-md-6">
+                <textarea id="description" name="description" #description="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    rows="4"
+                    placeholder="Description" 
+                    [(ngModel)]="WorkTaskType.Description"></textarea>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 1em;">
+            <div class="offset-md-3 col-md-4">
+                <button class="btn btn-primary" type="submit" [disabled]="!taskTypeForm.form.valid">
+                    <div *ngIf="Saving && !ErrorMessage" class="spinner-border spinner-border-sm  text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<ng-container *ngIf="Domain && WorkTaskType && WorkTaskType.WorkTaskTypeId">
+    <h3>Statuses</h3>
+    <app-work-task-statuses [WorkTaskType]="WorkTaskType"></app-work-task-statuses>
+</ng-container>
