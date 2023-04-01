@@ -22,7 +22,9 @@ namespace WorkTaskAPI
                 .ForMember(g => g.MemberUserIds, exp => exp.Ignore());
             config.CreateMap<IWorkGroup, WorkGroup>();
             config.CreateMap<IWorkTask, WorkTask>();
-            config.CreateMap<WorkTask, IWorkTask>();
+            config.CreateMap<WorkTask, IWorkTask>()
+                .ForMember(wt => wt.WorkTaskContexts, exp => exp.Ignore());
+                ;
             config.CreateMap<IComment, Comment>();
             config.CreateMap<IWorkTaskContext, WorkTaskContext>();
             config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
