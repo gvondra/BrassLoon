@@ -12,5 +12,6 @@ namespace BrassLoon.Interface.WorkTask.Models
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
         public List<string> MemberUserIds { get; set; }
+        public List<Guid> WorkTaskTypeIds { get; set; }
     }
 }

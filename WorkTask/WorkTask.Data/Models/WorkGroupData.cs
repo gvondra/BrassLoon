@@ -12,5 +12,6 @@ namespace BrassLoon.WorkTask.Data.Models
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
         public List<WorkGroupMemberData> Members { get; set; }
+        public List<WorkTaskTypeGroupData> TaskTypes { get; set; }
     }
 }

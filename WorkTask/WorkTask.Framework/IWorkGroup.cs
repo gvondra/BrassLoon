@@ -14,6 +14,7 @@ namespace BrassLoon.WorkTask.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         IReadOnlyList<string> MemberUserIds { get; }
+        IReadOnlyList<Guid> WorkTaskTypeIds { get; }
 
         Task Create(ITransactionHandler transactionHandler);
         Task Update(ITransactionHandler transactionHandler);

@@ -19,7 +19,9 @@ namespace WorkTaskAPI
             config.CreateMap<IReadOnlyList<string>, List<string>>()
                 .ConvertUsing(rol => new List<string>(rol));
             config.CreateMap<WorkGroup, IWorkGroup>()
-                .ForMember(g => g.MemberUserIds, exp => exp.Ignore());
+                .ForMember(g => g.MemberUserIds, exp => exp.Ignore())
+                .ForMember(g => g.WorkTaskTypeIds, exp => exp.Ignore());
+                ;
             config.CreateMap<IWorkGroup, WorkGroup>();
             config.CreateMap<IWorkTask, WorkTask>();
             config.CreateMap<WorkTask, IWorkTask>()

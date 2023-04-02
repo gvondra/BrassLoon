@@ -28,12 +28,30 @@ namespace BrassLoon.WorkTask.Data.Internal
                 parameters);
         }
 
+        private Task<IEnumerable<WorkTaskTypeGroupData>> GetTaskTypesByWorkGroupId(ISqlSettings settings, Guid workGroupId)
+        {
+            GenericDataFactory<WorkTaskTypeGroupData> genericDataFactory = new GenericDataFactory<WorkTaskTypeGroupData>();
+
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "workGroupId", DbType.Guid, workGroupId)
+            };
+            return genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blwt].[GetWorkTaskTypeGroup_by_WorkGroupId]",
+                () => new WorkTaskTypeGroupData(),
+                DataUtil.AssignDataStateManager,
+                parameters);
+        }
+
         public async Task<WorkGroupData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
             };
+            Task<IEnumerable<WorkGroupMemberData>> getMembersByWorkGroupId = GetMembersByWorkGroupId(settings, id);
+            Task<IEnumerable<WorkTaskTypeGroupData>> getTaskTypesByWorkGroupId = GetTaskTypesByWorkGroupId(settings, id);
             WorkGroupData data = (await _genericDataFactory.GetData(settings,
                 _providerFactory,
                 "[blwt].[GetWorkGroup]",
@@ -44,7 +62,8 @@ namespace BrassLoon.WorkTask.Data.Internal
 
             if (data != null)
             {
-                data.Members = (await GetMembersByWorkGroupId(settings, id)).ToList();
+                data.Members = (await getMembersByWorkGroupId).ToList();
+                data.TaskTypes = (await getTaskTypesByWorkGroupId).ToList();
             }
             return data;
         }
@@ -53,6 +72,7 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             List<WorkGroupData> workGroups = new List<WorkGroupData>();
             List<WorkGroupMemberData> members = new List<WorkGroupMemberData>();
+            List<WorkTaskTypeGroupData> taskTypes = new List<WorkTaskTypeGroupData>();
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
@@ -68,6 +88,11 @@ namespace BrassLoon.WorkTask.Data.Internal
                         GenericDataFactory<WorkGroupMemberData> genericDataFactory = new GenericDataFactory<WorkGroupMemberData>();
                         members = (await genericDataFactory.LoadData(reader, () => new WorkGroupMemberData(), DataUtil.AssignDataStateManager)).ToList();
                     }
+                    if (reader.NextResult())
+                    {
+                        GenericDataFactory<WorkTaskTypeGroupData> genericDataFactory = new GenericDataFactory<WorkTaskTypeGroupData>();
+                        taskTypes = (await genericDataFactory.LoadData(reader, () => new WorkTaskTypeGroupData(), DataUtil.AssignDataStateManager)).ToList();
+                    }
                 });
             workGroups = workGroups.GroupJoin<WorkGroupData, WorkGroupMemberData, Guid, WorkGroupData>(members, g => g.WorkGroupId, m => m.WorkGroupId, 
                 (g, mbrs) => 
@@ -75,6 +100,13 @@ namespace BrassLoon.WorkTask.Data.Internal
                     g.Members = mbrs.ToList();
                     return g;
                 })
+                .GroupJoin<WorkGroupData, WorkTaskTypeGroupData, Guid, WorkGroupData>(taskTypes, g => g.WorkGroupId, tt => tt.WorkGroupId,
+                (g, tts) =>
+                {
+                    g.TaskTypes = tts.ToList();
+                    return g;
+                }
+                )
                 .ToList();
             return workGroups;
         }

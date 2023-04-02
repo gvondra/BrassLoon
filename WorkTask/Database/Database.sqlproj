@@ -108,6 +108,8 @@
     <Build Include="Stored Procedure\blwt.GetWorkTaskComment_by_WorkTaskId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskType_by_DomainId_Code.sql" />
     <Build Include="Stored Procedure\blwt.DeleteWorkTaskStatus.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskTypeGroup_by_WorkGroupId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskTypeGroup_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

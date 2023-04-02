@@ -45,14 +45,28 @@ namespace BrassLoon.WorkTask.Core
         {
             get
             {
+                IEnumerable<WorkGroupMemberData> members = _data.Members ?? new List<WorkGroupMemberData>();
+                if (_newMemberData != null)
+                    members = members.Concat(_newMemberData);
+                members = members.Where(m => _deletedMemberData == null || !_deletedMemberData.Any(d => string.Equals(m.UserId, d.UserId, StringComparison.OrdinalIgnoreCase)));
                 return ImmutableList<string>.Empty.AddRange(
-                    _data.Members.Concat(_newMemberData ?? new List<WorkGroupMemberData>())
-                    .Where(m => _deletedMemberData == null || !_deletedMemberData.Any(d => string.Equals(m.UserId, d.UserId, StringComparison.OrdinalIgnoreCase)))
+                    members
                     .Select(m => m.UserId)
                     .Distinct()
                     );
             }
         }
+
+        public IReadOnlyList<Guid> WorkTaskTypeIds
+        {
+            get
+            {
+                IEnumerable<WorkTaskTypeGroupData> taskTypes = _data.TaskTypes ?? new List<WorkTaskTypeGroupData>();
+                return ImmutableList<Guid>.Empty.AddRange(
+                    taskTypes.Select(t => t.WorkTaskTypeId)
+                    );
+            }
+        }       
 
         public void AddMember(string userId)
         {

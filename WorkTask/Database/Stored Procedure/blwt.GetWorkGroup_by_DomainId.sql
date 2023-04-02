@@ -9,4 +9,5 @@ BEGIN
 	;
 
 	EXEC [blwt].[GetWorkGroupMember_by_DomainId] @domainId;
+	EXEC [blwt].[GetWorkTaskTypeGroup_by_DomainId] @domainId;
 END
