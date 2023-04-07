@@ -2,9 +2,7 @@
 using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
@@ -23,9 +21,9 @@ namespace BrassLoon.Interface.WorkTask
         public async Task AddWorkTaskTypeLink(ISettings settings, Guid domainId, Guid workGroupId, Guid workTaskTypeId)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post)
-                .AddPath("WorkGroup")
-                .AddPath(domainId.ToString("N"))
-                .AddPath(workGroupId.ToString("N"))
+                .AddPath("WorkGroup/{domainId}/{workGroupId}/WorkTaskType")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("workGroupId", workGroupId.ToString("N"))
                 .AddQueryParameter("workTaskTypeId", workTaskTypeId.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
@@ -50,9 +48,9 @@ namespace BrassLoon.Interface.WorkTask
         public async Task DeleteWorkTaskTypeLink(ISettings settings, Guid domainId, Guid workGroupId, Guid workTaskTypeId)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
-                .AddPath("WorkGroup")
-                .AddPath(domainId.ToString("N"))
-                .AddPath(workGroupId.ToString("N"))
+                .AddPath("WorkGroup/{domainId}/{workGroupId}/WorkTaskType")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("workGroupId", workGroupId.ToString("N"))
                 .AddQueryParameter("workTaskTypeId", workTaskTypeId.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
