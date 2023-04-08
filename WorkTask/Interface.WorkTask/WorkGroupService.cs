@@ -73,7 +73,7 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<WorkGroup>(_service, request);
         }
 
-        public Task<List<WorkGroup>> GetAll(ISettings settings, Guid domainId)
+        private Task<List<WorkGroup>> InnerGetAll(ISettings settings, Guid domainId, string userId = null)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -82,8 +82,16 @@ namespace BrassLoon.Interface.WorkTask
                 .AddPath(domainId.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                request.AddQueryParameter("userId", userId);
+            }
             return _restUtil.Send<List<WorkGroup>>(_service, request);
         }
+
+        public Task<List<WorkGroup>> GetAll(ISettings settings, Guid domainId) => InnerGetAll(settings, domainId);
+
+        public Task<List<WorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId) => InnerGetAll(settings, domainId, userId);
 
         public Task<WorkGroup> Update(ISettings settings, WorkGroup workGroup)
         {

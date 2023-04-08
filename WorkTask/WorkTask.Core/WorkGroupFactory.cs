@@ -50,5 +50,11 @@ namespace BrassLoon.WorkTask.Core
             return (await _dataFactory.GetByDomainId(new DataSettings(settings), domainId))
                 .Select<WorkGroupData, IWorkGroup>(Create);
         }
+
+        public async Task<IEnumerable<IWorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId)
+        {
+            return (await _dataFactory.GetByMemberUserId(new DataSettings(settings), domainId, userId))
+                .Select<WorkGroupData, IWorkGroup>(Create);
+        }
     }
 }

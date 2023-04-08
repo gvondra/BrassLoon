@@ -68,17 +68,13 @@ namespace BrassLoon.WorkTask.Data.Internal
             return data;
         }
 
-        public async Task<IEnumerable<WorkGroupData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        private async Task<IEnumerable<WorkGroupData>> InnerGetData(ISqlSettings settings, string procedureName, IDataParameter[] parameters)
         {
             List<WorkGroupData> workGroups = new List<WorkGroupData>();
             List<WorkGroupMemberData> members = new List<WorkGroupMemberData>();
             List<WorkTaskTypeGroupData> taskTypes = new List<WorkTaskTypeGroupData>();
-            IDataParameter[] parameters = new IDataParameter[]
-            {
-                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
-            };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(settings, _providerFactory, "[blwt].[GetWorkGroup_by_DomainId]", CommandType.StoredProcedure,
+            await dataReaderProcess.Read(settings, _providerFactory, procedureName, CommandType.StoredProcedure,
                 parameters,
                 readAction: async (DbDataReader reader) =>
                 {
@@ -94,8 +90,8 @@ namespace BrassLoon.WorkTask.Data.Internal
                         taskTypes = (await genericDataFactory.LoadData(reader, () => new WorkTaskTypeGroupData(), DataUtil.AssignDataStateManager)).ToList();
                     }
                 });
-            workGroups = workGroups.GroupJoin<WorkGroupData, WorkGroupMemberData, Guid, WorkGroupData>(members, g => g.WorkGroupId, m => m.WorkGroupId, 
-                (g, mbrs) => 
+            workGroups = workGroups.GroupJoin<WorkGroupData, WorkGroupMemberData, Guid, WorkGroupData>(members, g => g.WorkGroupId, m => m.WorkGroupId,
+                (g, mbrs) =>
                 {
                     g.Members = mbrs.ToList();
                     return g;
@@ -109,6 +105,25 @@ namespace BrassLoon.WorkTask.Data.Internal
                 )
                 .ToList();
             return workGroups;
+        }
+
+        public Task<IEnumerable<WorkGroupData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
+            };
+            return InnerGetData(settings, "[blwt].[GetWorkGroup_by_DomainId]", parameters);
+        }
+
+        public Task<IEnumerable<WorkGroupData>> GetByMemberUserId(ISqlSettings settings, Guid domainId, string userId)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
+                DataUtil.CreateParameter(_providerFactory, "userId", DbType.AnsiString, userId)
+            };
+            return InnerGetData(settings, "[blwt].[GetWorkGroup_by_MemberUserId]", parameters);
         }
     }
 }

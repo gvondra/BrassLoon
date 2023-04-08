@@ -10,5 +10,6 @@ namespace BrassLoon.WorkTask.Framework
         IWorkGroup Create(Guid domainId);
         Task<IWorkGroup> Get(ISettings settings, Guid id);
         Task<IEnumerable<IWorkGroup>> GetByDomainId(ISettings settings, Guid domainId);
+        Task<IEnumerable<IWorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId);
     }
 }

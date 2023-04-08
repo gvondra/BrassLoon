@@ -8,6 +8,7 @@ namespace BrassLoon.Interface.WorkTask
     public interface IWorkGroupService
     {
         Task<List<WorkGroup>> GetAll(ISettings settings, Guid domainId);
+        Task<List<WorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId);
         Task<WorkGroup> Get(ISettings settings, Guid domainId, Guid id);
         Task<WorkGroup> Create(ISettings settings, WorkGroup workGroup);
         Task<WorkGroup> Update(ISettings settings, WorkGroup workGroup);

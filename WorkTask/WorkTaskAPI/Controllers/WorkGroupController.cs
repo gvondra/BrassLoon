@@ -38,7 +38,7 @@ namespace WorkTaskAPI.Controllers
         [HttpGet("{domainId}")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<WorkGroup>), 200)]
-        public async Task<IActionResult> GetAll([FromRoute] Guid? domainId)
+        public async Task<IActionResult> GetAll([FromRoute] Guid? domainId, [FromQuery] string userId = null)
         {
             IActionResult result = null;
             try
@@ -49,11 +49,19 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
+                    IEnumerable<IWorkGroup> innerWorkGroups;
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        innerWorkGroups = await _workGroupFactory.GetByMemberUserId(settings, domainId.Value, userId);
+                    }
+                    else
+                    {
+                        innerWorkGroups = await _workGroupFactory.GetByDomainId(settings, domainId.Value);
+                    }
                     result = Ok(
-                        (await _workGroupFactory.GetByDomainId(settings, domainId.Value))
-                        .Select<IWorkGroup, WorkGroup>(t => mapper.Map<WorkGroup>(t))
+                        innerWorkGroups.Select<IWorkGroup, WorkGroup>(t => mapper.Map<WorkGroup>(t))
                         );
                 }
             }
