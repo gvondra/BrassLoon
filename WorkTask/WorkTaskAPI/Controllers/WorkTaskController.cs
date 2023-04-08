@@ -84,10 +84,10 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
-        [HttpGet("/api/WorkGroup/{domain}/{id}/WorkTask")]
+        [HttpGet("/api/WorkGroup/{domainId}/{workGroupId}/WorkTask")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<WorkTask>), 200)]
-        public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId)
+        public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId, bool? includeClosed = null)
         {
             IActionResult result = null;
             try
@@ -101,7 +101,7 @@ namespace WorkTaskAPI.Controllers
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IEnumerable<IWorkTask> innerWorkTasks = await _workTaskFactory.GetByWorkGroupId(settings, workGroupId.Value);
+                    IEnumerable<IWorkTask> innerWorkTasks = await _workTaskFactory.GetByWorkGroupId(settings, workGroupId.Value, includeClosed ?? false);
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         innerWorkTasks.Select<IWorkTask, WorkTask>(t => mapper.Map<WorkTask>(t))                        

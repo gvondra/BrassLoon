@@ -46,7 +46,7 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<Models.WorkTask>(_service, request);
         }
 
-        public Task<List<Models.WorkTask>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId)
+        public Task<List<Models.WorkTask>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId, bool? includeClosed = null)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -58,6 +58,8 @@ namespace BrassLoon.Interface.WorkTask
                 .AddPathParameter("id", workGroupId.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
+            if (includeClosed != null)
+                request.AddQueryParameter("includeClosed", includeClosed.Value.ToString());
             return _restUtil.Send<List<Models.WorkTask>>(_service, request);
         }
 
