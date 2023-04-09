@@ -10,5 +10,6 @@ namespace BrassLoon.Interface.WorkTask
         Task<List<Models.WorkTask>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId, bool? includeClosed = null);
         Task<Models.WorkTask> Create(ISettings settings, Models.WorkTask workTask);
         Task<Models.WorkTask> Update(ISettings settings, Models.WorkTask workTask);
+        Task<Models.ClaimWorkTaskResponse> Claim(ISettings settings, Guid domainId, Guid id, string assignToUserId);
     }
 }

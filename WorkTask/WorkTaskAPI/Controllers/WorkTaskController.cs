@@ -257,5 +257,67 @@ namespace WorkTaskAPI.Controllers
             }
             return result;
         }
+
+        [HttpPut("{id}/AssignTo")]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        [ProducesResponseType(typeof(ClaimWorkTaskResponse), 200)]
+        public async Task<IActionResult> Claim([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromQuery] string assignToUserId)
+        {
+            IActionResult result = null;
+            try
+            {
+                CoreSettings settings = CreateCoreSettings();
+                IWorkTask innerWorkTask = null;
+                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing id parameter value");
+                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                    result = BadRequest("Missing domain id parameter value");
+                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                if (result == null)
+                {
+                    innerWorkTask = await _workTaskFactory.Get(settings, id.Value);
+                    if (innerWorkTask == null)
+                    {
+                        result = NotFound();
+                    }
+                }
+                if (result == null && innerWorkTask != null)
+                {
+                    if (!string.IsNullOrEmpty(assignToUserId) 
+                        && !string.IsNullOrEmpty(innerWorkTask.AssignedToUserId)
+                        && !string.Equals(assignToUserId, innerWorkTask.AssignedToUserId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result = Ok(
+                            new ClaimWorkTaskResponse
+                            {
+                                IsAssigned = false,
+                                Message = "Work task already assigned"
+                            });
+                    }
+                }
+                if (result == null && innerWorkTask != null)
+                {
+                    ClaimWorkTaskResponse respone = new ClaimWorkTaskResponse();
+                    respone.IsAssigned = await _workTaskSaver.Claim(settings, domainId.Value, id.Value, assignToUserId);
+                    if (respone.IsAssigned)
+                    {
+                        respone.Message = "Work task assigned";
+                        respone.AssignedToUserId = assignToUserId;
+                    }
+                    else
+                    {
+                        respone.Message = "Failed to assign work task";
+                    }
+                    result = Ok(respone);
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
     }
 }

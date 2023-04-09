@@ -111,6 +111,7 @@
     <Build Include="Stored Procedure\blwt.GetWorkTaskTypeGroup_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskTypeGroup_by_DomainId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkGroup_by_MemberUserId.sql" />
+    <Build Include="Stored Procedure\blwt.ClaimWorkTask.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

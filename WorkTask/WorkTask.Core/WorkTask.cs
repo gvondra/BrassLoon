@@ -54,6 +54,8 @@ namespace BrassLoon.WorkTask.Core
             => ImmutableList<IWorkTaskContext>.Empty.AddRange(_contexts ?? new List<IWorkTaskContext>())
             .AddRange(_newContexts ?? new List<IWorkTaskContext>());
 
+        public string AssignedToUserId { get => _data.AssignedToUserId; set => _data.AssignedToUserId = value; }
+
         public async Task Create(ITransactionHandler transactionHandler)
         {
             if (_workTaskType == null)

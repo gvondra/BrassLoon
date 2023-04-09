@@ -1,4 +1,5 @@
-﻿using BrassLoon.RestClient;
+﻿using BrassLoon.Interface.WorkTask.Models;
+using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,6 +16,24 @@ namespace BrassLoon.Interface.WorkTask
         {
             _restUtil = restUtil;
             _service = service;
+        }
+
+        public Task<ClaimWorkTaskResponse> Claim(ISettings settings, Guid domainId, Guid id, string assignToUserId)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (id.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(id));
+            if (assignToUserId == null)
+                assignToUserId = string.Empty;
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put)
+                .AddPath("WorkTask/{domainId}/{id}/AssignTo")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("id", id.ToString("N"))
+                .AddQueryParameter("assignToUserId", assignToUserId)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            return _restUtil.Send<ClaimWorkTaskResponse>(_service, request);
         }
 
         public Task<Models.WorkTask> Create(ISettings settings, Models.WorkTask workTask)

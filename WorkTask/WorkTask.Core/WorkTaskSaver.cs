@@ -1,9 +1,7 @@
 ﻿using BrassLoon.CommonCore;
+using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
@@ -11,10 +9,23 @@ namespace BrassLoon.WorkTask.Core
     public class WorkTaskSaver : IWorkTaskSaver
     {
         private readonly Saver _saver;
+        private readonly IWorkTaskDataSaver _dataSaver;
 
-        public WorkTaskSaver(Saver saver)
+        public WorkTaskSaver(Saver saver,
+            IWorkTaskDataSaver dataSaver)
         {
             _saver = saver;
+            _dataSaver = dataSaver;
+        }
+
+        public async Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId)
+        {
+            bool result = false;
+            await _saver.Save(new TransactionHandler(settings), async (th) =>
+            {
+                result = await _dataSaver.Claim(th, domainId, id, userId);
+            });
+            return result;
         }
 
         public Task Create(ISettings settings, params IWorkTask[] workTasks)

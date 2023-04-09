@@ -3,7 +3,8 @@
 	@includeClosed BIT = 0
 AS
 BEGIN
-	SELECT [tsk].[WorkTaskId], [tsk].[DomainId], [tsk].[WorkTaskTypeId], [tsk].[WorkTaskStatusId], [tsk].[Title], [tsk].[Text], 
+	SELECT [tsk].[WorkTaskId], [tsk].[DomainId], [tsk].[WorkTaskTypeId], [tsk].[WorkTaskStatusId], [tsk].[Title], 
+	[tsk].[Text], [tsk].[AssignedToUserId],
 	[tsk].[CreateTimestamp], [tsk].[UpdateTimestamp]
 	FROM [blwt].[WorkTask] [tsk]
 	WHERE EXISTS (

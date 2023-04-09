@@ -2,7 +2,7 @@
 	@id UNIQUEIDENTIFIER
 AS
 BEGIN
-	SELECT TOP 1 [WorkTaskId], [DomainId], [WorkTaskTypeId], [WorkTaskStatusId], [Title], [Text], [CreateTimestamp], [UpdateTimestamp]
+	SELECT TOP 1 [WorkTaskId], [DomainId], [WorkTaskTypeId], [WorkTaskStatusId], [Title], [Text], [AssignedToUserId], [CreateTimestamp], [UpdateTimestamp]
 	FROM [blwt].[WorkTask] 
 	WHERE [WorkTaskId] = @id 
 	;

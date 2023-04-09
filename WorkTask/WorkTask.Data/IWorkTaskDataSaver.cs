@@ -8,5 +8,6 @@ namespace BrassLoon.WorkTask.Data
     {
         Task Create(ISqlTransactionHandler transactionHandler, WorkTaskData data);
         Task Update(ISqlTransactionHandler transactionHandler, WorkTaskData data);
+        Task<bool> Claim(ISqlTransactionHandler transactionHandler, Guid domainId, Guid id, string userId);
     }
 }

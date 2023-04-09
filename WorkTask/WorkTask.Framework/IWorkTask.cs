@@ -11,6 +11,7 @@ namespace BrassLoon.WorkTask.Framework
         Guid DomainId { get; }
         string Title { get; set; }
         string Text { get; set; }
+        string AssignedToUserId { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         IWorkTaskType WorkTaskType { get; }

@@ -9,6 +9,7 @@ namespace BrassLoon.Interface.WorkTask.Models
         public Guid? DomainId { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
+        public string AssignedToUserId { get; set; }
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
         public WorkTaskType WorkTaskType { get; set; }
