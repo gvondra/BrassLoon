@@ -18,7 +18,7 @@ namespace BrassLoon.Interface.WorkTask
             _service = service;
         }
 
-        public Task<ClaimWorkTaskResponse> Claim(ISettings settings, Guid domainId, Guid id, string assignToUserId)
+        public Task<ClaimWorkTaskResponse> Claim(ISettings settings, Guid domainId, Guid id, string assignToUserId, DateTime? assignedDate = null)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -33,6 +33,8 @@ namespace BrassLoon.Interface.WorkTask
                 .AddQueryParameter("assignToUserId", assignToUserId)
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
+            if (assignedDate.HasValue)
+                request.AddQueryParameter("assignedDate", assignedDate.Value.Date.ToString("O"));
             return _restUtil.Send<ClaimWorkTaskResponse>(_service, request);
         }
 

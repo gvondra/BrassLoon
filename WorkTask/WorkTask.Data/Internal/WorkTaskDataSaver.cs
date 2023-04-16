@@ -11,7 +11,7 @@ namespace BrassLoon.WorkTask.Data.Internal
     {
         public WorkTaskDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
 
-        public async Task<bool> Claim(ISqlTransactionHandler transactionHandler, Guid domainId, Guid id, string userId)
+        public async Task<bool> Claim(ISqlTransactionHandler transactionHandler, Guid domainId, Guid id, string userId, DateTime? assignedDate = null)
         {
             await _providerFactory.EstablishTransaction(transactionHandler);
             using (DbCommand command = transactionHandler.Connection.CreateCommand())
@@ -27,6 +27,7 @@ namespace BrassLoon.WorkTask.Data.Internal
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "workTaskId", DbType.Guid, DataUtil.GetParameterValue(id));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.AnsiString, DataUtil.GetParameterValue(userId));
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "assignedDate", DbType.Date, DataUtil.GetParameterValue(assignedDate));
 
                 int count = await command.ExecuteNonQueryAsync();
                 return count > 0;
@@ -94,6 +95,7 @@ namespace BrassLoon.WorkTask.Data.Internal
             DataUtil.AddParameter(_providerFactory, commandParameters, "title", DbType.String, DataUtil.GetParameterValue(data.Title));
             DataUtil.AddParameter(_providerFactory, commandParameters, "text", DbType.String, DataUtil.GetParameterValue(data.Text));
             DataUtil.AddParameter(_providerFactory, commandParameters, "assignedToUserId", DbType.AnsiString, DataUtil.GetParameterValue(data.AssignedToUserId));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "assignedDate", DbType.Date, DataUtil.GetParameterValue(data.AssignedDate));
         }
     }
 }

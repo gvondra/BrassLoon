@@ -55,6 +55,7 @@ namespace BrassLoon.WorkTask.Core
             .AddRange(_newContexts ?? new List<IWorkTaskContext>());
 
         public string AssignedToUserId { get => _data.AssignedToUserId; set => _data.AssignedToUserId = value; }
+        public DateTime? AssignedDate { get => _data.AssignedDate; set => _data.AssignedDate = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {

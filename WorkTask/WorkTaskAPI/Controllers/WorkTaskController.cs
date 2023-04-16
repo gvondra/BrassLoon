@@ -261,7 +261,7 @@ namespace WorkTaskAPI.Controllers
         [HttpPut("{id}/AssignTo")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(ClaimWorkTaskResponse), 200)]
-        public async Task<IActionResult> Claim([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromQuery] string assignToUserId)
+        public async Task<IActionResult> Claim([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromQuery] string assignToUserId, [FromQuery] DateTime? assignedDate = null)
         {
             IActionResult result = null;
             try
@@ -296,10 +296,18 @@ namespace WorkTaskAPI.Controllers
                             });
                     }
                 }
+                if (result == null && string.IsNullOrEmpty(assignToUserId) && assignedDate.HasValue)
+                {
+                    assignedDate = null;
+                }
+                if (result == null && !string.IsNullOrEmpty(assignToUserId) && !assignedDate.HasValue)
+                {
+                    assignedDate = DateTime.Today;
+                }
                 if (result == null && innerWorkTask != null)
                 {
                     ClaimWorkTaskResponse respone = new ClaimWorkTaskResponse();
-                    respone.IsAssigned = await _workTaskSaver.Claim(settings, domainId.Value, id.Value, assignToUserId);
+                    respone.IsAssigned = await _workTaskSaver.Claim(settings, domainId.Value, id.Value, assignToUserId, assignedDate);
                     if (respone.IsAssigned)
                     {
                         respone.Message = "Work task assigned";

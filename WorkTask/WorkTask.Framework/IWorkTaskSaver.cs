@@ -8,6 +8,6 @@ namespace BrassLoon.WorkTask.Framework
     {
         Task Create(ISettings settings, params IWorkTask[] workTasks);
         Task Update(ISettings settings, params IWorkTask[] workTasks);
-        Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId);
+        Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId, DateTime? assingedDate = null);
     }
 }

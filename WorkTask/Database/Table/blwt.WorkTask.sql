@@ -7,6 +7,7 @@
 	[Title] NVARCHAR(512) NOT NULL,
 	[Text] NVARCHAR(MAX) NOT NULL,
 	[AssignedToUserId] VARCHAR(1024) CONSTRAINT [DF_WorkTask_AssignedToUserId] DEFAULT ('') NOT NULL,
+	[AssignedDate] DATE NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTask_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTask_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	CONSTRAINT [PK_WorkTask] PRIMARY KEY NONCLUSTERED ([WorkTaskId]), 

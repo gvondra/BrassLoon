@@ -4,7 +4,7 @@
 AS
 BEGIN
 	SELECT [tsk].[WorkTaskId], [tsk].[DomainId], [tsk].[WorkTaskTypeId], [tsk].[WorkTaskStatusId], [tsk].[Title], 
-	[tsk].[Text], [tsk].[AssignedToUserId],
+	[tsk].[Text], [tsk].[AssignedToUserId], [tsk].[AssignedDate],
 	[tsk].[CreateTimestamp], [tsk].[UpdateTimestamp]
 	FROM [blwt].[WorkTask] [tsk]
 	WHERE EXISTS (
@@ -21,7 +21,7 @@ BEGIN
 		WHERE [sts].[WorkTaskStatusId] = [tsk].[WorkTaskStatusId]
 		AND [sts].[IsClosedStatus] = 0
 	))
-	ORDER BY [tsk].[CreateTimestamp] DESC
+	ORDER BY [tsk].[AssignedDate], [tsk].[CreateTimestamp]
 	;
 	EXEC [blwt].[GetWorkTaskType_by_WorkGroupId] @workGroupId;
 	EXEC [blwt].[GetWorkTaskStatus_by_WorkGroupId] @workGroupId;

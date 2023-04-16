@@ -18,12 +18,12 @@ namespace BrassLoon.WorkTask.Core
             _dataSaver = dataSaver;
         }
 
-        public async Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId)
+        public async Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId, DateTime? assingedDate = null)
         {
             bool result = false;
             await _saver.Save(new TransactionHandler(settings), async (th) =>
             {
-                result = await _dataSaver.Claim(th, domainId, id, userId);
+                result = await _dataSaver.Claim(th, domainId, id, userId, assingedDate);
             });
             return result;
         }
