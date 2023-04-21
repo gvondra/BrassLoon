@@ -9,9 +9,10 @@
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.0</Version>
-	<AssemblyVersion>2.2.0.1</AssemblyVersion>
-	<PackageReleaseNotes>- v2.2 remove duplicate rest util class
+    <Version>2.3.0-prerelease.1</Version>
+	<AssemblyVersion>2.3.0.1</AssemblyVersion>
+	<PackageReleaseNotes>- v2.3 Mark obsolete save lookup method with data parameter of type object
+		- v2.2 remove duplicate rest util class
 		- v2.1 Upgrade RestUtil v3.1
 		- v2.0 upgrade RestUtil v3</PackageReleaseNotes>
   </PropertyGroup>

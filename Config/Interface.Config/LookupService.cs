@@ -105,17 +105,30 @@ namespace BrassLoon.Interface.Config
             return response.Value;
         }
 
-        public async Task<Lookup> Save(ISettings settings, Guid domainId, string code, object data)
+        public Task<Lookup> Save(ISettings settings, Guid domainId, string code, object data)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            if (!typeof(Dictionary<string, string>).IsAssignableFrom(data.GetType()))
+                throw new ApplicationException("Parameter \"data\" must of type Dictionary<string, string>");
+            return Save(settings, domainId, code, (Dictionary<string, string>)data); 
+        }
+
+        public Task<Lookup> Save(ISettings settings, Guid domainId, string code, Dictionary<string, string> data)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(code))
+                throw new ArgumentNullException(nameof(code));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, data)
             .AddPath("Lookup/{domainId}/{code}/Data")
             .AddPathParameter("domainId", domainId.ToString("N"))
             .AddPathParameter("code", code)
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
-            IResponse<Lookup> response = await _service.Send<Lookup>(request);
-            _restUtil.CheckSuccess(response);
-            return response.Value;
+            return _restUtil.Send<Lookup>(_service, request);
         }
     }
 }
