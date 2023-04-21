@@ -10,6 +10,5 @@
       "applicationUrl": "http://localhost:5004"
     }
   },
-  "$schema": "https://json.schemastore.org/launchsettings.json"
-  }
+  "$schema": "https://json.schemastore.org/launchsettings.json"  
 }
