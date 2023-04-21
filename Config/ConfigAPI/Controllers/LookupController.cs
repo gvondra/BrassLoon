@@ -185,7 +185,7 @@ namespace ConfigAPI.Controllers
         [HttpPut("{domainId}/{code}/Data")]
         [ProducesResponseType(typeof(Lookup), 200)]
         [Authorize()]
-        public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] Dictionary<string, string> lookupData)
+        public async Task<IActionResult> Save([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] Dictionary<string, string> lookupData)
         {
             IActionResult result = null;
             try 
