@@ -14,7 +14,7 @@ namespace BrassLoon.Interface.Config
 {
     public class ItemService : IItemService
     {
-        private static readonly Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
+        private static Policy _cache = CreateCache();
         private readonly IService _service;
         private readonly RestUtil _restUtil;
 
@@ -24,16 +24,25 @@ namespace BrassLoon.Interface.Config
             _restUtil = restUtil;
         }
 
+        private static Policy CreateCache() => Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
+
         public async Task Delete(ISettings settings, Guid domainId, string code)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
-            .AddPath("Item/{domainId}/{code}")
-            .AddPathParameter("domainId", domainId.ToString("N"))
-            .AddPathParameter("code", code)
-            .AddJwtAuthorizationToken(settings.GetToken)
-            ;
-            IResponse response = await _service.Send(request);
-            _restUtil.CheckSuccess(response);
+            try
+            {
+                IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
+                .AddPath("Item/{domainId}/{code}")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("code", code)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+                IResponse response = await _service.Send(request);
+                _restUtil.CheckSuccess(response);
+            }
+            finally
+            {
+                _cache = CreateCache();
+            }
         }
 
         public async Task<Item> GetByCode(ISettings settings, Guid domainId, string code)
@@ -107,15 +116,22 @@ namespace BrassLoon.Interface.Config
 
         public async Task<Item> Save(ISettings settings, Guid domainId, string code, object data)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, data)
-            .AddPath("Item/{domainId}/{code}/Data")
-            .AddPathParameter("domainId", domainId.ToString("N"))
-            .AddPathParameter("code", code)
-            .AddJwtAuthorizationToken(settings.GetToken)
-            ;
-            IResponse<Item> response = await _service.Send<Item>(request);
-            _restUtil.CheckSuccess(response);
-            return response.Value;
+            try
+            {
+                IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, data)
+                .AddPath("Item/{domainId}/{code}/Data")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("code", code)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+                IResponse<Item> response = await _service.Send<Item>(request);
+                _restUtil.CheckSuccess(response);
+                return response.Value;
+            }
+            finally
+            {
+                _cache = CreateCache();
+            }
         }
     }
 }

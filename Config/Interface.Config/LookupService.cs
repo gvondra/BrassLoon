@@ -5,16 +5,14 @@ using Polly;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Config
 {
     public class LookupService : ILookupService
     {
-        private static readonly Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
+        private static Policy _cache = CreateCache();
         private readonly IService _service;
         private readonly RestUtil _restUtil;
 
@@ -24,16 +22,25 @@ namespace BrassLoon.Interface.Config
             _restUtil = restUtil;
         }
 
+        private static Policy CreateCache() => Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
+
         public async Task Delete(ISettings settings, Guid domainId, string code)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
-            .AddPath("Lookup/{domainId}/{code}")
-            .AddPathParameter("domainId", domainId.ToString("N"))
-            .AddPathParameter("code", code)
-            .AddJwtAuthorizationToken(settings.GetToken)
-            ;
-            IResponse response = await _service.Send(request);
-            _restUtil.CheckSuccess(response);
+            try
+            {
+                IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
+                .AddPath("Lookup/{domainId}/{code}")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("code", code)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+                IResponse response = await _service.Send(request);
+                _restUtil.CheckSuccess(response);
+            }
+            finally
+            {
+                _cache = CreateCache();
+            }
         }
 
         public async Task<Lookup> GetByCode(ISettings settings, Guid domainId, string code)
@@ -116,19 +123,26 @@ namespace BrassLoon.Interface.Config
 
         public Task<Lookup> Save(ISettings settings, Guid domainId, string code, Dictionary<string, string> data)
         {
-            if (domainId.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(domainId));
-            if (string.IsNullOrEmpty(code))
-                throw new ArgumentNullException(nameof(code));
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, data)
-            .AddPath("Lookup/{domainId}/{code}/Data")
-            .AddPathParameter("domainId", domainId.ToString("N"))
-            .AddPathParameter("code", code)
-            .AddJwtAuthorizationToken(settings.GetToken)
-            ;
-            return _restUtil.Send<Lookup>(_service, request);
+            try
+            {
+                if (domainId.Equals(Guid.Empty))
+                    throw new ArgumentNullException(nameof(domainId));
+                if (string.IsNullOrEmpty(code))
+                    throw new ArgumentNullException(nameof(code));
+                if (data == null)
+                    throw new ArgumentNullException(nameof(data));
+                IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, data)
+                .AddPath("Lookup/{domainId}/{code}/Data")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddPathParameter("code", code)
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+                return _restUtil.Send<Lookup>(_service, request);
+            }
+            finally
+            {
+                _cache = CreateCache();
+            }
         }
     }
 }
