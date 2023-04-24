@@ -312,6 +312,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         respone.Message = "Work task assigned";
                         respone.AssignedToUserId = assignToUserId;
+                        respone.AssignedDate = assignedDate;
                     }
                     else
                     {
