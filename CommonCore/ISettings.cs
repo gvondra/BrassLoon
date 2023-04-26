@@ -7,7 +7,7 @@ namespace BrassLoon.CommonCore
 {
     public interface ISettings
     {
-        bool UserDefaultAzureSqlToken { get; }
+        bool UseDefaultAzureSqlToken { get; }
         Task<string> GetConnetionString();
         Func<Task<string>> GetDatabaseAccessToken();
     }

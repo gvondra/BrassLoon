@@ -21,7 +21,7 @@ namespace BrassLoon.CommonAPI
             _settings = settings;
         }
 
-        public bool UserDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
+        public bool UseDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
 
         public async Task<string> GetConnetionString()
         {
