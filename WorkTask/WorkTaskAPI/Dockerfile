@@ -7,10 +7,10 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src/WorkTask/WorkTaskAPI"
 RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "nuget.config"
-RUN dotnet build "WorkTaskAPI.csproj" -c Release -o /app/build --configfile "nuget.config"
+RUN dotnet restore "WorkTaskAPI.csproj" -c Release -r linux-x64 -o /app/build --configfile "nuget.config"
 
 FROM build AS publish
-RUN dotnet publish "WorkTaskAPI.csproj" --no-restore -c Release -o /app/publish
+RUN dotnet publish "WorkTaskAPI.csproj" --no-restore -c Release  -r linux-x64 -o /app/publish
 
 FROM base AS final
 WORKDIR /app
