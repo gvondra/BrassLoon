@@ -9,7 +9,7 @@ RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile
 RUN dotnet build "Purger.csproj" -r linux-x64 --self-contained true -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Purger.csproj" --no-restore -r linux-x64 --self-contained true -c Release -o /app/publish
+RUN dotnet publish "Purger.csproj" --no-restore --no-build -r linux-x64 --self-contained true -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
