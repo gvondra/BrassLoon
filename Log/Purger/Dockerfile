@@ -6,7 +6,7 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src/Log/Purger"
 RUN dotnet nuget add source "/src/NugetPackages" -n "LocalPackages" --configfile "nuget.config"
-RUN dotnet build "Purger.csproj" -r linux-x64 --self-contained true -c Release -o /app/build
+RUN dotnet build "Purger.csproj" -r linux-x64 --self-contained true -c Release 
 
 FROM build AS publish
 RUN dotnet publish "Purger.csproj" --no-restore --no-build -r linux-x64 --self-contained true -c Release -o /app/publish
