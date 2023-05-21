@@ -23,10 +23,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Azure.Security.KeyVault.Keys" Version="4.4.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
 	</ItemGroup>
 
