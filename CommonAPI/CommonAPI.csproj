@@ -27,8 +27,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="[1.8.2,2.0)" />
-		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="[4.4.0,5.0)" />
+		<PackageReference Include="Azure.Identity" Version="[1.9.0,2.0)" />
+		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="[4.5.0,5.0)" />
 		<PackageReference Include="BrassLoon.Interface.Account" Version="[2.2.0,3.0)" />
 		<PackageReference Include="BrassLoon.Interface.Log" Version="[2.1.0,3.0)" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[6.0.14,7.0)" />
