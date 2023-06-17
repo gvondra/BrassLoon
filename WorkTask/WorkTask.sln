@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTask.Core", "WorkTask.Core\WorkTask.Core.csproj", "{C26D2C8C-FBEC-429F-BF52-96C45B838339}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTask.Core", "WorkTask.Core\WorkTask.Core.csproj", "{C26D2C8C-FBEC-429F-BF52-96C45B838339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTask.Data", "WorkTask.Data\WorkTask.Data.csproj", "{191ADED3-1B2F-4A67-AF6B-49CC8AF66BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTask.Data", "WorkTask.Data\WorkTask.Data.csproj", "{191ADED3-1B2F-4A67-AF6B-49CC8AF66BD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTask.Framework", "WorkTask.Framework\WorkTask.Framework.csproj", "{3FF132FE-9CDB-4C09-A1BC-D72D85CA515A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTask.Framework", "WorkTask.Framework\WorkTask.Framework.csproj", "{3FF132FE-9CDB-4C09-A1BC-D72D85CA515A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface.WorkTask", "Interface.WorkTask\Interface.WorkTask.csproj", "{8F92894F-188B-474F-8EF7-45BA280EB003}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interface.WorkTask", "Interface.WorkTask\Interface.WorkTask.csproj", "{8F92894F-188B-474F-8EF7-45BA280EB003}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{CDC3049F-217E-4232-9E6B-D511A8CF67D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTaskAPI", "WorkTaskAPI\WorkTaskAPI.csproj", "{7F89F44A-747C-430C-AC4F-870F45847230}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTaskAPI", "WorkTaskAPI\WorkTaskAPI.csproj", "{7F89F44A-747C-430C-AC4F-870F45847230}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonCore", "..\CommonCore\CommonCore.csproj", "{4C74B0D8-210E-4EB8-A572-816606D335A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "..\CommonAPI\CommonAPI.csproj", "{4EC24ED6-38C0-4A15-9E64-D45B3B06A876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTask.Core.Test", "WorkTask.Core.Test\WorkTask.Core.Test.csproj", "{58854C7B-8BEC-46EE-A962-4C8BFA57C516}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +60,10 @@ Global
 		{4EC24ED6-38C0-4A15-9E64-D45B3B06A876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EC24ED6-38C0-4A15-9E64-D45B3B06A876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EC24ED6-38C0-4A15-9E64-D45B3B06A876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58854C7B-8BEC-46EE-A962-4C8BFA57C516}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58854C7B-8BEC-46EE-A962-4C8BFA57C516}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58854C7B-8BEC-46EE-A962-4C8BFA57C516}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58854C7B-8BEC-46EE-A962-4C8BFA57C516}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
