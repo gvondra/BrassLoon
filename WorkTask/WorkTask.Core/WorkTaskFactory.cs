@@ -96,5 +96,13 @@ namespace BrassLoon.WorkTask.Core
             workTask.WorkTaskStatus = workTaskStatus;
             return workTask;
         }
+
+        public async Task<IEnumerable<IWorkTask>> GetByContextReference(ISettings settings, short referenceType, string referenceValue, bool includeClosed = false)
+        {
+            return (await _dataFactory.GetByContextReference(new DataSettings(settings), referenceType, WorkTaskContextHash.Compute(referenceValue), includeClosed))
+                .Where(d => d.WorkTaskContexts.Any(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
+                .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
+                .ToList();
+        }
     }
 }

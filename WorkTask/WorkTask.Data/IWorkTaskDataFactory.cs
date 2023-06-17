@@ -9,5 +9,6 @@ namespace BrassLoon.WorkTask.Data
     {
         Task<WorkTaskData> Get(ISqlSettings settings, Guid id);
         Task<IEnumerable<WorkTaskData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId, bool includeClosed = false);
+        Task<IEnumerable<WorkTaskData>> GetByContextReference(ISqlSettings settings, short referenceType, byte[] referenceValueHash, bool includeClosed = false);
     }
 }
