@@ -1,7 +1,10 @@
 ﻿CREATE PROCEDURE [blwt].[GetWorkTaskContext_by_WorkGroupId]
 	@workGroupId UNIQUEIDENTIFIER
 AS
-SELECT [ctx].[WorkTaskContextId], [ctx].[DomainId], [ctx].[WorkTaskId], [ctx].[Status], [ctx].[ReferenceType], [ctx].[ReferenceValue], [ctx].[CreateTimestamp]
+SELECT [ctx].[WorkTaskContextId], [ctx].[DomainId], [ctx].[WorkTaskId], 
+	[ctx].[Status], [ctx].[ReferenceType], 
+	[ctx].[ReferenceValue], [ctx].[ReferenceValueHash], 
+	[ctx].[CreateTimestamp]
 FROM [blwt].[WorkTaskContext] [ctx]
 WHERE EXISTS (
 	SELECT TOP 1 1 

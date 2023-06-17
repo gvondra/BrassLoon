@@ -1,10 +1,7 @@
 ﻿using BrassLoon.DataClient;
 using BrassLoon.WorkTask.Data.Models;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data.Internal
@@ -37,6 +34,7 @@ namespace BrassLoon.WorkTask.Data.Internal
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.Int16, DataUtil.GetParameterValue(data.Status));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "referenceType", DbType.Int16, DataUtil.GetParameterValue(data.ReferenceType));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "referenceValue", DbType.String, DataUtil.GetParameterValue(data.ReferenceValue));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "referenceValueHash", DbType.Binary, DataUtil.GetParameterValue(data.ReferenceValueHash));
 
                     await command.ExecuteNonQueryAsync();
                     data.WorkTaskId = (Guid)id.Value;

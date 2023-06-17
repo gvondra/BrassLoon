@@ -10,6 +10,7 @@ namespace BrassLoon.WorkTask.Data.Models
         [ColumnMapping()] public short Status { get; set; }
         [ColumnMapping()] public short ReferenceType { get; set; }
         [ColumnMapping()] public string ReferenceValue { get; set; }
+        [ColumnMapping()] public byte[] ReferenceValueHash { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
     }
 }
