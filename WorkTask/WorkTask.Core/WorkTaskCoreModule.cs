@@ -16,6 +16,7 @@ namespace BrassLoon.WorkTask.Core
             builder.RegisterType<WorkGroupSaver>().As<IWorkGroupSaver>();
             builder.RegisterType<WorkTaskCommentFactory>().As<IWorkTaskCommentFactory>();
             builder.RegisterType<WorkTaskFactory>().As<IWorkTaskFactory>();
+            builder.RegisterType<WorkTaskPatcher>().As<IWorkTaskPatcher>();
             builder.RegisterType<WorkTaskSaver>().As<IWorkTaskSaver>();
             builder.RegisterType<WorkTaskStatusFactory>();
             builder.RegisterType<WorkTaskStatusFactory>().As<IWorkTaskStatusFactory>();

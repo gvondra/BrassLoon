@@ -23,6 +23,7 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskSaver _workTaskSaver;
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
+        private readonly IWorkTaskPatcher _workTaskPatcher;
 
         public WorkTaskController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -32,13 +33,16 @@ namespace WorkTaskAPI.Controllers
             IWorkTaskFactory workTaskFactory,
             IWorkTaskSaver workTaskSaver,
             IWorkTaskTypeFactory workTaskTypeFactory,
-            IWorkTaskStatusFactory workTaskStatusFactory)
+            IWorkTaskStatusFactory workTaskStatusFactory,
+            IWorkTaskPatcher workTaskPatcher)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _workTaskFactory = workTaskFactory;
             _workTaskSaver = workTaskSaver;
             _workTaskTypeFactory = workTaskTypeFactory;
             _workTaskStatusFactory = workTaskStatusFactory;
+            _workTaskPatcher = workTaskPatcher;
+
         }
 
         [HttpGet]
@@ -358,6 +362,72 @@ namespace WorkTaskAPI.Controllers
                         respone.Message = "Failed to assign work task";
                     }
                     result = Ok(respone);
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
+        }
+
+        [NonAction]
+        private IActionResult ValidatePatchData(List<Dictionary<string, object>> patchData)
+        {
+            int i;
+            string[] required = new string[] { "WorkTaskId" };
+            string[] validFields = new string[] { "WorkTaskStatusId" };
+            IActionResult result = null;
+            string fields = string.Join(
+                ", ",
+                patchData.SelectMany(dct => dct.Keys)
+                .Where(fld => !required.Concat(validFields).Contains(fld))
+                .Distinct()
+                .OrderBy(fld => fld));
+            if (!string.IsNullOrEmpty(fields))
+            {
+                result = BadRequest("Found invalid fields: " + fields);
+            }
+            else
+            {
+                i = 0;
+                while (result == null && i < required.Length)
+                {
+                    if (patchData.Any(dct => !dct.ContainsKey(required[i])))
+                    {
+                        result = BadRequest($"Found patch missing required field \"{required[i]}\"");
+                    }
+                    i += 1;
+                }
+            }
+            return result;
+        }
+
+        [HttpPatch]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        [ProducesResponseType(typeof(WorkTask[]), 200)]
+        public async Task<IActionResult> Patch([FromRoute] Guid? domainId, [FromBody] List<Dictionary<string, object>> patchData)
+        {
+            IActionResult result;
+            try
+            {
+                CoreSettings settings = CreateCoreSettings();
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                    result = BadRequest("Missing domain id parameter value");
+                else if (!await VerifyDomainAccount(domainId.Value))
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                else
+                    result = ValidatePatchData(patchData);
+                if (result == null)
+                {
+                    IEnumerable<IWorkTask> innerWorkTasks = await _workTaskPatcher.Apply(settings, domainId.Value, patchData);
+                    await _workTaskSaver.Update(settings, innerWorkTasks.ToArray());
+                    IMapper mapper = CreateMapper();
+                    result = Ok(
+                        innerWorkTasks
+                        .Select<IWorkTask, WorkTask>(wt => Map(mapper, wt))
+                        .ToList());
                 }
             }
             catch (Exception ex)

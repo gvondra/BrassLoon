@@ -2,6 +2,7 @@
 using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -95,6 +96,20 @@ namespace BrassLoon.Interface.WorkTask
                 ;
             if (includeClosed != null)
                 request.AddQueryParameter("includeClosed", includeClosed.Value.ToString());
+            return _restUtil.Send<List<Models.WorkTask>>(_service, request);
+        }
+
+        public Task<List<Models.WorkTask>> Patch(ISettings settings, Guid domainId, IEnumerable<Dictionary<string, object>> patchData)
+        {
+            if (patchData == null)
+                throw new ArgumentNullException(nameof(patchData));
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Patch, patchData.ToArray())
+                .AddPath("WorkTask/{domainId}")
+                .AddPathParameter("domainId", domainId.ToString("N"))
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
             return _restUtil.Send<List<Models.WorkTask>>(_service, request);
         }
 
