@@ -67,6 +67,20 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<Models.WorkTask>(_service, request);
         }
 
+        public Task<List<Models.WorkTask>> GetByContext(ISettings settings, Guid domainId, short referenceType, string referenceValue)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(referenceValue))
+                throw new ArgumentNullException(nameof(referenceValue));
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
+                .AddPath("WorkTask/{domain}")
+                .AddPathParameter("domain", domainId.ToString("N"))
+                .AddJwtAuthorizationToken(settings.GetToken)
+                ;
+            return _restUtil.Send<List<Models.WorkTask>>(_service, request);
+        }
+
         public Task<List<Models.WorkTask>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId, bool? includeClosed = null)
         {
             if (domainId.Equals(Guid.Empty))
