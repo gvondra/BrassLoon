@@ -1,11 +1,8 @@
 ﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Framework;
 using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
+using BrassLoon.WorkTask.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
@@ -44,9 +41,7 @@ namespace BrassLoon.WorkTask.Core
         public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
 
         public IWorkTaskStatus CreateWorkTaskStatus(string code)
-        {
-            return _factory.GetWorkTaskStatusFactory().Create(this, code);
-        }
+            => _factory.GetWorkTaskStatusFactory().Create(this, code);
 
         public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }

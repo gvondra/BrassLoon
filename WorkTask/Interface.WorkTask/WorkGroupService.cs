@@ -33,10 +33,10 @@ namespace BrassLoon.Interface.WorkTask
 
         public Task<WorkGroup> Create(ISettings settings, WorkGroup workGroup)
         {
-            if (workGroup == null) 
+            if (workGroup == null)
                 throw new ArgumentNullException(nameof(workGroup));
             if (!workGroup.DomainId.HasValue || workGroup.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workGroup.DomainId));
+                throw new ArgumentException($"{nameof(workGroup.DomainId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workGroup)
                 .AddPath("WorkGroup")
                 .AddPath(workGroup.DomainId.Value.ToString("N"))
@@ -58,7 +58,7 @@ namespace BrassLoon.Interface.WorkTask
             _restUtil.CheckSuccess(response);
         }
 
-        public Task<WorkGroup> Get(ISettings settings, Guid id, Guid domainId)
+        public Task<WorkGroup> Get(ISettings settings, Guid domainId, Guid id)
         {
             if (id.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(id));
@@ -98,9 +98,9 @@ namespace BrassLoon.Interface.WorkTask
             if (workGroup == null)
                 throw new ArgumentNullException(nameof(workGroup));
             if (!workGroup.DomainId.HasValue || workGroup.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workGroup.DomainId));
+                throw new ArgumentException($"{nameof(workGroup.DomainId)} is null");
             if (!workGroup.WorkGroupId.HasValue || workGroup.WorkGroupId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workGroup.WorkGroupId));
+                throw new ArgumentException($"{nameof(workGroup.WorkGroupId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workGroup)
                 .AddPath("WorkGroup")
                 .AddPath(workGroup.DomainId.Value.ToString("N"))

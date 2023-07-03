@@ -24,8 +24,8 @@ namespace BrassLoon.WorkTask.Core
 
         public WorkTaskStatus(WorkTaskStatusData data,
             IWorkTaskStatusDataSaver dataSaver)
-            : this(data, dataSaver, null) 
-        {}
+            : this(data, dataSaver, null)
+        { }
 
         public Guid WorkTaskTypeId { get => _data.WorkTaskTypeId; private set => _data.WorkTaskTypeId = value; }
 
@@ -50,12 +50,12 @@ namespace BrassLoon.WorkTask.Core
         public Task Create(ITransactionHandler transactionHandler)
         {
             if (_workTaskType == null)
-                throw new ArgumentNullException(nameof(_workTaskType));
+                throw new ArgumentException($"{nameof(_workTaskType)} is null");
             WorkTaskTypeId = _workTaskType.WorkTaskTypeId;
             DomainId = _workTaskType.DomainId;
             return _dataSaver.Create(transactionHandler, _data);
         }
 
-        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);        
+        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }
 }

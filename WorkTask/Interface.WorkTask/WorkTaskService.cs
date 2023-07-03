@@ -43,7 +43,7 @@ namespace BrassLoon.Interface.WorkTask
             if (workTask == null)
                 throw new ArgumentNullException(nameof(workTask));
             if (!workTask.DomainId.HasValue || workTask.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTask.DomainId));
+                throw new ArgumentException($"{nameof(workTask.DomainId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workTask)
                 .AddPath("WorkTask")
                 .AddPath(workTask.DomainId.Value.ToString("N"))
@@ -89,9 +89,9 @@ namespace BrassLoon.Interface.WorkTask
             if (workTask == null)
                 throw new ArgumentNullException(nameof(workTask));
             if (!workTask.DomainId.HasValue || workTask.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTask.DomainId));
+                throw new ArgumentException($"{nameof(workTask.DomainId)} is null");
             if (!workTask.WorkTaskId.HasValue || workTask.WorkTaskId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTask.WorkTaskId));
+                throw new ArgumentException($"{nameof(workTask.WorkTaskId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workTask)
                 .AddPath("WorkTask")
                 .AddPath(workTask.DomainId.Value.ToString("N"))

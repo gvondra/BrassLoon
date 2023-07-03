@@ -28,9 +28,9 @@ namespace WorkTaskAPI.Controllers
             MapperFactory mapperFactory,
             IDomainService domainService,
             IWorkTaskTypeFactory workTaskTypeFactory,
-            IWorkTaskTypeSaver workTaskTypeSaver) 
-            :base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
-        { 
+            IWorkTaskTypeSaver workTaskTypeSaver)
+            : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
+        {
             _workTaskTypeFactory = workTaskTypeFactory;
             _workTaskTypeSaver = workTaskTypeSaver;
         }
@@ -43,11 +43,15 @@ namespace WorkTaskAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkTaskType innerWorkTaskType;
@@ -56,12 +60,14 @@ namespace WorkTaskAPI.Controllers
                     {
                         innerWorkTaskType = await _workTaskTypeFactory.GetByDomainIdCode(settings, domainId.Value, code);
                         if (innerWorkTaskType == null)
+                        {
                             result = Ok(null);
+                        }
                         else
+                        {
                             result = Ok(
-                                mapper.Map<WorkTaskType>(innerWorkTaskType) 
-                                );
-
+                                mapper.Map<WorkTaskType>(innerWorkTaskType));
+                        }
                     }
                     else
                     {
@@ -86,22 +92,30 @@ namespace WorkTaskAPI.Controllers
         [ProducesResponseType(typeof(List<WorkTaskType>), 200)]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, id.Value);
                     if (innerWorkTaskType == null)
+                    {
                         result = NotFound();
-                    if (result == null)
+                    }
+                    else
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
@@ -123,16 +137,22 @@ namespace WorkTaskAPI.Controllers
         [ProducesResponseType(typeof(List<WorkTaskType>), 200)]
         public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!workGroupId.HasValue || workGroupId.Value.Equals(Guid.Empty)))
+                if (!workGroupId.HasValue || workGroupId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing work group id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
@@ -166,17 +186,17 @@ namespace WorkTaskAPI.Controllers
         [ProducesResponseType(typeof(WorkTaskType), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromBody] WorkTaskType workTaskType)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
-                    result = ValidateRequest(workTaskType);
-                if (result == null && string.IsNullOrEmpty(workTaskType.Code))
+                else if (string.IsNullOrEmpty(workTaskType.Code))
                     result = BadRequest("Missing work task type code value");
+                else
+                    result = ValidateRequest(workTaskType);
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
@@ -202,16 +222,16 @@ namespace WorkTaskAPI.Controllers
         [ProducesResponseType(typeof(WorkTaskType), 200)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromBody] WorkTaskType workTaskType)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                else
                     result = ValidateRequest(workTaskType);
                 if (result == null)
                 {

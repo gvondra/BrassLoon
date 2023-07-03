@@ -21,6 +21,6 @@ namespace BrassLoon.WorkTask.Framework
 
         Task Create(ITransactionHandler transactionHandler);
         Task Update(ITransactionHandler transactionHandler);
-        IWorkTaskContext AddContext(short referenceType, string referenceValue);        
+        IWorkTaskContext AddContext(short referenceType, string referenceValue);
     }
 }

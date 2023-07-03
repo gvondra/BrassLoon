@@ -33,7 +33,7 @@ namespace BrassLoon.WorkTask.Core
             }
             else
             {
-                return Task.CompletedTask;  
+                return Task.CompletedTask;
             }
         }
 

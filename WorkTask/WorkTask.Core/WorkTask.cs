@@ -20,7 +20,7 @@ namespace BrassLoon.WorkTask.Core
         private List<IWorkTaskContext> _contexts;
         private List<IWorkTaskContext> _newContexts;
 
-        public WorkTask(WorkTaskData data, 
+        public WorkTask(WorkTaskData data,
             IWorkTaskDataSaver dataSaver,
             WorkTaskFactory factory,
             IWorkTaskType workTaskType,
@@ -50,7 +50,7 @@ namespace BrassLoon.WorkTask.Core
         private Guid WorkTaskStatusId { get => _data.WorkTaskStatusId; set => _data.WorkTaskStatusId = value; }
         public IWorkTaskStatus WorkTaskStatus { get => _workTaskStatus; set => _workTaskStatus = value; }
 
-        public IReadOnlyList<IWorkTaskContext> WorkTaskContexts 
+        public IReadOnlyList<IWorkTaskContext> WorkTaskContexts
             => ImmutableList<IWorkTaskContext>.Empty.AddRange(_contexts ?? new List<IWorkTaskContext>())
             .AddRange(_newContexts ?? new List<IWorkTaskContext>());
 
@@ -60,7 +60,7 @@ namespace BrassLoon.WorkTask.Core
         public async Task Create(ITransactionHandler transactionHandler)
         {
             if (_workTaskType == null)
-                throw new ApplicationException("Unable to create work task as no work task type was specified");            
+                throw new ApplicationException("Unable to create work task as no work task type was specified");
             WorkTaskTypeId = _workTaskType.WorkTaskTypeId;
             SetWorkTaskStatusId();
             await _dataSaver.Create(transactionHandler, _data);
@@ -107,12 +107,12 @@ namespace BrassLoon.WorkTask.Core
             }
         }
 
-        void DataClient.IDbTransactionObserver.BeforeCommit() {}
+        void DataClient.IDbTransactionObserver.BeforeCommit() { }
 
-        void DataClient.IDbTransactionObserver.AfterCommit() {}
+        void DataClient.IDbTransactionObserver.AfterCommit() { }
 
-        void DataClient.IDbTransactionObserver.BeforeRollback() 
-        { 
+        void DataClient.IDbTransactionObserver.BeforeRollback()
+        {
             _contexts = (_contexts ?? new List<IWorkTaskContext>())
                 .Concat(_newContexts ?? new List<IWorkTaskContext>())
                 .ToList();

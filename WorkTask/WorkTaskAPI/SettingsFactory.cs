@@ -5,9 +5,7 @@ namespace WorkTaskAPI
     public class SettingsFactory
     {
         public CoreSettings CreateCore(Settings settings)
-        {
-            return new CoreSettings(settings);
-        }
+            => new CoreSettings(settings);
 
         public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)
         {

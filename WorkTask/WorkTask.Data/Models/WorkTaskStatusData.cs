@@ -5,7 +5,7 @@ namespace BrassLoon.WorkTask.Data.Models
     public class WorkTaskStatusData : DataManagedStateBase
     {
         [ColumnMapping(IsPrimaryKey = true)] public Guid WorkTaskStatusId { get; set; }
-		[ColumnMapping()] public Guid WorkTaskTypeId { get; set; }
+        [ColumnMapping()] public Guid WorkTaskTypeId { get; set; }
         [ColumnMapping()] public Guid DomainId { get; set; }
         [ColumnMapping()] public string Code { get; set; }
         [ColumnMapping()] public string Name { get; set; }

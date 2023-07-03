@@ -23,7 +23,7 @@ namespace BrassLoon.Interface.WorkTask
             if (workTaskType == null)
                 throw new ArgumentNullException(nameof(workTaskType));
             if (!workTaskType.DomainId.HasValue || workTaskType.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskType.DomainId));
+                throw new ArgumentException($"{nameof(workTaskType.DomainId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workTaskType)
                 .AddPath("WorkTaskType")
                 .AddPath(workTaskType.DomainId.Value.ToString("N"))
@@ -94,9 +94,9 @@ namespace BrassLoon.Interface.WorkTask
             if (workTaskType == null)
                 throw new ArgumentNullException(nameof(workTaskType));
             if (!workTaskType.DomainId.HasValue || workTaskType.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskType.DomainId));
+                throw new ArgumentException($"{nameof(workTaskType.DomainId)} is null");
             if (!workTaskType.WorkTaskTypeId.HasValue || workTaskType.WorkTaskTypeId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskType.WorkTaskTypeId));
+                throw new ArgumentException($"{nameof(workTaskType.WorkTaskTypeId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workTaskType)
                 .AddPath("WorkTaskType")
                 .AddPath(workTaskType.DomainId.Value.ToString("N"))

@@ -30,7 +30,7 @@ namespace BrassLoon.WorkTask.Data.Internal
                     timestamp.Direction = ParameterDirection.Output;
                     command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));                    
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(data.Code));
                     AddCommonParameters(command.Parameters, data);
 

@@ -2,9 +2,7 @@
 using BrassLoon.RestClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
@@ -25,9 +23,9 @@ namespace BrassLoon.Interface.WorkTask
             if (workTaskStatus == null)
                 throw new ArgumentNullException(nameof(workTaskStatus));
             if (!workTaskStatus.DomainId.HasValue || workTaskStatus.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskStatus.DomainId));
+                throw new ArgumentException($"{nameof(workTaskStatus.DomainId)} is null");
             if (!workTaskStatus.WorkTaskTypeId.HasValue || workTaskStatus.WorkTaskTypeId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskStatus.WorkTaskTypeId));
+                throw new ArgumentException($"{nameof(workTaskStatus.WorkTaskTypeId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workTaskStatus)
                 .AddPath("WorkTaskType/{domainId}/{workTaskTypeId}/Status")
                 .AddPathParameter("domainId", workTaskStatus.DomainId.Value.ToString("N"))
@@ -94,11 +92,11 @@ namespace BrassLoon.Interface.WorkTask
             if (workTaskStatus == null)
                 throw new ArgumentNullException(nameof(workTaskStatus));
             if (!workTaskStatus.DomainId.HasValue || workTaskStatus.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskStatus.DomainId));
+                throw new ArgumentException($"{nameof(workTaskStatus.DomainId)} is null");
             if (!workTaskStatus.WorkTaskTypeId.HasValue || workTaskStatus.WorkTaskTypeId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskStatus.WorkTaskTypeId));
+                throw new ArgumentException($"{nameof(workTaskStatus.WorkTaskTypeId)} is null");
             if (!workTaskStatus.WorkTaskStatusId.HasValue || workTaskStatus.WorkTaskStatusId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(workTaskStatus.WorkTaskStatusId));
+                throw new ArgumentException($"{nameof(workTaskStatus.WorkTaskStatusId)} is null");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workTaskStatus)
                 .AddPath("WorkTaskType/{domainId}/{workTaskTypeId}/Status/{id}")
                 .AddPathParameter("domainId", workTaskStatus.DomainId.Value.ToString("N"))

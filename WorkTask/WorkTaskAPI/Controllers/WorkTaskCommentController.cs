@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,13 +43,19 @@ namespace WorkTaskAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!workTaskId.HasValue || workTaskId.Value.Equals(Guid.Empty)))
+                if (!workTaskId.HasValue || workTaskId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing work task id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IEnumerable<IComment> comments = await _workTaskCommentFactory.GetByWorkTaskId(settings, workTaskId.Value);
@@ -76,18 +81,26 @@ namespace WorkTaskAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!workTaskId.HasValue || workTaskId.Value.Equals(Guid.Empty)))
+                if (!workTaskId.HasValue || workTaskId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing work task id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && (comments == null || comments.Count == 0))
+                }
+                else if (comments == null || comments.Count == 0)
+                {
                     result = Ok(); // if no comments are submitted then just call it ok. No comments received no comments created
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    List<IComment> innerComments = new List<IComment>(); 
+                    List<IComment> innerComments = new List<IComment>();
                     foreach (Comment comment in comments.Where(c => !string.IsNullOrEmpty(c.Text)))
                     {
                         innerComments.Add(_workTaskCommentFactory.Create(domainId.Value, workTaskId.Value, comment.Text));

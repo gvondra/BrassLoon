@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using DataClient = BrassLoon.DataClient;
 
 namespace BrassLoon.WorkTask.Core
 {
@@ -66,7 +65,7 @@ namespace BrassLoon.WorkTask.Core
                     taskTypes.Select(t => t.WorkTaskTypeId)
                     );
             }
-        }       
+        }
 
         public void AddMember(string userId)
         {
@@ -74,7 +73,7 @@ namespace BrassLoon.WorkTask.Core
                 _data.Members = new List<WorkGroupMemberData>();
             if (_newMemberData == null)
                 _newMemberData = new List<WorkGroupMemberData>();
-            if (!_data.Members.Any(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase)) 
+            if (!_data.Members.Any(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase))
                 && !_newMemberData.Any(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase)))
             {
                 _newMemberData.Add(new WorkGroupMemberData { DomainId = DomainId, UserId = userId });

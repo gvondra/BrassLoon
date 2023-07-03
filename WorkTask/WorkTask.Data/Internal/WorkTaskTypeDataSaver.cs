@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
-    public class WorkTaskTypeDataSaver: DataSaverBase, IWorkTaskTypeDataSaver
+    public class WorkTaskTypeDataSaver : DataSaverBase, IWorkTaskTypeDataSaver
     {
         public WorkTaskTypeDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
 

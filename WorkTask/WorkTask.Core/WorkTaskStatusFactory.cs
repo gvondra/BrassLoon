@@ -1,11 +1,10 @@
 ﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Framework;
 using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
+using BrassLoon.WorkTask.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core

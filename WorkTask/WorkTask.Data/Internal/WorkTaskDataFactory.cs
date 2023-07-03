@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
-    public class WorkTaskDataFactory: DataFactoryBase<WorkTaskData>, IWorkTaskDataFactory
+    public class WorkTaskDataFactory : DataFactoryBase<WorkTaskData>, IWorkTaskDataFactory
     {
         public WorkTaskDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
 
