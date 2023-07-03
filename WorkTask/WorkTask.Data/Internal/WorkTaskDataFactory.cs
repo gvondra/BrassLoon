@@ -59,14 +59,15 @@ namespace BrassLoon.WorkTask.Data.Internal
             return result;
         }
 
-        public async Task<IEnumerable<WorkTaskData>> GetByContextReference(ISqlSettings settings, short referenceType, byte[] referenceValueHash, bool includeClosed = false)
+        public async Task<IEnumerable<WorkTaskData>> GetByContextReference(ISqlSettings settings, Guid domainId, short referenceType, byte[] referenceValueHash, bool includeClosed = false)
         {
             IEnumerable<WorkTaskData> result = new List<WorkTaskData>();
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "referenceType", DbType.Int16, referenceType),
+                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId)),
+                DataUtil.CreateParameter(_providerFactory, "referenceType", DbType.Int16, DataUtil.GetParameterValue(referenceType)),
                 DataUtil.CreateParameter(_providerFactory, "referenceValueHash", DbType.Binary, DataUtil.GetParameterValue(referenceValueHash)),
-                DataUtil.CreateParameter(_providerFactory, "includeClosed", DbType.Boolean, includeClosed)
+                DataUtil.CreateParameter(_providerFactory, "includeClosed", DbType.Boolean, DataUtil.GetParameterValue(includeClosed))
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
             await dataReaderProcess.Read(

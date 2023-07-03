@@ -21,8 +21,6 @@ namespace WorkTaskAPI.Controllers
     {
         private readonly IWorkTaskFactory _workTaskFactory;
         private readonly IWorkTaskSaver _workTaskSaver;
-        private readonly IWorkTaskCommentFactory _workTaskCommentFactory;
-        private readonly ICommentSaver _commentSaver;
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
 
@@ -33,18 +31,55 @@ namespace WorkTaskAPI.Controllers
             IDomainService domainService,
             IWorkTaskFactory workTaskFactory,
             IWorkTaskSaver workTaskSaver,
-            IWorkTaskCommentFactory workTaskCommentFactory,
-            ICommentSaver commentSaver,
             IWorkTaskTypeFactory workTaskTypeFactory,
             IWorkTaskStatusFactory workTaskStatusFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _workTaskFactory = workTaskFactory;
             _workTaskSaver = workTaskSaver;
-            _workTaskCommentFactory = workTaskCommentFactory;
-            _commentSaver = commentSaver;
             _workTaskTypeFactory = workTaskTypeFactory;
             _workTaskStatusFactory = workTaskStatusFactory;
+        }
+
+        [HttpGet]
+        [Authorize(Constants.POLICY_BL_AUTH)]
+        [ProducesResponseType(typeof(WorkTask[]), 200)]
+        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] short? referenceType, [FromQuery] string referenceValue)
+        {
+            IActionResult result = null;
+            try
+            {
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
+                    result = BadRequest("Missing domain id parameter value");
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
+                    result = StatusCode(StatusCodes.Status401Unauthorized);
+                }
+                else
+                {
+                    IEnumerable<IWorkTask> innerWorkTasks = null;
+                    CoreSettings settings = CreateCoreSettings();
+                    if (referenceType.HasValue && !string.IsNullOrEmpty(referenceValue))
+                    {
+                        innerWorkTasks = await _workTaskFactory.GetByContextReference(settings, domainId.Value, referenceType.Value, referenceValue);
+                    }
+                    if (innerWorkTasks == null)
+                        innerWorkTasks = new List<IWorkTask>();
+                    IMapper mapper = CreateMapper();
+                    result = Ok(
+                        innerWorkTasks
+                        .Select<IWorkTask, WorkTask>(wt => mapper.Map<WorkTask>(wt))
+                        .ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                await LogException(ex);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
         }
 
         [HttpGet("{id}")]
@@ -59,12 +94,14 @@ namespace WorkTaskAPI.Controllers
                     result = BadRequest("Missing id parameter value");
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, id.Value);
+                    if (!innerWorkTask.DomainId.Equals(domainId.Value))
+                        innerWorkTask = null;
                     if (innerWorkTask == null)
                         result = NotFound();
                     if (result == null)
@@ -96,16 +133,18 @@ namespace WorkTaskAPI.Controllers
                     result = BadRequest("Missing id parameter value");
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IEnumerable<IWorkTask> innerWorkTasks = await _workTaskFactory.GetByWorkGroupId(settings, workGroupId.Value, includeClosed ?? false);
+                    IEnumerable<IWorkTask> innerWorkTasks = await _workTaskFactory
+                        .GetByWorkGroupId(settings, workGroupId.Value, includeClosed ?? false);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerWorkTasks.Select<IWorkTask, WorkTask>(t => mapper.Map<WorkTask>(t))                        
-                        );
+                        innerWorkTasks
+                        .Where(wt => wt.DomainId.Equals(domainId.Value))
+                        .Select<IWorkTask, WorkTask>(t => mapper.Map<WorkTask>(t)));
                 }
             }
             catch (Exception ex)
@@ -127,13 +166,13 @@ namespace WorkTaskAPI.Controllers
                 CoreSettings settings = CreateCoreSettings();
                 IWorkTaskType innerWorkTaskType = null;
                 IWorkTaskStatus innerWorkTaskStatus = null;
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null && workTask.WorkTaskType == null)
+                else if (workTask.WorkTaskType == null)
                     result = BadRequest("Missing work task type");
-                if (result == null)
+                else if (result == null)
                     result = ValidateWorkTask(workTask);
                 if (result == null)
                 {
@@ -184,8 +223,8 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
-        [NonAction] 
-        private void ApplyContexts(WorkTask workTask, IWorkTask innerWorkTask)
+        [NonAction]
+        private static void ApplyContexts(WorkTask workTask, IWorkTask innerWorkTask)
         {
             if (workTask.WorkTaskContexts != null)
             {
@@ -198,7 +237,7 @@ namespace WorkTaskAPI.Controllers
         }
 
         [NonAction]
-        private WorkTask Map(IMapper mapper, IWorkTask innerWorkTask)
+        private static WorkTask Map(IMapper mapper, IWorkTask innerWorkTask)
         {
             WorkTask workTask = mapper.Map<WorkTask>(innerWorkTask);
             return workTask;
@@ -215,13 +254,13 @@ namespace WorkTaskAPI.Controllers
                 CoreSettings settings = CreateCoreSettings();
                 IWorkTask innerWorkTask = null;
                 IWorkTaskStatus innerWorkTaskStatus = null;
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                else
                     result = ValidateWorkTask(workTask);
                 if (result == null)
                 {
@@ -232,7 +271,7 @@ namespace WorkTaskAPI.Controllers
                     }
                 }
                 if (result == null && innerWorkTask != null)
-                {                    
+                {
                     innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, innerWorkTask.WorkTaskType.WorkTaskTypeId))
                         .FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
                     if (innerWorkTaskStatus == null)
@@ -268,11 +307,11 @@ namespace WorkTaskAPI.Controllers
             {
                 CoreSettings settings = CreateCoreSettings();
                 IWorkTask innerWorkTask = null;
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
@@ -284,7 +323,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null && innerWorkTask != null)
                 {
-                    if (!string.IsNullOrEmpty(assignToUserId) 
+                    if (!string.IsNullOrEmpty(assignToUserId)
                         && !string.IsNullOrEmpty(innerWorkTask.AssignedToUserId)
                         && !string.Equals(assignToUserId, innerWorkTask.AssignedToUserId, StringComparison.OrdinalIgnoreCase))
                     {

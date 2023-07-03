@@ -17,7 +17,7 @@ namespace BrassLoon.WorkTask.Core
         private readonly WorkTaskTypeFactory _typeFactory;
         private readonly WorkTaskStatusFactory _statusFactory;
 
-        public WorkTaskFactory(IWorkTaskDataFactory dataFactory, 
+        public WorkTaskFactory(IWorkTaskDataFactory dataFactory,
             IWorkTaskDataSaver dataSaver,
             IWorkTaskContextDataSaver contextDataSaver,
             WorkTaskTypeFactory typeFactory,
@@ -30,9 +30,9 @@ namespace BrassLoon.WorkTask.Core
             _statusFactory = statusFactory;
         }
 
-        private WorkTask Create(WorkTaskData data, 
-            IWorkTaskType workTaskType, 
-            List<IWorkTaskContext> contexts = null) 
+        private WorkTask Create(WorkTaskData data,
+            IWorkTaskType workTaskType,
+            List<IWorkTaskContext> contexts = null)
             => new WorkTask(data, _dataSaver, this, workTaskType, contexts);
 
         private WorkTaskContext Create(WorkTaskContextData data) => new WorkTaskContext(data, _contextDataSaver);
@@ -76,7 +76,7 @@ namespace BrassLoon.WorkTask.Core
             WorkTask workTask = null;
             WorkTaskData data = await _dataFactory.Get(new DataSettings(settings), id);
             if (data != null)
-                workTask = LoadWorkTask(data); 
+                workTask = LoadWorkTask(data);
             return workTask;
         }
 
@@ -97,9 +97,9 @@ namespace BrassLoon.WorkTask.Core
             return workTask;
         }
 
-        public async Task<IEnumerable<IWorkTask>> GetByContextReference(ISettings settings, short referenceType, string referenceValue, bool includeClosed = false)
+        public async Task<IEnumerable<IWorkTask>> GetByContextReference(ISettings settings, Guid domainId, short referenceType, string referenceValue, bool includeClosed = false)
         {
-            return (await _dataFactory.GetByContextReference(new DataSettings(settings), referenceType, WorkTaskContextHash.Compute(referenceValue), includeClosed))
+            return (await _dataFactory.GetByContextReference(new DataSettings(settings), domainId, referenceType, WorkTaskContextHash.Compute(referenceValue), includeClosed))
                 .Where(d => d.WorkTaskContexts.Any(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
                 .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
                 .ToList();

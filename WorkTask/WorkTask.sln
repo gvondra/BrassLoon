@@ -19,7 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonCore", "..\CommonCore
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "..\CommonAPI\CommonAPI.csproj", "{4EC24ED6-38C0-4A15-9E64-D45B3B06A876}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTask.Core.Test", "WorkTask.Core.Test\WorkTask.Core.Test.csproj", "{58854C7B-8BEC-46EE-A962-4C8BFA57C516}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTask.Core.Test", "WorkTask.Core.Test\WorkTask.Core.Test.csproj", "{58854C7B-8BEC-46EE-A962-4C8BFA57C516}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05A2D0DC-B788-471B-A141-0F55FF59EDD7}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

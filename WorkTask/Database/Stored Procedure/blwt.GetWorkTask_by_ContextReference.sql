@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [blwt].[GetWorkTask_by_ContextReference]
+	@domainId UNIQUEIDENTIFIER,
 	@referenceType SMALLINT,
 	@referenceValueHash VARBINARY(64),
 	@includeClosed BIT = 0
@@ -8,7 +9,8 @@ BEGIN
 	[tsk].[Text], [tsk].[AssignedToUserId], [tsk].[AssignedDate],
 	[tsk].[CreateTimestamp], [tsk].[UpdateTimestamp]
 	FROM [blwt].[WorkTask] [tsk] 
-	WHERE EXISTS (
+	WHERE [tsk].[DomainId] = @domainId
+		AND EXISTS (
 		SELECT TOP 1 1 
 		FROM [blwt].[WorkTaskContext] [wtc]
 		WHERE [wtc].[WorkTaskId] = [tsk].[WorkTaskId]
@@ -25,7 +27,7 @@ BEGIN
 	))
 	ORDER BY [tsk].[AssignedDate], [tsk].[CreateTimestamp]
 	;
-	EXEC [blwt].[GetWorkTaskType_by_ContextReference] @referenceType, @referenceValueHash;
-	EXEC [blwt].[GetWorkTaskStatus_by_ContextReference] @referenceType, @referenceValueHash;
-	EXEC [blwt].[GetWorkTaskContext_by_Reference] @referenceType, @referenceValueHash;
+	EXEC [blwt].[GetWorkTaskType_by_ContextReference] @domainId, @referenceType, @referenceValueHash;
+	EXEC [blwt].[GetWorkTaskStatus_by_ContextReference] @domainId, @referenceType, @referenceValueHash;
+	EXEC [blwt].[GetWorkTaskContext_by_Reference] @domainId, @referenceType, @referenceValueHash;
 END
