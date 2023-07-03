@@ -105,7 +105,7 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentNullException(nameof(patchData));
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Patch, patchData.ToArray())
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), new HttpMethod("PATCH"), patchData.ToArray())
                 .AddPath("WorkTask/{domainId}")
                 .AddPathParameter("domainId", domainId.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
