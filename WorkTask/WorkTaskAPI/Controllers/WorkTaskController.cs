@@ -48,7 +48,11 @@ namespace WorkTaskAPI.Controllers
         [HttpGet]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(WorkTask[]), 200)]
-        public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] short? referenceType, [FromQuery] string referenceValue)
+        public async Task<IActionResult> Search(
+            [FromRoute] Guid? domainId,
+            [FromQuery] short? referenceType,
+            [FromQuery] string referenceValue,
+            [FromQuery] bool? includeClosed = null)
         {
             IActionResult result = null;
             try
@@ -67,7 +71,7 @@ namespace WorkTaskAPI.Controllers
                     CoreSettings settings = CreateCoreSettings();
                     if (referenceType.HasValue && !string.IsNullOrEmpty(referenceValue))
                     {
-                        innerWorkTasks = await _workTaskFactory.GetByContextReference(settings, domainId.Value, referenceType.Value, referenceValue);
+                        innerWorkTasks = await _workTaskFactory.GetByContextReference(settings, domainId.Value, referenceType.Value, referenceValue, includeClosed ?? false);
                     }
                     if (innerWorkTasks == null)
                         innerWorkTasks = new List<IWorkTask>();
@@ -128,7 +132,7 @@ namespace WorkTaskAPI.Controllers
         [HttpGet("/api/WorkGroup/{domainId}/{workGroupId}/WorkTask")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<WorkTask>), 200)]
-        public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId, bool? includeClosed = null)
+        public async Task<IActionResult> GetByWorkGroupId([FromRoute] Guid? domainId, [FromRoute] Guid? workGroupId, [FromQuery] bool? includeClosed = null)
         {
             IActionResult result = null;
             try

@@ -68,7 +68,12 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<Models.WorkTask>(_service, request);
         }
 
-        public Task<List<Models.WorkTask>> GetByContext(ISettings settings, Guid domainId, short referenceType, string referenceValue)
+        public Task<List<Models.WorkTask>> GetByContext(
+            ISettings settings,
+            Guid domainId,
+            short referenceType,
+            string referenceValue,
+            bool? includeClosed = null)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -77,8 +82,12 @@ namespace BrassLoon.Interface.WorkTask
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("WorkTask/{domain}")
                 .AddPathParameter("domain", domainId.ToString("N"))
+                .AddQueryParameter("referenceType", referenceType.ToString())
+                .AddQueryParameter("referenceValue", referenceValue)
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
+            if (includeClosed.HasValue)
+                request.AddQueryParameter("includeClosed", includeClosed.Value.ToString());
             return _restUtil.Send<List<Models.WorkTask>>(_service, request);
         }
 
