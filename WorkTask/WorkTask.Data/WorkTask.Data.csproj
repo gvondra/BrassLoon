@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Using Include="System"/>
+		<Using Include="System" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="7.0.*" />
-	  <PackageReference Include="BrassLoon.DataClient" Version="3.0.0" />
+	  <PackageReference Include="BrassLoon.DataClient" Version="3.1.0" />
 	</ItemGroup>
 
 </Project>
