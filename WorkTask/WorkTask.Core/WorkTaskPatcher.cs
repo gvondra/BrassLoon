@@ -26,7 +26,8 @@ namespace BrassLoon.WorkTask.Core
             {
                 workTasks.Add(ApplyToWorkTask(settings, domainId, patch));
             }
-            return await Task.WhenAll(workTasks);
+            return (await Task.WhenAll(workTasks))
+                .Where(wt => wt != null);
         }
 
         private async Task<IWorkTask> ApplyToWorkTask(ISettings settings, Guid domainId, Dictionary<string, object> patch)
