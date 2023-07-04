@@ -103,7 +103,7 @@ namespace BrassLoon.Interface.Log
                 Message = exception.Message,
                 Source = exception.Source,
                 StackTrace = exception.StackTrace, 
-                TargetSite = exception.TargetSite.ToString(),
+                TargetSite = exception.TargetSite?.ToString() ?? string.Empty,
                 TypeName = exception.GetType().FullName,
                 InnerException = innerException,
                 Data = GetData(exception.Data),
