@@ -1,8 +1,4 @@
 ﻿using BrassLoon.Authorization.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -16,14 +12,28 @@ namespace BrassLoon.Authorization.Core
             _saver = saver;
         }
 
-        public Task Create(ISettings settings, IClient client)
+        public Task Create(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
-            return _saver.Save(new CommonCore.TransactionHandler(settings), th => client.Create(th, settings));
+            return _saver.Save(
+                new CommonCore.TransactionHandler(settings), 
+                async th =>
+                {
+                    if (userEmailAddress != null)
+                        await userEmailAddress.Create(th);
+                    await client.Create(th, settings);
+                });
         }
 
-        public Task Update(ISettings settings, IClient client)
+        public Task Update(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
-            return _saver.Save(new CommonCore.TransactionHandler(settings), th => client.Update(th, settings));
+            return _saver.Save(
+                new CommonCore.TransactionHandler(settings), 
+                async th =>
+                {
+                    if (userEmailAddress != null)
+                        await userEmailAddress.Create(th);
+                    await client.Update(th, settings);
+                });
         }
     }
 }

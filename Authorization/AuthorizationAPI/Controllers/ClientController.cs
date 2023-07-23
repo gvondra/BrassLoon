@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Encodings;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
@@ -24,18 +23,21 @@ namespace AuthorizationAPI.Controllers
     {
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
-
+        private readonly IEmailAddressFactory _emailAddressFactory;
+        
         public ClientController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,
             IDomainService domainService,
             IClientFactory clientFactory,
-            IClientSaver clientSaver)
+            IClientSaver clientSaver,
+            IEmailAddressFactory emailAddressFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;
+            _emailAddressFactory = emailAddressFactory;
         }
 
         [HttpGet("{domainId}/{id}")]
@@ -162,10 +164,11 @@ namespace AuthorizationAPI.Controllers
                     IClient innerClient = _clientFactory.Create(domainId.Value, client.Secret);
                     IMapper mapper = CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
+                    IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
                     innerClient.SetSecret(client.Secret);
                     if (client.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
-                    await _clientSaver.Create(coreSettings, innerClient);
+                    await _clientSaver.Create(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
                         MapClient(coreSettings, mapper, innerClient)
                         );
@@ -204,11 +207,12 @@ namespace AuthorizationAPI.Controllers
                 {
                     IMapper mapper = CreateMapper();
                     mapper.Map(client, innerClient);
+                    IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
                     if (!string.IsNullOrEmpty(client?.Secret))
                         innerClient.SetSecret(client.Secret);
                     if (client.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
-                    await _clientSaver.Update(coreSettings, innerClient);
+                    await _clientSaver.Update(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
                         MapClient(coreSettings, mapper, innerClient)
                         );
@@ -222,10 +226,30 @@ namespace AuthorizationAPI.Controllers
             return result;
         }
 
+        // returns an email address when creating a new email address. the returned email address needs to be saved
+        [NonAction]
+        private async Task<IEmailAddress> ConfigureUserEmailAddress(CoreSettings settings, IClient client, string emailAddress)
+        {
+            IEmailAddress result = null;
+            if (string.IsNullOrEmpty(emailAddress))
+            {
+                client.SetUserEmailAddress(null);
+            }
+            else
+            {
+                result = await _emailAddressFactory.GetByAddress(settings, emailAddress);
+                client.SetUserEmailAddress(result);
+                if (!result.IsNew)
+                    result = null;
+            }
+            return result;
+        }
+
         [NonAction]
         private async Task<Client> MapClient(CoreSettings coreSettings, IMapper mapper, IClient innerClient)
         {
             Client client = mapper.Map<Client>(innerClient);
+            client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address;
             client.Roles = (await innerClient.GetRoles(coreSettings))
                 .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
                 .ToList();

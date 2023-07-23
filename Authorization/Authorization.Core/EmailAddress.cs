@@ -2,17 +2,14 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Encodings;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
     public class EmailAddress : IEmailAddress
     {
-
         private const string HashPrefix = "brass-loon-authorization";
 
         private readonly EmailAddressData _data;
@@ -31,6 +28,8 @@ namespace BrassLoon.Authorization.Core
         public byte[] AddressHash => _data.AddressHash;
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
+
+        public bool IsNew => _data.Manager.GetState(_data) == DataClient.DataState.New;
 
         public Task Create(CommonCore.ITransactionHandler transactionHandler)
         {

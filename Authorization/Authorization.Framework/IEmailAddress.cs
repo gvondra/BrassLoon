@@ -1,9 +1,5 @@
 ﻿using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
@@ -14,6 +10,7 @@ namespace BrassLoon.Authorization.Framework
         string Address { get; }
         byte[] AddressHash { get; }
         DateTime CreateTimestamp { get; }
+        bool IsNew { get; }
 
         Task Create(ITransactionHandler transactionHandler);
     }
