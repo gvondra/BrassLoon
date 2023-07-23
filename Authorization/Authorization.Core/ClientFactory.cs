@@ -4,7 +4,6 @@ using BrassLoon.Authorization.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -16,21 +15,25 @@ namespace BrassLoon.Authorization.Core
         private readonly IKeyVault _keyVault;
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleDataSaver _roleDataSaver;
+        private readonly IEmailAddressFactory _emailAddressFactory;
 
         public ClientFactory(IClientDataFactory dataFactory, 
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,
-            IRoleDataSaver roleDataSaver)
+            IRoleDataSaver roleDataSaver,
+            IEmailAddressFactory emailAddressFactory)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _keyVault = keyVault;
             _roleFactory = roleFactory;
             _roleDataSaver = roleDataSaver;
+            _emailAddressFactory = emailAddressFactory;
+
         }
 
-        private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault, _roleFactory, _roleDataSaver);
+        private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault, _roleFactory, _roleDataSaver, _emailAddressFactory);
 
         public IClient Create(Guid domainId, string secret)
         {

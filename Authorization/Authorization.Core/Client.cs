@@ -20,22 +20,27 @@ namespace BrassLoon.Authorization.Core
         private readonly IKeyVault _keyVault;
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleDataSaver _roleDataSaver;
+        private readonly IEmailAddressFactory _emailAddressFactory;
         private string _newSecret;
         private List<IRole> _roles;
         private List<IRole> _addRoles;
         private List<IRole> _removeRoles;
+        private IEmailAddress _userEmailAddress;
+        private bool _userEmailChanged;
 
         public Client(ClientData data,
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,
-            IRoleDataSaver roleDataSaver)
+            IRoleDataSaver roleDataSaver,
+            IEmailAddressFactory emailAddressFactory)
         {
             _data = data;
             _dataSaver = dataSaver;
             _keyVault = keyVault;
             _roleFactory = roleFactory;
             _roleDataSaver = roleDataSaver;
+            _emailAddressFactory = emailAddressFactory;
         }
 
         public Guid ClientId => _data.ClientId;
@@ -51,6 +56,11 @@ namespace BrassLoon.Authorization.Core
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
+
+        private Guid? UserEmailAddressId { get => _data.UserEmailAddressId; set => _data.UserEmailAddressId = value; }
+
+        public string UserName { get => _data.UserName; set => _data.UserName = value ?? string.Empty; }
+        Guid? IClient.UserEmailAddressId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void SetSalt()
         {
@@ -91,6 +101,7 @@ namespace BrassLoon.Authorization.Core
                 throw new ApplicationException("Unable to create client. No secret value specified");
             SetSalt();
             await SaveSecret(settings, SecretKey, _newSecret, SecrectSalt);
+            UserEmailAddressId = _userEmailAddress?.EmailAddressId;
             await _dataSaver.Create(transactionHandler, _data);
             await SaveRoleRoleChanges(transactionHandler);
         }
@@ -99,6 +110,8 @@ namespace BrassLoon.Authorization.Core
         {
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, SecretKey, _newSecret, SecrectSalt);
+            if (_userEmailChanged)
+                UserEmailAddressId = _userEmailAddress?.EmailAddressId;
             await _dataSaver.Update(transactionHandler, _data);
             await SaveRoleRoleChanges(transactionHandler);
         }
@@ -186,10 +199,24 @@ namespace BrassLoon.Authorization.Core
             _roles = null;
             _addRoles = null;
             _removeRoles = null;
+            _userEmailChanged = false;
         } 
 
         void DataClient.IDbTransactionObserver.BeforeRollback() { } // do nothing
 
         void DataClient.IDbTransactionObserver.AfterRollback() { } // do nothing
+
+        public async Task<IEmailAddress> GetUserEmailAddress(Framework.ISettings settings)
+        {
+            if (UserEmailAddressId.HasValue && _userEmailAddress == null)
+                _userEmailAddress = await _emailAddressFactory.Get(settings, UserEmailAddressId.Value);
+            return _userEmailAddress;
+        }
+
+        public void SetUserEmailAddress(IEmailAddress emailAddress)
+        {
+            _userEmailAddress = emailAddress;
+            _userEmailChanged = true;
+        }
     }
 }

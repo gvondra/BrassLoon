@@ -26,7 +26,7 @@ namespace BrassLoon.Authorization.CoreTest
             Mock<IRoleDataSaver> roleDataSaver = new Mock<IRoleDataSaver>();
             KeyVaultFake keyVault = new KeyVaultFake();
             await keyVault.SetSecret(settings.Object, secretKey.ToString("D"), Convert.ToBase64String(Client.HashSecret(actualSecret, data.SecretSalt)));
-            Client client = new Client(data, dataSaver.Object, keyVault, roleFactory.Object, roleDataSaver.Object);
+            Client client = new Client(data, dataSaver.Object, keyVault, roleFactory.Object, roleDataSaver.Object, null);
             Assert.IsTrue(await client.AuthenticateSecret(settings.Object, actualSecret));
             Assert.IsFalse(await client.AuthenticateSecret(settings.Object, actualSecret.ToUpper()));
             client.IsActive = false;

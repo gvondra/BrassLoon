@@ -2,13 +2,10 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections;
+using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data
 {
@@ -76,6 +73,8 @@ namespace BrassLoon.Authorization.Data
         {
             DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));
             DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "userEmailAddressId", DbType.Guid, DataUtil.GetParameterValue(data.UserEmailAddressId));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "userName", DbType.String, DataUtil.GetParameterValue(data.UserName));
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
@@ -13,6 +10,8 @@ namespace BrassLoon.Authorization.Framework
         Guid DomainId { get; }
         string Name { get; set; }
         bool IsActive { get; set; }
+        Guid? UserEmailAddressId { get; set; }
+        string UserName { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
@@ -24,5 +23,7 @@ namespace BrassLoon.Authorization.Framework
         Task<IEnumerable<IRole>> GetRoles(ISettings settings);
         Task AddRole(ISettings settings, string policyName);
         Task RemoveRole(ISettings settings, string policyName);
+        Task<IEmailAddress> GetUserEmailAddress(ISettings settings);
+        void SetUserEmailAddress(IEmailAddress emailAddress);
     }
 }
