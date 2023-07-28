@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
@@ -68,7 +67,7 @@ namespace AuthorizationAPI.Controllers
                     if (signingKey != null)
                         result = Content(await CreateToken(coreSettings, user, signingKey), "text/plain");
                     else
-                        result = StatusCode(StatusCodes.Status500InternalServerError);
+                        result = StatusCode(StatusCodes.Status500InternalServerError, "No active signing key found");
                 }
             }
             catch (Exception ex)
@@ -97,28 +96,27 @@ namespace AuthorizationAPI.Controllers
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IClient client = await _clientFactory.Get(coreSettings, domainId.Value, clientCredential.ClientId.Value);
-                    if (client == null)
+                    if (client == null || await client.AuthenticateSecret(coreSettings, clientCredential.Secret) == false)
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
-                    {
-                        if (await client.AuthenticateSecret(coreSettings, clientCredential.Secret) == false)
-                            result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
-                    if (result == null)
+                    else
                     {
+                        Task<IUser> getUser = GetUser(coreSettings, client);
                         ISigningKey signingKey = (await _signingKeyFactory.GetByDomainId(coreSettings, domainId.Value)).Where(sk => sk.IsActive)
                             .OrderByDescending(sk => sk.UpdateTimestamp)
                             .FirstOrDefault()
                             ;
                         if (signingKey != null)
-                            result = Content(await CreateToken(coreSettings, client, signingKey), "text/plain");
+                            result = Content(await CreateToken(coreSettings, client, signingKey, await getUser), "text/plain");
                         else
-                            result = StatusCode(StatusCodes.Status500InternalServerError);
+                            result = StatusCode(StatusCodes.Status500InternalServerError, "No active signing key found");
                     }
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
@@ -127,10 +125,9 @@ namespace AuthorizationAPI.Controllers
         [NonAction]
         private async Task<IUser> GetUser(CoreSettings coreSettings, Guid domainId)
         {
-            IUser user;
             IEmailAddress emailAddress = null;
             string subscriber = GetCurrentUserReferenceId();
-            user = await _userFactory.GetByReferenceId(coreSettings, domainId, subscriber);
+            IUser user = await _userFactory.GetByReferenceId(coreSettings, domainId, subscriber);
             if (user == null)
             {
                 string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
@@ -143,6 +140,26 @@ namespace AuthorizationAPI.Controllers
             {
                 user.Name = GetUserNameClaim().Value;
                 await _userSaver.Update(coreSettings, user);
+            }
+            return user;
+        }
+
+        [NonAction]
+        private async Task<IUser> GetUser(CoreSettings coreSettings, IClient client)
+        {
+            IEmailAddress emailAddress = await client.GetUserEmailAddress(coreSettings);
+            IUser user = null;
+            if (emailAddress != null)
+            {
+                Func<BrassLoon.Authorization.Framework.ISettings, IUser, Task> saveAction = _userSaver.Update;
+                user = await _userFactory.GetByEmailAddress(coreSettings, client.DomainId, emailAddress.Address);
+                if (user == null)
+                {
+                    user = _userFactory.Create(client.DomainId, client.ClientId.ToString("N"), emailAddress);
+                    saveAction = _userSaver.Create;
+                }
+                user.Name = client.UserName;
+                await saveAction(coreSettings, user);
             }
             return user;
         }
@@ -169,14 +186,20 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task<string> CreateToken(CoreSettings coreSettings, IUser user, ISigningKey signingKey)
+        private async Task<List<Claim>> CreateCommonUserClaims(IUser user)
         {
-            List<Claim> claims = new List<Claim>()
+            return new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.ReferenceId),
                 new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateCore(_settings.Value))).Address),
                 new Claim(JwtRegisteredClaimNames.Name, user.Name)
             };
+        }
+
+        [NonAction]
+        private async Task<string> CreateToken(CoreSettings coreSettings, IUser user, ISigningKey signingKey)
+        {
+            List<Claim> claims = await CreateCommonUserClaims(user);
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.ReferenceId));
             AddRoleClaims(claims, await GetRoles(coreSettings, user));
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
@@ -185,12 +208,16 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task<string> CreateToken(CoreSettings coreSettings, IClient client, ISigningKey signingKey)
+        private async Task<string> CreateToken(CoreSettings coreSettings, IClient client, ISigningKey signingKey, IUser user = null)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N"))
             };
+            if (user != null)
+            {
+                claims.AddRange(await CreateCommonUserClaims(user));
+            }
             AddRoleClaims(claims, await GetRoles(coreSettings, client));
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
