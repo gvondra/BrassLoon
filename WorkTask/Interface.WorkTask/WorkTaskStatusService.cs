@@ -1,5 +1,9 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.RestClient;
+using Microsoft.Extensions.Caching.Memory;
+using Polly;
+using Polly.Caching;
+using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,6 +13,8 @@ namespace BrassLoon.Interface.WorkTask
 {
     public class WorkTaskStatusService : IWorkTaskStatusService
     {
+        private static AsyncPolicy _getCache = CreateCachePolicy();
+        private static AsyncPolicy _getAllCache = CreateCachePolicy();
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -18,7 +24,7 @@ namespace BrassLoon.Interface.WorkTask
             _service = service;
         }
 
-        public Task<WorkTaskStatus> Create(ISettings settings, WorkTaskStatus workTaskStatus)
+        public async Task<WorkTaskStatus> Create(ISettings settings, WorkTaskStatus workTaskStatus)
         {
             if (workTaskStatus == null)
                 throw new ArgumentNullException(nameof(workTaskStatus));
@@ -32,7 +38,9 @@ namespace BrassLoon.Interface.WorkTask
                 .AddPathParameter("workTaskTypeId", workTaskStatus.WorkTaskTypeId.Value.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return _restUtil.Send<WorkTaskStatus>(_service, request);
+            WorkTaskStatus result = await _restUtil.Send<WorkTaskStatus>(_service, request);
+            ResetAllCaches();
+            return result;
         }
 
         public async Task Delete(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
@@ -52,9 +60,23 @@ namespace BrassLoon.Interface.WorkTask
                 ;
             IResponse response = await _service.Send(request);
             _restUtil.CheckSuccess(response);
+            ResetAllCaches();
         }
 
         public Task<WorkTaskStatus> Get(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (workTaskTypeId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workTaskTypeId));
+            if (id.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(id));
+            return _getCache.ExecuteAsync(
+                (context) => GetUncached(settings, domainId, workTaskTypeId, id),
+                new Context($"{domainId:N}|{workTaskTypeId:N}{id:N}"));
+        }
+
+        private Task<WorkTaskStatus> GetUncached(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -78,6 +100,17 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentNullException(nameof(domainId));
             if (workTaskTypeId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(workTaskTypeId));
+            return _getAllCache.ExecuteAsync(
+                (context) => GetAllUncached(settings, domainId, workTaskTypeId),
+                new Context($"{domainId:N}|{workTaskTypeId:N}"));
+        }
+
+        private Task<List<WorkTaskStatus>> GetAllUncached(ISettings settings, Guid domainId, Guid workTaskTypeId)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (workTaskTypeId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workTaskTypeId));
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("WorkTaskType/{domainId}/{workTaskTypeId}/Status")
                 .AddPathParameter("domainId", domainId.ToString("N"))
@@ -87,7 +120,7 @@ namespace BrassLoon.Interface.WorkTask
             return _restUtil.Send<List<WorkTaskStatus>>(_service, request);
         }
 
-        public Task<WorkTaskStatus> Update(ISettings settings, WorkTaskStatus workTaskStatus)
+        public async Task<WorkTaskStatus> Update(ISettings settings, WorkTaskStatus workTaskStatus)
         {
             if (workTaskStatus == null)
                 throw new ArgumentNullException(nameof(workTaskStatus));
@@ -104,7 +137,17 @@ namespace BrassLoon.Interface.WorkTask
                 .AddPathParameter("id", workTaskStatus.WorkTaskStatusId.Value.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return _restUtil.Send<WorkTaskStatus>(_service, request);
+            WorkTaskStatus result = await _restUtil.Send<WorkTaskStatus>(_service, request);
+            ResetAllCaches();
+            return result;
+        }
+
+        private static AsyncPolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
+
+        private static void ResetAllCaches()
+        {
+            _getCache = CreateCachePolicy();
+            _getAllCache = CreateCachePolicy();
         }
     }
 }
