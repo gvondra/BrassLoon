@@ -170,7 +170,7 @@ namespace AuthorizationAPI.Controllers
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Create(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
-                        MapClient(coreSettings, mapper, innerClient)
+                        await MapClient(coreSettings, mapper, innerClient)
                         );
                 }
             }
@@ -214,7 +214,7 @@ namespace AuthorizationAPI.Controllers
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Update(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
-                        MapClient(coreSettings, mapper, innerClient)
+                        await MapClient(coreSettings, mapper, innerClient)
                         );
                 }
             }
@@ -249,7 +249,7 @@ namespace AuthorizationAPI.Controllers
         private async Task<Client> MapClient(CoreSettings coreSettings, IMapper mapper, IClient innerClient)
         {
             Client client = mapper.Map<Client>(innerClient);
-            client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address;
+            client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address ?? string.Empty;
             client.Roles = (await innerClient.GetRoles(coreSettings))
                 .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
                 .ToList();
