@@ -96,29 +96,41 @@ export class DomainClientComponent implements OnInit {
   Save() {
     this.ErrorMessage = null;
     this.NotificationMessage = null;
-    this.ShowBusy = true;
-    const secret = this.Client.Secret;
-    if (this.Client.ClientId) {
-      this.clientService.Update(this.Client)
-      .then(c => {
-        this.OnSave.emit(c);
-        this.NotificationMessage = "Save complete"; 
-        this.Secret = secret;       
-      })
-      .catch(err => this.CatchWebAPIError(err))
-      .finally(() => this.ShowBusy = false)
-      ;
+    if (this.Client.UserName == null) {
+      this.Client.UserName = "";
+    }
+    if (this.Client.UserEmailAddress == null) {
+      this.Client.UserEmailAddress = "";
+    }
+    if ((this.Client.UserName == "" && this.Client.UserEmailAddress != "")
+    || (this.Client.UserName != "" && this.Client.UserEmailAddress == "")){
+      this.ErrorMessage = "User name and email must be used together"
     }
     else {
-      this.clientService.Create(this.Client)
-      .then(c => {
-        this.OnSave.emit(c);
-        this.NotificationMessage = "Save complete";        
-        this.Secret = secret;
-      })
-      .catch(err => this.CatchWebAPIError(err))
-      .finally(() => this.ShowBusy = false)
-      ;
+      this.ShowBusy = true;
+      const secret = this.Client.Secret;
+      if (this.Client.ClientId) {
+        this.clientService.Update(this.Client)
+        .then(c => {
+          this.OnSave.emit(c);
+          this.NotificationMessage = "Save complete"; 
+          this.Secret = secret;       
+        })
+        .catch(err => this.CatchWebAPIError(err))
+        .finally(() => this.ShowBusy = false)
+        ;
+      }
+      else {
+        this.clientService.Create(this.Client)
+        .then(c => {
+          this.OnSave.emit(c);
+          this.NotificationMessage = "Save complete";        
+          this.Secret = secret;
+        })
+        .catch(err => this.CatchWebAPIError(err))
+        .finally(() => this.ShowBusy = false)
+        ;
+      }
     }
   }
 

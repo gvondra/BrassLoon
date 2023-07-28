@@ -102,8 +102,10 @@ export class DomainClientsComponent implements OnInit {
 
   OnSaveClient(client: DomainClient) { 
     const i: number = this.FindClientIndex(this.Clients, client);
-    if (i >= 0) { this.Clients[i] = client; }
-    else { this.Clients.push(client); }
+    if (i < 0) { 
+      this.Clients.push(client);
+      this.SelectedClient = client; 
+    }
   }
 
 }

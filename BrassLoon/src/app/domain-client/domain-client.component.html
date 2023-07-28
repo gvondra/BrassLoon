@@ -53,6 +53,32 @@
         </div>
         <div class="row">
             <div [class]="LabelColumnClass">
+                <label>User Name:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="userName" name="userName" #userName="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    maxlength="2000" 
+                    placeholder="User Name" 
+                    [(ngModel)]="Client.UserName"/>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
+                <label>User Email:</label>
+            </div>
+            <div [class]="InputColumnClass">
+                <input id="userEmail" name="userEmail" #userEmail="ngModel" 
+                    class="form-control" 
+                    type="text" 
+                    maxlength="2000" 
+                    placeholder="Address" 
+                    [(ngModel)]="Client.UserEmailAddress"/>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
                 <label>Secret:</label>
             </div>
             <div [class]="InputColumnClass">
@@ -93,4 +119,6 @@
     </div>
 </form>
 <p style="font-size: small;">Client secrects cannot be read after they're created. Be sure to document secrects for future use, and handle them with care.</p>
+<p style="font-size: small;">User name and email address must used together. When assigned a user entry will be created with the given name and email address.
+Created client tokens will include the user name and email address.</p>
 <p *ngIf="Secret && Secret !== ''" style="font-size: small;">Capture this secret: {{ Secret }}</p>
