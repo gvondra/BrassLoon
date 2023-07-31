@@ -363,7 +363,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-TestClient/.vscode
+/**/TestClient/.vscode/
 
 !/[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/
