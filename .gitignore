@@ -370,3 +370,4 @@ FodyWeavers.xsd
 !/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
 /Log/Purger/Properties/launchSettings.json
 /Log/LoggingTest/Properties/launchSettings.json
+/WorkTask/TestClient/Properties/launchSettings.json
