@@ -6,7 +6,7 @@ namespace AccountAPI
     {
         public CoreSettings CreateCore(Settings settings)
         {
-            return new CoreSettings(settings);
+            return new AccountCoreSettings(settings);
         }
 
         public LogSettings CreateLog(Settings settings, string accessToken)
