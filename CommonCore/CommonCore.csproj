@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BrassLoon.DataClient" Version="3.2.*" />
+    <PackageReference Include="BrassLoon.DataClient" Version="3.3.*" />
   </ItemGroup>
 
 </Project>
