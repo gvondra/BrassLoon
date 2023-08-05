@@ -20,6 +20,8 @@ namespace BrassLoon.Interface.Account
 
         public async Task<Domain> Get(ISettings settings, Guid id)
         {
+            if (id.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(id));
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get) 
                 .AddPath("Domain/{id}")
                 .AddPathParameter("id", id.ToString())
@@ -36,6 +38,8 @@ namespace BrassLoon.Interface.Account
 
         public async Task<AccountDomain> GetAccountDomain(ISettings settings, Guid id)
         {
+            if (id.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(id));
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("AccountDomain/{id}")
                 .AddPathParameter("id", id.ToString())
