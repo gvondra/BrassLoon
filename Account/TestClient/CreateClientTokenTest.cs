@@ -36,9 +36,9 @@ namespace BrassLoon.Account.TestClient
             _logger.Information("Starting  test execution");
             AccountSettings settings = _settingsFactory.CreateAccountSettings();
             Queue<Task> tasks = new Queue<Task>();
-            foreach (int i in Enumerable.Range(0, 500))
+            foreach (int i in Enumerable.Range(0, 1500))
             {
-                while (tasks.Count >= 512)
+                while (tasks.Count >= 8)
                 {
                     try
                     {
