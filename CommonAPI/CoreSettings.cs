@@ -21,9 +21,9 @@ namespace BrassLoon.CommonAPI
             _settings = settings;
         }
 
-        public bool UseDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
+        public virtual bool UseDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
 
-        public async Task<string> GetConnetionString()
+        public virtual async Task<string> GetConnetionString()
         {
             string result = _settings.ConnectionString;
             if (!string.IsNullOrEmpty(_settings.KeyVaultAddress) && !string.IsNullOrEmpty(_settings.ConnectionStringUser))
@@ -63,7 +63,7 @@ namespace BrassLoon.CommonAPI
             return result;
         }
 
-        public Func<Task<string>> GetDatabaseAccessToken()
+        public virtual Func<Task<string>> GetDatabaseAccessToken()
         {
             return null;
         }
