@@ -1,9 +1,6 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using BrassLoon.CommonAPI;
-using Microsoft.Extensions.Caching.Memory;
-using Polly;
-using Polly.Caching.Memory;
 using System;
 using System.Threading.Tasks;
 
@@ -11,7 +8,8 @@ namespace AccountAPI
 {
     public class AccountCoreSettings : CoreSettings
     {
-        private static readonly AsyncPolicy _tokenCache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly TokenRequestContext _databaseTokenRequestContext = CreateTokenRequestContext();
+        private static readonly DefaultAzureCredential _defaultAzureCredential = CreateDefaultAzureCredential();
         private readonly Settings _settings;
 
         public AccountCoreSettings(Settings settings)
@@ -31,16 +29,15 @@ namespace AccountAPI
 
         public static async Task<string> GetDatabaseAccessTokenInternal()
         {
-            return await _tokenCache.ExecuteAsync(async (c) =>
-            {
-                DefaultAzureCredentialOptions options = GetDefaultAzureCredentialOptions();
-                TokenRequestContext context = new TokenRequestContext(new[] { "https://database.windows.net/.default" });
-                return (await new DefaultAzureCredential(options)
-                    .GetTokenAsync(context))
-                    .Token;
-            },
-            new Context("1"));
+            DefaultAzureCredentialOptions options = GetDefaultAzureCredentialOptions();
+            TokenRequestContext context = new TokenRequestContext(new[] { "https://database.windows.net/.default" });
+            return (await _defaultAzureCredential.GetTokenAsync(_databaseTokenRequestContext))
+                .Token;
         }
+
+        private static TokenRequestContext CreateTokenRequestContext() => new TokenRequestContext(new[] { "https://database.windows.net/.default" });
+
+        private static DefaultAzureCredential CreateDefaultAzureCredential() => new DefaultAzureCredential(GetDefaultAzureCredentialOptions());
 
         private static DefaultAzureCredentialOptions GetDefaultAzureCredentialOptions()
         {
