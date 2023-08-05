@@ -27,7 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="[6.5.0,8.0)" />
-		<PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
+		<PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,4.0)" />
 		<PackageReference Include="Polly" Version="[7.2.3,8.0)" />
 		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
 	</ItemGroup>

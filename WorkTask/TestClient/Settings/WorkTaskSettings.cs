@@ -25,13 +25,19 @@ namespace BrassLoon.WorkTask.TestClient.Settings
 
         public async Task<string> GetToken()
         {
-            if (_jwtToken == null || _jwtToken.ValidTo < DateTime.UtcNow.AddMinutes(2))
-            {
-                AccountSettings settings = _settingsFactory.CreateAccountSettings();
-                string token = await _tokenService.CreateClientCredentialToken(settings, _appSettings.ClientId.Value, _appSettings.ClientSecret);
-                _jwtToken = new JwtSecurityToken(token);
-            }
-            return _jwtToken.RawData;
+            AccountSettings settings = _settingsFactory.CreateAccountSettings();
+            return await _tokenService.CreateClientCredentialToken(settings, _appSettings.ClientId.Value, _appSettings.ClientSecret);
         }
+
+        //public async Task<string> GetToken()
+        //{
+        //    if (_jwtToken == null || _jwtToken.ValidTo < DateTime.UtcNow.AddMinutes(2))
+        //    {
+        //        AccountSettings settings = _settingsFactory.CreateAccountSettings();
+        //        string token = await _tokenService.CreateClientCredentialToken(settings, _appSettings.ClientId.Value, _appSettings.ClientSecret);
+        //        _jwtToken = new JwtSecurityToken(token);
+        //    }
+        //    return _jwtToken.RawData;
+        //}
     }
 }
