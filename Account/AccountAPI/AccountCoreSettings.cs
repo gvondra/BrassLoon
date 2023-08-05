@@ -31,14 +31,15 @@ namespace AccountAPI
 
         public static async Task<string> GetDatabaseAccessTokenInternal()
         {
-            return await _tokenCache.ExecuteAsync(async () =>
+            return await _tokenCache.ExecuteAsync(async (c) =>
             {
                 DefaultAzureCredentialOptions options = GetDefaultAzureCredentialOptions();
                 TokenRequestContext context = new TokenRequestContext(new[] { "https://database.windows.net/.default" });
                 return (await new DefaultAzureCredential(options)
                     .GetTokenAsync(context))
                     .Token;
-            });
+            },
+            new Context("1"));
         }
 
         private static DefaultAzureCredentialOptions GetDefaultAzureCredentialOptions()
