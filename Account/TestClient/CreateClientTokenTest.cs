@@ -38,7 +38,7 @@ namespace BrassLoon.Account.TestClient
             Queue<Task> tasks = new Queue<Task>();
             foreach (int i in Enumerable.Range(0, 1500))
             {
-                while (tasks.Count >= 8)
+                while (tasks.Count >= 64)
                 {
                     try
                     {
