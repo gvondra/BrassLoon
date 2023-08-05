@@ -105,7 +105,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                Console.WriteLine(ex.ToString());
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
