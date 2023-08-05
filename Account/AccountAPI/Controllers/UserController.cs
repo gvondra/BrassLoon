@@ -1,18 +1,17 @@
-﻿using System;
+﻿using AutoMapper;
 using BrassLoon.Account.Framework;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using BrassLoon.Interface.Account.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Log = BrassLoon.Interface.Log;
-using System.Linq;
-using AutoMapper;
-using BrassLoon.Account.Framework.Enumerations;
 
 namespace AccountAPI.Controllers
 {
