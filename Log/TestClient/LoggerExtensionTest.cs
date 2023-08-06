@@ -1,23 +1,27 @@
 ﻿using BrassLoon.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
+using BrassLoon.Log.TestClient.Settings;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.LoggingTest
+namespace BrassLoon.Log.TestClient
 {
-    public static class Program
+    public class LoggerExtensionTest
     {
-        private static Settings _settings;
+        private readonly AppSettings _appSettings;
 
-        public static async Task<int> Main(string[] args)
+        public LoggerExtensionTest(AppSettings settings)
+        {
+            _appSettings = settings;
+        }
+
+        public async Task Generate()
         {
             DateTime start = DateTime.Now;
             Console.WriteLine($"start    {start:hh:mm:ss tt}");
-            _settings = LoadSettings(args);
-            using (ILoggerFactory loggerFactory = LoadLogger(_settings))
+            using (ILoggerFactory loggerFactory = LoadLogger(_appSettings))
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
                 try
@@ -43,47 +47,26 @@ namespace BrassLoon.LoggingTest
             TimeSpan duration = finish.Subtract(start);
             Console.WriteLine($"finish   {finish:hh:mm:ss tt}");
             Console.WriteLine($"duration {Math.Round(duration.TotalMinutes, 3)} minute");
-            return 0;
+        }
+
+        private static ILoggerFactory LoadLogger(AppSettings settings)
+        {
+            return LoggerFactory.Create(builder =>
+            {
+                builder.AddBrassLoonLogger((config) =>
+                {
+                    config.AccountApiBaseAddress = settings.AccountAPIBaseAddress;
+                    config.LogApiBaseAddress = settings.LogAPIBaseAddress;
+                    config.LogDomainId = settings.DomainId;
+                    config.LogClientId = settings.ClientId;
+                    config.LogClientSecret = settings.Secret;
+                });
+            });
         }
 
         private static void RaiseException()
         {
             throw new ApplicationException("test exception");
         }
-
-        private static ILoggerFactory LoadLogger(Settings settings)
-        {
-            return LoggerFactory.Create(builder => 
-            {
-                builder.AddBrassLoonLogger((config) =>
-                {
-                    config.AccountApiBaseAddress = settings.AccountApiBaseAddress;
-                    config.LogApiBaseAddress = settings.LogApiBaseAddress;
-                    config.LogDomainId = settings.LogDomainId;
-                    config.LogClientId = settings.LogClientId;
-                    config.LogClientSecret = settings.LogClientSecret;
-                });
-            });
-        }
-
-        private static Settings LoadSettings(string[] args)
-        {
-            
-            Settings settings = new Settings();
-            ConfigurationBinder.Bind(GetConfiguration(args), settings);
-            return settings;
-        }
-
-        private static IConfiguration GetConfiguration(string[] args)
-        {
-            ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder
-            .AddJsonFile("appSettings.json", false)
-            .AddEnvironmentVariables()
-            .AddCommandLine(args)
-            ;
-            return builder.Build();
-        }
-
     }
 }
