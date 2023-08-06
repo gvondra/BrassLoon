@@ -1,14 +1,13 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "LogAPI": {
+    "LogRPC": {
       "commandName": "Project",
-      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5001",
-      "dotnetRunMessages": true
+      "hotReloadEnabled": false
     }
   }
 }

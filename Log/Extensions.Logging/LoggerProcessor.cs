@@ -1,10 +1,9 @@
 ﻿using BrassLoon.Interface.Log;
 using BrassLoon.Interface.Log.Models;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
@@ -99,7 +98,7 @@ namespace BrassLoon.Extensions.Logging
                 }
                 if (_logEntries.Count > 16)
                 {
-                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 128)];
+                    entries = new LogMessageEntry[Math.Min(_logEntries.Count, 256)];
                     for (int i = 0; i < entries.Length; i += 1)
                     {
                         entries[i] = _logEntries.Dequeue(); 
@@ -142,23 +141,25 @@ namespace BrassLoon.Extensions.Logging
                         {
                             metrics.Add(CreateLogMetric(configuration.LogDomainId, entries[i]));
                         }
+                        else if (entries[i].Exception != null)
+                        {
+                            _exceptionService.Create(
+                                settings,
+                                configuration.LogDomainId,
+                                entries[i].Exception,
+                                createTimestamp: entries[i].Timestamp,
+                                category: entries[i].Category,
+                                level: entries[i].LogLevel.ToString(),
+                                eventId: (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
+                                ).Wait();
+                        }
                     }
-                    if (traces.Count > 0) 
+                    //if (traces.Count > 0) 
+                    //    SubmitTraces(traces).Wait();  
+                    if (traces.Count > 0)
                         _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
                     if (metrics.Count > 0)
                         _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
-                    foreach (LogMessageEntry exceptionEntry in entries.Where(e => e.Exception != null))
-                    {
-                        _exceptionService.Create(settings, 
-                            configuration.LogDomainId, 
-                            exceptionEntry.Exception, 
-                            createTimestamp: exceptionEntry.Timestamp, 
-                            category: exceptionEntry.Category, 
-                            level: exceptionEntry.LogLevel.ToString(),
-                            eventId: (exceptionEntry.EventId.Id != default(int) || !string.IsNullOrEmpty(exceptionEntry.EventId.Name)) ? new LogModels.EventId { Id = exceptionEntry.EventId.Id, Name = exceptionEntry.EventId.Name } : default(LogModels.EventId)
-                            ).Wait();
-                    }
-                        
                 }
             }
             catch (System.Exception ex)
@@ -180,6 +181,35 @@ namespace BrassLoon.Extensions.Logging
                 Requestor = entry.Metric.Requestor,
                 EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId?)
             };
+        }
+
+        private async Task SubmitTraces(List<Trace> traces)
+        {   
+            if (traces.Count > 0)
+            {
+                LoggerConfiguration configuration = _options.CurrentValue;
+                using (GrpcChannel channel = GrpcChannel.ForAddress("http://localhost:5001"))
+                {
+                    LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);
+                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Trace, Google.Protobuf.WellKnownTypes.Empty> call = client.Create();
+                    foreach (Trace trace in traces)
+                    {
+                        await call.RequestStream.WriteAsync(
+                            new LogRPC.Protos.Trace
+                            {
+                                Category = trace.Category,
+                                //Data = trace.Data,
+                                DomainId = configuration.LogDomainId.ToString("D"),
+                                EventCode = trace.EventCode,
+                                Level = trace.Level,
+                                //EventId = 
+                                Message = trace.Message
+                            });
+                    }
+                    await call.RequestStream.CompleteAsync();
+                    await call;
+                }
+            }
         }
 
         private LogModels.Trace CreateLogTrace(Guid domainId, LogMessageEntry entry)

@@ -33,9 +33,20 @@
 	  <PackageReference Include="BrassLoon.Interface.Account" Version="[2.2.0,3.0)" />
 	  <PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
 	  <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,4.0)" />
+	  <PackageReference Include="Google.Protobuf" Version="3.23.*" />
+	  <PackageReference Include="Grpc.Net.Client" Version="2.55.*" />
+	  <PackageReference Include="Grpc.Tools" Version="2.56.*">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="[6.0.0,7.0)" />
 	  <PackageReference Include="Polly" Version="[7.2.3,8.0)" />
 	  <PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Protobuf Include="Protos\event_id.proto" GrpcServices="Client" />
+	  <Protobuf Include="Protos\trace.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>

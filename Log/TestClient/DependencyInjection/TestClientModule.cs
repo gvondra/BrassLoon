@@ -14,6 +14,7 @@ namespace BrassLoon.Log.TestClient.DependencyInjection
                 .SingleInstance()
                 .As<ISettingsFactory>();
             builder.RegisterType<LoggerExtensionTest>();
+            builder.RegisterType<LoggerRPCTest>();
             builder.RegisterType<LogInterfaceTest>();
         }
     }

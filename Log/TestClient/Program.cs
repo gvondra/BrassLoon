@@ -23,10 +23,14 @@ namespace BrassLoon.Log.TestClient
                     Option<bool> loggerExtensionTest = new Option<bool>(
                        name: "--log-extension-test",
                        getDefaultValue: () => true);
+                    Option<bool> loggerRpcTest = new Option<bool>(
+                       name: "--log-rpc-test",
+                       getDefaultValue: () => true);
                     RootCommand rootCommand = new RootCommand
                     {
                         logInterfaceTest,
-                        loggerExtensionTest
+                        loggerExtensionTest,
+                        loggerRpcTest
                     };
                     rootCommand.SetHandler(
                         logInterface => GenerateInterfaceEntries(),
@@ -34,6 +38,9 @@ namespace BrassLoon.Log.TestClient
                     rootCommand.SetHandler(
                         logExtension => GenerateExtensionEntries(),
                         loggerExtensionTest);
+                    rootCommand.SetHandler(
+                        logExtension => GenerateRPCEntries(),
+                        loggerRpcTest);
                     await rootCommand.InvokeAsync(args);
                 }
             }
@@ -48,6 +55,15 @@ namespace BrassLoon.Log.TestClient
             using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope())
             {
                 LoggerExtensionTest test = scope.Resolve<LoggerExtensionTest>();
+                await test.Generate();
+            }
+        }
+
+        private static async Task GenerateRPCEntries()
+        {
+            using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope())
+            {
+                LoggerRPCTest test = scope.Resolve<LoggerRPCTest>();
                 await test.Generate();
             }
         }
