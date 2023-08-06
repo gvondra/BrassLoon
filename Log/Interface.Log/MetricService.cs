@@ -37,19 +37,9 @@ namespace BrassLoon.Interface.Log
             return response.Value;
         }
 
-        public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double magnitude, object data = null)
-        {
-            return Create(settings, domainId, eventCode, magnitude, data: data);
-        }
-
         public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double magnitude, string status = "", string requestor = "", object data = null)
         {
             return Create(settings, domainId, null, eventCode, magnitude, status, requestor, data);
-        }
-
-        public Task<Metric> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, double magnitude, object data = null)
-        {
-            return Create(settings, domainId, createTimestamp, eventCode, magnitude, data: data);
         }
 
         public Task<Metric> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, double magnitude, string status = "", string requestor = "", object data = null)

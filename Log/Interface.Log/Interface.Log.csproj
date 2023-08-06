@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>2.2.0-prerelease.11</Version>
-		<AssemblyVersion>2.2.0.11</AssemblyVersion>
+		<Version>2.2.0-prerelease.13</Version>
+		<AssemblyVersion>2.2.0.13</AssemblyVersion>
 		<PackageReleaseNotes>
 			- v2.2 Added create batch traces method; Added create batch metrics method
 			- v2.1 Upgrade RestUtil v3.1
