@@ -1,8 +1,5 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Authorization
@@ -11,5 +8,6 @@ namespace BrassLoon.Interface.Authorization
     {
         Task<string> Create(ISettings settings, Guid domainId);
         Task<string> CreateClientCredential(ISettings settings, Guid domainId, ClientCredential clientCredential);
+        Task<string> CreateClientCredential(ISettings settings, Guid domainId, Guid clientId, string secret);
     }
 }

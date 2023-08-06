@@ -30,19 +30,20 @@ namespace BrassLoon.Interface.Account
                 throw new ArgumentException($"Missing client id value");
             if (string.IsNullOrEmpty(clientCredential.Secret))
                 throw new ArgumentException($"Missing client secret value");
-            IResponse<string> response = await _cache.ExecuteAsync(async c =>
+            return await _cache.ExecuteAsync(async c =>
             {
                 UriBuilder builder = new UriBuilder(settings.BaseAddress);
                 builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
-                return await Policy
-                .HandleResult<IResponse<string>>(res => !res.IsSuccessStatusCode)
-                .WaitAndRetryAsync(new TimeSpan[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) })
-                .ExecuteAsync(() => _service.Post<string>(builder.Uri, clientCredential));
+                IResponse<string> response = await GetRetryPolicy<string>()
+                .ExecuteAsync(async () =>
+                {
+                    IResponse<string> innerResponse = await _service.Post<string>(builder.Uri, clientCredential);
+                    _restUtil.CheckSuccess(innerResponse);
+                    return innerResponse;
+                });
+                return response.Value;
             },
             new Context(GetCacheKey(clientCredential)));
-                
-            _restUtil.CheckSuccess(response);
-            return response.Value;
         }
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)
@@ -58,6 +59,12 @@ namespace BrassLoon.Interface.Account
                     ClientId = clientId,
                     Secret = secret
                 });
+        }
+
+        private static AsyncPolicy<IResponse<T>> GetRetryPolicy<T>()
+        {
+            return Policy.HandleResult<IResponse<T>>(res => !res.IsSuccessStatusCode)
+                .WaitAndRetryAsync(new TimeSpan[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) });
         }
 
         private static string GetCacheKey(ClientCredential clientCredential)
