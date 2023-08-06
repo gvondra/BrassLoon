@@ -1,127 +1,78 @@
-﻿using AccountInterface = BrassLoon.Interface.Account;
-using AccountInterfaceModels = BrassLoon.Interface.Account.Models;
-using Autofac;
-using BrassLoon.Interface.Log;
-using BrassLoon.Interface.Log.Models;
+﻿using Autofac;
+using BrassLoon.Log.TestClient.Settings;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.CommandLine;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
-using Microsoft.Extensions.Configuration.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.CommandLine;
 using System.Threading.Tasks;
 
-namespace TestClient
+namespace BrassLoon.Log.TestClient
 {
     public sealed class Program
     {
-        private static Settings _settings = null;
-        private static IContainer _diContainer = null;
         public static async Task Main(string[] args)
-        {        
+        {
             try
             {
-                _settings = LoadSettings(args);
-                if (ValidateArgs())
+                AppSettings appSettings = LoadSettings();
+                if (ValidateArgs(appSettings))
                 {
-                    _diContainer = LoadDiContainer();
-                    AccountInterfaceModels.Domain domain = await GetDomain(_settings.DomainId);
-                    Console.WriteLine($"Loaded domain {domain.Name}");
-                    await GenerateEntries(domain);
-                }                    
-            } 
+                    DependencyInjection.ContainerFactory.Initialize(appSettings);
+                    Option<bool> logInterfaceTest = new Option<bool>(
+                       name: "--log-interface-test",
+                       getDefaultValue: () => true);
+                    RootCommand rootCommand = new RootCommand
+                    {
+                        logInterfaceTest
+                    };
+                    rootCommand.SetHandler(
+                        logInterface => GenerateEntries(),
+                        logInterfaceTest);
+                    await rootCommand.InvokeAsync(args);
+                }
+            }
             catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
             }
         }
 
-        private static async Task GenerateEntries(AccountInterfaceModels.Domain domain) 
+        private static Task GenerateEntries()
         {
-            DateTime start = DateTime.UtcNow;
-            using ILifetimeScope scope = _diContainer.BeginLifetimeScope();
-            IMetricService metricService = scope.Resolve<IMetricService>();
-            ITraceService traceService = scope.Resolve<ITraceService>();
-            IExceptionService exceptionService = scope.Resolve<IExceptionService>();
-            SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-            LogSettings logSettings = settingsFactory.CreateLog(_settings);
-            Queue<Task<Metric>> queue = new Queue<Task<Metric>>();
-            Console.WriteLine($"Entry generation started at {start:HH:mm:ss}");
-            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"Entry generation started at {start:HH:mm:ss}", new { Date = DateTime.UtcNow });
-            for (int i = 0; i < _settings.EntryCount; i += 1)
+            using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope())
             {
-                if (queue.Count >= _settings.ConcurentTaskCount) 
-                {
-                    try 
-                    {
-                        await queue.Dequeue();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        await exceptionService.Create(settingsFactory.CreateLog(_settings), domain.DomainId.Value, ex);
-                    }
-                }
-                queue.Enqueue(metricService.Create(logSettings, domain.DomainId.Value, DateTime.UtcNow, "bl-t-client-gen", DateTime.UtcNow.Subtract(new DateTime(2000, 1, 1)).TotalSeconds));
+                LogInterfaceTest test = scope.Resolve<LogInterfaceTest>();
+                return test.GenerateEntries();
             }
-            await Task.WhenAll(queue);
-            DateTime end = DateTime.UtcNow;
-            Console.WriteLine($"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
-            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"Entry generation ended at {end:HH:mm:ss} and took {end.Subtract(start).TotalMinutes:0.0##} minutes");
-            Console.WriteLine($"{_settings.EntryCount} records created");
-            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"{_settings.EntryCount} records created");
-            double rate = Math.Round((double)_settings.EntryCount / end.Subtract(start).TotalSeconds, 3, MidpointRounding.ToEven);
-            Console.WriteLine($"at {rate} records per second");
-            await traceService.Create(logSettings, domain.DomainId.Value, "bl-t-client-gen", $"at {rate} records per second");
         }
 
-        private static async Task<AccountInterfaceModels.Domain> GetDomain(Guid domainId)
-        {
-            using ILifetimeScope scope = _diContainer.BeginLifetimeScope();
-            AccountInterface.IDomainService domainService = scope.Resolve<AccountInterface.IDomainService>();
-            SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-            return await domainService.Get(settingsFactory.CreateAccount(_settings), domainId);
-        }
-
-        private static IContainer LoadDiContainer() 
-        {
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.Register<SettingsFactory>(context => new SettingsFactory(context.Resolve<BrassLoon.Interface.Account.ITokenService>()));
-            return builder.Build();
-        }
-
-        private static Settings LoadSettings(string[] args) 
+        private static AppSettings LoadSettings()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
             builder
             .AddJsonFile("appSettings.json", false)
             .AddEnvironmentVariables()
-            .AddCommandLine(args)
             ;
             IConfiguration configuration = builder.Build();
-            Settings settings = new Settings();
+            AppSettings settings = new AppSettings();
             ConfigurationBinder.Bind(configuration, settings);
             return settings;
         }
 
-        private static bool ValidateArgs()
+        private static bool ValidateArgs(AppSettings appSettings)
         {
             bool result = true;
-            if (_settings.DomainId.Equals(Guid.Empty)) 
+            if (appSettings.DomainId.Equals(Guid.Empty))
             {
                 result = false;
                 Console.Error.WriteLine("Missing or invalid domain id");
             }
-            if (_settings.ClientId.Equals(Guid.Empty))
+            if (appSettings.ClientId.Equals(Guid.Empty))
             {
                 result = false;
                 Console.Error.WriteLine("Missing or invalid client id");
             }
-            if (string.IsNullOrEmpty(_settings.Secret)) {
+            if (string.IsNullOrEmpty(appSettings.Secret))
+            {
                 result = false;
                 Console.Error.WriteLine("Mssing client secret");
             }
