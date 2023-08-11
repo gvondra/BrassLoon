@@ -156,11 +156,13 @@ namespace BrassLoon.Extensions.Logging
                         }
                     }
                     if (traces.Count > 0) 
-                        SubmitTraces(traces).Wait();  
+                        SubmitTraces(traces).Wait();
                     //if (traces.Count > 0)
                     //    _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
+                    //if (metrics.Count > 0)
+                    //    _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
                     if (metrics.Count > 0)
-                        _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
+                        SubmitMetrics(metrics).Wait();
                 }
             }
             catch (System.Exception ex)
@@ -206,8 +208,44 @@ namespace BrassLoon.Extensions.Logging
                                 DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
                                 EventCode = trace.EventCode,
                                 Level = trace.Level,
-                                //EventId = 
+                                EventId = trace.EventId.HasValue ? new LogRPC.Protos.EventId { Id = trace.EventId.Value.Id, Name = trace.EventId.Value.Name } : null,
                                 Message = trace.Message
+                            });
+                    }
+                    await call.RequestStream.CompleteAsync();
+                    await call;
+                }
+            }
+        }
+
+        private async Task SubmitMetrics(List<LogModels.Metric> metrics)
+        {
+            if (metrics.Count > 0)
+            {
+                using (GrpcChannel channel = GrpcChannel.ForAddress(_options.CurrentValue.LogApiBaseAddress))
+                {
+                    Metadata headers = new Metadata()
+                    {
+                        { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
+                    };
+                    LogRPC.Protos.MetricService.MetricServiceClient client = new LogRPC.Protos.MetricService.MetricServiceClient(channel);
+                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Metric, Google.Protobuf.WellKnownTypes.Empty> call = client.Create(headers);
+                    foreach (LogModels.Metric metric in metrics)
+                    {
+                        Google.Protobuf.WellKnownTypes.Timestamp createTimestamp = metric.CreateTimestamp.HasValue ? Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(metric.CreateTimestamp.Value) : null;
+                        await call.RequestStream.WriteAsync(
+                            new LogRPC.Protos.Metric
+                            {
+                                Category = metric.Category,
+                                CreateTimestamp = createTimestamp,
+                                //Data = 
+                                DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
+                                EventCode = metric.EventCode,
+                                EventId = metric.EventId.HasValue ? new LogRPC.Protos.EventId { Id = metric.EventId.Value.Id, Name = metric.EventId.Value.Name } : null,
+                                Level = metric.Level,
+                                Magnitude = metric.Magnitude,
+                                Requestor = metric.Requestor,
+                                Status = metric.Status
                             });
                     }
                     await call.RequestStream.CompleteAsync();

@@ -11,36 +11,36 @@ using System.Threading.Tasks;
 
 namespace LogRPC.Services
 {
-    public class TraceService : Protos.TraceService.TraceServiceBase
+    public class MetricService : Protos.MetricService.MetricServiceBase
     {
         private readonly IOptions<Settings> _settings;
         private readonly SettingsFactory _settingsFactory;
         private readonly IMetaDataProcessor _metaDataProcessor;
         private readonly IDomainAcountAccessVerifier _domainAcountAccessVerifier;
         private readonly IEventIdFactory _eventIdFactory;
-        private readonly ITraceFactory _traceFactory;
-        private readonly ITraceSaver _traceSaver;
+        private readonly IMetricFactory _metricFactory;
+        private readonly IMetricSaver _metricSaver;
 
-        public TraceService(
+        public MetricService(
             IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IMetaDataProcessor metaDataProcessor,
             IDomainAcountAccessVerifier domainAcountAccessVerifier,
             IEventIdFactory eventIdFactory,
-            ITraceFactory traceFactory,
-            ITraceSaver traceSaver)
+            IMetricFactory metricFactory,
+            IMetricSaver metricSaver)
         {
             _settings = settings;
             _settingsFactory = settingsFactory;
             _metaDataProcessor = metaDataProcessor;
             _domainAcountAccessVerifier = domainAcountAccessVerifier;
             _eventIdFactory = eventIdFactory;
-            _traceFactory = traceFactory;
-            _traceSaver = traceSaver;
+            _metricFactory = metricFactory;
+            _metricSaver = metricSaver;
         }
 
         [Authorize("BL:AUTH")]
-        public override async Task<Empty> Create(IAsyncStreamReader<Trace> requestStream, ServerCallContext context)
+        public async override Task<Empty> Create(IAsyncStreamReader<Metric> requestStream, ServerCallContext context)
         {
             while (await requestStream.MoveNext())
             {
@@ -60,16 +60,18 @@ namespace LogRPC.Services
                     }
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEventId eventId = await GetInnerEventId(settings, domainId, requestStream.Current.EventId);
-                    ITrace innerTrace = _traceFactory.Create(
+                    IMetric innerMetric = _metricFactory.Create(
                         domainId,
                         requestStream.Current.CreateTimestamp != null ? requestStream.Current.CreateTimestamp.ToDateTime() : default(DateTime?),
                         requestStream.Current.EventCode,
                         eventId);
-                    innerTrace.Category = requestStream.Current.Category;
-                    //innerTrace.Data
-                    innerTrace.Level = requestStream.Current.Level;
-                    innerTrace.Message = requestStream.Current.Message;
-                    await _traceSaver.Create(settings, innerTrace);
+                    innerMetric.Category = requestStream.Current.Category;
+                    //innerMetric.Data
+                    innerMetric.Level = requestStream.Current.Level;
+                    innerMetric.Magnitude = requestStream.Current.Magnitude;
+                    innerMetric.Requestor = requestStream.Current.Requestor;
+                    innerMetric.Status = requestStream.Current.Status;
+                    await _metricSaver.Create(settings, innerMetric);
                 }
                 catch (Exception ex)
                 {

@@ -78,7 +78,7 @@ namespace BrassLoon.CommonAPI
             GetAccessToken(),
             domainService
             );
-            return !domain.Account.Locked && VerifyDomainAccount(domain);
+            return domain != null && !domain.Account.Locked && VerifyDomainAccount(domain);
         }
 
         [NonAction]

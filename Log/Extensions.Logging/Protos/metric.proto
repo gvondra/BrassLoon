@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/event_id.proto";
+
+option csharp_namespace = "LogRPC.Protos";
+
+service MetricService {
+    rpc Create(stream Metric) returns (google.protobuf.Empty);
+}
+
+message Metric {
+	google.protobuf.Int64Value MetricId = 1;
+	string DomainId = 2;
+    string EventCode = 3;
+    google.protobuf.DoubleValue Magnitude = 4;
+    map<string, google.protobuf.Any> Data = 5;
+    google.protobuf.Timestamp CreateTimestamp = 6;
+    string Status = 7;
+    string Requestor = 8;
+    EventId EventId = 9;
+    string Category = 10;
+    string Level = 11;
+}

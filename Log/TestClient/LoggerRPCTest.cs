@@ -21,7 +21,17 @@ namespace BrassLoon.Log.TestClient
             using (ILoggerFactory loggerFactory = LoadLogger(_appSettings))
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
-                logger.Log(LogLevel.Information, "test message");
+                logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
+                logger.LogMetric(
+                    new EventId(1, "test client"),
+                    new Metric
+                    {
+                        //CreateTimestamp = new DateTime(2023, 1, 1), is not used
+                        EventCode = "test code",
+                        Magnitude = 1.23,
+                        Requestor = "test requestor",
+                        Status = "500"
+                    }); 
             }
             DateTime finish = DateTime.Now;
             TimeSpan duration = finish.Subtract(start);

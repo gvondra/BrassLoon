@@ -30,6 +30,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Protos\metric.proto" />
 	  <None Remove="Protos\token.proto" />
 	</ItemGroup>
 
@@ -50,6 +51,7 @@
 
 	<ItemGroup>
 	  <Protobuf Include="Protos\event_id.proto" GrpcServices="Client" />
+	  <Protobuf Include="Protos\metric.proto" GrpcServices="Client" />
 	  <Protobuf Include="Protos\token.proto" GrpcServices="Client" />
 	  <Protobuf Include="Protos\trace.proto" GrpcServices="Client" />
 	</ItemGroup>

@@ -4,6 +4,11 @@ namespace LogRPC
 {
     public class SettingsFactory
     {
+        public CoreSettings CreateCore(Settings settings)
+        {
+            return new CoreSettings(settings);
+        }
+
         public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)
         {
             return new AccountSettings(accessToken)

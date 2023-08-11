@@ -23,7 +23,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Protos\metric.proto" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Protobuf Include="Protos\event_id.proto" GrpcServices="Server" />
+		<Protobuf Include="Protos\metric.proto" GrpcServices="Server" />
 		<Protobuf Include="Protos\token.proto" GrpcServices="Server" />
 		<Protobuf Include="Protos\trace.proto" GrpcServices="Server" />
 	</ItemGroup>
