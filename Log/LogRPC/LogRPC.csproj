@@ -28,6 +28,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include="..\.dockerignore" Link=".dockerignore">
+	    <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Protobuf Include="Protos\event_id.proto" GrpcServices="Server" Access="Public" />
 		<Protobuf Include="Protos\exception.proto" GrpcServices="Server" Access="Public" />
 		<Protobuf Include="Protos\metric.proto" GrpcServices="Server" Access="Public" />
