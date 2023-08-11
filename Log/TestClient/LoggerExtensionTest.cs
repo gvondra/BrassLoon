@@ -55,7 +55,6 @@ namespace BrassLoon.Log.TestClient
             {
                 builder.AddBrassLoonLogger((config) =>
                 {
-                    config.AccountApiBaseAddress = settings.AccountAPIBaseAddress;
                     config.LogApiBaseAddress = settings.LogAPIBaseAddress;
                     config.LogDomainId = settings.DomainId;
                     config.LogClientId = settings.ClientId;

@@ -12,8 +12,8 @@
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<LangVersion>10</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-beta.9</Version>
-		<AssemblyVersion>1.0.0.9</AssemblyVersion>
+		<Version>1.0.0-beta.10</Version>
+		<AssemblyVersion>1.0.0.10</AssemblyVersion>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/gvondra/BrassLoon</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/gvondra/BrassLoon.git</RepositoryUrl>
@@ -36,9 +36,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="BrassLoon.Interface.Account" Version="[2.2.0,3.0)" />
-	  <PackageReference Include="BrassLoon.Interface.Log" Version="2.2.0-prerelease.*" />
-	  <PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,4.0)" />
 	  <PackageReference Include="Google.Protobuf" Version="3.23.*" />
 	  <PackageReference Include="Grpc.Net.Client" Version="2.55.*" />
 	  <PackageReference Include="Grpc.Tools" Version="2.56.*">

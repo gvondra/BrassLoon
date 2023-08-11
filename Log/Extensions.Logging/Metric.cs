@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrassLoon.Extensions.Logging
 {
     public class Metric
     {
+        private DateTime _createTimestamp = DateTime.UtcNow;
         private DateTime _startTime = DateTime.Now;
 
         public Guid? DomainId { get; set; }
         public string EventCode { get; set; }
         public double? Magnitude { get; set; }
-        public dynamic Data { get; set; }
-        public DateTime? CreateTimestamp { get; set; }
+        public Dictionary<string, string> Data { get; set; }
+        public DateTime CreateTimestamp
+        { 
+            get => _createTimestamp;
+            set => _createTimestamp = value.ToUniversalTime();
+        }
         public string Status { get; set; }
         public string Requestor { get; set; }
 

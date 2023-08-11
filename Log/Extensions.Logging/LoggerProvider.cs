@@ -1,8 +1,6 @@
-﻿using BrassLoon.Interface.Log;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
-using Account = BrassLoon.Interface.Account;
 
 namespace BrassLoon.Extensions.Logging
 {
@@ -14,17 +12,14 @@ namespace BrassLoon.Extensions.Logging
         private readonly LoggerProcessor _loggerProcessor;
         private readonly ConcurrentDictionary<string, Logger> _loggers;
 
-        public LoggerProvider(ITraceService traceService,
-            IExceptionService exceptionService,
-            IMetricService metricService,
-            Account.ITokenService tokenService,
+        public LoggerProvider(
             IOptionsMonitor<LoggerConfiguration> options, 
             MessageFormatter messageFormatter)
         {
             _options = options;
             _loggers = new ConcurrentDictionary<string, Logger>();
             _messageFormatter = messageFormatter;
-            _loggerProcessor = new LoggerProcessor(traceService, exceptionService, metricService, tokenService, options);
+            _loggerProcessor = new LoggerProcessor(options);
         }
 
         public ILogger CreateLogger(string categoryName)
@@ -32,6 +27,7 @@ namespace BrassLoon.Extensions.Logging
             return _loggers.TryGetValue(categoryName, out Logger logger) ? logger :
                 _loggers.GetOrAdd(categoryName, new Logger(categoryName, _options.CurrentValue, _messageFormatter, _loggerProcessor));
         }
+
         public void Dispose() 
         {
             _loggerProcessor.Dispose();

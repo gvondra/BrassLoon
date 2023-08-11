@@ -1,4 +1,5 @@
-﻿using BrassLoon.Interface.Log;
+﻿using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
@@ -8,8 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Account = BrassLoon.Interface.Account;
-using LogModels = BrassLoon.Interface.Log.Models;
 
 namespace BrassLoon.Extensions.Logging
 {
@@ -17,25 +16,13 @@ namespace BrassLoon.Extensions.Logging
     {
         private const int MAX_QUEUE_LENGTH = 10240;
         private readonly Thread _outputThread;
-        private readonly ITraceService _traceService;
-        private readonly IExceptionService _exceptionService;
-        private readonly IMetricService _metricService;
-        private readonly Account.ITokenService _tokenService;
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
         private bool _disposedValue;
         private Queue<LogMessageEntry> _logEntries;
         private bool _exit; 
 
-        public LoggerProcessor(ITraceService traceService,
-            IExceptionService exceptionService,
-            IMetricService metricService,
-            Account.ITokenService tokenService,
-            IOptionsMonitor<LoggerConfiguration> options)
+        public LoggerProcessor(IOptionsMonitor<LoggerConfiguration> options)
         {
-            _traceService = traceService;
-            _exceptionService = exceptionService;
-            _metricService = metricService;
-            _tokenService = tokenService;
             _options = options;
             _exit = false;
             _logEntries = new Queue<LogMessageEntry>();
@@ -129,31 +116,20 @@ namespace BrassLoon.Extensions.Logging
             {
                 if (entries != null && entries.Length > 0)
                 {
-                    LoggerConfiguration configuration = _options.CurrentValue;
-                    LogSettings settings = new LogSettings(_tokenService, configuration);
-                    List<LogModels.Trace> traces = new List<LogModels.Trace>();
-                    List<LogModels.Metric> metrics = new List<LogModels.Metric>();
+                    List<LogMessageEntry> traces = new List<LogMessageEntry>();
+                    List<LogMessageEntry> metrics = new List<LogMessageEntry>();
                     for (int i = 0; i < entries.Length; i += 1)
                     {
                         if (!string.IsNullOrEmpty(entries[i].Message) && entries[i].Metric == null)
                         {
-                            traces.Add(CreateLogTrace(configuration.LogDomainId, entries[i]));
+                            traces.Add(entries[i]);
                         }
                         else if (entries[i].Metric != null)
                         {
-                            metrics.Add(CreateLogMetric(configuration.LogDomainId, entries[i]));
+                            metrics.Add(entries[i]);
                         }
                         if (entries[i].Exception != null)
                         {
-                            //_exceptionService.Create(
-                            //    settings,
-                            //    configuration.LogDomainId,
-                            //    entries[i].Exception,
-                            //    createTimestamp: entries[i].Timestamp,
-                            //    category: entries[i].Category,
-                            //    level: entries[i].LogLevel.ToString(),
-                            //    eventId: (entries[i].EventId.Id != default(int) || !string.IsNullOrEmpty(entries[i].EventId.Name)) ? new LogModels.EventId { Id = entries[i].EventId.Id, Name = entries[i].EventId.Name } : default(LogModels.EventId)
-                            //    ).Wait();
                             SubmitExcepiton(
                                 entries[i].Exception,
                                 entries[i].Timestamp,
@@ -164,10 +140,6 @@ namespace BrassLoon.Extensions.Logging
                     }
                     if (traces.Count > 0) 
                         SubmitTraces(traces).Wait();
-                    //if (traces.Count > 0)
-                    //    _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
-                    //if (metrics.Count > 0)
-                    //    _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
                     if (metrics.Count > 0)
                         SubmitMetrics(metrics).Wait();
                 }
@@ -176,21 +148,6 @@ namespace BrassLoon.Extensions.Logging
             {
                 Console.WriteLine(ex.ToString());
             }
-        }
-
-        private LogModels.Metric CreateLogMetric(Guid domainId, LogMessageEntry entry)
-        {
-            return new LogModels.Metric
-            {
-                DomainId = domainId,
-                EventCode = entry.Metric.EventCode,
-                Magnitude = entry.Metric.Magnitude,
-                Status = entry.Metric.Status,
-                Category = entry.Category,
-                Level = entry.LogLevel.ToString(),
-                Requestor = entry.Metric.Requestor,
-                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId?)
-            };
         }
 
         private async Task SubmitExcepiton(
@@ -218,7 +175,7 @@ namespace BrassLoon.Extensions.Logging
             string level,
             EventId? eventId)
         {
-            Google.Protobuf.WellKnownTypes.Timestamp timestampConverted = timestamp.HasValue ? Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(timestamp.Value) : null;
+            Timestamp timestampConverted = timestamp.HasValue ? Timestamp.FromDateTime(timestamp.Value) : null;
             LogRPC.Protos.LogException logException = new LogRPC.Protos.LogException();
             logException.AppDomain = AppDomain.CurrentDomain.FriendlyName;
             logException.Category = category;
@@ -237,7 +194,7 @@ namespace BrassLoon.Extensions.Logging
             return logException;
         }
 
-        private void MapExcpetionData(Google.Protobuf.Collections.MapField<string, string> map, IDictionary exceptionData)
+        private void MapExcpetionData(MapField<string, string> map, IDictionary exceptionData)
         {
             if (exceptionData != null)
             {
@@ -249,9 +206,9 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
-        private async Task SubmitTraces(List<LogModels.Trace> traces)
+        private async Task SubmitTraces(List<LogMessageEntry> entries)
         {
-            if (traces.Count > 0)
+            if (entries.Count > 0)
             {
                 using (GrpcChannel channel = GrpcChannel.ForAddress(_options.CurrentValue.LogApiBaseAddress))
                 {
@@ -260,19 +217,18 @@ namespace BrassLoon.Extensions.Logging
                         { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
                     };
                     LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);
-                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Trace, Google.Protobuf.WellKnownTypes.Empty> call = client.Create(headers);
-                    foreach (LogModels.Trace trace in traces)
+                    AsyncClientStreamingCall<LogRPC.Protos.Trace, Empty> call = client.Create(headers);
+                    foreach (LogMessageEntry entry in entries)
                     {
                         await call.RequestStream.WriteAsync(
                             new LogRPC.Protos.Trace
                             {
-                                Category = trace.Category,
-                                //Data = trace.Data,
+                                Category = entry.Category,
                                 DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
-                                EventCode = trace.EventCode,
-                                Level = trace.Level,
-                                EventId = trace.EventId.HasValue ? new LogRPC.Protos.EventId { Id = trace.EventId.Value.Id, Name = trace.EventId.Value.Name } : null,
-                                Message = trace.Message
+                                EventCode = entry.Category,
+                                Level = entry.LogLevel.ToString(),
+                                EventId = entry.EventId.Id != default(int) && !string.IsNullOrEmpty(entry.EventId.Name) ? new LogRPC.Protos.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : null,
+                                Message = entry.Message
                             });
                     }
                     await call.RequestStream.CompleteAsync();
@@ -281,9 +237,9 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
-        private async Task SubmitMetrics(List<LogModels.Metric> metrics)
+        private async Task SubmitMetrics(List<LogMessageEntry> entries)
         {
-            if (metrics.Count > 0)
+            if (entries.Count > 0)
             {
                 using (GrpcChannel channel = GrpcChannel.ForAddress(_options.CurrentValue.LogApiBaseAddress))
                 {
@@ -292,27 +248,38 @@ namespace BrassLoon.Extensions.Logging
                         { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
                     };
                     LogRPC.Protos.MetricService.MetricServiceClient client = new LogRPC.Protos.MetricService.MetricServiceClient(channel);
-                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Metric, Google.Protobuf.WellKnownTypes.Empty> call = client.Create(headers);
-                    foreach (LogModels.Metric metric in metrics)
+                    AsyncClientStreamingCall<LogRPC.Protos.Metric, Empty> call = client.Create(headers);
+                    foreach (LogMessageEntry entry in entries)
                     {
-                        Google.Protobuf.WellKnownTypes.Timestamp createTimestamp = metric.CreateTimestamp.HasValue ? Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(metric.CreateTimestamp.Value) : null;
-                        await call.RequestStream.WriteAsync(
-                            new LogRPC.Protos.Metric
-                            {
-                                Category = metric.Category,
-                                CreateTimestamp = createTimestamp,
-                                //Data = 
-                                DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
-                                EventCode = metric.EventCode,
-                                EventId = metric.EventId.HasValue ? new LogRPC.Protos.EventId { Id = metric.EventId.Value.Id, Name = metric.EventId.Value.Name } : null,
-                                Level = metric.Level,
-                                Magnitude = metric.Magnitude,
-                                Requestor = metric.Requestor,
-                                Status = metric.Status
-                            });
+                        Metric metric = entry.Metric;
+                        LogRPC.Protos.Metric request = new LogRPC.Protos.Metric
+                        {
+                            Category = entry.Category,
+                            CreateTimestamp = Timestamp.FromDateTime(metric.CreateTimestamp),
+                            DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
+                            EventCode = metric.EventCode,
+                            EventId = entry.EventId.Id != default(int) && !string.IsNullOrEmpty(entry.EventId.Name) ? new LogRPC.Protos.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : null,
+                            Level = entry.LogLevel.ToString(),
+                            Magnitude = metric.Magnitude,
+                            Requestor = metric.Requestor,
+                            Status = metric.Status
+                        };
+                        MapMetricData(request.Data, metric.Data);
+                        await call.RequestStream.WriteAsync(request);
                     }
                     await call.RequestStream.CompleteAsync();
                     await call;
+                }
+            }
+        }
+
+        private void MapMetricData(MapField<string, string> map, Dictionary<string, string> sourceData)
+        {
+            if (sourceData != null)
+            {
+                foreach (KeyValuePair<string, string> keyValuePair in sourceData)
+                {
+                    map.Add(keyValuePair.Key, keyValuePair.Value);
                 }
             }
         }
@@ -327,19 +294,6 @@ namespace BrassLoon.Extensions.Logging
             };
             LogRPC.Protos.Token token = await client.CreateAsync(request, new CallOptions());
             return token.Value;
-        }
-
-        private LogModels.Trace CreateLogTrace(Guid domainId, LogMessageEntry entry)
-        {
-            return new LogModels.Trace
-            {
-                DomainId = domainId,
-                EventCode = entry.Category,
-                Message = entry.Message,
-                Category = entry.Category,
-                Level = entry.LogLevel.ToString(),
-                EventId = (entry.EventId.Id != default(int) || !string.IsNullOrEmpty(entry.EventId.Name)) ? new LogModels.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : default(LogModels.EventId?)
-            };
         }
 
         protected virtual void Dispose(bool disposing)

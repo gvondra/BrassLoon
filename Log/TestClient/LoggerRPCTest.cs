@@ -2,6 +2,7 @@
 using BrassLoon.Log.TestClient.Settings;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.CommandLine.Help;
 using System.Threading.Tasks;
 
@@ -22,17 +23,21 @@ namespace BrassLoon.Log.TestClient
             using (ILoggerFactory loggerFactory = LoadLogger(_appSettings))
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
-                //logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
-                //logger.LogMetric(
-                //    new EventId(1, "test client"),
-                //    new Metric
-                //    {
-                //        //CreateTimestamp = new DateTime(2023, 1, 1), is not used
-                //        EventCode = "test code",
-                //        Magnitude = 1.23,
-                //        Requestor = "test requestor",
-                //        Status = "500"
-                //    });
+                logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
+                logger.LogMetric(
+                    new EventId(1, "test client"),
+                    new Metric
+                    {
+                        CreateTimestamp = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        EventCode = "test code",
+                        Magnitude = 1.23,
+                        Requestor = "test requestor",
+                        Status = "500",
+                        Data = new Dictionary<string, string>
+                        {
+                            { "data", "value" }
+                        }
+                    });
                 try
                 {
                     ThrowException();
@@ -55,7 +60,6 @@ namespace BrassLoon.Log.TestClient
             {
                 builder.AddBrassLoonLogger((config) =>
                 {
-                    config.AccountApiBaseAddress = settings.AccountAPIBaseAddress;
                     config.LogApiBaseAddress = settings.LogAPIBaseAddress;
                     config.LogDomainId = settings.DomainId;
                     config.LogClientId = settings.ClientId;
