@@ -17,11 +17,14 @@ namespace BrassLoon.Extensions.Logging
         private const int MAX_QUEUE_LENGTH = 10240;
         private readonly Thread _outputThread;
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
+        private readonly IAccessTokenFactory _accessTokenFactory;
         private bool _disposedValue;
         private Queue<LogMessageEntry> _logEntries;
         private bool _exit; 
 
-        public LoggerProcessor(IOptionsMonitor<LoggerConfiguration> options)
+        public LoggerProcessor(
+            IOptionsMonitor<LoggerConfiguration> options,
+            IAccessTokenFactory accessTokenFactory)
         {
             _options = options;
             _exit = false;
@@ -32,6 +35,7 @@ namespace BrassLoon.Extensions.Logging
                 Name = "Log queue processor"
             };
             _outputThread.Start();
+            _accessTokenFactory = accessTokenFactory;
         }
 
         public void Enque(LogMessageEntry entry)
@@ -161,7 +165,7 @@ namespace BrassLoon.Extensions.Logging
             {
                 Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
+                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                 LogRPC.Protos.ExceptionService.ExceptionServiceClient client = new LogRPC.Protos.ExceptionService.ExceptionServiceClient(channel);
                 await client.CreateAsync(Map(exception, timestamp, category, level, eventId), headers: headers);
@@ -214,7 +218,7 @@ namespace BrassLoon.Extensions.Logging
                 {
                     Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
+                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                     LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);
                     AsyncClientStreamingCall<LogRPC.Protos.Trace, Empty> call = client.Create(headers);
@@ -245,7 +249,7 @@ namespace BrassLoon.Extensions.Logging
                 {
                     Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
+                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                     LogRPC.Protos.MetricService.MetricServiceClient client = new LogRPC.Protos.MetricService.MetricServiceClient(channel);
                     AsyncClientStreamingCall<LogRPC.Protos.Metric, Empty> call = client.Create(headers);
@@ -282,18 +286,6 @@ namespace BrassLoon.Extensions.Logging
                     map.Add(keyValuePair.Key, keyValuePair.Value);
                 }
             }
-        }
-
-        private async Task<string> GetAccessToken(GrpcChannel channel)
-        {
-            LogRPC.Protos.TokenService.TokenServiceClient client = new LogRPC.Protos.TokenService.TokenServiceClient(channel);
-            LogRPC.Protos.TokenRequest request = new LogRPC.Protos.TokenRequest
-            {
-                ClientId = _options.CurrentValue.LogClientId.ToString("D"),
-                Secret = _options.CurrentValue.LogClientSecret
-            };
-            LogRPC.Protos.Token token = await client.CreateAsync(request, new CallOptions());
-            return token.Value;
         }
 
         protected virtual void Dispose(bool disposing)
