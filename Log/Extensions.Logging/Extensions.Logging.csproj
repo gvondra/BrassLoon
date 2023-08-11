@@ -30,6 +30,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Protos\exception.proto" />
 	  <None Remove="Protos\metric.proto" />
 	  <None Remove="Protos\token.proto" />
 	</ItemGroup>
@@ -50,10 +51,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Protobuf Include="Protos\event_id.proto" GrpcServices="Client" />
-	  <Protobuf Include="Protos\metric.proto" GrpcServices="Client" />
-	  <Protobuf Include="Protos\token.proto" GrpcServices="Client" />
-	  <Protobuf Include="Protos\trace.proto" GrpcServices="Client" />
+	  <Protobuf Include="Protos\event_id.proto" GrpcServices="Client" Access="Internal" />
+	  <Protobuf Include="Protos\exception.proto" GrpcServices="Client" Access="Internal" />
+	  <Protobuf Include="Protos\metric.proto" GrpcServices="Client" Access="Internal" />
+	  <Protobuf Include="Protos\token.proto" GrpcServices="Client" Access="Internal" />
+	  <Protobuf Include="Protos\trace.proto" GrpcServices="Client" Access="Internal" />
 	</ItemGroup>
 
 </Project>

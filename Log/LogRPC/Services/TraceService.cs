@@ -6,6 +6,7 @@ using LogRPC.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -66,7 +67,7 @@ namespace LogRPC.Services
                         requestStream.Current.EventCode,
                         eventId);
                     innerTrace.Category = requestStream.Current.Category;
-                    //innerTrace.Data
+                    innerTrace.Data = GetData(requestStream.Current.Data);
                     innerTrace.Level = requestStream.Current.Level;
                     innerTrace.Message = requestStream.Current.Message;
                     await _traceSaver.Create(settings, innerTrace);
@@ -78,6 +79,19 @@ namespace LogRPC.Services
                 }
             }
             return new Empty();
+        }
+
+        private object GetData(Google.Protobuf.Collections.MapField<string, string> map)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            if (map != null)
+            {
+                foreach (string key in map.Keys)
+                {
+                    result[key] = map[key];
+                }
+            }
+            return result;
         }
 
         private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, Protos.EventId eventId)

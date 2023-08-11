@@ -2,6 +2,7 @@
 using BrassLoon.Log.TestClient.Settings;
 using Microsoft.Extensions.Logging;
 using System;
+using System.CommandLine.Help;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.TestClient
@@ -21,17 +22,25 @@ namespace BrassLoon.Log.TestClient
             using (ILoggerFactory loggerFactory = LoadLogger(_appSettings))
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
-                logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
-                logger.LogMetric(
-                    new EventId(1, "test client"),
-                    new Metric
-                    {
-                        //CreateTimestamp = new DateTime(2023, 1, 1), is not used
-                        EventCode = "test code",
-                        Magnitude = 1.23,
-                        Requestor = "test requestor",
-                        Status = "500"
-                    }); 
+                //logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
+                //logger.LogMetric(
+                //    new EventId(1, "test client"),
+                //    new Metric
+                //    {
+                //        //CreateTimestamp = new DateTime(2023, 1, 1), is not used
+                //        EventCode = "test code",
+                //        Magnitude = 1.23,
+                //        Requestor = "test requestor",
+                //        Status = "500"
+                //    });
+                try
+                {
+                    ThrowException();
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(LogLevel.Error, new EventId(1, "test client"), ex, ex.Message);
+                }
             }
             DateTime finish = DateTime.Now;
             TimeSpan duration = finish.Subtract(start);
@@ -53,6 +62,20 @@ namespace BrassLoon.Log.TestClient
                     config.LogClientSecret = settings.Secret;
                 });
             });
+        }
+
+        private static void ThrowException()
+        {
+            try
+            {
+                Exception exception = new ArgumentException("test argument exception");
+                exception.Data.Add("test guid", Guid.NewGuid());
+                throw exception;
+            }
+            catch (System.Exception ex)
+            {
+                throw new ApplicationException("outer exception", ex);
+            }
         }
     }
 }

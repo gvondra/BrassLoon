@@ -17,7 +17,7 @@ message Metric {
 	string DomainId = 2;
     string EventCode = 3;
     google.protobuf.DoubleValue Magnitude = 4;
-    map<string, google.protobuf.Any> Data = 5;
+    map<string, string> Data = 5;
     google.protobuf.Timestamp CreateTimestamp = 6;
     string Status = 7;
     string Requestor = 8;

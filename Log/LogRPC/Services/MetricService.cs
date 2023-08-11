@@ -6,6 +6,7 @@ using LogRPC.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,10 +48,10 @@ namespace LogRPC.Services
                 try
                 {
                     if (string.IsNullOrEmpty(requestStream.Current.DomainId))
-                        throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Trace.DomainId)} parameter value");
+                        throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Metric.DomainId)} parameter value");
                     Guid domainId = Guid.Parse(requestStream.Current.DomainId);
                     if (domainId.Equals(Guid.Empty))
-                        throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Trace.DomainId)} parameter value");
+                        throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Metric.DomainId)} parameter value");
                     if (!(await _domainAcountAccessVerifier.HasAccess(
                         _settings.Value,
                         domainId,
@@ -66,7 +67,7 @@ namespace LogRPC.Services
                         requestStream.Current.EventCode,
                         eventId);
                     innerMetric.Category = requestStream.Current.Category;
-                    //innerMetric.Data
+                    innerMetric.Data = GetData(requestStream.Current.Data);
                     innerMetric.Level = requestStream.Current.Level;
                     innerMetric.Magnitude = requestStream.Current.Magnitude;
                     innerMetric.Requestor = requestStream.Current.Requestor;
@@ -80,6 +81,19 @@ namespace LogRPC.Services
                 }
             }
             return new Empty();
+        }
+
+        private object GetData(Google.Protobuf.Collections.MapField<string, string> map)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            if (map != null)
+            {
+                foreach (string key in map.Keys)
+                {
+                    result[key] = map[key];
+                }
+            }
+            return result;
         }
 
         private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, Protos.EventId eventId)

@@ -186,7 +186,7 @@ namespace LogAPI.Controllers
             List<IException> allExceptions,
             IException parentException = null)
         {
-            IEventId innerEventId = await GetInnerEventId(settings, exception.DomainId.Value, exception.EventId);
+            IEventId innerEventId = await GetInnerEventId(settings, domainId, exception.EventId);
             IException innerException = exceptionFactory.Create(domainId, timestamp, parentException, innerEventId);
             mapper.Map<LogModels.Exception, IException>(exception, innerException);
             allExceptions.Add(innerException);

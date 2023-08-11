@@ -43,6 +43,7 @@ namespace LogRPC
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapGrpcService<ExceptionService>();
             app.MapGrpcService<MetricService>();
             app.MapGrpcService<TokenService>();
             app.MapGrpcService<TraceService>();
