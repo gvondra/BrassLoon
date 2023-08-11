@@ -9,7 +9,7 @@ namespace LogRPC.Services
 {
     public class TraceService : Protos.TraceService.TraceServiceBase
     {
-        [Authorize]
+        [Authorize("BL:AUTH")]
         public override async Task<Empty> Create(IAsyncStreamReader<Trace> requestStream, ServerCallContext context)
         {
             while (await requestStream.MoveNext())

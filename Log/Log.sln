@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Logging", "Exten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClient", "TestClient\TestClient.csproj", "{5E45E7FE-7F36-4959-8C7B-2783650C8445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogRPC", "LogRPC\LogRPC.csproj", "{C208600E-0FC7-4DF4-B951-F0EBCE943482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogRPC", "LogRPC\LogRPC.csproj", "{C208600E-0FC7-4DF4-B951-F0EBCE943482}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

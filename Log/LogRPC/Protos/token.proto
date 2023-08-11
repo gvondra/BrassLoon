@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "LogRPC.Protos";
+
+service TokenService {
+	rpc Create(TokenRequest) returns (Token);
+}
+
+message TokenRequest {
+	string ClientId = 1;
+	string Secret = 2;
+}
+
+message Token {
+	string Value = 1;
+}

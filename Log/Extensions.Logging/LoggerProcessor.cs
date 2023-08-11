@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.Log;
 using BrassLoon.Interface.Log.Models;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using System;
@@ -154,10 +155,10 @@ namespace BrassLoon.Extensions.Logging
                                 ).Wait();
                         }
                     }
-                    //if (traces.Count > 0) 
-                    //    SubmitTraces(traces).Wait();  
-                    if (traces.Count > 0)
-                        _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
+                    if (traces.Count > 0) 
+                        SubmitTraces(traces).Wait();  
+                    //if (traces.Count > 0)
+                    //    _traceService.Create(settings, configuration.LogDomainId, traces).Wait();
                     if (metrics.Count > 0)
                         _metricService.Create(settings, configuration.LogDomainId, metrics).Wait();
                 }
@@ -187,11 +188,14 @@ namespace BrassLoon.Extensions.Logging
         {   
             if (traces.Count > 0)
             {
-                LoggerConfiguration configuration = _options.CurrentValue;
-                using (GrpcChannel channel = GrpcChannel.ForAddress("http://localhost:5001"))
+                using (GrpcChannel channel = GrpcChannel.ForAddress(_options.CurrentValue.LogApiBaseAddress))
                 {
-                    LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);
-                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Trace, Google.Protobuf.WellKnownTypes.Empty> call = client.Create();
+                    Metadata headers = new Metadata()
+                    {
+                        { "Authorization", string.Format("Bearer {0}", await GetAccessToken(channel)) }
+                    };
+                    LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);                    
+                    Grpc.Core.AsyncClientStreamingCall<LogRPC.Protos.Trace, Google.Protobuf.WellKnownTypes.Empty> call = client.Create(headers);
                     foreach (Trace trace in traces)
                     {
                         await call.RequestStream.WriteAsync(
@@ -199,7 +203,7 @@ namespace BrassLoon.Extensions.Logging
                             {
                                 Category = trace.Category,
                                 //Data = trace.Data,
-                                DomainId = configuration.LogDomainId.ToString("D"),
+                                DomainId = _options.CurrentValue.LogDomainId.ToString("D"),
                                 EventCode = trace.EventCode,
                                 Level = trace.Level,
                                 //EventId = 
@@ -210,6 +214,18 @@ namespace BrassLoon.Extensions.Logging
                     await call;
                 }
             }
+        }
+
+        private async Task<string> GetAccessToken(GrpcChannel channel)
+        {
+            LogRPC.Protos.TokenService.TokenServiceClient client = new LogRPC.Protos.TokenService.TokenServiceClient(channel);
+            LogRPC.Protos.TokenRequest request = new LogRPC.Protos.TokenRequest
+            {
+                ClientId = _options.CurrentValue.LogClientId.ToString("D"),
+                Secret = _options.CurrentValue.LogClientSecret
+            };
+            LogRPC.Protos.Token token = await client.CreateAsync(request, new CallOptions());
+            return token.Value;
         }
 
         private LogModels.Trace CreateLogTrace(Guid domainId, LogMessageEntry entry)

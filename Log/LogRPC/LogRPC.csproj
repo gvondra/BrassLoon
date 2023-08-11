@@ -24,13 +24,14 @@
 
 	<ItemGroup>
 		<Protobuf Include="Protos\event_id.proto" GrpcServices="Server" />
-		<Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+		<Protobuf Include="Protos\token.proto" GrpcServices="Server" />
 		<Protobuf Include="Protos\trace.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="7.0.*" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.*" />
+		<PackageReference Include="BrassLoon.Interface.Account" Version="2.3.*" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.40.*" />
 	</ItemGroup>
 
