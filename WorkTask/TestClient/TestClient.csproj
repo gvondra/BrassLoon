@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="7.0.*" />
+    <PackageReference Include="Autofac" Version="7.1.*" />
     <PackageReference Include="BrassLoon.Interface.Account" Version="2.3.*" />
     <PackageReference Include="BrassLoon.Interface.WorkTask" Version="1.0.0-prerelease.*" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.*" />

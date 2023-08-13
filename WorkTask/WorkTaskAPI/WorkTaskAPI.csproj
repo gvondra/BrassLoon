@@ -22,7 +22,7 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="7.0.*" />
+    <PackageReference Include="Autofac" Version="7.1.*" />
 	<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.*" />
 	<PackageReference Include="AutoMapper" Version="12.0.*" />
 	<PackageReference Include="BrassLoon.Interface.Account" Version="2.3.*" />
