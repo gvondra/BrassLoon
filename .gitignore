@@ -368,6 +368,8 @@ FodyWeavers.xsd
 !/[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
+/Config/ConfigAPI/**/launchSettings.json
+/Config/TestClient/**/launchSettings.json
 /Log/Purger/**/launchSettings.json
 # 2023 August, Log/LoggingTest removed
 /Log/LoggingTest/**/launchSettings.json
