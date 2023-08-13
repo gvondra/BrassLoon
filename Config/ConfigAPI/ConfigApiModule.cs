@@ -6,7 +6,7 @@ namespace ConfigAPI
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterInstance(new SettingsFactory());
+            builder.RegisterType<SettingsFactory>().SingleInstance();
             builder.RegisterModule(new BrassLoon.Config.Core.ConfigModule());
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
             builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());

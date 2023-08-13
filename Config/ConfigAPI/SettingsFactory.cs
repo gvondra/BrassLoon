@@ -1,13 +1,17 @@
 ﻿using BrassLoon.CommonAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BrassLoon.Interface.Account;
 
 namespace ConfigAPI
 {
     public class SettingsFactory
     {
+        private readonly ITokenService _tokenService;
+
+        public SettingsFactory(ITokenService tokenService)
+        {
+            _tokenService = tokenService;
+        }
+
         public CoreSettings CreateCore(CommonApiSettings settings)
         {
             return new CoreSettings(settings);
@@ -24,6 +28,14 @@ namespace ConfigAPI
         public LogSettings CreateLog(CommonApiSettings settings, string accessToken)
         {
             return new LogSettings(accessToken)
+            {
+                BaseAddress = settings.LogApiBaseAddress
+            };
+        }
+
+        public LogSettings CreateLog(CommonApiSettings settings)
+        {
+            return new LogSettings(settings, _tokenService)
             {
                 BaseAddress = settings.LogApiBaseAddress
             };

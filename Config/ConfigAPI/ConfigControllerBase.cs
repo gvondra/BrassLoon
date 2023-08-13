@@ -1,11 +1,6 @@
 ﻿using BrassLoon.CommonAPI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConfigAPI
 {
@@ -29,6 +24,9 @@ namespace ConfigAPI
                 _loggSettings = _settingsFactory.CreateLog(settings, accessToken);
             return _loggSettings;
         }
+
+        [NonAction]
+        protected override BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings) => _settingsFactory.CreateLog(settings);
 
         [NonAction]
         protected override BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken)

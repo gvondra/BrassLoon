@@ -113,6 +113,8 @@ namespace BrassLoon.CommonAPI
         protected abstract BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken);
         [NonAction]
         protected abstract BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings, string accessToken);
+        [NonAction]
+        protected virtual BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings) => throw new NotImplementedException();
 
         [NonAction]
         protected async Task LogException(Exception ex, IExceptionService exceptionService, CommonApiSettings settings)
@@ -120,16 +122,28 @@ namespace BrassLoon.CommonAPI
             try
             {
                 Console.WriteLine(ex.ToString());
-                Guid loggingDomainId = Guid.Empty;
-                bool loggingDomainIdIsSet = false;
-                if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId))
-                    loggingDomainIdIsSet = Guid.TryParse(settings.ExceptionLoggingDomainId, out loggingDomainId);
-                if (loggingDomainIdIsSet && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
+                if (settings.LoggingDomainId.HasValue
+                    && settings.LoggingClientId.HasValue
+                    && !string.IsNullOrEmpty(settings.LoggingClientSecret)
+                    && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
+                {
                     await exceptionService.Create(
-                        CreateLogSettings(settings, GetAccessToken()),
-                        Guid.Parse(settings.ExceptionLoggingDomainId),
-                        ex
-                        );
+                        CreateLogSettings(settings),
+                        settings.LoggingDomainId.Value,
+                        ex);
+                }
+                else
+                {
+                    Guid loggingDomainId = Guid.Empty;
+                    bool loggingDomainIdIsSet = false;
+                    if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId))
+                        loggingDomainIdIsSet = Guid.TryParse(settings.ExceptionLoggingDomainId, out loggingDomainId);
+                    if (loggingDomainIdIsSet && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
+                        await exceptionService.Create(
+                            CreateLogSettings(settings, GetAccessToken()),
+                            loggingDomainId,
+                            ex);
+                }
             }
             catch (Exception innerException)
             {

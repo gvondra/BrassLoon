@@ -5,12 +5,15 @@ namespace BrassLoon.CommonAPI
 {
     public class AccountSettings : ISettings
     {
-        private string _accessToken;
+        private readonly string _accessToken;
 
         public AccountSettings(string accessToken)
         {
             _accessToken = accessToken;
         }
+
+        public AccountSettings()
+        { }
 
         public string BaseAddress { get; set; }
 
