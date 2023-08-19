@@ -375,4 +375,5 @@ FodyWeavers.xsd
 /Log/LoggingTest/**/launchSettings.json
 /Log/TestClient/**/launchSettings.json
 /WorkTask/TestClient/**/launchSettings.json
+/WorkTask/WorkTaskAPI/**/launchSettings.json
 /Account/TestClient/**/launchSettings.json
