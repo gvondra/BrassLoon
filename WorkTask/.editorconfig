@@ -119,3 +119,6 @@ dotnet_style_qualification_for_property = false:silent
 
 # IDE0032: Use auto property
 dotnet_diagnostic.IDE0032.severity = none
+
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none

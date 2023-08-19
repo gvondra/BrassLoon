@@ -7,6 +7,7 @@ using BrassLoon.WorkTask.Framework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,13 @@ namespace WorkTaskAPI.Controllers
     [ApiController]
     public class WorkTaskCommentController : WorkTaskControllerBase
     {
+        private readonly ILogger<WorkTaskCommentController> _logger;
         private readonly IWorkTaskCommentFactory _workTaskCommentFactory;
         private readonly ICommentSaver _commentSaver;
 
         public WorkTaskCommentController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
+            ILogger<WorkTaskCommentController> logger,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,
             IDomainService domainService,
@@ -31,6 +34,7 @@ namespace WorkTaskAPI.Controllers
             ICommentSaver commentSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _workTaskCommentFactory = workTaskCommentFactory;
             _commentSaver = commentSaver;
         }
@@ -67,7 +71,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -114,7 +118,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

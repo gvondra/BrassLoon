@@ -7,6 +7,7 @@ using BrassLoon.WorkTask.Framework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,13 @@ namespace WorkTaskAPI.Controllers
     [ApiController]
     public class WorkGroupController : WorkTaskControllerBase
     {
+        private readonly ILogger<WorkGroupController> _logger;
         private readonly IWorkGroupFactory _workGroupFactory;
         private readonly IWorkGroupSaver _workGroupSaver;
 
         public WorkGroupController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
+            ILogger<WorkGroupController> logger,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,
             IDomainService domainService,
@@ -31,6 +34,7 @@ namespace WorkTaskAPI.Controllers
             IWorkGroupSaver workGroupSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _workGroupFactory = workGroupFactory;
             _workGroupSaver = workGroupSaver;
         }
@@ -71,7 +75,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -116,7 +120,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -160,7 +164,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -204,7 +208,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -262,7 +266,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -300,7 +304,7 @@ namespace WorkTaskAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
