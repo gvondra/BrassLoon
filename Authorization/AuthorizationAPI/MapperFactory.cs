@@ -20,7 +20,7 @@ namespace AuthorizationAPI
                 ;
             config.CreateMap<IClient, Client>();
             config.CreateMap<Role, IRole>()
-                .ForMember(r => r.IsActive, exp => exp.MapFrom(r => r.IsActive ?? true))    
+                .ForMember(r => r.IsActive, exp => exp.MapFrom(r => r.IsActive ?? true))
                 ;
             config.CreateMap<IRole, Role>();
             config.CreateMap<SigningKey, ISigningKey>()

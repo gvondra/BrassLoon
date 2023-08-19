@@ -2,13 +2,13 @@
 using BrassLoon.JwtUtility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
 {
@@ -16,19 +16,20 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class JwksController : AccountControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<JwksController> _logger;
 
         public JwksController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService)
-            : base(settings, settingsFactory)
+            IExceptionService exceptionService,
+            ILogger<JwksController> logger)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
         }
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 90)]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             try
             {
@@ -40,7 +41,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }            
         }

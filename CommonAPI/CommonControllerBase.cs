@@ -29,7 +29,7 @@ namespace BrassLoon.CommonAPI
             token = (token ?? string.Empty).Trim();
             if (!string.IsNullOrEmpty(token))
             {
-                Match match = Regex.Match(token, @"(?<=^Bearer\s+).+$", RegexOptions.IgnoreCase);
+                Match match = Regex.Match(token, @"(?<=^Bearer\s+).+$", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200));
                 if (match.Success)
                     token = match.Value;
             }
@@ -37,7 +37,7 @@ namespace BrassLoon.CommonAPI
         }
 
         [NonAction]
-        protected bool UserCanAccessAccount(Guid accountId)
+        protected virtual bool UserCanAccessAccount(Guid accountId)
         {
             string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
             return accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));

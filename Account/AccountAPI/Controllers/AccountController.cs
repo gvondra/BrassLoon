@@ -3,10 +3,10 @@ using BrassLoon.Account.Framework;
 using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
@@ -20,20 +20,21 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class AccountController : AccountControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<AccountController> _logger;
         private readonly IAccountFactory _accountFactory;
         private readonly IAccountSaver _accountSaver;
         private readonly IUserFactory _userFactory;
 
         public AccountController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            IExceptionService exceptionService,
+            ILogger<AccountController> logger,
             IAccountFactory accountFactory,
             IAccountSaver accountSaver,
             IUserFactory userFactory)
-            : base(settings, settingsFactory)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _accountFactory = accountFactory;
             _accountSaver = accountSaver;
             _userFactory = userFactory;
@@ -54,7 +55,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -67,7 +68,7 @@ namespace AccountAPI.Controllers
             CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
             IUser user = await GetUser(_userFactory, settings);
             IEnumerable<IAccount> accounts = await _accountFactory.GetByUserId(settings, user.UserId);
-            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+            IMapper mapper = CreateMapper();
             result = Ok(
                 accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
                 );
@@ -82,7 +83,7 @@ namespace AccountAPI.Controllers
             IEnumerable<IUser> users = await _userFactory.GetByEmailAddress(settings, emailAddress);
             ConcurrentBag<Task<IEnumerable<IAccount>>> accounts = new ConcurrentBag<Task<IEnumerable<IAccount>>>();
             users.AsParallel().ForAll(user => accounts.Add(_accountFactory.GetByUserId(settings, user.UserId)));
-            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+            IMapper mapper = CreateMapper();
             result = Ok(
                 (await Task.WhenAll<IEnumerable<IAccount>>(accounts))
                 .SelectMany(results => results)
@@ -114,14 +115,14 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<Account>(account));
                     }
                 }
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -144,7 +145,7 @@ namespace AccountAPI.Controllers
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUser user = await GetUser(_userFactory, settings);
                     IAccount innerAccount = _accountFactory.Create();
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     mapper.Map<Account, IAccount>(account, innerAccount);
                     await _accountSaver.Create(settings, user.UserId, innerAccount);
                     result = Ok(
@@ -154,7 +155,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -184,7 +185,7 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<Account, IAccount>(account, innerAccount);
                         await _accountSaver.Update(settings, innerAccount);
                         result = Ok(
@@ -195,7 +196,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -234,7 +235,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -262,7 +263,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -283,7 +284,7 @@ namespace AccountAPI.Controllers
                 {         
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     result = Ok(
                         innerUsers.Select<IUser, User>(innerUser => mapper.Map<User>(innerUser))
                         );
@@ -291,7 +292,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

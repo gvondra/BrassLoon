@@ -7,14 +7,13 @@ using BrassLoon.JwtUtility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
@@ -23,11 +22,10 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class TokenController : AccountControllerBase
     {
-
         private const string JWT_ISSUER = "urn:brassloon";
         private const string JWT_AUDIENCE = "urn:brassloon";
 
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<TokenController> _logger;
         private readonly IAccountFactory _accountFactory;
         private readonly IClientFactory _clientFactory;
         private readonly IEmailAddressFactory _emailAddressFactory;
@@ -38,7 +36,8 @@ namespace AccountAPI.Controllers
 
         public TokenController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            IExceptionService exceptionService,
+            ILogger<TokenController> logger,
             IAccountFactory accountFactory,
             IClientFactory clientFactory,
             IEmailAddressFactory emailAddressFactory,
@@ -46,9 +45,9 @@ namespace AccountAPI.Controllers
             ISecretProcessor secretProcessor,
             IUserFactory userFactory,
             IUserSaver userSaver)
-            : base(settings, settingsFactory)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _accountFactory = accountFactory;
             _clientFactory = clientFactory;
             _emailAddressFactory = emailAddressFactory;
@@ -69,7 +68,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }            
         }
@@ -105,7 +104,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

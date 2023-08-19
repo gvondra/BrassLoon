@@ -6,6 +6,7 @@ using BrassLoon.Interface.Account.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,19 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class UserController : AccountControllerBase
     {
-        private readonly Lazy<Log.IExceptionService> _exceptionService;
+        private readonly ILogger<UserController> _logger;
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
         public UserController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<Log.IExceptionService> exceptionService,
+            Log.IExceptionService exceptionService,
+            ILogger<UserController> logger,
             IUserFactory userFactory,
             IUserSaver userSaver)
-            : base(settings, settingsFactory) 
+            : base(settings, settingsFactory, exceptionService) 
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _userFactory = userFactory;
             _userSaver = userSaver;
         }
@@ -46,7 +48,7 @@ namespace AccountAPI.Controllers
                 if (result == null && !string.IsNullOrEmpty(emailAddress))
                 {
                     ISettings settings = _settingsFactory.CreateCore(_settings.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     users = (await _userFactory.GetByEmailAddress(settings, emailAddress))
                         .Select<IUser, User>(u => mapper.Map<User>(u));                    
                 }
@@ -59,7 +61,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -84,13 +86,13 @@ namespace AccountAPI.Controllers
                 }
                 if (result == null && user != null)
                 {
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     result = Ok(mapper.Map<User>(user));
                 }
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -125,7 +127,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -171,7 +173,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

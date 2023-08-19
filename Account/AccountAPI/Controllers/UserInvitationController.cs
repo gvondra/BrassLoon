@@ -7,6 +7,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class UserInvitationController : AccountControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<UserInvitationController> _logger;
         private readonly IAccountFactory _accountFactory;
         private readonly IAccountSaver _accountSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
@@ -32,7 +33,8 @@ namespace AccountAPI.Controllers
 
         public UserInvitationController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            IExceptionService exceptionService,
+            ILogger<UserInvitationController> logger,
             IAccountFactory accountFactory,
             IAccountSaver accountSaver,
             IEmailAddressFactory emailAddressFactory,
@@ -40,9 +42,9 @@ namespace AccountAPI.Controllers
             IUserFactory userFactory,
             IUserInvitationFactory userInvitationFactory,
             IUserInvitationSaver userInvitationSaver)
-            : base(settings, settingsFactory)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _accountFactory = accountFactory;
             _accountSaver = accountSaver;
             _emailAddressFactory = emailAddressFactory;
@@ -76,7 +78,7 @@ namespace AccountAPI.Controllers
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUserInvitation> innerInvitations = await _userInvitationFactory.GetByAccountId(settings, accountId.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     result = Ok(
                         await Task.WhenAll(
                             innerInvitations.Select<IUserInvitation, Task<UserInvitation>>(innerInvitation => Map(mapper, settings, innerInvitation))
@@ -85,7 +87,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -124,7 +126,7 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(
                             await Map(mapper, settings, innerInvitation)
                             );
@@ -133,7 +135,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -189,7 +191,7 @@ namespace AccountAPI.Controllers
                             userInvitation.EmailAddress
                             );
                         IUserInvitation innerInvitation = _userInvitationFactory.Create(account, emailAddress);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
                         innerInvitation.Status = UserInvitationStatus.Created;
                         await _userInvitationSaver.Create(settings, innerInvitation);
@@ -199,7 +201,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -238,7 +240,7 @@ namespace AccountAPI.Controllers
                         {
                             await AddAccountUser(_userFactory, _accountSaver, settings, innerInvitation.AccountId);
                         }
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
                         await _userInvitationSaver.Update(settings, innerInvitation);
                         result = Ok(await Map(mapper, settings, innerInvitation));
@@ -247,7 +249,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

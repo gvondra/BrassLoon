@@ -6,6 +6,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,20 +19,21 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class DomainController : AccountControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<DomainController> _logger;
         private readonly IAccountFactory _accountFactory;
         private readonly IDomainFactory _domainFactory;
         private readonly IDomainSaver _domainSaver;
 
         public DomainController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            IExceptionService exceptionService,
+            ILogger<DomainController> logger,
             IAccountFactory accountFactory,
             IDomainFactory domainFactory,
             IDomainSaver domainSaver)
-            : base(settings, settingsFactory)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _accountFactory = accountFactory;
             _domainFactory = domainFactory;
             _domainSaver = domainSaver;
@@ -57,7 +59,7 @@ namespace AccountAPI.Controllers
                         domains = await _domainFactory.GetDeletedByAccountId(settings, id.Value);
                     else
                         domains = await _domainFactory.GetByAccountId(settings, id.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     result = Ok(
                         domains.Select<IDomain, Domain>(d => mapper.Map<Domain>(d))
                         );
@@ -65,7 +67,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }            
             return result;
@@ -91,14 +93,14 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
                 }
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -124,7 +126,7 @@ namespace AccountAPI.Controllers
                         result = NotFound();
                     else
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         AccountDomain accountDomain = mapper.Map<AccountDomain>(innerDomain);
                         accountDomain.Account = mapper.Map<Account>(await _accountFactory.Get(settings, innerDomain.AccountId));
                         result = Ok(accountDomain);
@@ -133,7 +135,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -159,7 +161,7 @@ namespace AccountAPI.Controllers
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Create(domain.AccountId.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     mapper.Map<Domain, IDomain>(domain, innerDomain);
                     await _domainSaver.Create(settings, innerDomain);
                     result = Ok(mapper.Map<Domain>(innerDomain));
@@ -167,7 +169,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -197,7 +199,7 @@ namespace AccountAPI.Controllers
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<Domain, IDomain>(domain, innerDomain);
                         await _domainSaver.Update(settings, innerDomain);
                         result = Ok(mapper.Map<Domain>(innerDomain));
@@ -206,7 +208,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -245,14 +247,14 @@ namespace AccountAPI.Controllers
                     {
                         innerDomain.Deleted = deleted;
                         await _domainSaver.Update(settings, innerDomain);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
                 }
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

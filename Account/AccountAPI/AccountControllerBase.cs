@@ -1,41 +1,46 @@
-﻿using BrassLoon.Account.Framework;
+﻿using AutoMapper;
+using BrassLoon.Account.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AccountAPI
 {
-    public abstract class AccountControllerBase : ControllerBase
+    public abstract class AccountControllerBase : CommonControllerBase
     {
         protected readonly IOptions<Settings> _settings;
         protected readonly SettingsFactory _settingsFactory;
+        protected readonly IExceptionService _exceptionService;
+        private readonly MapperFactory _mapperFactory;
+        private BrassLoon.Interface.Log.ISettings _loggSettings;
+        private BrassLoon.Interface.Account.ISettings _accountSettings;
+        private CoreSettings _coreSettings;
 
         protected AccountControllerBase(IOptions<Settings> settings,
-            SettingsFactory settingsFactory)
+            SettingsFactory settingsFactory,
+            IExceptionService exceptionService)
         {
             _settings = settings;
             _settingsFactory = settingsFactory;
+            _exceptionService = exceptionService;
         }
 
         [NonAction]
         protected async Task<IUser> GetUser(IUserFactory userFactory, BrassLoon.CommonCore.ISettings settings)
         {
-            string referenceId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            string referenceId = GetCurrentUserReferenceId();
             return await userFactory.GetByReferenceId(settings, referenceId);
         }
 
         [NonAction]
-        protected bool UserCanAccessAccount(Guid accountId)
+        protected override bool UserCanAccessAccount(Guid accountId)
         {
-            bool result;
-            string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
-            result = accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
+            bool result = base.UserCanAccessAccount(accountId);
             if (!result)
             {
                 result = User.Claims.Any(
@@ -46,38 +51,31 @@ namespace AccountAPI
         }
 
         [NonAction]
-        protected string GetAccessToken()
+        protected IMapper CreateMapper() => _mapperFactory.Create();
+
+        [NonAction]
+        protected BrassLoon.Interface.Log.ISettings CreateLogSettings() => CreateLogSettings(_settings.Value, GetAccessToken());
+
+        [NonAction]
+        protected override BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings, string accessToken)
         {
-            string token = this.Request.Headers.Where(h => string.Equals("Authorization", h.Key, StringComparison.OrdinalIgnoreCase))
-                .Select(h => h.Value.FirstOrDefault())
-                .FirstOrDefault();
-            token = (token ?? string.Empty).Trim();
-            if (!string.IsNullOrEmpty(token))
-            {
-                Match match = Regex.Match(token, @"(?<=^Bearer\s+).+$", RegexOptions.IgnoreCase);
-                if (match.Success)
-                    token = match.Value;
-            }
-            return token;
+            if (_loggSettings == null)
+                _loggSettings = _settingsFactory.CreateLog(settings, accessToken);
+            return _loggSettings;
         }
 
         [NonAction]
-        protected async Task LogException(Exception ex, IExceptionService exceptionService, SettingsFactory settingsFactory, Settings settings)
+        protected override BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken) => throw new NotImplementedException();
+
+        [NonAction]
+        protected CoreSettings CreateCoreSettings()
         {
-            try
-            {
-                Console.WriteLine(ex.ToString());
-                if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
-                    await exceptionService.Create(
-                        settingsFactory.CreateLog(settings, GetAccessToken()),
-                        Guid.Parse(settings.ExceptionLoggingDomainId),
-                        ex
-                        );
-            }
-            catch (Exception innerException)
-            {
-                Console.Write(innerException.ToString());
-            }
+            if (_coreSettings == null)
+                _coreSettings = _settingsFactory.CreateCore(_settings.Value);
+            return _coreSettings;
         }
+
+        [NonAction]
+        protected Task LogException(Exception ex) => LogException(ex, _exceptionService, _settings.Value);
     }
 }

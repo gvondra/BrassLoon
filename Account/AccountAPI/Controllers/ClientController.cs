@@ -6,6 +6,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,20 +19,21 @@ namespace AccountAPI.Controllers
     [ApiController]
     public class ClientController : AccountControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<ClientController> _logger;
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
         private readonly ISecretProcessor _secretProcessor;
 
         public ClientController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            IExceptionService exceptionService,
+            ILogger<ClientController> logger,
             IClientFactory clientFactory,
             IClientSaver clientSaver,
             ISecretProcessor secretProcessor)
-            : base(settings, settingsFactory)
+            : base(settings, settingsFactory, exceptionService)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;
             _secretProcessor = secretProcessor;
@@ -59,7 +61,7 @@ namespace AccountAPI.Controllers
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IClient> clients = await _clientFactory.GetByAccountId(settings, id.Value);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     result = Ok(
                         clients.Select<IClient, Client>(d => mapper.Map<Client>(d))
                         );
@@ -67,7 +69,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }            
             return result;
@@ -93,7 +95,7 @@ namespace AccountAPI.Controllers
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         result = Ok(
                             mapper.Map<Client>(client)
                             );
@@ -102,7 +104,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -131,7 +133,7 @@ namespace AccountAPI.Controllers
                 if (result == null)
                 {
                     IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret);
-                    IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                    IMapper mapper = CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     await _clientSaver.Create(settings, innerClient);
@@ -140,7 +142,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -172,7 +174,7 @@ namespace AccountAPI.Controllers
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        IMapper mapper = CreateMapper();
                         mapper.Map<Client, IClient>(client, innerClient);
                         await _clientSaver.Update(settings, innerClient, client.Secret);
                         result = Ok(mapper.Map<Client>(innerClient));
@@ -181,7 +183,7 @@ namespace AccountAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settingsFactory, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
