@@ -5,7 +5,6 @@ using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -18,7 +17,7 @@ namespace BrassLoon.Authorization.Core
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleDataSaver _roleDataSaver;
         private IEmailAddress _emailAddress;
-        private bool _saveEmailAddress = false;
+        private bool _saveEmailAddress;
         private List<IRole> _roles;
         private List<IRole> _addRoles;
         private List<IRole> _removeRoles;

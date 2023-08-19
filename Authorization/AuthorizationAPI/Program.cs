@@ -1,13 +1,19 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using BrassLoon.CommonAPI;
+using BrassLoon.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if !DEBUG
+using Microsoft.Extensions.Logging;
+#endif
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using System;
 
 namespace AuthorizationAPI
 {
@@ -20,6 +26,26 @@ namespace AuthorizationAPI
             builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthorizationAPIModule()));
             // Add services to the container.
             builder.Services.Configure<Settings>(builder.Configuration);
+
+            builder.Services.AddLogging(b =>
+            {
+#if !DEBUG
+                b.ClearProviders();
+#endif
+                Settings settings = new Settings();
+                builder.Configuration.Bind(settings);
+                if (settings.LoggingDomainId.HasValue && !string.IsNullOrEmpty(settings.LogApiBaseAddress) && settings.LoggingClientId.HasValue)
+                {
+                    b.AddBrassLoonLogger(c =>
+                    {
+                        c.LogApiBaseAddress = settings.LogApiBaseAddress;
+                        c.LogDomainId = settings.LoggingDomainId.Value;
+                        c.LogClientId = settings.LoggingClientId.Value;
+                        c.LogClientSecret = settings.LoggingClientSecret;
+                    });
+                }
+            });
+
             builder.Services.AddControllers()
             .AddNewtonsoftJson(o =>
             {
@@ -59,7 +85,7 @@ namespace AuthorizationAPI
                         Id = "Bearer"
                     }
                     },
-                    new string[] { }
+                    Array.Empty<string>()
                 }
                 });
             });

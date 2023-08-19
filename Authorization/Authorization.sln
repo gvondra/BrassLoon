@@ -19,7 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "..\CommonAPI\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationAPI", "AuthorizationAPI\AuthorizationAPI.csproj", "{532E3BD5-CE5F-49C5-8E90-FED313B8F5AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization.CoreTest", "Authorization.CoreTest\Authorization.CoreTest.csproj", "{52A8E791-B72F-4D6B-9C35-FF6A79A4AB70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authorization.CoreTest", "Authorization.CoreTest\Authorization.CoreTest.csproj", "{52A8E791-B72F-4D6B-9C35-FF6A79A4AB70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC07A027-6BD2-48E0-88B4-FF93A1B73B82}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

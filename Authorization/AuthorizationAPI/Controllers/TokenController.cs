@@ -7,6 +7,7 @@ using BrassLoon.JwtUtility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -22,6 +23,7 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class TokenController : AuthorizationContollerBase
     {
+        private readonly ILogger<TokenController> _logger;
         private readonly IClientFactory _clientFactory;
         private readonly IEmailAddressFactory _emailAddressFactory;
         private readonly ISigningKeyFactory _signingKeyFactory;
@@ -31,6 +33,7 @@ namespace AuthorizationAPI.Controllers
         public TokenController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<TokenController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             IClientFactory clientFactory,
@@ -40,6 +43,7 @@ namespace AuthorizationAPI.Controllers
             IUserSaver userSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _clientFactory = clientFactory;
             _emailAddressFactory = emailAddressFactory;
             _signingKeyFactory = signingKeyFactory;
@@ -72,7 +76,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
@@ -168,16 +172,16 @@ namespace AuthorizationAPI.Controllers
         private Claim GetUserNameClaim() => User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase));
 
         [NonAction]
-        private async Task<List<string>> GetRoles(CoreSettings settings, IUser user) => await GetRoles(await user.GetRoles(settings));
+        private static async Task<List<string>> GetRoles(CoreSettings settings, IUser user) => await GetRoles(await user.GetRoles(settings));
 
         [NonAction]
-        private async Task<List<string>> GetRoles(CoreSettings settings, IClient client) => await GetRoles(await client.GetRoles(settings));
+        private static async Task<List<string>> GetRoles(CoreSettings settings, IClient client) => await GetRoles(await client.GetRoles(settings));
 
         [NonAction]
-        private Task<List<string>> GetRoles(IEnumerable<IRole> roles) => Task.FromResult(roles.Select(r => r.PolicyName).ToList());
+        private static Task<List<string>> GetRoles(IEnumerable<IRole> roles) => Task.FromResult(roles.Select(r => r.PolicyName).ToList());
 
         [NonAction]
-        private void AddRoleClaims(List<Claim> claims, IEnumerable<string> roles)
+        private static void AddRoleClaims(List<Claim> claims, IEnumerable<string> roles)
         {
             foreach (string role in roles)
             {

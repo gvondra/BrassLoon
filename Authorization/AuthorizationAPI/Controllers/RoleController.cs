@@ -7,6 +7,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,21 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class RoleController : AuthorizationContollerBase
     {
+        private readonly ILogger<RoleController> _logger;
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleSaver _roleSaver;
 
         public RoleController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<RoleController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             IRoleFactory roleFactory,
             IRoleSaver roleSaver)
-            : base(settings, settingsFactory, exceptionService, mapperFactory, domainService) 
+            : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _roleFactory = roleFactory;
             _roleSaver = roleSaver;
         }
@@ -45,7 +49,7 @@ namespace AuthorizationAPI.Controllers
             {
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -59,7 +63,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -81,7 +85,7 @@ namespace AuthorizationAPI.Controllers
             if (result == null && role == null)
                 result = BadRequest("Missing role data body");
             if (result == null && string.IsNullOrEmpty(role.Name))
-                result = BadRequest("Missing role name value");            
+                result = BadRequest("Missing role name value");
             return result;
         }
 
@@ -105,7 +109,7 @@ namespace AuthorizationAPI.Controllers
                 CoreSettings coreSettings = CreateCoreSettings();
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                     result = ValidateCreate(role);
@@ -122,7 +126,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -142,7 +146,7 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing or invalid domain id parameter value");
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid role id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                     result = Validate(role);
@@ -157,12 +161,12 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     mapper.Map(role, innerRole);
                     await _roleSaver.Update(coreSettings, innerRole);
-                    result = Ok(mapper.Map<Role>(innerRole)); 
+                    result = Ok(mapper.Map<Role>(innerRole));
                 }
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

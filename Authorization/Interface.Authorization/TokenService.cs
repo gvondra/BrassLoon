@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching.Memory;
 using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,6 +93,7 @@ namespace BrassLoon.Interface.Authorization
         private static string GetCacheKey(string token)
         {
             return string.Format(
+                CultureInfo.InvariantCulture,
                 "user-token-{0}",
                 HashValue(token));
         }
@@ -99,6 +101,7 @@ namespace BrassLoon.Interface.Authorization
         private static string GetCacheKey(ClientCredential clientCredential)
         {
             return string.Format(
+                CultureInfo.InvariantCulture,
                 "client-credential-{0:N}_{1}",
                 clientCredential.ClientId.Value,
                 HashValue(clientCredential.Secret));

@@ -7,6 +7,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,21 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class UserController : AuthorizationContollerBase
     {
+        private readonly ILogger<UserController> _logger;
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
         public UserController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<UserController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             IUserFactory userFactory,
             IUserSaver userSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
-        { 
+        {
+            _logger = logger;
             _userFactory = userFactory;
             _userSaver = userSaver;
         }
@@ -39,7 +43,7 @@ namespace AuthorizationAPI.Controllers
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<User>), 200)]
         public async Task<IActionResult> Search(
-            [FromRoute] Guid? domainId, 
+            [FromRoute] Guid? domainId,
             [FromQuery] string emailAddress,
             [FromQuery] string referenceId)
         {
@@ -47,14 +51,14 @@ namespace AuthorizationAPI.Controllers
             try
             {
                 IUser innerUser = null;
-                List<IUser> innerUsers = null;                
+                List<IUser> innerUsers = null;
                 CoreSettings coreSettings = CreateCoreSettings();
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(emailAddress))
-                {                    
+                {
                     innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);
                 }
                 if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(referenceId))
@@ -69,7 +73,7 @@ namespace AuthorizationAPI.Controllers
                 {
                     innerUsers = new List<IUser>();
                     if (innerUser != null)
-                        innerUsers.Add(innerUser);                    
+                        innerUsers.Add(innerUser);
                 }
                 if (result == null && innerUsers != null)
                 {
@@ -86,7 +90,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
@@ -104,7 +108,7 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing or invalid domain id parameter value");
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -125,7 +129,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
@@ -143,7 +147,7 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing or invalid domain id parameter value");
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -161,7 +165,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
@@ -183,7 +187,7 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing or invalid id parameter value");
                 if (result == null && string.IsNullOrEmpty(user?.Name))
                     result = BadRequest("Missing user name value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -205,14 +209,14 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;
         }
 
         [NonAction]
-        private async Task<User> MapUser(CoreSettings coreSettings, IMapper mapper, IUser innerUser)
+        private static async Task<User> MapUser(CoreSettings coreSettings, IMapper mapper, IUser innerUser)
         {
             User user = mapper.Map<User>(innerUser);
             IEmailAddress emailAddress = await innerUser.GetEmailAddress(coreSettings);
@@ -224,7 +228,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task ApplyRoleChanges(CoreSettings coreSettings, IUser innerUser, List<AppliedRole> roles)
+        private static async Task ApplyRoleChanges(CoreSettings coreSettings, IUser innerUser, List<AppliedRole> roles)
         {
             if (roles != null)
             {

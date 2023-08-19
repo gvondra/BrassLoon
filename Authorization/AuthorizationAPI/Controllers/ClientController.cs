@@ -7,6 +7,7 @@ using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,15 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class ClientController : AuthorizationContollerBase
     {
+        private readonly ILogger<ClientController> _logger;
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
-        
+
         public ClientController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<ClientController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             IClientFactory clientFactory,
@@ -35,6 +38,7 @@ namespace AuthorizationAPI.Controllers
             IEmailAddressFactory emailAddressFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;
             _emailAddressFactory = emailAddressFactory;
@@ -51,24 +55,26 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing id parameter value");
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IClient innerClient = await _clientFactory.Get(coreSettings, domainId.Value, id.Value);
                     if (innerClient == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(await MapClient(coreSettings, mapper, innerClient));
-                    }   
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -83,7 +89,7 @@ namespace AuthorizationAPI.Controllers
             {
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -97,7 +103,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -106,7 +112,7 @@ namespace AuthorizationAPI.Controllers
         [HttpGet("/api/ClientCredentialSecret")]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<IActionResult> GetClientCredentialSecret()
+        public IActionResult GetClientCredentialSecret()
         {
             IActionResult result;
             try
@@ -118,7 +124,7 @@ namespace AuthorizationAPI.Controllers
                 randomNumberGenerator.GetBytes(values);
                 for (int i = 0; i < values.Length; i += 1)
                 {
-                    values[i] = (byte)((values[i] % characterRange) + firstCharacter);                    
+                    values[i] = (byte)((values[i] % characterRange) + firstCharacter);
                 }
                 result = Ok(
                     Encoding.ASCII.GetString(values)
@@ -126,7 +132,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -152,7 +158,7 @@ namespace AuthorizationAPI.Controllers
             {
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                     result = Validate(client);
@@ -176,7 +182,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -195,7 +201,7 @@ namespace AuthorizationAPI.Controllers
                     result = BadRequest("Missing or invalid domain id parameter value");
                 if (result == null)
                     result = Validate(client);
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -220,7 +226,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -246,7 +252,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task<Client> MapClient(CoreSettings coreSettings, IMapper mapper, IClient innerClient)
+        private static async Task<Client> MapClient(CoreSettings coreSettings, IMapper mapper, IClient innerClient)
         {
             Client client = mapper.Map<Client>(innerClient);
             client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address ?? string.Empty;
@@ -257,7 +263,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [NonAction]
-        private async Task ApplyRoleChanges(CoreSettings coreSettings, IClient innerClient, List<AppliedRole> roles)
+        private static async Task ApplyRoleChanges(CoreSettings coreSettings, IClient innerClient, List<AppliedRole> roles)
         {
             if (roles != null)
             {

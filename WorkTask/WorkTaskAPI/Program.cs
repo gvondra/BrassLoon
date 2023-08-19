@@ -27,7 +27,6 @@ namespace WorkTaskAPI
             // Add services to the container.
             builder.Services.Configure<Settings>(builder.Configuration);
 
-
             builder.Services.AddLogging(b =>
             {
 #if !DEBUG
@@ -46,7 +45,6 @@ namespace WorkTaskAPI
                     });
                 }
             });
-
 
             builder.Services.AddControllers().AddNewtonsoftJson(o =>
             {

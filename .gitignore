@@ -368,6 +368,7 @@ FodyWeavers.xsd
 !/[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
+/Authorization/AuthorizationAPI/**/launchSettings.json
 /Config/ConfigAPI/**/launchSettings.json
 /Config/TestClient/**/launchSettings.json
 /Log/Purger/**/launchSettings.json

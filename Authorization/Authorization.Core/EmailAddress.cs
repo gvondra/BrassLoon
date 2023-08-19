@@ -2,6 +2,7 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,16 +32,13 @@ namespace BrassLoon.Authorization.Core
 
         public bool IsNew => _data.Manager.GetState(_data) == DataClient.DataState.New;
 
-        public Task Create(CommonCore.ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Create(transactionHandler, _data);
-        }
+        public Task Create(CommonCore.ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
 
         public static byte[] HashAddress(string address)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException(nameof(address));
-            address = HashPrefix + address.Trim().ToLower();
+            address = HashPrefix + address.Trim().ToLower(CultureInfo.InvariantCulture);
             SHA512 alogrithm = SHA512.Create();
             return alogrithm.ComputeHash(Encoding.UTF8.GetBytes(address));
         }

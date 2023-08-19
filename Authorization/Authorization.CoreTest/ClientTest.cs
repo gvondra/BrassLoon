@@ -2,6 +2,7 @@
 using BrassLoon.Authorization.Data.Models;
 using Moq;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.CoreTest
@@ -28,7 +29,7 @@ namespace BrassLoon.Authorization.CoreTest
             await keyVault.SetSecret(settings.Object, secretKey.ToString("D"), Convert.ToBase64String(Client.HashSecret(actualSecret, data.SecretSalt)));
             Client client = new Client(data, dataSaver.Object, keyVault, roleFactory.Object, roleDataSaver.Object, null);
             Assert.IsTrue(await client.AuthenticateSecret(settings.Object, actualSecret));
-            Assert.IsFalse(await client.AuthenticateSecret(settings.Object, actualSecret.ToUpper()));
+            Assert.IsFalse(await client.AuthenticateSecret(settings.Object, actualSecret.ToUpper(CultureInfo.InvariantCulture)));
             client.IsActive = false;
             Assert.IsFalse(await client.AuthenticateSecret(settings.Object, actualSecret));
         }

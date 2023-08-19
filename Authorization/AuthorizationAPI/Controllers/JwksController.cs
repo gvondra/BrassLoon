@@ -3,6 +3,7 @@ using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -10,7 +11,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
@@ -19,16 +19,19 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class JwksController : AuthorizationContollerBase
     {
+        private readonly ILogger<JwksController> _logger;
         private readonly ISigningKeyFactory _signingKeyFactory;
 
         public JwksController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<JwksController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             ISigningKeyFactory signingKeyFactory)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
-        { 
+        {
+            _logger = logger;
             _signingKeyFactory = signingKeyFactory;
         }
 
@@ -46,7 +49,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null)
                 {
                     signingKeys = await _signingKeyFactory.GetByDomainId(coreSettings, domainId.Value);
-                }                
+                }
                 if (result == null && signingKeys != null)
                 {
                     var jsonWebKeySet = new { Keys = new List<object>() };
@@ -59,11 +62,13 @@ namespace AuthorizationAPI.Controllers
                         jsonWebKey.Use = "sig";
                         jsonWebKeySet.Keys.Add(jsonWebKey);
                     }
-                    if (jsonWebKeySet.Keys.Count > 0) 
+                    if (jsonWebKeySet.Keys.Count > 0)
+                    {
                         result = Content(
-                            JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }), 
+                            JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }),
                             "appliation/json"
                             );
+                    }
                 }
                 if (result == null)
                 {
@@ -72,7 +77,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
             return result;

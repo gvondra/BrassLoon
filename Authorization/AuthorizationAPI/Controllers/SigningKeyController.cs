@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.CommonAPI;
+using Microsoft.Extensions.Logging;
 
 namespace AuthorizationAPI.Controllers
 {
@@ -19,17 +20,20 @@ namespace AuthorizationAPI.Controllers
     [ApiController]
     public class SigningKeyController : AuthorizationContollerBase
     {
+        private readonly ILogger<SigningKeyController> _logger;
         private readonly ISigningKeyFactory _signingKeyFactory;
         private readonly ISigningKeySaver _signingKeySaver;
         public SigningKeyController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            ILogger<SigningKeyController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
             ISigningKeyFactory signingKeyFactory,
             ISigningKeySaver signingKeySaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
+            _logger = logger;
             _signingKeyFactory = signingKeyFactory;
             _signingKeySaver = signingKeySaver;
         }
@@ -43,7 +47,7 @@ namespace AuthorizationAPI.Controllers
             {
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -55,7 +59,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -70,7 +74,7 @@ namespace AuthorizationAPI.Controllers
             {
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -86,7 +90,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -103,7 +107,7 @@ namespace AuthorizationAPI.Controllers
                 ISigningKey innerSigningKey = null;
                 if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                if (result == null && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null)
                 {
@@ -123,7 +127,7 @@ namespace AuthorizationAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
