@@ -3,10 +3,10 @@ using BrassLoon.CommonAPI;
 using BrassLoon.Config.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Config.Models;
-using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,20 +19,20 @@ namespace ConfigAPI.Controllers
     [ApiController]
     public class LookupController : ConfigControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<LookupController> _logger;
         private readonly IDomainService _domainService;
         private readonly ILookupFactory _lookupFactory;
         private readonly ILookupSaver _lookupSaver;
 
         public LookupController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            ILogger<LookupController> logger,
             IDomainService domainService,
             ILookupFactory lookupFactory,
             ILookupSaver lookupSaver)
             : base(settings, settingsFactory)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _domainService = domainService;
             _lookupFactory = lookupFactory;
             _lookupSaver = lookupSaver;
@@ -69,7 +69,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -106,7 +106,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -146,7 +146,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -176,7 +176,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -221,7 +221,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -251,7 +251,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;

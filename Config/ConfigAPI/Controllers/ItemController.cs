@@ -3,10 +3,10 @@ using BrassLoon.CommonAPI;
 using BrassLoon.Config.Framework;
 using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Config.Models;
-using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -19,20 +19,20 @@ namespace ConfigAPI.Controllers
     [ApiController]
     public class ItemController : ConfigControllerBase
     {
-        private readonly Lazy<IExceptionService> _exceptionService;
+        private readonly ILogger<ItemController> _logger;
         private readonly IDomainService _domainService;
         private readonly IItemFactory _itemFactory;
         private readonly IItemSaver _itemSaver;
 
         public ItemController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            Lazy<IExceptionService> exceptionService,
+            ILogger<ItemController> logger,
             IDomainService domainService,
             IItemFactory itemFactory,
             IItemSaver itemSaver)
             : base(settings, settingsFactory)
         {
-            _exceptionService = exceptionService;
+            _logger = logger;
             _domainService = domainService;
             _itemFactory = itemFactory;
             _itemSaver = itemSaver;
@@ -66,7 +66,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -99,7 +99,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -139,7 +139,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -169,7 +169,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -214,7 +214,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
@@ -244,7 +244,7 @@ namespace ConfigAPI.Controllers
             }
             catch (Exception ex)
             {
-                await LogException(ex, _exceptionService.Value, _settings.Value);
+                _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
             }
             return result;
