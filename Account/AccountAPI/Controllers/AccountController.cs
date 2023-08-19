@@ -29,10 +29,11 @@ namespace AccountAPI.Controllers
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<AccountController> logger,
+            MapperFactory mapperFactory,
             IAccountFactory accountFactory,
             IAccountSaver accountSaver,
             IUserFactory userFactory)
-            : base(settings, settingsFactory, exceptionService)
+            : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
             _accountFactory = accountFactory;

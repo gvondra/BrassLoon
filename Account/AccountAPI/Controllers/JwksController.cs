@@ -21,8 +21,9 @@ namespace AccountAPI.Controllers
         public JwksController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
+            MapperFactory mapperFactory,
             ILogger<JwksController> logger)
-            : base(settings, settingsFactory, exceptionService)
+            : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
         }

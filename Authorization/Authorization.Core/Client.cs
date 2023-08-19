@@ -113,7 +113,8 @@ namespace BrassLoon.Authorization.Core
             await SaveRoleRoleChanges(transactionHandler);
         }
 
-        private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt) => await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
+        private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt)
+            => await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
 
         private async Task<byte[]> GetSecret(Framework.ISettings settings, Guid key)
         {

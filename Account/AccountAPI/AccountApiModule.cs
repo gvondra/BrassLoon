@@ -8,7 +8,8 @@ namespace AccountAPI
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Account.Core.AccountModule());
             builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterInstance<SettingsFactory>(new SettingsFactory());
+            builder.RegisterType<MapperFactory>().SingleInstance();
+            builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
 }

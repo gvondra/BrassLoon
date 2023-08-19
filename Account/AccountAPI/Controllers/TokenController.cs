@@ -38,6 +38,7 @@ namespace AccountAPI.Controllers
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<TokenController> logger,
+            MapperFactory mapperFactory,
             IAccountFactory accountFactory,
             IClientFactory clientFactory,
             IEmailAddressFactory emailAddressFactory,
@@ -45,7 +46,7 @@ namespace AccountAPI.Controllers
             ISecretProcessor secretProcessor,
             IUserFactory userFactory,
             IUserSaver userSaver)
-            : base(settings, settingsFactory, exceptionService)
+            : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
             _accountFactory = accountFactory;

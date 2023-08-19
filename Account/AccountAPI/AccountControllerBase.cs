@@ -23,11 +23,13 @@ namespace AccountAPI
 
         protected AccountControllerBase(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
-            IExceptionService exceptionService)
+            IExceptionService exceptionService,
+            MapperFactory mapperFactory)
         {
             _settings = settings;
             _settingsFactory = settingsFactory;
             _exceptionService = exceptionService;
+            _mapperFactory = mapperFactory;
         }
 
         [NonAction]

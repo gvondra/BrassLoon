@@ -35,6 +35,7 @@ namespace AccountAPI.Controllers
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<UserInvitationController> logger,
+            MapperFactory mapperFactory,
             IAccountFactory accountFactory,
             IAccountSaver accountSaver,
             IEmailAddressFactory emailAddressFactory,
@@ -42,7 +43,7 @@ namespace AccountAPI.Controllers
             IUserFactory userFactory,
             IUserInvitationFactory userInvitationFactory,
             IUserInvitationSaver userInvitationSaver)
-            : base(settings, settingsFactory, exceptionService)
+            : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
             _accountFactory = accountFactory;
