@@ -62,10 +62,7 @@ namespace BrassLoon.Authorization.Core
         public string UserName { get => _data.UserName; set => _data.UserName = value ?? string.Empty; }
         Guid? IClient.UserEmailAddressId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        private void SetSalt()
-        {
-            SecrectSalt = CreateSalt();
-        }
+        private void SetSalt() => SecrectSalt = CreateSalt();
 
         public static byte[] CreateSalt()
         {
@@ -116,10 +113,7 @@ namespace BrassLoon.Authorization.Core
             await SaveRoleRoleChanges(transactionHandler);
         }
 
-        private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt)
-        {
-            await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
-        }
+        private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt) => await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
 
         private async Task<byte[]> GetSecret(Framework.ISettings settings, Guid key)
         {
@@ -141,10 +135,7 @@ namespace BrassLoon.Authorization.Core
             return argon.GetBytes(512);
         }
 
-        public void SetSecret(string secret)
-        {
-            _newSecret = secret;
-        }
+        public void SetSecret(string secret) => _newSecret = secret;
 
         public async Task<bool> AuthenticateSecret(Framework.ISettings settings, string secret)
         {
@@ -168,7 +159,7 @@ namespace BrassLoon.Authorization.Core
         }
 
         public async Task AddRole(Framework.ISettings settings, string policyName)
-        {            
+        {
             IRole role = (await _roleFactory.GetByDomainId(settings, DomainId))
                 .FirstOrDefault(r => string.Equals(policyName, r.PolicyName, StringComparison.OrdinalIgnoreCase));
             if (role != null)
@@ -191,16 +182,16 @@ namespace BrassLoon.Authorization.Core
             }
         }
 
-        void DataClient.IDbTransactionObserver.BeforeCommit() {} // do nothing
+        void DataClient.IDbTransactionObserver.BeforeCommit() { } // do nothing
 
-        void DataClient.IDbTransactionObserver.AfterCommit() 
+        void DataClient.IDbTransactionObserver.AfterCommit()
         {
             // after saving roles, unset role lists to force them to reload from the DB
             _roles = null;
             _addRoles = null;
             _removeRoles = null;
             _userEmailChanged = false;
-        } 
+        }
 
         void DataClient.IDbTransactionObserver.BeforeRollback() { } // do nothing
 

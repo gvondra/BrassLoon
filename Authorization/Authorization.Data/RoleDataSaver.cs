@@ -5,8 +5,6 @@ using System;
 using System.Collections;
 using System.Data.Common;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data

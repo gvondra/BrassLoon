@@ -2,9 +2,6 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -34,13 +31,11 @@ namespace BrassLoon.Authorization.Core
         public async Task<IEmailAddress> GetByAddress(ISettings settings, string address)
         {
             byte[] hash = EmailAddress.HashAddress(address);
-            EmailAddressData data = await _dataFactory.GetByAddressHash(new CommonCore.DataSettings(settings), hash);
-            if (data == null)
-                data = new EmailAddressData
-                {
-                    Address = address,
-                    AddressHash = hash
-                };
+            EmailAddressData data = await _dataFactory.GetByAddressHash(new CommonCore.DataSettings(settings), hash) ?? new EmailAddressData
+            {
+                Address = address,
+                AddressHash = hash
+            };
             return Create(data);
         }
     }

@@ -18,7 +18,7 @@ namespace BrassLoon.CommonAPI
 {
     public abstract class CommonControllerBase : ControllerBase
     {
-        private static Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
+        private static readonly Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
 
         [NonAction]
         protected string GetAccessToken()

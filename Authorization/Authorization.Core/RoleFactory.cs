@@ -8,7 +8,6 @@ using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -30,7 +29,7 @@ namespace BrassLoon.Authorization.Core
         public IRole Create(Guid domainId, string policyName)
         {
             policyName = (policyName ?? string.Empty).Trim();
-            if (domainId.Equals(Guid.Empty)) 
+            if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             if (string.IsNullOrEmpty(policyName))
                 throw new ArgumentNullException(nameof(policyName));
@@ -46,19 +45,19 @@ namespace BrassLoon.Authorization.Core
         {
             Role role = null;
             RoleData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
-            if (data != null && data.DomainId.Equals(domainId)) 
+            if (data != null && data.DomainId.Equals(domainId))
                 role = Create(data);
             return role;
         }
 
         public Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
-        {            
+        {
             return m_domainCache.Execute(async context =>
             {
                 return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
                 .Select<RoleData, IRole>(Create);
             },
-            new Context(domainId.ToString("D")));            
+            new Context(domainId.ToString("D")));
         }
 
         public async Task<IEnumerable<IRole>> GetByClientId(ISettings settings, Guid clientId)
@@ -73,9 +72,6 @@ namespace BrassLoon.Authorization.Core
                 .Select<RoleData, IRole>(Create);
         }
 
-        public static void ClearCache()
-        {
-            m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
-        }
+        public static void ClearCache() => m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
     }
 }

@@ -2,9 +2,6 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -17,8 +14,8 @@ namespace BrassLoon.Authorization.Core
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleDataSaver _roleDataSaver;
 
-        public UserFactory(IUserDataFactory dataFactory, 
-            IUserDataSaver dataSaver, 
+        public UserFactory(IUserDataFactory dataFactory,
+            IUserDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory,
             IRoleFactory roleFactory,
             IRoleDataSaver roleDataSaver)

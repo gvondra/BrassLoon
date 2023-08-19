@@ -3,9 +3,6 @@ using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core

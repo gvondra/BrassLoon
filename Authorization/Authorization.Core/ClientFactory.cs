@@ -17,7 +17,7 @@ namespace BrassLoon.Authorization.Core
         private readonly IRoleDataSaver _roleDataSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
 
-        public ClientFactory(IClientDataFactory dataFactory, 
+        public ClientFactory(IClientDataFactory dataFactory,
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,

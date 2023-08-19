@@ -5,13 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data
 {
     public class RoleDataFactory : DataFactoryBase<RoleData>, IRoleDataFactory
-    {        
+    {
         public RoleDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
 
         public async Task<RoleData> Get(ISqlSettings settings, Guid id)

@@ -12,7 +12,7 @@ namespace BrassLoon.Interface.Authorization
 {
     public class UserService : IUserService
     {
-        private static Policy _userNameCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly Policy _userNameCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
 
         private readonly IService _service;
         private readonly RestUtil _restUtil;
@@ -55,7 +55,7 @@ namespace BrassLoon.Interface.Authorization
                     ;
                 return _restUtil.Send<string>(_service, request);
             },
-            new Context(string.Concat(domainId.ToString("N"), " ", userId.ToString("N"))));            
+            new Context(string.Concat(domainId.ToString("N"), " ", userId.ToString("N"))));
         }
 
         public Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)

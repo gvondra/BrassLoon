@@ -6,7 +6,7 @@ namespace BrassLoon.CommonCore
 {
     public class TransactionHandler : ITransactionHandler
     {
-        private ISettings _settings;
+        private readonly ISettings _settings;
 
         public TransactionHandler(ISettings settings)
         {

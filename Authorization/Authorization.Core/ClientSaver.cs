@@ -15,7 +15,7 @@ namespace BrassLoon.Authorization.Core
         public Task Create(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
             return _saver.Save(
-                new CommonCore.TransactionHandler(settings), 
+                new CommonCore.TransactionHandler(settings),
                 async th =>
                 {
                     if (userEmailAddress != null)
@@ -27,7 +27,7 @@ namespace BrassLoon.Authorization.Core
         public Task Update(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
             return _saver.Save(
-                new CommonCore.TransactionHandler(settings), 
+                new CommonCore.TransactionHandler(settings),
                 async th =>
                 {
                     if (userEmailAddress != null)

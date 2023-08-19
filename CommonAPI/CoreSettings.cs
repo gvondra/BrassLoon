@@ -13,7 +13,7 @@ namespace BrassLoon.CommonAPI
 {
     public class CoreSettings : ISettings
     {
-        private static Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
+        private static readonly Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
         private readonly CommonApiSettings _settings;
 
         public CoreSettings(CommonApiSettings settings)

@@ -11,7 +11,7 @@ namespace BrassLoon.Authorization.Core
 {
     public sealed class KeyVault : IKeyVault
     {
-        private static Policy m_secretCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly Policy m_secretCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
 
         public async Task<KeyVaultSecret> SetSecret(ISettings settings, string name, string value)
         {
@@ -28,7 +28,7 @@ namespace BrassLoon.Authorization.Core
                 Azure.Response<KeyVaultSecret> kevaultSecret = await secretClient.GetSecretAsync(name);
                 return kevaultSecret.Value;
             },
-            new Context(name));            
+            new Context(name));
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Authorization.Framework;
-using BrassLoon.CommonAPI;
 
 namespace AuthorizationAPI
 {

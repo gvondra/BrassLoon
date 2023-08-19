@@ -5,10 +5,7 @@ using BrassLoon.Authorization.Framework;
 using BrassLoon.JwtUtility;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -19,7 +16,7 @@ namespace BrassLoon.Authorization.Core
         private readonly ISigningKeyDataSaver _dataSaver;
         private readonly IKeyVault _keyVault;
 
-        public SigningKey(SigningKeyData data, 
+        public SigningKey(SigningKeyData data,
             ISigningKeyDataSaver dataSaver,
             IKeyVault keyVault)
         {
@@ -61,9 +58,6 @@ namespace BrassLoon.Authorization.Core
             return RsaSecurityKeySerializer.GetSecurityKey(secret.Value, includePrivateKey);
         }
 
-        public Task Update(CommonCore.ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Update(transactionHandler, _data);
-        }
+        public Task Update(CommonCore.ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }
 }

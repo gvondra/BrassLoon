@@ -1,11 +1,6 @@
 ﻿using Autofac;
 using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.DataClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data
 {

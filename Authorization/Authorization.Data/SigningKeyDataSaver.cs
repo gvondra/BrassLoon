@@ -3,11 +3,8 @@ using BrassLoon.Authorization.Data.Models;
 using BrassLoon.DataClient;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data
@@ -71,9 +68,6 @@ namespace BrassLoon.Authorization.Data
             }
         }
 
-        private void AddCommonParameters(IList commandParameters, SigningKeyData data)
-        {
-            DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
-        }
+        private void AddCommonParameters(IList commandParameters, SigningKeyData data) => DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
     }
 }

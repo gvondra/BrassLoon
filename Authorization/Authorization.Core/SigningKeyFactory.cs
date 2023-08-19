@@ -4,7 +4,6 @@ using BrassLoon.Authorization.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -15,7 +14,7 @@ namespace BrassLoon.Authorization.Core
         private readonly ISigningKeyDataSaver _dataSaver;
         private readonly IKeyVault _keyVault;
 
-        public SigningKeyFactory(ISigningKeyDataFactory dataFactory, 
+        public SigningKeyFactory(ISigningKeyDataFactory dataFactory,
             ISigningKeyDataSaver dataSaver,
             IKeyVault keyVault)
         {
@@ -28,12 +27,12 @@ namespace BrassLoon.Authorization.Core
 
         public ISigningKey Create(Guid domainId)
         {
-            if (domainId.Equals(Guid.Empty)) 
+            if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             return Create(new SigningKeyData
             {
                 DomainId = domainId,
-                KeyVaultKey = Guid.NewGuid()                
+                KeyVaultKey = Guid.NewGuid()
             });
         }
 
