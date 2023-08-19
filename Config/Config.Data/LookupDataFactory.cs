@@ -11,8 +11,8 @@ namespace BrassLoon.Config.Data
 {
     public class LookupDataFactory : ILookupDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<LookupData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<LookupData> _genericDataFactory;
 
         public LookupDataFactory(ISqlDbProviderFactory providerFactory)
         {

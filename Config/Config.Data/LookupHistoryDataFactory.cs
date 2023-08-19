@@ -3,15 +3,14 @@ using BrassLoon.DataClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Data
 {
     public class LookupHistoryDataFactory : ILookupHistoryDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<LookupHistoryData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<LookupHistoryData> _genericDataFactory;
 
         public LookupHistoryDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -25,13 +24,12 @@ namespace BrassLoon.Config.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "lookupId", DbType.Guid, lookupId)
             };
-            return (await _genericDataFactory.GetData(
+            return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
                 "[blc].[GetLookupHistoryByLookupId]",
                 () => new LookupHistoryData(),
-                parameters
-                ));
+                parameters);
         }
     }
 }

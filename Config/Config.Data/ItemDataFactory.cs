@@ -11,8 +11,8 @@ namespace BrassLoon.Config.Data
 {
     public class ItemDataFactory : IItemDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<ItemData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<ItemData> _genericDataFactory;
 
         public ItemDataFactory(ISqlDbProviderFactory providerFactory)
         {

@@ -4,7 +4,6 @@ using BrassLoon.Config.Data.Models;
 using BrassLoon.Config.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Core
@@ -27,10 +26,7 @@ namespace BrassLoon.Config.Core
             _itemHistoryFactory = itemHistoryFactory;
         }
 
-        public IItem Create(Guid domainId, string code)
-        {
-            return new Item(new ItemData() { DomainId = domainId, Code = code }, _dataSaver, _itemHistoryFactory);
-        }
+        public IItem Create(Guid domainId, string code) => new Item(new ItemData() { DomainId = domainId, Code = code }, _dataSaver, _itemHistoryFactory);
 
         public async Task<IItem> GetByCode(ISettings settings, Guid domainId, string code)
         {
@@ -41,9 +37,6 @@ namespace BrassLoon.Config.Core
             return result;
         }
 
-        public Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId)
-        {
-            return _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
-        }
+        public Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId) => _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
     }
 }

@@ -52,8 +52,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
@@ -85,8 +87,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
@@ -119,13 +123,17 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
+                        {
                             result = Ok(new List<ItemHistory>());
+                        }
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -157,8 +165,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         result = Ok(
@@ -192,7 +202,7 @@ namespace ConfigAPI.Controllers
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IItem innerItem = null;
                     Func<CoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                         innerItem = await _itemFactory.GetByCode(settings, domainId.Value, code);
@@ -233,8 +243,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing item code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         await _itemSaver.DeleteByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);

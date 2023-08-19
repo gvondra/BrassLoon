@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 #endif
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using System;
 
 namespace ConfigAPI
 {
@@ -28,7 +29,7 @@ namespace ConfigAPI
             builder.Services.Configure<Settings>(builder.Configuration);
 
             builder.Services.AddLogging(b =>
-            {   
+            {
 #if !DEBUG
                 b.ClearProviders();
 #endif
@@ -85,7 +86,7 @@ namespace ConfigAPI
                         Id = "Bearer"
                     }
                     },
-                    new string[] { }
+                    Array.Empty<string>()
                 }
                 });
             });

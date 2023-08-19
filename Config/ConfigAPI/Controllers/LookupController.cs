@@ -52,13 +52,17 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
+                        {
                             result = NotFound();
+                        }
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -89,13 +93,17 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
+                        {
                             result = NotFound();
+                        }
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -126,13 +134,17 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         ILookup lookup = await _lookupFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (lookup == null)
+                        {
                             result = NotFound();
+                        }
                         else
                         {
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
@@ -164,8 +176,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing domain id parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         result = Ok(
@@ -188,7 +202,7 @@ namespace ConfigAPI.Controllers
         public async Task<IActionResult> Save([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] Dictionary<string, string> lookupData)
         {
             IActionResult result = null;
-            try 
+            try
             {
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
@@ -199,7 +213,7 @@ namespace ConfigAPI.Controllers
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     ILookup innerLookup = null;
                     Func<CoreSettings, ILookupSaver, ILookup, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                         innerLookup = await _lookupFactory.GetByCode(settings, domainId.Value, code);
@@ -232,7 +246,7 @@ namespace ConfigAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result = null;
-            try 
+            try
             {
                 if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
                     result = BadRequest("Missing domain id parameter value");
@@ -240,8 +254,10 @@ namespace ConfigAPI.Controllers
                     result = BadRequest("Missing lookup code parameter value");
                 if (result == null)
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService)))
+                    if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         await _lookupSaver.DeleteByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);

@@ -3,8 +3,6 @@ using BrassLoon.Config.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Config.Core
 {

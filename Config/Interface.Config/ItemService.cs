@@ -5,9 +5,7 @@ using Polly;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Config
@@ -48,7 +46,7 @@ namespace BrassLoon.Interface.Config
         public async Task<Item> GetByCode(ISettings settings, Guid domainId, string code)
         {
             return await _cache.Execute(async (context) => await InnerGetByCode(settings, domainId, code),
-                new Context($"Get{domainId.ToString("N")}|{code}"));
+                new Context($"Get{domainId:N}|{code}"));
         }
 
         private async Task<Item> InnerGetByCode(ISettings settings, Guid domainId, string code)
@@ -67,7 +65,7 @@ namespace BrassLoon.Interface.Config
         public async Task<List<string>> GetCodes(ISettings settings, Guid domainId)
         {
             return await _cache.Execute(async (context) => await InnerGetCodes(settings, domainId),
-            new Context($"Codes{domainId.ToString("N")}"));
+            new Context($"Codes{domainId:N}"));
         }
 
         private async Task<List<string>> InnerGetCodes(ISettings settings, Guid domainId)
@@ -85,7 +83,7 @@ namespace BrassLoon.Interface.Config
         public async Task<object> GetDataByCode(ISettings settings, Guid domainId, string code)
         {
             return await _cache.Execute(async (context) => await InnerGetDataByCode(settings, domainId, code),
-                new Context($"GetData{domainId.ToString("N")}|{code}"));
+                new Context($"GetData{domainId:N}|{code}"));
         }
 
         private async Task<object> InnerGetDataByCode(ISettings settings, Guid domainId, string code)

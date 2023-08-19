@@ -46,7 +46,7 @@ namespace BrassLoon.Interface.Config
         public async Task<Lookup> GetByCode(ISettings settings, Guid domainId, string code)
         {
             return await _cache.Execute(async (context) => await InnerGetByCode(settings, domainId, code),
-                new Context($"Get{domainId.ToString("N")}|{code}"));
+                new Context($"Get{domainId:N}|{code}"));
         }
 
         private async Task<Lookup> InnerGetByCode(ISettings settings, Guid domainId, string code)
@@ -65,7 +65,7 @@ namespace BrassLoon.Interface.Config
         public async Task<List<string>> GetCodes(ISettings settings, Guid domainId)
         {
             return await _cache.Execute(async (context) => await InnerGetCodes(settings, domainId),
-            new Context($"Codes{domainId.ToString("N")}"));
+            new Context($"Codes{domainId:N}"));
         }
 
         private async Task<List<string>> InnerGetCodes(ISettings settings, Guid domainId)
@@ -83,7 +83,7 @@ namespace BrassLoon.Interface.Config
         public async Task<Dictionary<string, string>> GetDataByCode(ISettings settings, Guid domainId, string code)
         {
             return await _cache.Execute(async (context) => await InnerGetDataByCode(settings, domainId, code),
-                new Context($"GetData{domainId.ToString("N")}|{code}"));
+                new Context($"GetData{domainId:N}|{code}"));
         }
 
         private async Task<Dictionary<string, string>> InnerGetDataByCode(ISettings settings, Guid domainId, string code)
@@ -118,7 +118,7 @@ namespace BrassLoon.Interface.Config
                 throw new ArgumentNullException(nameof(data));
             if (!typeof(Dictionary<string, string>).IsAssignableFrom(data.GetType()))
                 throw new ApplicationException("Parameter \"data\" must of type Dictionary<string, string>");
-            return Save(settings, domainId, code, (Dictionary<string, string>)data); 
+            return Save(settings, domainId, code, (Dictionary<string, string>)data);
         }
 
         public Task<Lookup> Save(ISettings settings, Guid domainId, string code, Dictionary<string, string> data)

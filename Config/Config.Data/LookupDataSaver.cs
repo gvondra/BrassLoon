@@ -1,17 +1,15 @@
 ﻿using BrassLoon.Config.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Data
 {
     public class LookupDataSaver : ILookupDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public LookupDataSaver(ISqlDbProviderFactory providerFactory)
         {

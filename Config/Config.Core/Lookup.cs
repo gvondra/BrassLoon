@@ -7,7 +7,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Core
@@ -34,7 +33,7 @@ namespace BrassLoon.Config.Core
 
         public string Code { get => _data.Code; set => _data.Code = value; }
 
-        public Dictionary<string, string> Data 
+        public Dictionary<string, string> Data
         {
             get
             {
@@ -56,10 +55,7 @@ namespace BrassLoon.Config.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public Task Create(ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Create(transactionHandler, _data);
-        }
+        public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
 
         public async Task<IEnumerable<ILookupHistory>> GetHistory(ISettings settings)
         {
@@ -68,9 +64,6 @@ namespace BrassLoon.Config.Core
             return _lookupHistories;
         }
 
-        public Task Update(ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Update(transactionHandler, _data);
-        }
+        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }
 }

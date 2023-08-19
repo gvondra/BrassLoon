@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-using BrassLoon.Interface.Config.Models;
 using BrassLoon.Config.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using BrassLoon.Interface.Config.Models;
 
 namespace ConfigAPI
 {
     public class MapperConfigurationFactory
     {
-        private static MapperConfiguration _mapperConfiguratin;
+        private static readonly MapperConfiguration _mapperConfiguratin;
 
         static MapperConfigurationFactory()
         {
@@ -24,9 +21,6 @@ namespace ConfigAPI
             });
         }
 
-        public static Mapper CreateMapper()
-        {
-            return new Mapper(_mapperConfiguratin);
-        }
+        public static Mapper CreateMapper() => new Mapper(_mapperConfiguratin);
     }
 }
