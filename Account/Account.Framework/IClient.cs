@@ -1,7 +1,6 @@
-﻿using BrassLoon.CommonCore;
+﻿using BrassLoon.Account.Framework.Enumerations;
+using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Framework
@@ -11,6 +10,8 @@ namespace BrassLoon.Account.Framework
         Guid ClientId { get; }
         Guid AccountId { get; }
         string Name { get; set; }
+        bool IsActive { get; set; }
+        SecretType SecretType { get; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 

@@ -94,7 +94,7 @@ namespace AccountAPI.Controllers
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
-                        if (!_secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
+                        if (!client.IsActive || !_secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
                             result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)

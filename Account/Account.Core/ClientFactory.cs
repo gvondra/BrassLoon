@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
@@ -31,18 +32,18 @@ namespace BrassLoon.Account.Core
             _clientCredentialDataFactory = clientCredentialDataFactory;
         }
 
+        private Client Create(ClientData data) => new Client(data, _dataSaver, _clientCredentialDataFactory, _settingsFactory);
+
         public Task<IClient> Create(Guid accountId, string secret)
         {
             SecretProcessor secretProcessor = new SecretProcessor();
-            Client client = new Client(
+            Client client = Create(
                 new ClientData()
                 {
-                    AccountId = accountId                    
-                },
-                _dataSaver,
-                _clientCredentialDataFactory,
-                _settingsFactory
-                );
+                    AccountId = accountId,
+                    SecretType = (short)SecretType.SHA512
+                });
+            client.IsActive = true;
             client.ClientCredentialChange = new ClientCredential(
                 client,
                 new ClientCredentialData()
@@ -51,9 +52,9 @@ namespace BrassLoon.Account.Core
                 },
                 _clientCredentialDataSaver
                 )
-            { 
+            {
                 IsActive = true
-            };            
+            };
             return Task.FromResult<IClient>(client);
         }
 

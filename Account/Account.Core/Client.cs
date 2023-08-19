@@ -1,11 +1,10 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -37,6 +36,9 @@ namespace BrassLoon.Account.Core
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
+
+        public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
+        public SecretType SecretType { get => (SecretType)_data.SecretType; private set => _data.SecretType = (short)value; }
 
         // set the client credential property when changing the client secret
         internal ClientCredential ClientCredentialChange { get; set; } 

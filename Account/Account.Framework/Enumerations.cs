@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Account.Framework.Enumerations
 {
@@ -17,5 +15,12 @@ namespace BrassLoon.Account.Framework.Enumerations
         Cancelled = -1,
         Created = 0,
         Completed = 0xFF,
+    }
+
+    public enum SecretType : short
+    {
+        NotSet = 0,
+        SHA512 = 1, // phasing out. do not use
+        Argon2 = 2
     }
 }

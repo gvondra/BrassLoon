@@ -65,6 +65,10 @@ namespace BrassLoon.Account.Data
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(clientData.ClientId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(clientData.Name));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretType", DbType.Int16, DataUtil.GetParameterValue(clientData.SecretType));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretKey", DbType.Guid, DataUtil.GetParameterValue(clientData.SecretKey));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretSalt", DbType.Binary, DataUtil.GetParameterValue(clientData.SecretSalt));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(clientData.IsActive));
 
                     await command.ExecuteNonQueryAsync();
                     clientData.UpdateTimestamp = (DateTime)timestamp.Value;
