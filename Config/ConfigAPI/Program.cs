@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if !DEBUG
+using Microsoft.Extensions.Logging;
+#endif
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
