@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Interface.Account.Models
 {
@@ -9,6 +7,7 @@ namespace BrassLoon.Interface.Account.Models
         public Guid? ClientId { get; set; }
         public Guid? AccountId { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; } = true;
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
     }

@@ -13,6 +13,6 @@ namespace BrassLoon.Account.Data.Models
         [ColumnMapping] public short SecretType { get; set; }
         [ColumnMapping] public Guid? SecretKey { get; set; }
         [ColumnMapping] public byte[] SecretSalt { get; set; }
-        [ColumnMapping] public bool IsActive { get; set; }
+        [ColumnMapping] public bool IsActive { get; set; } = true;
     }
 }
