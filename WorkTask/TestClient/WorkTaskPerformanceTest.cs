@@ -3,7 +3,6 @@ using BrassLoon.Interface.WorkTask.Models;
 using BrassLoon.WorkTask.TestClient.Settings;
 using Serilog;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
