@@ -90,12 +90,9 @@ namespace AccountAPI.Controllers
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient client = await _clientFactory.Get(settings, clientCredential.ClientId.Value);
-                    if (client == null)
-                        result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
+                    if (client == null || await client.AuthenticateSecret(settings, clientCredential.Secret) == false)
                     {
-                        if (!client.IsActive || !_secretProcessor.Verify(clientCredential.Secret, await client.GetSecretHash(settings)))
-                            result = StatusCode(StatusCodes.Status401Unauthorized);
+                        result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
                     {

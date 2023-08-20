@@ -97,6 +97,7 @@ export class ClientComponent implements OnInit {
 
   Save() {
     this.ErrorMessage = null;
+    this.Secret = null;
     this.ShowBusy = true;
     if (this.ClientRequest.ClientId && this.ClientRequest.ClientId != '') {
       this.clientService.Update(this.ClientRequest.ClientId, this.ClientRequest)

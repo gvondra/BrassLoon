@@ -38,29 +38,34 @@ namespace BrassLoon.Account.Core
 
         private Client Create(ClientData data) => new Client(data, _dataSaver, _clientCredentialDataFactory, _settingsFactory, _secretProcessor, _keyVault);
 
-        public Task<IClient> Create(Guid accountId, string secret)
+        public Task<IClient> Create(Guid accountId, string secret, SecretType secretType)
         {
             SecretProcessor secretProcessor = new SecretProcessor();
             Client client = Create(
                 new ClientData()
                 {
                     AccountId = accountId,
-                    SecretType = (short)SecretType.SHA512,
                     SecretKey = Guid.NewGuid()
                 });
             client.IsActive = true;
-            client.SetSecret(secret);
-            client.ClientCredentialChange = new ClientCredential(
-                client,
-                new ClientCredentialData()
-                {
-                    Secret = secretProcessor.Hash(secret)
-                },
-                _clientCredentialDataSaver
-                )
+            if (secretType == SecretType.Argon2)
             {
-                IsActive = true
-            };
+                client.SetSecret(secret, secretType);
+            }
+            else
+            {
+                client.ClientCredentialChange = new ClientCredential(
+                    client,
+                    new ClientCredentialData()
+                    {
+                        Secret = secretProcessor.Hash(secret)
+                    },
+                    _clientCredentialDataSaver
+                    )
+                {
+                    IsActive = true
+                };
+            }
             return Task.FromResult<IClient>(client);
         }
 

@@ -1,4 +1,5 @@
-﻿using BrassLoon.Account.Data;
+﻿using Azure.Security.KeyVault.Secrets;
+using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
@@ -18,6 +19,7 @@ namespace BrassLoon.Account.Core
         private readonly ISecretProcessor _secretProcessor;
         private readonly IKeyVault _keyVault;
         private string _newSecret;
+        private SecretType _newSecretType = SecretType.NotSet;
 
         public Client(ClientData data,
             IClientDataSaver dataSaver,
@@ -54,19 +56,35 @@ namespace BrassLoon.Account.Core
         // set the client credential property when changing the client secret
         internal ClientCredential ClientCredentialChange { get; set; }
 
-        public Task<bool> AuthenticateSecret(BrassLoon.Account.Framework.ISettings settings, string secret)
+        public async Task<bool> AuthenticateSecret(BrassLoon.Account.Framework.ISettings settings, string secret)
         {
-            throw new NotImplementedException();
+            bool isAuthentic = false;
+            if (IsActive && SecretType == SecretType.SHA512)
+            {
+                isAuthentic = _secretProcessor.Verify(secret, await GetSecretHash(settings));
+            }
+            else if (IsActive && SecretType == SecretType.Argon2 && SecretKey.HasValue && SecretSalt != null)
+            {
+                Task<byte[]> storedHash = GetVaultedSecret(settings, SecretKey.Value); // hash of the stored secrect to verify against
+                byte[] parameterHash = _secretProcessor.HashSecretArgon2i(secret, SecretSalt); // hash of the incoming secrect to be verified
+                isAuthentic = parameterHash.SequenceEqual(await storedHash);
+            } 
+            return isAuthentic;
+        }
+        private async Task<byte[]> GetVaultedSecret(Framework.ISettings settings, Guid key)
+        {
+            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings, key.ToString("D"));
+            return Convert.FromBase64String(keyVaultSecret.Value);
         }
 
         public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
         {
-            if (SecretType == SecretType.NotSet)
+            if (_newSecretType == SecretType.NotSet)
                 throw new ApplicationException("Unable to create client. Secret type is not set");
             if (SecretType == SecretType.Argon2 && string.IsNullOrEmpty(_newSecret))
                 throw new ApplicationException("Unable to create client. No secret value specified");
             if (!string.IsNullOrEmpty(_newSecret))
-                await SaveSecret(settings, _newSecret);
+                await SaveSecret(settings, _newSecret, _newSecretType   );
             await _dataSaver.Create(transactionHandler, _data);
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(transactionHandler);
@@ -91,14 +109,20 @@ namespace BrassLoon.Account.Core
             if (SecretSalt == null)
                 SecretSalt = _secretProcessor.CreateSalt();
         }
-        public void SetSecret(string secret) => _newSecret = secret;
+        public void SetSecret(string secret, SecretType secretType)
+        {
+            if (!string.IsNullOrEmpty(secret) && secretType == SecretType.NotSet)
+                throw new ArgumentNullException(nameof(secretType));
+            _newSecret = secret;
+            _newSecretType = secretType;
+        }
 
         public async Task Update(ITransactionHandler transactionHandler, Framework.ISettings settings)
         {
             if (SecretType == SecretType.NotSet)
                 throw new ApplicationException("Unable to create client. Secret type is not set");
             if (!string.IsNullOrEmpty(_newSecret))
-                await SaveSecret(settings, _newSecret);
+                await SaveSecret(settings, _newSecret, _newSecretType);
             await _dataSaver.Update(transactionHandler, _data);
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(transactionHandler);
@@ -107,12 +131,14 @@ namespace BrassLoon.Account.Core
 
         private async Task SaveSecret(
             BrassLoon.Account.Framework.ISettings settings,
-            string value)
+            string value,
+            SecretType secretType)
         {
             SetSalt();
             if (!SecretKey.HasValue)
                 SecretKey = Guid.NewGuid();
             await _keyVault.SetSecret(settings, SecretKey.Value.ToString("D"), Convert.ToBase64String(_secretProcessor.HashSecretArgon2i(value, SecretSalt)));
+            SecretType = secretType;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonAPI;
+using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
@@ -157,7 +157,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
                 if (result == null)
                 {
-                    IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret);
+                    IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret, _settings.Value.SecretType);
                     IMapper mapper = CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
@@ -201,9 +201,12 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         mapper.Map<Client, IClient>(client, innerClient);
-                        if (!string.IsNullOrEmpty(client?.Secret))
-                            innerClient.SetSecret(client.Secret);
-                        await _clientSaver.Update(settings, innerClient, client.Secret);
+                        if (_settings.Value.SecretType == SecretType.Argon2 && !string.IsNullOrEmpty(client?.Secret))
+                            innerClient.SetSecret(client.Secret, _settings.Value.SecretType);
+                        await _clientSaver.Update(
+                            settings,
+                            innerClient,
+                            _settings.Value.SecretType != SecretType.Argon2 ? client.Secret : string.Empty);
                         result = Ok(mapper.Map<Client>(innerClient));
                     }
                 }
