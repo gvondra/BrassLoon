@@ -17,9 +17,9 @@ namespace BrassLoon.Log.Purger
     public class CoreSettings : ISettings
     {
         private static Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
-        private readonly Settings _settings;
+        private readonly AppSettings _settings;
 
-        public CoreSettings(Settings settings)
+        public CoreSettings(AppSettings settings)
         {
             _settings = settings;
         }

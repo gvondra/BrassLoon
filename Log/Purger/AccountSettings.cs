@@ -8,11 +8,11 @@ namespace BrassLoon.Log.Purger
 {
     public class AccountSettings : ISettings
     {
-        private readonly Settings _settings;
+        private readonly AppSettings _settings;
         private readonly ITokenService _tokenService;
         private string _token = null;
 
-        public AccountSettings(Settings settings,
+        public AccountSettings(AppSettings settings,
             ITokenService tokenService)
         {
             _settings = settings;

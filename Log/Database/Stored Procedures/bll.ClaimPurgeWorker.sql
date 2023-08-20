@@ -17,6 +17,10 @@ BEGIN
 				WHERE [PurgeWorkerId] = @purgeWorkId
 					AND [Status] = 0
 				;
+				IF @@ROWCOUNT = 0
+				BEGIN
+					SET @purgeWorkId = NULL;
+				END
 			END
 			COMMIT TRANSACTION;
 			SET @id = @purgeWorkId;

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Log.Purger
 {
-    public class Settings
+    public class AppSettings
     {
         public string ConnectionString { get; set; }
         public string ConnectionStringUser { get; set; }

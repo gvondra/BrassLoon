@@ -1,20 +1,17 @@
-﻿using AccountInterface = BrassLoon.Interface.Account;
-using BrassLoon.Interface.Log;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BrassLoon.Interface.Log;
 using System.Threading.Tasks;
+using AccountInterface = BrassLoon.Interface.Account;
 
 namespace BrassLoon.Log.Purger
 {
     public class LogSettings : ISettings
     {
-        private readonly Settings _settings;
+        private readonly AppSettings _settings;
         private readonly AccountInterface.ITokenService _tokenService;
         private readonly SettingsFactory _settingsFactory;
         private string _token = null;
 
-        public LogSettings(Settings settings,
+        public LogSettings(AppSettings settings,
             AccountInterface.ITokenService tokenService,
             SettingsFactory settingsFactory)
         {
@@ -28,7 +25,7 @@ namespace BrassLoon.Log.Purger
         public async Task<string> GetToken()
         {
             if (string.IsNullOrEmpty(_token))
-                _token = await _tokenService.CreateClientCredentialToken(_settingsFactory.CreateAccount(_settings), _settings.ClientId, _settings.Secret);
+                _token = await _tokenService.CreateClientCredentialToken(_settingsFactory.CreateAccount(), _settings.ClientId, _settings.Secret);
             return _token;
         }
     }

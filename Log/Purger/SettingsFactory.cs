@@ -1,32 +1,33 @@
 ﻿using AccountInterface = BrassLoon.Interface.Account;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrassLoon.Log.Purger
 {
     public sealed class SettingsFactory
     {
+        private readonly AppSettings _appSettings;
         private readonly AccountInterface.ITokenService _tokenService;
 
-        public SettingsFactory(AccountInterface.ITokenService tokenService)
+        public SettingsFactory(
+            AppSettings appSettings,
+            AccountInterface.ITokenService tokenService)
         {
+            _appSettings = appSettings;
             _tokenService = tokenService;
         }
 
-        public CoreSettings CreateCore(Settings settings)
+        public CoreSettings CreateCore()
         {
-            return new CoreSettings(settings);
+            return new CoreSettings(_appSettings);
         }
 
-        public AccountSettings CreateAccount(Settings settings)
+        public AccountSettings CreateAccount()
         {
-            return new AccountSettings(settings, _tokenService);
+            return new AccountSettings(_appSettings, _tokenService);
         }
 
-        public LogSettings CreateLog(Settings settings)
+        public LogSettings CreateLog()
         {
-            return new LogSettings(settings, _tokenService, this);
+            return new LogSettings(_appSettings, _tokenService, this);
         }
     }
 }

@@ -11,26 +11,23 @@ namespace BrassLoon.Log.Purger
 {
     public class Program
     {
-        private static Settings _settings;
-        private static IContainer _container;
-
         public static async Task Main(string[] args)
         {
             DateTime startTime;
             try
             {
-                _settings = LoadSettings(args);
-                _container = LoadDiContainer();
+                AppSettings appSettings = LoadSettings(args);
+                DependencyInjection.ContainerFactory.Initialize(appSettings);
                 startTime = DateTime.UtcNow;
                 while (true)
                 {                    
                     await StartPurge();
                     startTime = GetNextStartTime(startTime);
-                    using (ILifetimeScope scope = _container.BeginLifetimeScope())
+                    using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope())
                     {
                         SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                         ITraceService traceService = scope.Resolve<ITraceService>();
-                        await WriteTrace(traceService, settingsFactory, $"Next start time {startTime:O}");
+                        await WriteTrace(traceService, appSettings, settingsFactory, $"Next start time {startTime:O}");
                     }                    
                     await Task.Delay(startTime.Subtract(DateTime.UtcNow));
                 }                
@@ -39,26 +36,23 @@ namespace BrassLoon.Log.Purger
             {
                 Console.Error.WriteLine(ex.ToString());
             }
-            finally
-            {
-                if (_container != null) _container.Dispose();
-            }
         }
 
         private static async Task StartPurge()
         {
-            using ILifetimeScope scope = _container.BeginLifetimeScope();
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
+            AppSettings appSettings = scope.Resolve<AppSettings>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             ITraceService traceService = scope.Resolve<ITraceService>();
-            await WriteTrace(traceService, settingsFactory, "Start Purge");
+            await WriteTrace(traceService, appSettings, settingsFactory, "Start Purge");
             await InitializeWorkers();
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
+            CoreSettings settings = settingsFactory.CreateCore();
             IPurgeWorkerFactory workerFactory = scope.Resolve<IPurgeWorkerFactory>();
             IPurgeWorkerSaver workerSaver = scope.Resolve<IPurgeWorkerSaver>();
             Guid? workerId = await workerFactory.Claim(settings);
             while (workerId.HasValue && !workerId.Value.Equals(Guid.Empty))
             {
-                await WriteTrace(traceService, settingsFactory, $"Claimed worker {workerId.Value}");
+                await WriteTrace(traceService, appSettings, settingsFactory, $"Claimed worker {workerId.Value}");
                 IPurgeWorker purgeWorker = await workerFactory.Get(settings, workerId.Value);
                 try
                 {
@@ -69,7 +63,7 @@ namespace BrassLoon.Log.Purger
                     purgeWorker.Status = PurgeWorkerStatus.Error;
                     try
                     {
-                        await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(_settings), _settings.ExceptionLoggingDomainId, ex);
+                        await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
                     }
                     catch { }
                     throw;
@@ -77,21 +71,21 @@ namespace BrassLoon.Log.Purger
                 finally
                 {
                     await workerSaver.Update(settings, purgeWorker);
-                    await WriteTrace(traceService, settingsFactory, $"Updated Worker {workerId.Value} Status {purgeWorker.Status}");
+                    await WriteTrace(traceService, appSettings, settingsFactory, $"Updated Worker {workerId.Value} Status {purgeWorker.Status}");
                 }
                 workerId = await workerFactory.Claim(settings);
             }
             try
             {
-                await WriteTrace(traceService, settingsFactory, "Purging meta data");
-                await PurgMetaData(settingsFactory, scope.Resolve<IPurgeSaver>());
+                await WriteTrace(traceService, appSettings, settingsFactory, "Purging meta data");
+                await PurgMetaData(appSettings, settingsFactory, scope.Resolve<IPurgeSaver>());
             }
             catch (System.Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
                 try
                 {
-                    await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(_settings), _settings.ExceptionLoggingDomainId, ex);
+                    await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
                 }
                 catch { }
             }
@@ -99,135 +93,134 @@ namespace BrassLoon.Log.Purger
 
         private static async Task Purge(IPurgeWorker purgeWorker)
         {
-            using ILifetimeScope scope = _container.BeginLifetimeScope();
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
+            AppSettings appSettings = scope.Resolve<AppSettings>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             if (purgeWorker.Status == PurgeWorkerStatus.InProgress)
             {
                 await Task.WhenAll(
-                Task.Run(() => UpdateExceptionMetaData(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                ),
-                Task.Run(() => UpdateMetricMetaData(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                ),
-                Task.Run(() => UpdateTraceMetaData(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                )
-                );
+                    Task.Run(() => UpdateExceptionMetaData(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)),
+                    Task.Run(() => UpdateMetricMetaData(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)),
+                    Task.Run(() => UpdateTraceMetaData(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)));
                 await Task.WhenAll(
-                Task.Run(() => PurgeException(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                ),
-                Task.Run(() => PurgeMetric(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                ),
-                Task.Run(() => PurgeTrace(
-                    settingsFactory,
-                    scope.Resolve<ITraceService>(),
-                    scope.Resolve<IPurgeSaver>(),
-                    purgeWorker.DomainId
-                    )
-                )
-                );
+                    Task.Run(() => PurgeException(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)),
+                    Task.Run(() => PurgeMetric(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)),
+                    Task.Run(() => PurgeTrace(
+                        appSettings,
+                        settingsFactory,
+                        scope.Resolve<ITraceService>(),
+                        scope.Resolve<IPurgeSaver>(),
+                        purgeWorker.DomainId)));
                 purgeWorker.Status = PurgeWorkerStatus.Complete;
             }
         }
 
         private static async Task PurgeException(
+            AppSettings appSettings,
             SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
             DateTime maxTimestamp = DateTime.UtcNow;
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
-            await WriteTrace(traceService, settingsFactory, $"Purging exceptions");
+            CoreSettings settings = settingsFactory.CreateCore();
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Purging exceptions");
             await purgeSaver.PurgeException(settings, domainId, maxTimestamp);
         }
 
         private static async Task PurgeMetric(
+            AppSettings appSettings,
             SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
             DateTime maxTimestamp = DateTime.UtcNow;
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
-            await WriteTrace(traceService, settingsFactory, $"Purging metrics");
+            CoreSettings settings = settingsFactory.CreateCore();
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Purging metrics");
             await purgeSaver.PurgeMetric(settings, domainId, maxTimestamp);
         }
 
         private static async Task PurgeTrace(
+            AppSettings appSettings,
             SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
             DateTime maxTimestamp = DateTime.UtcNow;
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
-            await WriteTrace(traceService, settingsFactory, $"Purging traces");
+            CoreSettings settings = settingsFactory.CreateCore();
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Purging traces");
             await purgeSaver.PurgeTrace(settings, domainId, maxTimestamp);
         }
 
         private static async Task UpdateExceptionMetaData(
+            AppSettings appSettings,
             SettingsFactory settingsFactory, 
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
-            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, _settings.RetensionPeriod).ToUniversalTime();
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
+            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
+            CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
             expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
-            await WriteTrace(traceService, settingsFactory, $"Updating meta data for exceptions created up to {minTimestamp}");
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for exceptions created up to {minTimestamp}");
             await purgeSaver.InitializeException(settings, domainId, expiration, minTimestamp);
         }
 
         private static async Task UpdateMetricMetaData(
+            AppSettings appSettings,
             SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
-            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, _settings.RetensionPeriod).ToUniversalTime();
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
+            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
+            CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
             expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
-            await WriteTrace(traceService, settingsFactory, $"Updating meta data for metrics created up to {minTimestamp}");
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for metrics created up to {minTimestamp}");
             await purgeSaver.InitializeMetric(settings, domainId, expiration, minTimestamp);
         }
 
         private static async Task UpdateTraceMetaData(
+            AppSettings appSettings,
             SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
         {
-            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, _settings.RetensionPeriod).ToUniversalTime();
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
+            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
+            CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
             expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
-            await WriteTrace(traceService, settingsFactory, $"Updating meta data for traces created up to {minTimestamp}");
+            await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for traces created up to {minTimestamp}");
             await purgeSaver.InitializeTrace(settings, domainId, expiration, minTimestamp);
         }
 
@@ -239,22 +232,26 @@ namespace BrassLoon.Log.Purger
         /// </summary>
         private static async Task InitializeWorkers()
         {
-            using (ILifetimeScope scope = _container.BeginLifetimeScope())
+            using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope())
             {
+                AppSettings appSettings = scope.Resolve<AppSettings>();
                 SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
                 IPurgeWorkerSaver saver = scope.Resolve<IPurgeWorkerSaver>();
-                await saver.InitializePurgeWorker(settingsFactory.CreateCore(_settings));
-                await WriteTrace(scope.Resolve<ITraceService>(), settingsFactory, "Workers Initialized");
+                await saver.InitializePurgeWorker(settingsFactory.CreateCore());
+                await WriteTrace(scope.Resolve<ITraceService>(), appSettings, settingsFactory, "Workers Initialized");
             }
         }
 
         /// <summary>
         /// Calling stored procs to delete old purge meta data records
         /// </summary>
-        private static async Task PurgMetaData(SettingsFactory settingsFactory, IPurgeSaver saver)
+        private static async Task PurgMetaData(
+            AppSettings appSettings,
+            SettingsFactory settingsFactory,
+            IPurgeSaver saver)
         {
-            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, _settings.PurgeMetaDataTimespan).ToUniversalTime();
-            CoreSettings settings = settingsFactory.CreateCore(_settings);
+            DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.PurgeMetaDataTimespan).ToUniversalTime();
+            CoreSettings settings = settingsFactory.CreateCore();
             await Task.WhenAll(
                 saver.DeleteExceptionByMinTimestamp(settings, minTimestamp),
                 saver.DeleteMetricByMinTimestamp(settings, minTimestamp),
@@ -294,7 +291,7 @@ namespace BrassLoon.Log.Purger
             return result;
         }
 
-        private static Settings LoadSettings(string[] args)
+        private static AppSettings LoadSettings(string[] args)
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
             builder
@@ -303,19 +300,9 @@ namespace BrassLoon.Log.Purger
             .AddCommandLine(args)
             ;
             IConfiguration configuration = builder.Build();
-            Settings settings = new Settings();
+            AppSettings settings = new AppSettings();
             ConfigurationBinder.Bind(configuration, settings);
             return settings;
-        }
-
-        private static IContainer LoadDiContainer()
-        {
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new BrassLoon.Log.Core.LogModule());
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterType<SettingsFactory>();
-            return builder.Build();
         }
 
         private static DateTime GetNextStartTime(DateTime previous)
@@ -328,10 +315,14 @@ namespace BrassLoon.Log.Purger
             return next;
         }
 
-        public static async Task WriteTrace(ITraceService traceService, SettingsFactory settingsFactory, string value)
+        public static async Task WriteTrace(
+            ITraceService traceService,
+            AppSettings appSettings,
+            SettingsFactory settingsFactory,
+            string value)
         {
             Console.WriteLine(value);
-            await traceService.Create(settingsFactory.CreateLog(_settings), _settings.TraceLoggingDomainId, "log-purger", value);
+            await traceService.Create(settingsFactory.CreateLog(), appSettings.TraceLoggingDomainId, "log-purger", value);
         }
     }
 }

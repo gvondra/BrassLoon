@@ -28,7 +28,7 @@ BEGIN
 			SELECT DISTINCT [DomainId]
 			FROM [bll].[Trace] WITH(READUNCOMMITTED)
 			) [DOMAIN]
-		WHERE NOT EXISTS (SELECT 1 FROM [bll].[PurgeWorker] WHERE [bll].[PurgeWorker].[DomainId] = [DOMAIN].[DomainId])
+		WHERE NOT EXISTS (SELECT TOP 1 1 FROM [bll].[PurgeWorker] WHERE [bll].[PurgeWorker].[DomainId] = [DOMAIN].[DomainId])
 		;
 		COMMIT TRANSACTION
 	END TRY
