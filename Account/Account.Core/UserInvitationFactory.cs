@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +36,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IUserInvitation> Get(ISettings settings, Guid id)
+        public async Task<IUserInvitation> Get(Framework.ISettings settings, Guid id)
         {
             UserInvitation result = null;
             UserInvitationData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
@@ -46,7 +45,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEnumerable<IUserInvitation>> GetByAccountId(ISettings settings, Guid accountId)
+        public async Task<IEnumerable<IUserInvitation>> GetByAccountId(Framework.ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
                 .Select<UserInvitationData, IUserInvitation>(data => Create(data));

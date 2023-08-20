@@ -19,6 +19,7 @@ export class ClientComponent implements OnInit {
   AccountId: string | null = null;
   ClientRequest: ClientCredentialRequest | null = null;
   Secret: string | null = null;
+  ShowBusy: boolean = false;
   LabelColumnClass: string = "col-md-2";
   InputColumnClass: string = "col-md-8";
 
@@ -95,6 +96,8 @@ export class ClientComponent implements OnInit {
   }
 
   Save() {
+    this.ErrorMessage = null;
+    this.ShowBusy = true;
     if (this.ClientRequest.ClientId && this.ClientRequest.ClientId != '') {
       this.clientService.Update(this.ClientRequest.ClientId, this.ClientRequest)
       .then(client => {
@@ -104,7 +107,8 @@ export class ClientComponent implements OnInit {
       .catch(err => {
         console.error(err);
         this.ErrorMessage = err.message || "Unexpected Error"
-      });   
+      })
+      .finally(() => this.ShowBusy = false);   
     }
     else {
       this.clientService.Create(this.ClientRequest)
@@ -117,7 +121,8 @@ export class ClientComponent implements OnInit {
       .catch(err => {
         console.error(err);
         this.ErrorMessage = err.message || "Unexpected Error"
-      });   
+      })
+      .finally(() => this.ShowBusy = false);   
     }
   }
 }

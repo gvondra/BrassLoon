@@ -33,7 +33,7 @@ namespace AccountAPI
         }
 
         [NonAction]
-        protected async Task<IUser> GetUser(IUserFactory userFactory, BrassLoon.CommonCore.ISettings settings)
+        protected async Task<IUser> GetUser(IUserFactory userFactory, BrassLoon.Account.Framework.ISettings settings)
         {
             string referenceId = GetCurrentUserReferenceId();
             return await userFactory.GetByReferenceId(settings, referenceId);

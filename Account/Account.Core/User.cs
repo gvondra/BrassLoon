@@ -57,7 +57,7 @@ namespace BrassLoon.Account.Core
             await _dataSaver.Update(transactionHandler, _data);
         }
 
-        public async Task<IEmailAddress> GetEmailAddress(ISettings settings)
+        public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
         {
             if (_emailAddress == null)
                 _emailAddress = await _emailAddressFactory.Get(settings, EmailAddressId);

@@ -6,5 +6,6 @@
         public string ExternalIdIssuer { get; set; }
         public string Issuer { get; set; }
         public string SuperUser { get; set; }
+        public string ClientSecretVaultAddress { get; set; }
     }
 }

@@ -170,7 +170,6 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     mapper.Map<Client, IClient>(client, innerClient);
                     IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
-                    innerClient.SetSecret(client.Secret);
                     if (client.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Create(coreSettings, innerClient, userEmailAddress);

@@ -4,7 +4,6 @@ using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -36,7 +35,7 @@ namespace BrassLoon.Account.Core
             await _dataSaver.Create(transactionHandler, userId, _data);
         }
 
-        public Task<IEnumerable<IDomain>> GetDomains(ISettings settings)
+        public Task<IEnumerable<IDomain>> GetDomains(Framework.ISettings settings)
         {
             throw new NotImplementedException();
         }

@@ -4,7 +4,7 @@ namespace AccountAPI
 {
     public class SettingsFactory
     {
-        public CoreSettings CreateCore(CommonApiSettings settings)
+        public CoreSettings CreateCore(Settings settings)
         {
             return new CoreSettings(settings);
         }

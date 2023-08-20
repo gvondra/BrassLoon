@@ -151,7 +151,7 @@ namespace AccountAPI.Controllers
                     result = BadRequest("Missing account id value");
                 if (result == null && !UserCanAccessAccount(client.AccountId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null && string.IsNullOrEmpty(client.Secret))
+                if (result == null && string.IsNullOrEmpty(client?.Secret))
                     result = BadRequest("Missing secret value");
                 if (result == null && client.Secret.Trim().Length < 16)
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
@@ -201,6 +201,8 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         mapper.Map<Client, IClient>(client, innerClient);
+                        if (!string.IsNullOrEmpty(client?.Secret))
+                            innerClient.SetSecret(client.Secret);
                         await _clientSaver.Update(settings, innerClient, client.Secret);
                         result = Ok(mapper.Map<Client>(innerClient));
                     }

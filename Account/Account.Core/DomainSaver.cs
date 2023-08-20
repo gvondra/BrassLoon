@@ -9,7 +9,7 @@ namespace BrassLoon.Account.Core
 {
     public class DomainSaver : IDomainSaver
     {
-        public async Task Create(ISettings settings, params IDomain[] domains)
+        public async Task Create(Framework.ISettings settings, params IDomain[] domains)
         {
             if (domains != null && domains.Length > 0)
             {
@@ -24,7 +24,7 @@ namespace BrassLoon.Account.Core
             }
         }
 
-        public async Task Update(ISettings settings, params IDomain[] domains)
+        public async Task Update(Framework.ISettings settings, params IDomain[] domains)
         {
             if (domains != null && domains.Length > 0)
             {

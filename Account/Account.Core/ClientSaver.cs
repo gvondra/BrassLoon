@@ -2,9 +2,6 @@
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -18,23 +15,23 @@ namespace BrassLoon.Account.Core
             _clientCredentialDataSaver = clientCredentialDataSaver;
         }
 
-        public async Task Create(ISettings settings, IClient client)
+        public async Task Create(BrassLoon.Account.Framework.ISettings settings, IClient client)
         {
             Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), client.Create);
+            await saver.Save(new TransactionHandler(settings), (th) => client.Create(th, settings));
         }
 
-        public async Task Update(ISettings settings, IClient client)
+        public async Task Update(BrassLoon.Account.Framework.ISettings settings, IClient client)
         {
             await Update(settings, client, null);
         }
 
-        public async Task Update(ISettings settings, IClient client, string secret)
+        public async Task Update(BrassLoon.Account.Framework.ISettings settings, IClient client, string secret)
         {
             Saver saver = new Saver();
             if (string.IsNullOrEmpty(secret))
             {
-                await saver.Save(new TransactionHandler(settings), client.Update);
+                await saver.Save(new TransactionHandler(settings), (th) => client.Update(th, settings));
             }
             else
             {
@@ -47,14 +44,14 @@ namespace BrassLoon.Account.Core
                 { 
                     IsActive = true 
                 };
-                await saver.Save(new TransactionHandler(settings), async th => await UpdateClient(th, client, clientCredential));
+                await saver.Save(new TransactionHandler(settings), async th => await UpdateClient(th, settings, client, clientCredential));
             }
             
         }
 
-        private async Task UpdateClient(ITransactionHandler transactionHandler, IClient client, ClientCredential clientCredential)
+        private static async Task UpdateClient(ITransactionHandler transactionHandler, BrassLoon.Account.Framework.ISettings settings, IClient client, ClientCredential clientCredential)
         {
-            await client.Update(transactionHandler);
+            await client.Update(transactionHandler, settings);
             await clientCredential.Create(transactionHandler);
         }
     }

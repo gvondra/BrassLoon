@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Account.Data.Models;
 using BrassLoon.DataClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -38,7 +39,7 @@ namespace BrassLoon.Account.Data
                     command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "accountId", DbType.Guid, DataUtil.GetParameterValue(clientData.AccountId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(clientData.Name));
+                    AddCommonParameters(command.Parameters, clientData);
 
                     await command.ExecuteNonQueryAsync();
                     clientData.ClientId = (Guid)guid.Value;
@@ -64,16 +65,21 @@ namespace BrassLoon.Account.Data
                     command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(clientData.ClientId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(clientData.Name));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretType", DbType.Int16, DataUtil.GetParameterValue(clientData.SecretType));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretKey", DbType.Guid, DataUtil.GetParameterValue(clientData.SecretKey));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretSalt", DbType.Binary, DataUtil.GetParameterValue(clientData.SecretSalt));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(clientData.IsActive));
+                    AddCommonParameters(command.Parameters, clientData);
 
                     await command.ExecuteNonQueryAsync();
                     clientData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }
+        }
+
+        private void AddCommonParameters(IList commandParameters, ClientData data)
+        {
+            DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "secretType", DbType.Int16, DataUtil.GetParameterValue(data.SecretType));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "secretKey", DbType.Guid, DataUtil.GetParameterValue(data.SecretKey));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "secretSalt", DbType.Binary, DataUtil.GetParameterValue(data.SecretSalt));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
         }
     }
 }

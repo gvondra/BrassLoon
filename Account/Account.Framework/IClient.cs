@@ -15,8 +15,11 @@ namespace BrassLoon.Account.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
-        Task Update(ITransactionHandler transactionHandler);
-        Task<byte[]> GetSecretHash(ISettings settings);
+        void SetSecret(string secret);
+        /// <returns>Returns true if the client is active and the given secret matches the stored secret.</returns>
+        Task<bool> AuthenticateSecret(ISettings settings, string secret);
+        Task Create(ITransactionHandler transactionHandler, ISettings settings);
+        Task Update(ITransactionHandler transactionHandler, ISettings settings);
+        Task<byte[]> GetSecretHash(BrassLoon.CommonCore.ISettings settings);
     }
 }
