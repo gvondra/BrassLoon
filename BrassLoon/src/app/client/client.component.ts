@@ -14,10 +14,13 @@ import { ClientCredentialRequest } from '../models/client-credential-request';
 })
 export class ClientComponent implements OnInit {
 
-  ErrorMessage: string = null;
-  Account: Account = null;
-  AccountId: string = null;
-  ClientRequest: ClientCredentialRequest = null;
+  ErrorMessage: string | null = null;
+  Account: Account | null = null;
+  AccountId: string | null = null;
+  ClientRequest: ClientCredentialRequest | null = null;
+  Secret: string | null = null;
+  LabelColumnClass: string = "col-md-2";
+  InputColumnClass: string = "col-md-8";
 
   constructor(private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -49,7 +52,7 @@ export class ClientComponent implements OnInit {
         else {
           this.clientService.CreateClientSecret()
           .then(secret => {
-            let client: Client = new Client()
+            let client: Client = new Client();
             client.AccountId = params["accountId"];
             this.SetRequest(client, secret);
           })
@@ -75,6 +78,7 @@ export class ClientComponent implements OnInit {
     }
     request.AccountId = client.AccountId;
     request.Name = client.Name;
+    request.IsActive = client.IsActive;
     request.Secret = secret;
     this.ClientRequest = request;
   }
@@ -93,7 +97,10 @@ export class ClientComponent implements OnInit {
   Save() {
     if (this.ClientRequest.ClientId && this.ClientRequest.ClientId != '') {
       this.clientService.Update(this.ClientRequest.ClientId, this.ClientRequest)
-      .then(client => this.SetRequest(client, ''))
+      .then(client => {
+        this.Secret = this.ClientRequest.Secret;
+        this.SetRequest(client, '');
+      })
       .catch(err => {
         console.error(err);
         this.ErrorMessage = err.message || "Unexpected Error"
@@ -102,7 +109,10 @@ export class ClientComponent implements OnInit {
     else {
       this.clientService.Create(this.ClientRequest)
       .then(client => {
-        this.router.navigate(['/a', client.AccountId, 'Client', client.ClientId]);
+        this.ClientRequest.ClientId = client.ClientId;
+        this.ClientRequest.AccountId = client.AccountId;
+        this.Secret = this.ClientRequest.Secret;
+        this.SetRequest(client, '');
       })
       .catch(err => {
         console.error(err);

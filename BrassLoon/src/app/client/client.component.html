@@ -5,18 +5,18 @@
 <form *ngIf="!ErrorMessage && ClientRequest" (ngSubmit)="Save()" #clientForm="ngForm">
     <div class="container">
         <div *ngIf="ClientRequest.ClientId" class="row">
-            <div class="col-md-1">
+            <div [class]="LabelColumnClass">
                 <label for="clientId">Id</label>
             </div>
-            <div class="col-md-9">
+            <div [class]="InputColumnClass">
                 {{ ClientRequest.ClientId }}
             </div>
         </div>
         <div class="row">
-            <div class="col-md-1">
+            <div [class]="LabelColumnClass">
                 <label for="clientName">Name</label>
             </div>
-            <div class="col-md-9">
+            <div [class]="InputColumnClass">
                 <input id="clientName" name="clientName" #clientName="ngModel" class="form-control" type="text" required="true" maxlength="2000" placeholder="Client Name" [(ngModel)]="ClientRequest.Name"/>
                 <div *ngIf="clientName.invalid && (clientName.dirty || clientName.touched)" class="alert alert-danger">
                     <div *ngIf="clientName.errors.required">
@@ -26,12 +26,25 @@
             </div>
         </div>
         <div class="row">
+            <div [class]="LabelColumnClass">
+                <label for="isActive">Is Active</label>
+            </div>
             <div class="col-md-1">
+                <input id="isActive" 
+                    name="isActive" 
+                    #isActive="ngModel" 
+                    class="form-control" 
+                    type="checkbox"
+                    style="height: 1.25em; width: 1.25em;"
+                    [(ngModel)]="ClientRequest.IsActive"/>
+            </div>
+        </div>
+        <div class="row">
+            <div [class]="LabelColumnClass">
                 <label for="clientSecret">Secret</label>
             </div>
-            <div class="col-md-9">
-                <input id="clientSecret" name="clientSecret" #clientSecret="ngModel" class="form-control" type="text" readonly="true" [(ngModel)]="ClientRequest.Secret"/>
-                <p *ngIf="ClientRequest.Secret && ClientRequest.Secret != ''" style="font-size: small;">Be sure to capture this secret before saving. There is no way to recover it after it's saved.</p>                
+            <div [class]="InputColumnClass">
+                <input id="clientSecret" name="clientSecret" #clientSecret="ngModel" class="form-control" type="text" readonly="true" [(ngModel)]="ClientRequest.Secret"/>                
             </div>
             <div class="col-md-2"><button class="btn btn-secondary btn-sm" type="button" (click)="GenerateSecret()">Generate Secret</button></div>
         </div>        
@@ -42,3 +55,9 @@
         </div>
     </div>
 </form>
+<div class="row">
+    <div class="offset-md-2 col-md-8">
+        <p style="font-size: small;">Client secrects cannot be read after they're created. Be sure to document secrects for future use, and handle them with care.</p>
+        <p *ngIf="Secret && Secret !== ''" style="font-size: small;">Capture this secret: {{ Secret }}</p>
+    </div>
+</div>

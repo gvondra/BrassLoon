@@ -11,6 +11,8 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AccountAPI.Controllers
@@ -41,9 +43,31 @@ namespace AccountAPI.Controllers
         }
 
         [HttpGet("/api/ClientSecret")]
+        [ProducesResponseType(typeof(string), 200)]
+        [Authorize("READ:ACCOUNT")]
         public IActionResult CreateSecret()
         {
-            return Ok(new { Secret = _secretProcessor.Create() });
+            IActionResult result;
+            try
+            {
+                RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
+                byte firstCharacter = 33;
+                byte characterRange = 94;
+                byte[] values = new byte[32];
+                randomNumberGenerator.GetBytes(values);
+                for (int i = 0; i < values.Length; i += 1)
+                {
+                    values[i] = (byte)((values[i] % characterRange) + firstCharacter);
+                }
+                result = Ok(
+                    Encoding.ASCII.GetString(values));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return result;
         }
 
         [HttpGet("/api/Account/{id}/Client")]

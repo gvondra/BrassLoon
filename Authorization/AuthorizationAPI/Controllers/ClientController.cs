@@ -127,8 +127,7 @@ namespace AuthorizationAPI.Controllers
                     values[i] = (byte)((values[i] % characterRange) + firstCharacter);
                 }
                 result = Ok(
-                    Encoding.ASCII.GetString(values)
-                    );
+                    Encoding.ASCII.GetString(values));
             }
             catch (Exception ex)
             {

@@ -46,13 +46,5 @@ namespace BrassLoon.Account.Core
             }            
             return result;
         }
-
-        public string Create()
-        {
-            return string.Concat(
-                Guid.NewGuid().ToString("N"),
-                Guid.NewGuid().ToString("N")
-                );
-        }
     }
 }
