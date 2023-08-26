@@ -27,7 +27,10 @@ namespace BrassLoon.Extensions.Logging
                     Secret = loggerConfiguration.LogClientSecret
                 };
                 LogRPC.Protos.Token token = await client.CreateAsync(request, new CallOptions());
-                _tokenCache[cacheKey] = (DateTime.UtcNow.AddMinutes(6), token.Value);
+                lock (_cacheLock)
+                {
+                    _tokenCache[cacheKey] = (DateTime.UtcNow.AddMinutes(6), token.Value);
+                }
             }
             return _tokenCache[cacheKey].token;
         }
