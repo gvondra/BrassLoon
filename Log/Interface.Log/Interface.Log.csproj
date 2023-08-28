@@ -11,10 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>2.2.0-prerelease.14</Version>
-		<AssemblyVersion>2.2.0.14</AssemblyVersion>
+		<Version>3.0.0-prerelease.1</Version>
+		<AssemblyVersion>3.0.0.1</AssemblyVersion>
 		<PackageReleaseNotes>
-			- v2.2 Added create batch traces method; Added create batch metrics method
+			- v3.0 Upgrade RestClient. Added create batch traces method; Added create batch metrics method
 			- v2.1 Upgrade RestUtil v3.1
 			- v2.0 upgrade RestUtil v3
 		</PackageReleaseNotes>
@@ -33,10 +33,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="[6.3.0,8.0)" />
-		<PackageReference Include="BrassLoon.RestClient" Version="[3.1.0,3.2)" />
+		<PackageReference Include="Autofac" Version="[7.0,8.0)" />
+		<PackageReference Include="BrassLoon.RestClient" Version="[4.0.0-prerelease.1,5.0)" />
 		<PackageReference Include="Polly" Version="[7.2.3,8.0)" />
-		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,3.1)" />
+		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
 	</ItemGroup>
 
 </Project>
