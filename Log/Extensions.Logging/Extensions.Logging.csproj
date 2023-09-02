@@ -12,8 +12,8 @@
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<LangVersion>10</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-beta.12</Version>
-		<AssemblyVersion>1.0.0.12</AssemblyVersion>
+		<Version>1.0.0-beta.13</Version>
+		<AssemblyVersion>1.0.0.13</AssemblyVersion>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/gvondra/BrassLoon</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/gvondra/BrassLoon.git</RepositoryUrl>
