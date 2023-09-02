@@ -265,7 +265,7 @@ namespace BrassLoon.Extensions.Logging
                             EventId = entry.EventId.Id != default(int) && !string.IsNullOrEmpty(entry.EventId.Name) ? new LogRPC.Protos.EventId { Id = entry.EventId.Id, Name = entry.EventId.Name } : null,
                             Level = entry.LogLevel.ToString(),
                             Magnitude = metric.Magnitude,
-                            Requestor = metric.Requestor,
+                            Requestor = metric.Requestor ?? string.Empty,
                             Status = metric.Status
                         };
                         MapMetricData(request.Data, metric.Data);
