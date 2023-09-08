@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-#if !DEBUG
 using Microsoft.Extensions.Logging;
-#endif
 using Microsoft.OpenApi.Models;
 
 namespace AccountAPI
@@ -25,9 +23,9 @@ namespace AccountAPI
 
             builder.Services.AddLogging(b =>
             {
-#if !DEBUG
                 b.ClearProviders();
-#endif
+                b.AddConsole();
+
                 Settings settings = new Settings();
                 builder.Configuration.Bind(settings);
                 if (settings.LoggingDomainId.HasValue && !string.IsNullOrEmpty(settings.LogApiBaseAddress) && settings.LoggingClientId.HasValue)
