@@ -6,7 +6,7 @@
 AS
 BEGIN
 	SELECT [tsk].[WorkTaskId], [tsk].[DomainId], [tsk].[WorkTaskTypeId], [tsk].[WorkTaskStatusId], [tsk].[Title], 
-	[tsk].[Text], [tsk].[AssignedToUserId], [tsk].[AssignedDate],
+	[tsk].[Text], [tsk].[AssignedToUserId], [tsk].[AssignedDate], [tsk].[ClosedDate],
 	[tsk].[CreateTimestamp], [tsk].[UpdateTimestamp]
 	FROM [blwt].[WorkTask] [tsk] 
 	WHERE [tsk].[DomainId] = @domainId

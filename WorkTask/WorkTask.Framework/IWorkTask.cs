@@ -13,6 +13,7 @@ namespace BrassLoon.WorkTask.Framework
         string Text { get; set; }
         string AssignedToUserId { get; set; }
         DateTime? AssignedDate { get; set; }
+        DateTime? ClosedDate { get; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         IWorkTaskType WorkTaskType { get; }

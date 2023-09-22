@@ -96,6 +96,7 @@ namespace BrassLoon.WorkTask.Data.Internal
             DataUtil.AddParameter(_providerFactory, commandParameters, "text", DbType.String, DataUtil.GetParameterValue(data.Text));
             DataUtil.AddParameter(_providerFactory, commandParameters, "assignedToUserId", DbType.AnsiString, DataUtil.GetParameterValue(data.AssignedToUserId));
             DataUtil.AddParameter(_providerFactory, commandParameters, "assignedDate", DbType.Date, DataUtil.GetParameterValue(data.AssignedDate));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "closedDate", DbType.Date, DataUtil.GetParameterValue(data.ClosedDate));
         }
     }
 }

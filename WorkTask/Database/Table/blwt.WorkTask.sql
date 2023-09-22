@@ -10,6 +10,7 @@
 	[AssignedDate] DATE NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTask_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTask_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	[ClosedDate] DATE NULL,
 	CONSTRAINT [PK_WorkTask] PRIMARY KEY NONCLUSTERED ([WorkTaskId]), 
     CONSTRAINT [FK_WorkTask_To_WorkTaskType] FOREIGN KEY ([WorkTaskTypeId]) REFERENCES [blwt].[WorkTaskType]([WorkTaskTypeId]), 
     CONSTRAINT [FK_WorkTask_To_WorkTaskStatus] FOREIGN KEY ([WorkTaskStatusId]) REFERENCES [blwt].[WorkTaskStatus]([WorkTaskStatusId]) 

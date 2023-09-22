@@ -5,6 +5,7 @@
 	@text NVARCHAR(MAX),
 	@assignedToUserId VARCHAR(1024) = '',
 	@assignedDate DATE = NULL,
+	@closedDate DATE = NULL,
 	@timestamp DATETIME2(4) OUT
 AS
 BEGIN
@@ -16,6 +17,7 @@ BEGIN
 		[Text] = @text, 
 		[AssignedToUserId] = @assignedToUserId,
 		[AssignedDate] = @assignedDate,
+		[ClosedDate] = @closedDate,
 		[UpdateTimestamp] = @timestamp
 	WHERE [WorkTaskId] = @id
 	;

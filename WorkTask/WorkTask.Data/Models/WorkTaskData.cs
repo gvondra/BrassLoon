@@ -13,6 +13,7 @@ namespace BrassLoon.WorkTask.Data.Models
         [ColumnMapping()] public string Text { get; set; }
         [ColumnMapping()] public string AssignedToUserId { get; set; }
         [ColumnMapping()] public DateTime? AssignedDate { get; set; }
+        [ColumnMapping()] public DateTime? ClosedDate { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime UpdateTimestamp { get; set; }
         public WorkTaskTypeData WorkTaskType { get; set; }

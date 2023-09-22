@@ -44,10 +44,10 @@ namespace BrassLoon.WorkTask.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        private Guid WorkTaskTypeId { get => _data.WorkTaskTypeId; set => _data.WorkTaskTypeId = value; }
+        private Guid WorkTaskTypeId { set => _data.WorkTaskTypeId = value; }
         public IWorkTaskType WorkTaskType => _workTaskType;
 
-        private Guid WorkTaskStatusId { get => _data.WorkTaskStatusId; set => _data.WorkTaskStatusId = value; }
+        private Guid WorkTaskStatusId { set => _data.WorkTaskStatusId = value; }
         public IWorkTaskStatus WorkTaskStatus { get => _workTaskStatus; set => _workTaskStatus = value; }
 
         public IReadOnlyList<IWorkTaskContext> WorkTaskContexts
@@ -56,6 +56,7 @@ namespace BrassLoon.WorkTask.Core
 
         public string AssignedToUserId { get => _data.AssignedToUserId; set => _data.AssignedToUserId = value; }
         public DateTime? AssignedDate { get => _data.AssignedDate; set => _data.AssignedDate = value; }
+        public DateTime? ClosedDate { get => _data.ClosedDate; private set => _data.ClosedDate = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {
@@ -63,6 +64,7 @@ namespace BrassLoon.WorkTask.Core
                 throw new ApplicationException("Unable to create work task as no work task type was specified");
             WorkTaskTypeId = _workTaskType.WorkTaskTypeId;
             SetWorkTaskStatusId();
+            SetClosedDate();
             await _dataSaver.Create(transactionHandler, _data);
             await SaveNewContexts(transactionHandler);
         }
@@ -70,6 +72,7 @@ namespace BrassLoon.WorkTask.Core
         public async Task Update(ITransactionHandler transactionHandler)
         {
             SetWorkTaskStatusId();
+            SetClosedDate();
             await _dataSaver.Update(transactionHandler, _data);
             await SaveNewContexts(transactionHandler);
         }
@@ -79,6 +82,16 @@ namespace BrassLoon.WorkTask.Core
             if (_workTaskStatus == null)
                 throw new ApplicationException("Unable to create work task as no status has been set");
             WorkTaskStatusId = _workTaskStatus.WorkTaskStatusId;
+        }
+
+        private void SetClosedDate()
+        {
+            if (_workTaskStatus == null)
+                throw new ApplicationException("Unable to create work task as no status has been set");
+            if (_workTaskStatus.IsClosedStatus && !ClosedDate.HasValue)
+                ClosedDate = DateTime.Today;
+            else if (!_workTaskStatus.IsClosedStatus && ClosedDate.HasValue)
+                ClosedDate = null;
         }
 
         public IWorkTaskContext AddContext(short referenceType, string referenceValue)
