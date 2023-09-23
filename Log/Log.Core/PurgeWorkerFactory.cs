@@ -2,7 +2,6 @@
 using BrassLoon.Log.Data;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using BrassLoon.CommonCore;
 using BrassLoon.Log.Data.Models;
