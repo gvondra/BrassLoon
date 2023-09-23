@@ -116,6 +116,10 @@
     <Build Include="Stored Procedure\blwt.GetWorkTask_by_ContextReference.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskType_by_ContextReference.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_ContextReference.sql" />
+    <Build Include="Table\blwt.PurgeWorker.sql" />
+    <Build Include="Stored Procedure\blwt.InitializePurgeWorker.sql" />
+    <Build Include="Stored Procedure\blwt.UpdatePurgeWorker.sql" />
+    <Build Include="Stored Procedure\blwt.ClaimPurgeWorker.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

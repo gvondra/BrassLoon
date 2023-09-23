@@ -376,6 +376,7 @@ FodyWeavers.xsd
 # 2023 August, Log/LoggingTest removed
 /Log/LoggingTest/**/launchSettings.json
 /Log/TestClient/**/launchSettings.json
+/WorkTask/Purger/**/launchSettings.json
 /WorkTask/TestClient/**/launchSettings.json
 /WorkTask/WorkTaskAPI/**/launchSettings.json
 /Account/TestClient/**/launchSettings.json
