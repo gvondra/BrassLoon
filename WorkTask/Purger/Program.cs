@@ -32,6 +32,8 @@ namespace BrassLoon.WorkTask.Purger
                 logger.LogInformation("Started Work Task Purge");
                 PurgeProcessor purgeProcessor = scope.Resolve<PurgeProcessor>();
                 await purgeProcessor.InitializeWorkers();
+                await purgeProcessor.StartPurge();
+                await purgeProcessor.PugeMetaData();
                 logger.LogInformation("Completed Work Task Purge");
             }
             catch (Exception ex)

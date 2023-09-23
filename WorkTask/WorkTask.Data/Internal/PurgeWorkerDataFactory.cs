@@ -3,10 +3,11 @@ using BrassLoon.WorkTask.Data.Models;
 using System.Data.Common;
 using System.Data;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
-    public class PurgeWorkerDataFactory : DataFactoryBase<WorkTaskData>, IPurgeWorkerDataFactory
+    public class PurgeWorkerDataFactory : DataFactoryBase<PurgeWorkerData>, IPurgeWorkerDataFactory
     {
         public PurgeWorkerDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
 
@@ -29,6 +30,23 @@ namespace BrassLoon.WorkTask.Data.Internal
                 }
             }
             return result;
+        }
+
+        public async Task<PurgeWorkerData> Get(ISqlSettings settings, Guid id)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "purgeWorkerId", DbType.Guid, id),
+            };
+
+            return (await _genericDataFactory.GetData(
+                settings,
+                _providerFactory,
+                "[blwt].[GetPurgeWorker]",
+                () => new PurgeWorkerData(),
+                DataUtil.AssignDataStateManager,
+                parameters))
+                .FirstOrDefault();
         }
     }
 }

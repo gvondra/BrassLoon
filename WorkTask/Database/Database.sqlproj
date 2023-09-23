@@ -120,6 +120,11 @@
     <Build Include="Stored Procedure\blwt.InitializePurgeWorker.sql" />
     <Build Include="Stored Procedure\blwt.UpdatePurgeWorker.sql" />
     <Build Include="Stored Procedure\blwt.ClaimPurgeWorker.sql" />
+    <Build Include="Stored Procedure\blwt.GetPurgeWorker.sql" />
+    <Build Include="Table\blwt.WorkTaskPurge.sql" />
+    <Build Include="Stored Procedure\blwt.DeleteWorkTaskPurge_by_MinTimestamp.sql" />
+    <Build Include="Stored Procedure\blwt.InitializeWorkTaskPurge.sql" />
+    <Build Include="Stored Procedure\blwt.PurgeWorkTask.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

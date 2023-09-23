@@ -11,6 +11,7 @@ namespace BrassLoon.WorkTask.Purger
         public Guid? LoggingDomainId { get; set; }
         public Guid? LoggingClientId { get; set; }
         public string LoggingClientSecret { get; set; }
+        public short PurgeMetaDataDays { get; set; }
         // in months
         public short DefaultPurgePeriod { get; set; } = 18;
     }
