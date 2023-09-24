@@ -1,9 +1,8 @@
 ﻿using Grpc.Core;
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace LogRPC
+namespace BrassLoon.CommonAPI
 {
     public class MetaDataProcessor : IMetaDataProcessor
     {

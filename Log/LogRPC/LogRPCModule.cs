@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using BrassLoon.CommonAPI;
+
 namespace LogRPC
 {
     public class LogRPCModule : Module
