@@ -107,6 +107,9 @@ dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_style_qualification_for_method = false:silent
 
+# Inline variable declaration
+csharp_style_inlined_variable_declaration = false:none
+
 # IDE0074: Use compound assignment
 dotnet_diagnostic.IDE0074.severity = none
 
