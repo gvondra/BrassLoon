@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/get_by_domain_request.proto";
+
+option csharp_namespace = "BrassLoon.Interface.Authorization.Protos";
+
+service RoleService {
+	rpc GetByDomainId(GetByDomainRequest) returns (stream Role);
+    rpc Create(Role) returns (Role);
+    rpc Update(Role) returns (Role);
+}
+
+message Role {
+    string RoleId = 1;
+    string DomainId = 2;
+    string Name = 3;
+    string PolicyName = 4;
+    google.protobuf.BoolValue IsActive = 5;
+    string Comment = 6;
+    google.protobuf.Timestamp CreateTimestamp = 7;
+    google.protobuf.Timestamp UpdateTimestamp = 8;
+}

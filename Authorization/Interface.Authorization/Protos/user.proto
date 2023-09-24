@@ -1,0 +1,41 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/applied_role.proto";
+
+option csharp_namespace = "BrassLoon.Interface.Authorization.Protos";
+
+service UserService {
+    rpc Get(GetUserRequest) returns (User);
+    rpc GetName(GetUserRequest) returns (GetUserNameResponse);
+    rpc Search(SearchRequest) returns (stream User);
+    rpc Update(User) returns (User);
+}
+
+message SearchRequest {
+    string DomainId = 1;
+    string EmailAddress = 2;
+    string ReferenceId = 3;
+}
+
+message GetUserRequest {
+    string DomainId = 1;
+    string UserId = 2;
+}
+
+message GetUserNameResponse {
+    string Name = 1;
+}
+
+message User {
+    string UserId = 1;
+    string DomainId = 2;
+    string ReferenceId = 3;
+    string EmailAddress = 4;
+    string Name = 5;
+    repeated AppliedRole Roles = 6;
+    google.protobuf.Timestamp CreateTimestamp = 7;
+    google.protobuf.Timestamp UpdateTimestamp = 8;
+}

@@ -1,0 +1,39 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/applied_role.proto";
+import "Protos/get_by_domain_request.proto";
+
+option csharp_namespace = "BrassLoon.Interface.Authorization.Protos";
+
+service ClientService {
+    rpc Get(GetClientRequest) returns (Client);
+    rpc GetByDomain(GetByDomainRequest) returns (stream Client);
+    rpc GetClientCredentialSecret(google.protobuf.Empty) returns (ClientCredentialSecret);
+    rpc Create(Client) returns (Client);
+    rpc Update(Client) returns (Client);
+}
+
+message ClientCredentialSecret {
+    string Secret = 1;
+}
+
+message GetClientRequest {
+    string DomainId = 1;
+    string ClientId = 2;
+}
+
+message Client {
+    string ClientId = 1;
+    string DomainId = 2;
+    string Name = 3;
+    google.protobuf.BoolValue IsActive = 4;
+    string UserEmailAddress = 5;
+    string UserName = 6;
+    string Secret = 7;
+    repeated AppliedRole Roles = 8;
+    google.protobuf.Timestamp CreateTimestamp = 9;
+    google.protobuf.Timestamp UpdateTimestamp = 10;
+}

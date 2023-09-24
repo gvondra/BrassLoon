@@ -1,0 +1,8 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "BrassLoon.Interface.Authorization.Protos";
+
+message AppliedRole {
+    string Name = 1;
+    string PolicyName = 2;
+}
