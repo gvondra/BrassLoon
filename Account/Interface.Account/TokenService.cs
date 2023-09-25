@@ -34,6 +34,7 @@ namespace BrassLoon.Interface.Account
                 IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
                 {
                     IRequest request = _service.CreateRequest(builder.Uri, HttpMethod.Post);
+                    request.AddJwtAuthorizationToken(token);
                     IResponse<string> innerResponse = await _service.Send<string>(request);
                     _restUtil.CheckSuccess(innerResponse);
                     return innerResponse;
