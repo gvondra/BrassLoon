@@ -3,6 +3,7 @@ using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Authorization.Protos;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,7 @@ namespace AuthorizationRPC.Services
             _emailAddressFactory = emailAddressFactory;
         }
 
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<Client> Create(Client request, ServerCallContext context)
         {
             try
@@ -80,6 +82,7 @@ namespace AuthorizationRPC.Services
             }
         }
 
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<Client> Get(GetClientRequest request, ServerCallContext context)
         {
             try
@@ -118,6 +121,7 @@ namespace AuthorizationRPC.Services
             }
         }
 
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task GetByDomain(GetByDomainRequest request, IServerStreamWriter<Client> responseStream, ServerCallContext context)
         {
             try
@@ -151,6 +155,7 @@ namespace AuthorizationRPC.Services
             }
         }
 
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override Task<ClientCredentialSecret> GetClientCredentialSecret(Empty request, ServerCallContext context)
         {
             try
@@ -171,6 +176,7 @@ namespace AuthorizationRPC.Services
             }
         }
 
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<Client> Update(Client request, ServerCallContext context)
         {
             try

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -28,7 +28,8 @@
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.0.*" />
         <PackageReference Include="BrassLoon.Interface.Authorization" Version="4.0.0-prerelease.*" />
         <PackageReference Include="BrassLoon.Interface.Log" Version="4.0.*" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.40.*" />
+        <PackageReference Include="BrassLoon.JwtUtility" Version="1.2.*" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.57.*" />
     </ItemGroup>
 
     <ItemGroup>

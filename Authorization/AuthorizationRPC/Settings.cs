@@ -6,5 +6,6 @@ namespace AuthorizationRPC
     {
         public string SigningKeyVaultAddress { get; set; }
         public string ClientSecretVaultAddress { get; set; }
+        public string TokenIssuer { get; set; }
     }
 }
