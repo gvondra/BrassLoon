@@ -1,11 +1,11 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
-using BrassLoon.RestClient;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching.Memory;
 using System;
 using System.Globalization;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,34 +15,31 @@ namespace BrassLoon.Interface.Authorization
     public class TokenService : ITokenService
     {
         private static readonly AsyncPolicy _cache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
-        private readonly IService _service;
-        private readonly RestUtil _restUtil;
-
-        public TokenService(IService service, RestUtil restUtil)
-        {
-            _service = service;
-            _restUtil = restUtil;
-        }
 
         public async Task<string> Create(ISettings settings, Guid domainId)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             string token = await settings.GetToken();
+            Metadata headers = new Metadata()
+            {
+                { "Authorization", string.Format("Bearer {0}", token) }
+            };
             return await _cache.ExecuteAsync(async context =>
             {
-                UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-                uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Token", domainId.ToString("D"));
-                IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
+                Protos.TokenResponse tokenResponse = await GetRetryPolicy().ExecuteAsync(async () =>
                 {
-                    IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post)
-                    .AddJwtAuthorizationToken(() => token)
-                    ;
-                    IResponse<string> innerResponse = await _service.Send<string>(request);
-                    _restUtil.CheckSuccess(innerResponse);
-                    return innerResponse;
+                    using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                    {
+                        Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
+                        return await client.CreateAsync(new Protos.GetByDomainRequest
+                        {
+                            DomainId = domainId.ToString("D")
+                        },
+                        headers: headers);
+                    }
                 });
-                return response.Value;
+                return tokenResponse.Value;
             },
             new Context(GetCacheKey(token)));
         }
@@ -57,13 +54,18 @@ namespace BrassLoon.Interface.Authorization
                 throw new ArgumentException("Missing client secret value");
             return await _cache.ExecuteAsync(async context =>
             {
-                UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-                uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "Token/ClientCredential", domainId.ToString("D"));
-                IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
+                Protos.TokenResponse response = await GetRetryPolicy().ExecuteAsync(async () =>
                 {
-                    IResponse<string> innerResponse = await _service.Post<string>(uriBuilder.Uri, clientCredential);
-                    _restUtil.CheckSuccess(innerResponse);
-                    return innerResponse;
+                    using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                    {
+                        Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
+                        return await client.CreateClientCredentialAsync(new Protos.ClientCredential
+                        {
+                            ClientId = clientCredential.ClientId.Value.ToString("D"),
+                            Secret = clientCredential.Secret,
+                            DomainId = domainId.ToString("D")
+                        });
+                    }
                 });
                 return response.Value;
             },
@@ -84,9 +86,9 @@ namespace BrassLoon.Interface.Authorization
                 new ClientCredential { ClientId = clientId, Secret = secret });
         }
 
-        private static AsyncPolicy<IResponse<T>> GetRetryPolicy<T>()
+        private static AsyncPolicy GetRetryPolicy()
         {
-            return Policy.HandleResult<IResponse<T>>(res => !res.IsSuccessStatusCode)
+            return Policy.Handle<Exception>()
                 .WaitAndRetryAsync(new TimeSpan[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) });
         }
 

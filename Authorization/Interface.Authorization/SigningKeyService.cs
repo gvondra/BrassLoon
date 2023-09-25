@@ -1,31 +1,27 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
-using BrassLoon.RestClient;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Grpc.Net.Client;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Authorization
 {
     public class SigningKeyService : ISigningKeyService
     {
-        private readonly IService _service;
-        private readonly RestUtil _restUtil;
-
-        public SigningKeyService(IService service, RestUtil restUtil)
+        public async Task<SigningKey> Create(ISettings settings, Guid domainId, SigningKey signingKey)
         {
-            _service = service;
-            _restUtil = restUtil;
-        }
-
-        public Task<SigningKey> Create(ISettings settings, Guid domainId, SigningKey signingKey)
-        {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Post, signingKey)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<SigningKey>(_service, request);
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.SigningKeyService.SigningKeyServiceClient client = new Protos.SigningKeyService.SigningKeyServiceClient(channel);
+                Protos.SigningKey request = Map(signingKey);
+                request.DomainId = domainId.ToString("D");
+                Protos.SigningKey result = await client.CreateAsync(
+                    request,
+                    headers: await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return Map(result);
+            }
         }
 
         public Task<SigningKey> Create(ISettings settings, SigningKey signingKey)
@@ -35,24 +31,39 @@ namespace BrassLoon.Interface.Authorization
             return Create(settings, signingKey.DomainId.Value, signingKey);
         }
 
-        public Task<List<SigningKey>> GetByDomain(ISettings settings, Guid domainId)
+        public async Task<List<SigningKey>> GetByDomain(ISettings settings, Guid domainId)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<List<SigningKey>>(_service, request);
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.SigningKeyService.SigningKeyServiceClient client = new Protos.SigningKeyService.SigningKeyServiceClient(channel);
+                AsyncServerStreamingCall<Protos.SigningKey> stream = client.GetByDomain(
+                    new Protos.GetByDomainRequest { DomainId = domainId.ToString("D") },
+                    await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                List<SigningKey> result = new List<SigningKey>();
+                while (await stream.ResponseStream.MoveNext())
+                {
+                    result.Add(
+                        Map(stream.ResponseStream.Current));
+                }
+                return result;
+            }
         }
 
-        public Task<SigningKey> Update(ISettings settings, Guid domainId, Guid signingKeyId, SigningKey signingKey)
+        public async Task<SigningKey> Update(ISettings settings, Guid domainId, Guid signingKeyId, SigningKey signingKey)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "SigningKey", domainId.ToString("D"), signingKeyId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, signingKey)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<SigningKey>(_service, request);
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.SigningKeyService.SigningKeyServiceClient client = new Protos.SigningKeyService.SigningKeyServiceClient(channel);
+                Protos.SigningKey request = Map(signingKey);
+                request.SigningKeyId = signingKeyId.ToString("D");
+                request.DomainId = domainId.ToString("D");
+                Protos.SigningKey result = await client.UpdateAsync(
+                    request,
+                    headers: await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return Map(result);
+            }
         }
 
         public Task<SigningKey> Update(ISettings settings, SigningKey signingKey)
@@ -62,6 +73,30 @@ namespace BrassLoon.Interface.Authorization
             if (!signingKey.SigningKeyId.HasValue || signingKey.SigningKeyId.Value.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(signingKey.SigningKeyId));
             return Update(settings, signingKey.DomainId.Value, signingKey.SigningKeyId.Value, signingKey);
+        }
+
+        private static Protos.SigningKey Map(SigningKey signingKey)
+        {
+            return new Protos.SigningKey
+            {
+                CreateTimestamp = signingKey.CreateTimestamp.HasValue ? Timestamp.FromDateTime(signingKey.CreateTimestamp.Value) : default,
+                DomainId = signingKey.DomainId.HasValue ? signingKey.DomainId.Value.ToString("D") : string.Empty,
+                IsActive = signingKey.IsActive,
+                SigningKeyId = signingKey.SigningKeyId.HasValue ? signingKey.SigningKeyId.Value.ToString("D") : string.Empty,
+                UpdateTimestamp = signingKey.UpdateTimestamp.HasValue ? Timestamp.FromDateTime(signingKey.UpdateTimestamp.Value) : default
+            };
+        }
+
+        private static SigningKey Map(Protos.SigningKey signingKey)
+        {
+            return new SigningKey
+            {
+                CreateTimestamp = signingKey.CreateTimestamp != default ? signingKey.CreateTimestamp.ToDateTime() : default,
+                DomainId = !string.IsNullOrEmpty(signingKey.DomainId) ? Guid.Parse(signingKey.DomainId) : default,
+                IsActive = signingKey.IsActive,
+                SigningKeyId = !string.IsNullOrEmpty(signingKey.SigningKeyId) ? Guid.Parse(signingKey.SigningKeyId) : default,
+                UpdateTimestamp = signingKey.UpdateTimestamp != default ? signingKey.UpdateTimestamp.ToDateTime() : default
+            };
         }
     }
 }
