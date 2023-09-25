@@ -7,7 +7,7 @@ namespace AccountAPI
         private SecretType _secretType = SecretType.SHA512;
 
         public string TknCsp { get; set; }
-        public string ExternalIdIssuer { get; set; }
+        public string GoogleIdIssuer { get; set; }
         public string Issuer { get; set; }
         public string SuperUser { get; set; }
         public string ClientSecretVaultAddress { get; set; }

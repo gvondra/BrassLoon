@@ -1,10 +1,9 @@
-﻿using BrassLoon.JwtUtility;
+﻿using BrassLoon.CommonAPI;
+using BrassLoon.JwtUtility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 
 namespace AccountAPI
@@ -39,34 +38,12 @@ namespace AccountAPI
 
         public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
-            JsonWebKeySet keySet = JsonWebKeySet.Create(
-                documentRetriever.GetDocumentAsync(configuration["ExternalIssuerJwksUrl"], new System.Threading.CancellationToken()).Result
-                );
             services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer("External", o =>
-            {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateIssuerSigningKey = false,
-                    ValidateLifetime = false,
-                    ValidateActor = false,
-                    ValidateTokenReplay = false,
-                    RequireAudience = false,
-                    RequireExpirationTime = false,
-                    RequireSignedTokens = false,
-                    ValidAudience = configuration["ExternalIdAudience"],
-                    ValidIssuer = configuration["ExternalIdIssuer"],
-                    IssuerSigningKeys = keySet.GetSigningKeys(),
-                    TryAllIssuerSigningKeys = true                   
-                };
-            })
+            .AddGoogleAuthentication(configuration)
             .AddJwtBearer("BrassLoon", o =>
             {
                 o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -96,13 +73,13 @@ namespace AccountAPI
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .AddAuthenticationSchemes("External", "BrassLoon")
+                .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE, "BrassLoon")
                 .Build();
                 o.AddPolicy(POLICY_EDIT_USER,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["ExternalIdIssuer"]))
-                        .AddAuthenticationSchemes("External")
+                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["GoogleIdIssuer"]))
+                        .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE)
                         .Build();
                     });
                 o.AddPolicy(POLICY_READ_ACCOUNT,
