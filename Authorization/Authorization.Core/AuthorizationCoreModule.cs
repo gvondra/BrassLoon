@@ -20,6 +20,7 @@ namespace BrassLoon.Authorization.Core
             builder.RegisterType<SecretGenerator>().As<ISecretGenerator>();
             builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
             builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
+            builder.RegisterType<TokenClaimGenerator>().As<ITokenClaimGenerator>();
             builder.RegisterType<UserFactory>().As<IUserFactory>();
             builder.RegisterType<UserSaver>().As<IUserSaver>();
         }
