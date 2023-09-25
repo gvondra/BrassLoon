@@ -1,6 +1,8 @@
 ﻿using BrassLoon.Interface.Authorization;
 using BrassLoon.Interface.Authorization.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
 
@@ -30,7 +32,17 @@ namespace BrassLoon.Authorization.TestClient
             if (string.IsNullOrEmpty(AccessToken.Get.GetGoogleIdToken()))
                 await GoogleLogin.Login(_settings);
             string accessToken = await _tokenService.Create(_settingsFactory.CreateAccount(AccessToken.Get.GetGoogleIdToken()));
-            List<SigningKey> signingKeys = await _signingKeyService.GetByDomain(_settingsFactory.CreateAuthorization(accessToken), _settings.AuthorizationDomainId.Value);
+            AuthorizationSettings settings = _settingsFactory.CreateAuthorization(accessToken);
+            Console.WriteLine("Getting signing keys");
+            List<SigningKey> signingKeys = await _signingKeyService.GetByDomain(settings, _settings.AuthorizationDomainId.Value);
+            Console.WriteLine("Creating signing key");
+            await _signingKeyService.Create(settings, new SigningKey { DomainId = _settings.AuthorizationDomainId.Value, IsActive = true });
+            foreach (SigningKey signingKey in signingKeys.Where(sk => sk.IsActive ?? true))
+            {
+                Console.WriteLine($"Inactivating existing signing key {signingKey.SigningKeyId.Value:D}");
+                signingKey.IsActive = false;
+                await _signingKeyService.Update(settings, signingKey);
+            }
         }
     }
 }
