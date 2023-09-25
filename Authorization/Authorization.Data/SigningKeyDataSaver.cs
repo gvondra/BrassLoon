@@ -38,8 +38,8 @@ namespace BrassLoon.Authorization.Data
 
                     await command.ExecuteNonQueryAsync();
                     data.SigningKeyId = (Guid)id.Value;
-                    data.CreateTimestamp = (DateTime)timestamp.Value;
-                    data.UpdateTimestamp = (DateTime)timestamp.Value;
+                    data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
+                    data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace BrassLoon.Authorization.Data
                     AddCommonParameters(command.Parameters, data);
 
                     await command.ExecuteNonQueryAsync();
-                    data.UpdateTimestamp = (DateTime)timestamp.Value;
+                    data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }
         }
