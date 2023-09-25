@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 
 namespace AccountAPI
@@ -75,13 +73,13 @@ namespace AccountAPI
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .AddAuthenticationSchemes("External", "BrassLoon")
+                .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE, "BrassLoon")
                 .Build();
                 o.AddPolicy(POLICY_EDIT_USER,
                     configure =>
                     {
                         configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["GoogleIdIssuer"]))
-                        .AddAuthenticationSchemes("External")
+                        .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE)
                         .Build();
                     });
                 o.AddPolicy(POLICY_READ_ACCOUNT,
