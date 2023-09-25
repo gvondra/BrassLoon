@@ -3,6 +3,7 @@ using BrassLoon.Log.Framework;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using LogRPC.Protos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,7 @@ namespace LogRPC.Services
             _exceptionSaver = exceptionSaver;
         }
 
+        [Authorize("BL:AUTH")]
         public async override Task<Empty> Create(LogException request, ServerCallContext context)
         {
             try
