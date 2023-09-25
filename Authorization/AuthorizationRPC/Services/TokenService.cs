@@ -65,7 +65,7 @@ namespace AuthorizationRPC.Services
                     .FirstOrDefault();
                 if (signingKey == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Signing key not found"), "No active signing key found");
-                IUser user = await GetUser(settings, domainId);
+                IUser user = await GetUser(settings, domainId, context.GetHttpContext().User);
                 return new TokenResponse
                 {
                     Value = await CreateToken(settings, user, signingKey)
@@ -121,27 +121,34 @@ namespace AuthorizationRPC.Services
             }
         }
 
-        private async Task<IUser> GetUser(CoreSettings coreSettings, Guid domainId)
+        private async Task<IUser> GetUser(CoreSettings coreSettings, Guid domainId, ClaimsPrincipal claimsPrincipal)
         {
-            //IEmailAddress emailAddress = null;
-            //string subscriber = GetCurrentUserReferenceId();
-            //IUser user = await _userFactory.GetByReferenceId(coreSettings, domainId, subscriber);
-            //if (user == null)
-            //{
-            //    string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
-            //    emailAddress = await _emailAddressFactory.GetByAddress(coreSettings, email);
-            //    user = _userFactory.Create(domainId, subscriber, emailAddress);
-            //    user.Name = GetUserNameClaim().Value;
-            //    await _userSaver.Create(coreSettings, user);
-            //}
-            //else
-            //{
-            //    user.Name = GetUserNameClaim().Value;
-            //    await _userSaver.Update(coreSettings, user);
-            //}
-            //return user;
-            return null;
+            string subscriber = GetReferenceId(claimsPrincipal);
+            IUser user = await _userFactory.GetByReferenceId(coreSettings, domainId, subscriber);
+            if (user == null)
+            {
+                string email = GetEmail(claimsPrincipal);
+                IEmailAddress emailAddress = await _emailAddressFactory.GetByAddress(coreSettings, email);
+                user = _userFactory.Create(domainId, subscriber, emailAddress);
+                user.Name = GetName(claimsPrincipal);
+                await _userSaver.Create(coreSettings, user);
+            }
+            else
+            {
+                user.Name = GetName(claimsPrincipal);
+                await _userSaver.Update(coreSettings, user);
+            }
+            return user;
         }
+
+        private static string GetName(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value;
+
+        private static string GetEmail(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.Email)?.Value;
+
+        private static string GetReferenceId(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
         private async Task<IUser> GetUser(CoreSettings coreSettings, IClient client)
         {

@@ -22,17 +22,28 @@ namespace BrassLoon.Authorization.TestClient
                     name: "--create-signing-key",
                     getDefaultValue: () => true
                     );
-                RootCommand rootCommand = new RootCommand
+                RootCommand rootCommand = new RootCommand("Authorization Test Harness");
+
+                Command command;
+
+                command = new Command("create_token")
                 {
-                    createSigningKey,
                     createToken
                 };
-                rootCommand.SetHandler(
+                command.SetHandler(
                     (ct) => CreateTokenTest(),
                     createToken);
-                rootCommand.SetHandler(
+                rootCommand.AddCommand(command);
+
+                command = new Command("signing_key")
+                {
+                    createSigningKey
+                };
+                command.SetHandler(
                     (csk) => CreateSigningKeyTest(),
                     createSigningKey);
+                rootCommand.AddCommand(command);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
