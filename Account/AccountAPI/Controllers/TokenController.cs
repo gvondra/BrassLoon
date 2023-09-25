@@ -162,7 +162,7 @@ namespace AccountAPI.Controllers
         private async Task<string> CreateToken(IUser user)
         {
             List<Claim> claims = new List<Claim>();
-            Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.ExternalIdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
+            Claim claim = User.Claims.FirstOrDefault(c => string.Equals(_settings.Value.GoogleIdIssuer, c.Issuer, StringComparison.OrdinalIgnoreCase) && string.Equals(ClaimTypes.NameIdentifier, c.Type, StringComparison.OrdinalIgnoreCase));
             if (claim != null)
                 claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claim.Value));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateCore(_settings.Value))).Address));
