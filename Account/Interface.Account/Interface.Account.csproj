@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.0.0</Version>
-		<AssemblyVersion>4.0.0.0</AssemblyVersion>
+		<Version>4.1.0-prerelease.1</Version>
+		<AssemblyVersion>4.1.0.1</AssemblyVersion>
 		<PackageReleaseNotes>
+            - v4.1 Added Create Token method
 			- v4.0 Upgrade RestClient.
 			- v3.0 Upgrade RestClient. To Client model, add IsActive property
 			- v2.3 Add client credential token caching
