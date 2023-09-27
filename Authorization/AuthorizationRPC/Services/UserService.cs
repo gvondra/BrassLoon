@@ -99,7 +99,7 @@ namespace AuthorizationRPC.Services
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
-        public override async Task Search(SearchRequest request, IServerStreamWriter<User> responseStream, ServerCallContext context)
+        public override async Task Search(SearchUserRequest request, IServerStreamWriter<User> responseStream, ServerCallContext context)
         {
             try
             {

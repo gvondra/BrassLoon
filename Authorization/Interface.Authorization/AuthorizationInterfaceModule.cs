@@ -11,6 +11,7 @@ namespace BrassLoon.Interface.Authorization
             builder.RegisterType<Service>().As<IService>().SingleInstance();
             builder.RegisterType<RestUtil>().SingleInstance();
             builder.RegisterType<ClientService>().As<IClientService>();
+            builder.RegisterType<JwksService>().As<IJwksService>();
             builder.RegisterType<RoleService>().As<IRoleService>();
             builder.RegisterType<SigningKeyService>().As<ISigningKeyService>();
             builder.RegisterType<TokenService>().As<ITokenService>();

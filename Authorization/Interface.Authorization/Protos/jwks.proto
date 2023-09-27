@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+
+import "Protos/get_by_domain_request.proto";
+
+option csharp_namespace = "BrassLoon.Interface.Authorization.Protos";
+
+service JwksService {
+	rpc Get(GetByDomainRequest) returns (GetJwksResponse);
+}
+
+message GetJwksResponse {
+	string Token = 1;
+}

@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.0.0-prerelease.1</Version>
-		<AssemblyVersion>4.0.0.1</AssemblyVersion>
+		<Version>4.0.0-prerelease.2</Version>
+		<AssemblyVersion>4.0.0.2</AssemblyVersion>
 		<PackageReleaseNotes>
             -v4.0 Switch to gRPC
 			-v3.0 Upgrade RestClient</PackageReleaseNotes>		
@@ -45,6 +45,7 @@
 	  <Protobuf Include="Protos\applied_role.proto" />
 	  <Protobuf Include="Protos\client.proto" />
 	  <Protobuf Include="Protos\get_by_domain_request.proto" />
+	  <Protobuf Include="Protos\jwks.proto" />
 	  <Protobuf Include="Protos\role.proto" />
 	  <Protobuf Include="Protos\signing_key.proto" />
 	  <Protobuf Include="Protos\token.proto" />
