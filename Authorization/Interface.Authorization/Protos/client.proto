@@ -30,9 +30,9 @@ message Client {
     string DomainId = 2;
     string Name = 3;
     google.protobuf.BoolValue IsActive = 4;
-    string UserEmailAddress = 5;
-    string UserName = 6;
-    string Secret = 7;
+    google.protobuf.StringValue UserEmailAddress = 5;
+    google.protobuf.StringValue UserName = 6;
+    google.protobuf.StringValue Secret = 7;
     repeated AppliedRole Roles = 8;
     google.protobuf.Timestamp CreateTimestamp = 9;
     google.protobuf.Timestamp UpdateTimestamp = 10;

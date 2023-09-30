@@ -1,85 +1,108 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
-using BrassLoon.RestClient;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Authorization
 {
     public class UserService : IUserService
     {
-        private static readonly Policy _userNameCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly AsyncPolicy _userNameCache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
 
-        private readonly IService _service;
-        private readonly RestUtil _restUtil;
-
-        public UserService(IService service, RestUtil restUtil)
+        public async Task<User> Get(ISettings settings, Guid domainId, Guid userId)
         {
-            _service = service;
-            _restUtil = restUtil;
-        }
-
-        public Task<User> Get(ISettings settings, Guid domainId, Guid userId)
-        {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"), userId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<User>(_service, request);
+            Protos.GetUserRequest request = new Protos.GetUserRequest
+            {
+                DomainId = domainId.ToString("D"),
+                UserId = userId.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                Protos.User response = await userService.GetAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return Map(response);
+            }
         }
 
         public async Task<User> Get(ISettings settings, Guid domainId)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            List<User> users = await _restUtil.Send<List<User>>(_service, request);
-            return users != null ? users[0] : null;
-        }
-
-        public Task<string> GetName(ISettings settings, Guid domainId, Guid userId)
-        {
-            return _userNameCache.Execute(context =>
+            Protos.SearchUserRequest request = new Protos.SearchUserRequest
             {
-                UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-                uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"), userId.ToString("D"), "Name");
-                IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                    .AddJwtAuthorizationToken(settings.GetToken)
-                    ;
-                return _restUtil.Send<string>(_service, request);
+                DomainId = domainId.ToString("D"),
+            };
+            List<User> results = new List<User>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                AsyncServerStreamingCall<Protos.User> stream = userService.Search(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await stream.ResponseStream.MoveNext())
+                {
+                    results.Add(
+                        Map(stream.ResponseStream.Current));
+                }
+            }
+            return results.FirstOrDefault();
+        }
+
+        public async Task<string> GetName(ISettings settings, Guid domainId, Guid userId)
+        {
+            Protos.GetUserRequest request = new Protos.GetUserRequest
+            {
+                DomainId = domainId.ToString("D"),
+                UserId = userId.ToString("D")
+            };
+            return await _userNameCache.ExecuteAsync(async context =>
+            {
+                using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                {
+                    Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                    Protos.GetUserNameResponse response = await userService.GetNameAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                    return response.Name;
+                }
             },
-            new Context(string.Concat(domainId.ToString("N"), " ", userId.ToString("N"))));
+            new Context(string.Concat(domainId.ToString("N"), "|", userId.ToString("N"))));
         }
 
-        public Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)
+        public async Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Get)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            if (!string.IsNullOrEmpty(emailAddress))
-                request.AddQueryParameter("emailAddress", emailAddress);
-            if (!string.IsNullOrEmpty(referenceId))
-                request.AddQueryParameter("referenceId", referenceId);
-            return _restUtil.Send<List<User>>(_service, request);
+            Protos.SearchUserRequest request = new Protos.SearchUserRequest
+            {
+                DomainId = domainId.ToString("D"),
+                EmailAddress = emailAddress,
+                ReferenceId = referenceId
+            };
+            List<User> results = new List<User>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                AsyncServerStreamingCall<Protos.User> stream = userService.Search(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await stream.ResponseStream.MoveNext())
+                {
+                    results.Add(
+                        Map(stream.ResponseStream.Current));
+                }
+            }
+            return results;
         }
 
-        public Task<User> Update(ISettings settings, Guid domainId, Guid userId, User user)
+        public async Task<User> Update(ISettings settings, Guid domainId, Guid userId, User user)
         {
-            UriBuilder uriBuilder = new UriBuilder(settings.BaseAddress);
-            uriBuilder.Path = _restUtil.AppendPath(uriBuilder.Path, "User", domainId.ToString("D"), userId.ToString("D"));
-            IRequest request = _service.CreateRequest(uriBuilder.Uri, HttpMethod.Put, user)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<User>(_service, request);
+            Protos.User request = Map(user);
+            request.UserId = userId.ToString("D");
+            request.DomainId = domainId.ToString("D");
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                Protos.User response = await userService.UpdateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return Map(response);
+            }
         }
 
         public Task<User> Update(ISettings settings, User user)
@@ -89,6 +112,63 @@ namespace BrassLoon.Interface.Authorization
             if (!user.UserId.HasValue || user.UserId.Value.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(user.UserId));
             return Update(settings, user.DomainId.Value, user.UserId.Value, user);
+        }
+
+        private static Protos.User Map(User user)
+        {
+            Protos.User result = new Protos.User
+            {
+                CreateTimestamp = user.CreateTimestamp.HasValue ? Timestamp.FromDateTime(user.CreateTimestamp.Value) : null,
+                DomainId = user.DomainId?.ToString("D"),
+                UserId = user.UserId?.ToString("D"),
+                EmailAddress = user.EmailAddress,
+                Name = user.Name,
+                ReferenceId = user.ReferenceId,
+                UpdateTimestamp = user.UpdateTimestamp.HasValue ? Timestamp.FromDateTime(user.UpdateTimestamp.Value) : null
+            };
+            foreach (AppliedRole role in user.Roles ?? new List<AppliedRole>())
+            {
+                result.Roles.Add(Map(role));
+            }
+            return result;
+        }
+
+        private static User Map(Protos.User user)
+        {
+            User result = new User
+            {
+                CreateTimestamp = user.CreateTimestamp?.ToDateTime(),
+                DomainId = !string.IsNullOrEmpty(user.DomainId) ? Guid.Parse(user.DomainId) : default(Guid?),
+                EmailAddress = user.EmailAddress,
+                Name = user.Name,
+                ReferenceId = user.ReferenceId,
+                UpdateTimestamp = user.UpdateTimestamp?.ToDateTime(),
+                UserId = !string.IsNullOrEmpty(user.UserId) ? Guid.Parse(user.UserId) : default(Guid?),
+                Roles = new List<AppliedRole>()
+            };
+            foreach (Protos.AppliedRole role in user.Roles)
+            {
+                result.Roles.Add(Map(role));
+            }
+            return result;
+        }
+
+        private static Protos.AppliedRole Map(AppliedRole role)
+        {
+            return new Protos.AppliedRole
+            {
+                Name = role.Name,
+                PolicyName = role.PolicyName
+            };
+        }
+
+        private static AppliedRole Map(Protos.AppliedRole role)
+        {
+            return new AppliedRole
+            {
+                Name = role.Name,
+                PolicyName = role.PolicyName
+            };
         }
     }
 }
