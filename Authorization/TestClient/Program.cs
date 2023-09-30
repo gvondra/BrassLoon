@@ -44,12 +44,24 @@ namespace BrassLoon.Authorization.TestClient
                     createSigningKey);
                 rootCommand.AddCommand(command);
 
+                command = new Command("cient");
+                command.SetHandler(
+                    () => ClientTest());
+                rootCommand.AddCommand(command);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private static async Task ClientTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            ClientTest test = scope.Resolve<ClientTest>();
+            await test.Execute();
         }
 
         private static async Task CreateSigningKeyTest()
