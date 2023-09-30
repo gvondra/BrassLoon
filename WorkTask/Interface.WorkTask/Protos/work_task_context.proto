@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
+
+message WorkTaskContext {
+	string WorkTaskContextId = 1;
+    string DomainId = 2;
+    string WorkTaskId = 3;
+    google.protobuf.Int32Value ReferenceType = 4;
+    google.protobuf.StringValue ReferenceValue = 5;
+    google.protobuf.Timestamp CreateTimestamp = 6;
+}

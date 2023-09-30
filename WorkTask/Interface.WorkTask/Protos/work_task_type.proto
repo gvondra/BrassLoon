@@ -1,0 +1,44 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/get_by_domain_request.proto";
+
+option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
+
+service WorkTaskTypeService {
+    rpc GetAll(GetByDomainRequest) returns (stream WorkTaskType);
+    rpc GetByCode(GetWorkTaskTypeByCodeRequest) returns (WorkTaskType);
+    rpc Get(GetWorkTaskTypeRequest) returns (WorkTaskType);
+    rpc GetByWorkGroupId(GetWorkTaskTypeByWorkGroupIdRequest) returns (stream WorkTaskType);
+    rpc Create(WorkTaskType) returns (WorkTaskType);
+    rpc Update(WorkTaskType) returns (WorkTaskType);
+}
+
+message GetWorkTaskTypeByWorkGroupIdRequest {
+    string DomainId = 1;
+    string WorkGroupId = 2;
+}
+
+message GetWorkTaskTypeRequest {
+    string DomainId = 1;
+    string WorkTaskTypeId = 2;
+}
+
+message GetWorkTaskTypeByCodeRequest {
+    string DomainId = 1;
+    string Code = 2;
+}
+
+message WorkTaskType {
+	string WorkTaskTypeId = 1;
+    string DomainId = 2;
+    string Code = 3;
+    string Title = 4;
+    google.protobuf.StringValue Description = 5;
+    google.protobuf.Int32Value PurgePeriod  = 6;
+    google.protobuf.Timestamp CreateTimestamp = 7;
+    google.protobuf.Timestamp UpdateTimestamp = 8;
+    google.protobuf.Int32Value WorkTaskCount = 9;
+}
