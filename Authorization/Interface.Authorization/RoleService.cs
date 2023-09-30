@@ -92,11 +92,11 @@ namespace BrassLoon.Interface.Authorization
             {
                 Comment = innerRole.Comment,
                 CreateTimestamp = innerRole.CreateTimestamp.HasValue ? Timestamp.FromDateTime(innerRole.CreateTimestamp.Value) : null,
-                DomainId = innerRole.DomainId?.ToString("D"),
+                DomainId = innerRole.DomainId?.ToString("D") ?? string.Empty,
                 IsActive = innerRole.IsActive,
                 Name = innerRole.Name,
                 PolicyName = innerRole.PolicyName,
-                RoleId = innerRole.RoleId?.ToString("D"),
+                RoleId = innerRole.RoleId?.ToString("D") ?? string.Empty,
                 UpdateTimestamp = innerRole.UpdateTimestamp.HasValue ? Timestamp.FromDateTime(innerRole.UpdateTimestamp.Value) : null
             };
         }

@@ -125,9 +125,9 @@ namespace BrassLoon.Interface.Authorization
         {
             Protos.Client result = new Protos.Client
             {
-                ClientId = client.ClientId.HasValue ? client.ClientId.Value.ToString("D") : string.Empty,
+                ClientId = client.ClientId?.ToString("D") ?? string.Empty,
                 CreateTimestamp = client.CreateTimestamp.HasValue ? Timestamp.FromDateTime(client.CreateTimestamp.Value) : null,
-                DomainId = client.DomainId.HasValue ? client.DomainId.Value.ToString("D") : string.Empty,
+                DomainId = client.DomainId?.ToString("D") ?? string.Empty,
                 IsActive = client.IsActive,
                 Name = client.Name,
                 Secret = client.Secret,
