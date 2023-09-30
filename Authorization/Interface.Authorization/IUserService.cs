@@ -7,7 +7,9 @@ namespace BrassLoon.Interface.Authorization
 {
     public interface IUserService
     {
+        // returns the current user
         Task<User> Get(ISettings settings, Guid domainId);
+        Task<IAsyncEnumerable<User>> GetByDomainId(ISettings settings, Guid domainId);
         Task<User> Get(ISettings settings, Guid domainId, Guid userId);
         Task<string> GetName(ISettings settings, Guid domainId, Guid userId);
         Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null);

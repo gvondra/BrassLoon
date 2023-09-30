@@ -115,7 +115,7 @@ namespace BrassLoon.Interface.Authorization
             {
                 foreach (Protos.AppliedRole r in client.Roles)
                 {
-                    result.Roles.Add(Map(r));
+                    result.Roles.Add(AppliedRole.Create(r));
                 }
             }
             return result;
@@ -143,15 +143,6 @@ namespace BrassLoon.Interface.Authorization
                 }
             }
             return result;
-        }
-
-        private static AppliedRole Map(Protos.AppliedRole appliedRole)
-        {
-            return new AppliedRole
-            {
-                Name = appliedRole.Name,
-                PolicyName = appliedRole.PolicyName
-            };
         }
 
         private static Protos.AppliedRole Map(AppliedRole appliedRole)

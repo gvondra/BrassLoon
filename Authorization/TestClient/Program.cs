@@ -54,12 +54,24 @@ namespace BrassLoon.Authorization.TestClient
                     () => RoleTest());
                 rootCommand.AddCommand(command);
 
+                command = new Command("user");
+                command.SetHandler(
+                    () => UserTest());
+                rootCommand.AddCommand(command);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private static async Task UserTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            UserTest test = scope.Resolve<UserTest>();
+            await test.Execute();
         }
 
         private static async Task RoleTest()

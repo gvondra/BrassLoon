@@ -27,7 +27,7 @@ namespace BrassLoon.Interface.Authorization
             {
                 Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
                 Protos.User response = await userService.GetAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                return Map(response);
+                return User.Create(response);
             }
         }
 
@@ -45,7 +45,7 @@ namespace BrassLoon.Interface.Authorization
                 while (await stream.ResponseStream.MoveNext())
                 {
                     results.Add(
-                        Map(stream.ResponseStream.Current));
+                        User.Create(stream.ResponseStream.Current));
                 }
             }
             return results.FirstOrDefault();
@@ -70,6 +70,23 @@ namespace BrassLoon.Interface.Authorization
             new Context(string.Concat(domainId.ToString("N"), "|", userId.ToString("N"))));
         }
 
+        public Task<IAsyncEnumerable<User>> GetByDomainId(ISettings settings, Guid domainId)
+        {
+            Protos.GetByDomainRequest request = new Protos.GetByDomainRequest
+            {
+                DomainId = domainId.ToString("D")
+            };
+            return Task.FromResult<IAsyncEnumerable<User>>(
+                new StreamEnumerable<Protos.User, User>(
+                    settings,
+                    async channel =>
+                    {
+                        Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                        return userService.GetByDomain(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                    },
+                    User.Create));
+        }
+
         public async Task<List<User>> Search(ISettings settings, Guid domainId, string emailAddress = null, string referenceId = null)
         {
             Protos.SearchUserRequest request = new Protos.SearchUserRequest
@@ -86,7 +103,7 @@ namespace BrassLoon.Interface.Authorization
                 while (await stream.ResponseStream.MoveNext())
                 {
                     results.Add(
-                        Map(stream.ResponseStream.Current));
+                        User.Create(stream.ResponseStream.Current));
                 }
             }
             return results;
@@ -101,7 +118,7 @@ namespace BrassLoon.Interface.Authorization
             {
                 Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
                 Protos.User response = await userService.UpdateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                return Map(response);
+                return User.Create(response);
             }
         }
 
@@ -133,38 +150,9 @@ namespace BrassLoon.Interface.Authorization
             return result;
         }
 
-        private static User Map(Protos.User user)
-        {
-            User result = new User
-            {
-                CreateTimestamp = user.CreateTimestamp?.ToDateTime(),
-                DomainId = !string.IsNullOrEmpty(user.DomainId) ? Guid.Parse(user.DomainId) : default(Guid?),
-                EmailAddress = user.EmailAddress,
-                Name = user.Name,
-                ReferenceId = user.ReferenceId,
-                UpdateTimestamp = user.UpdateTimestamp?.ToDateTime(),
-                UserId = !string.IsNullOrEmpty(user.UserId) ? Guid.Parse(user.UserId) : default(Guid?),
-                Roles = new List<AppliedRole>()
-            };
-            foreach (Protos.AppliedRole role in user.Roles)
-            {
-                result.Roles.Add(Map(role));
-            }
-            return result;
-        }
-
         private static Protos.AppliedRole Map(AppliedRole role)
         {
             return new Protos.AppliedRole
-            {
-                Name = role.Name,
-                PolicyName = role.PolicyName
-            };
-        }
-
-        private static AppliedRole Map(Protos.AppliedRole role)
-        {
-            return new AppliedRole
             {
                 Name = role.Name,
                 PolicyName = role.PolicyName

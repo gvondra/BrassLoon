@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.0.0-prerelease.5</Version>
-		<AssemblyVersion>4.0.0.5</AssemblyVersion>
+		<Version>4.0.0-prerelease.6</Version>
+		<AssemblyVersion>4.0.0.6</AssemblyVersion>
 		<PackageReleaseNotes>
             -v4.0 Switch to gRPC
 			-v3.0 Upgrade RestClient</PackageReleaseNotes>		

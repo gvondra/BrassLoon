@@ -99,6 +99,40 @@ namespace AuthorizationRPC.Services
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
+        public override async Task GetByDomain(GetByDomainRequest request, IServerStreamWriter<User> responseStream, ServerCallContext context)
+        {
+            try
+            {
+                Guid domainId;
+                if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
+                string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
+                if (!await _domainAcountAccessVerifier.HasAccess(
+                    _settingsFactory.CreateAccount(accessToken),
+                    domainId,
+                    accessToken))
+                {
+                    throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
+                }
+                CoreSettings settings = _settingsFactory.CreateCore();
+                IEnumerable<IUser> innerUsers = await _userFactory.GetByDomainId(settings, domainId);
+                foreach (Task<Protos.User> getUser in innerUsers.Select<IUser, Task<Protos.User>>(u => Map(settings, u)))
+                {
+                    await responseStream.WriteAsync(await getUser);
+                }
+            }
+            catch (RpcException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
+            }
+        }
+
+        [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task Search(SearchUserRequest request, IServerStreamWriter<User> responseStream, ServerCallContext context)
         {
             try

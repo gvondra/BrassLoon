@@ -99,6 +99,7 @@
     <Build Include="Stored Procedure\blt.AddClientRole.sql" />
     <Build Include="Stored Procedure\blt.RemoveUserRole.sql" />
     <Build Include="Stored Procedure\blt.RemoveClientRole.sql" />
+    <Build Include="Stored Procedure\blt.GetUser_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

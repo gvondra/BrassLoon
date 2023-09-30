@@ -14,6 +14,7 @@ namespace BrassLoon.Authorization.TestClient.DependencyInjection
             builder.RegisterType<RoleTest>();
             builder.RegisterType<SettingsFactory>().SingleInstance();
             builder.RegisterType<SigningKeyTest>();
+            builder.RegisterType<UserTest>();
         }
     }
 }
