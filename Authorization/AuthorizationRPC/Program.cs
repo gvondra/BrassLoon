@@ -67,8 +67,10 @@ namespace AuthorizationRPC
 
             app.MapGrpcService<ClientService>();
             app.MapGrpcService<JwksService>();
+            app.MapGrpcService<RoleService>();
             app.MapGrpcService<SigningKeyService>();
             app.MapGrpcService<TokenService>();
+            app.MapGrpcService<UserService>();
 
             app.Run();
         }
