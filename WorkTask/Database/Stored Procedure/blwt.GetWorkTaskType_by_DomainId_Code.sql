@@ -2,7 +2,8 @@
 	@domainId UNIQUEIDENTIFIER,
 	@code NVARCHAR(128)
 AS
-SELECT [WorkTaskTypeId], [DomainId], [Code], [Title], [Description], [CreateTimestamp], [UpdateTimestamp],
+SELECT [WorkTaskTypeId], [DomainId], [Code], [Title], [Description], [PurgePeriod],
+	[CreateTimestamp], [UpdateTimestamp],
 	(SELECT COUNT(1) FROM [blwt].[WorkTask] WITH(READUNCOMMITTED) WHERE [DomainId] = [blwt].[WorkTaskType].[DomainId] AND [WorkTaskTypeId] = [blwt].[WorkTaskType].[WorkTaskTypeId]) [WorkTaskCount]
 FROM [blwt].[WorkTaskType] 
 WHERE [DomainId] = @domainId

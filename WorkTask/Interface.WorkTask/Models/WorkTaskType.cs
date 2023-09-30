@@ -9,6 +9,7 @@ namespace BrassLoon.Interface.WorkTask.Models
         public string Code { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public short? PurgePeriod { get; set; }
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
         public int? WorkTaskCount { get; set; }

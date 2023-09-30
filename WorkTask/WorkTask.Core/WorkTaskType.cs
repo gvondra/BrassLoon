@@ -38,6 +38,8 @@ namespace BrassLoon.WorkTask.Core
 
         public int WorkTaskCount => _data.WorkTaskCount;
 
+        public short? PurgePeriod { get => _data.PurgePeriod; set => _data.PurgePeriod = value > 0 ? value : default; }
+
         public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
 
         public IWorkTaskStatus CreateWorkTaskStatus(string code)

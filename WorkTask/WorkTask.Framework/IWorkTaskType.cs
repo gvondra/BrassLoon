@@ -11,6 +11,7 @@ namespace BrassLoon.WorkTask.Framework
         string Code { get; }
         string Title { get; set; }
         string Description { get; set; }
+        short? PurgePeriod { get; set; }
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         int WorkTaskCount { get; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
@@ -9,5 +10,6 @@ namespace BrassLoon.Authorization.Framework
         Task<IUser> Get(ISettings settings, Guid domainId, Guid id);
         Task<IUser> GetByEmailAddress(ISettings settings, Guid domainId, string address);
         Task<IUser> GetByReferenceId(ISettings settings, Guid domainId, string referenceId);
+        Task<IEnumerable<IUser>> GetByDomainId(ISettings settings, Guid domainId);
     }
 }

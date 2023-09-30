@@ -25,6 +25,17 @@ namespace BrassLoon.Authorization.Data
                 .FirstOrDefault();
         }
 
+        public Task<IEnumerable<UserData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        {
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
+            return _genericDataFactory.GetData(settings,
+                _providerFactory,
+                "[blt].[GetUser_by_DomainId]",
+                Create,
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter });
+        }
+
         public async Task<UserData> GetByEmailAddressHash(ISqlSettings settings, Guid domainId, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]

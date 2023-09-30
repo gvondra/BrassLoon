@@ -7,6 +7,7 @@
 	[Description] NVARCHAR(MAX) NOT NULL,
 	[CreateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTaskType_CreateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
 	[UpdateTimestamp] DATETIME2(4) CONSTRAINT [DF_WorkTaskType_UpdateTimestamp] DEFAULT(SYSUTCDATETIME()) NOT NULL,
+	[PurgePeriod] SMALLINT NULL,
 	CONSTRAINT [PK_WorkTaskType] PRIMARY KEY NONCLUSTERED ([WorkTaskTypeId])
 )
 

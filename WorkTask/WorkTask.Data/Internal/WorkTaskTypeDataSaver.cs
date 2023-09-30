@@ -70,6 +70,7 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             DataUtil.AddParameter(_providerFactory, commandParameters, "title", DbType.String, DataUtil.GetParameterValue(data.Title));
             DataUtil.AddParameter(_providerFactory, commandParameters, "description", DbType.String, DataUtil.GetParameterValue(data.Description));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "purgePeriod", DbType.Int16, DataUtil.GetParameterValue(data.PurgePeriod));
         }
     }
 }

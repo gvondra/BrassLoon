@@ -2,6 +2,8 @@
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
@@ -66,6 +68,12 @@ namespace BrassLoon.Authorization.Core
             if (data != null && data.DomainId.Equals(domainId))
                 user = Create(data);
             return user;
+        }
+
+        public async Task<IEnumerable<IUser>> GetByDomainId(ISettings settings, Guid domainId)
+        {
+            return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+                .Select<UserData, IUser>(Create);
         }
     }
 }

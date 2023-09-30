@@ -53,9 +53,9 @@ namespace AuthorizationAPI.Controllers
                 IUser innerUser = null;
                 List<IUser> innerUsers = null;
                 CoreSettings coreSettings = CreateCoreSettings();
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
                 if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(emailAddress))
                 {

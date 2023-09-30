@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>TestClient</AssemblyName>
+        <RootNamespace>BrassLoon.Authorization.TestClient</RootNamespace>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="7.1.*" />
+        <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.0-prerelease.*"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.*"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.*" />
+        <PackageReference Include="System.CommandLine" Version="2.0.0-beta*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Interface.Authorization\Interface.Authorization.csproj" />
+    </ItemGroup>
+
+</Project>

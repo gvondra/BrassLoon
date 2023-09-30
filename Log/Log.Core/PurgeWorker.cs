@@ -4,8 +4,6 @@ using BrassLoon.Log.Data.Models;
 using BrassLoon.Log.Framework;
 using BrassLoon.Log.Framework.Enumerations;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core

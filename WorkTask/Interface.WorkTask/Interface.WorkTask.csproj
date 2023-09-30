@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>2.1.0</Version>
-		<AssemblyVersion>2.1.0.0</AssemblyVersion>
-		<PackageReleaseNotes>-2.1 Added Work task closed date property
+		<Version>2.2.0-prerelease.1</Version>
+		<AssemblyVersion>2.2.0.1</AssemblyVersion>
+		<PackageReleaseNotes>-2.2 Added purge period (months) to work task type
+            -2.1 Added Work task closed date property
 			-v2.0 Upgrade ReestClient</PackageReleaseNotes>
 	</PropertyGroup>
 

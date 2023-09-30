@@ -13,24 +13,11 @@ namespace BrassLoon.Log.Purger
     {
         public static async Task Main(string[] args)
         {
-            DateTime startTime;
             try
             {
                 AppSettings appSettings = LoadSettings(args);
                 DependencyInjection.ContainerFactory.Initialize(appSettings);
-                startTime = DateTime.UtcNow;
-                while (true)
-                {                    
-                    await StartPurge();
-                    startTime = GetNextStartTime(startTime);
-                    using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope())
-                    {
-                        SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
-                        ITraceService traceService = scope.Resolve<ITraceService>();
-                        await WriteTrace(traceService, appSettings, settingsFactory, $"Next start time {startTime:O}");
-                    }                    
-                    await Task.Delay(startTime.Subtract(DateTime.UtcNow));
-                }                
+                await StartPurge();
             }
             catch (Exception ex)
             {
@@ -303,16 +290,6 @@ namespace BrassLoon.Log.Purger
             AppSettings settings = new AppSettings();
             ConfigurationBinder.Bind(configuration, settings);
             return settings;
-        }
-
-        private static DateTime GetNextStartTime(DateTime previous)
-        {
-            DateTime next = previous;
-            while (next.ToUniversalTime() < DateTime.UtcNow)
-            {
-                next = next.AddHours(8);
-            }
-            return next;
         }
 
         public static async Task WriteTrace(

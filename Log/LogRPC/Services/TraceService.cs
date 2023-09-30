@@ -53,7 +53,7 @@ namespace LogRPC.Services
                     if (domainId.Equals(Guid.Empty))
                         throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Trace.DomainId)} parameter value");
                     if (!(await _domainAcountAccessVerifier.HasAccess(
-                        _settings.Value,
+                        _settingsFactory.CreateAccount(_settings.Value, _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders)),
                         domainId,
                         _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders))))
                     {

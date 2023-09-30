@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BrassLoon.Log.Framework.Enumerations
+﻿namespace BrassLoon.Log.Framework.Enumerations
 {
     public enum PurgeWorkerStatus : short
     {

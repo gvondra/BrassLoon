@@ -17,8 +17,10 @@ namespace BrassLoon.Authorization.Core
             builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
             builder.RegisterType<RoleFactory>().As<IRoleFactory>();
             builder.RegisterType<RoleSaver>().As<IRoleSaver>();
+            builder.RegisterType<SecretGenerator>().As<ISecretGenerator>();
             builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
             builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
+            builder.RegisterType<TokenClaimGenerator>().As<ITokenClaimGenerator>();
             builder.RegisterType<UserFactory>().As<IUserFactory>();
             builder.RegisterType<UserSaver>().As<IUserSaver>();
         }

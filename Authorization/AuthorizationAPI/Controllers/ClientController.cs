@@ -12,8 +12,6 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Controllers
@@ -26,6 +24,7 @@ namespace AuthorizationAPI.Controllers
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
+        private readonly ISecretGenerator _secretGenerator;
 
         public ClientController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -35,13 +34,15 @@ namespace AuthorizationAPI.Controllers
             IDomainService domainService,
             IClientFactory clientFactory,
             IClientSaver clientSaver,
-            IEmailAddressFactory emailAddressFactory)
+            IEmailAddressFactory emailAddressFactory,
+            ISecretGenerator secretGenerator)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _logger = logger;
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;
             _emailAddressFactory = emailAddressFactory;
+            _secretGenerator = secretGenerator;
         }
 
         [HttpGet("{domainId}/{id}")]
@@ -117,17 +118,7 @@ namespace AuthorizationAPI.Controllers
             IActionResult result;
             try
             {
-                RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
-                byte firstCharacter = 33;
-                byte characterRange = 94;
-                byte[] values = new byte[32];
-                randomNumberGenerator.GetBytes(values);
-                for (int i = 0; i < values.Length; i += 1)
-                {
-                    values[i] = (byte)((values[i] % characterRange) + firstCharacter);
-                }
-                result = Ok(
-                    Encoding.ASCII.GetString(values));
+                result = Ok(_secretGenerator.GenerateSecret());
             }
             catch (Exception ex)
             {

@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -29,6 +28,7 @@ namespace AuthorizationAPI.Controllers
         private readonly ISigningKeyFactory _signingKeyFactory;
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
+        private readonly ITokenClaimGenerator _tokenClaimGenerator;
 
         public TokenController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -40,7 +40,8 @@ namespace AuthorizationAPI.Controllers
             IEmailAddressFactory emailAddressFactory,
             ISigningKeyFactory signingKeyFactory,
             IUserFactory userFactory,
-            IUserSaver userSaver)
+            IUserSaver userSaver,
+            ITokenClaimGenerator tokenClaimGenerator)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _logger = logger;
@@ -49,6 +50,8 @@ namespace AuthorizationAPI.Controllers
             _signingKeyFactory = signingKeyFactory;
             _userFactory = userFactory;
             _userSaver = userSaver;
+            _tokenClaimGenerator = tokenClaimGenerator;
+
         }
 
         [HttpPost("{domainId}")]
@@ -172,39 +175,9 @@ namespace AuthorizationAPI.Controllers
         private Claim GetUserNameClaim() => User.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase));
 
         [NonAction]
-        private static async Task<List<string>> GetRoles(CoreSettings settings, IUser user) => await GetRoles(await user.GetRoles(settings));
-
-        [NonAction]
-        private static async Task<List<string>> GetRoles(CoreSettings settings, IClient client) => await GetRoles(await client.GetRoles(settings));
-
-        [NonAction]
-        private static Task<List<string>> GetRoles(IEnumerable<IRole> roles) => Task.FromResult(roles.Select(r => r.PolicyName).ToList());
-
-        [NonAction]
-        private static void AddRoleClaims(List<Claim> claims, IEnumerable<string> roles)
-        {
-            foreach (string role in roles)
-            {
-                claims.Add(new Claim("role", role));
-            }
-        }
-
-        [NonAction]
-        private async Task<List<Claim>> CreateCommonUserClaims(IUser user)
-        {
-            return new List<Claim>()
-            {
-                new Claim(JwtRegisteredClaimNames.Email, (await user.GetEmailAddress(_settingsFactory.CreateCore(_settings.Value))).Address),
-                new Claim(JwtRegisteredClaimNames.Name, user.Name)
-            };
-        }
-
-        [NonAction]
         private async Task<string> CreateToken(CoreSettings coreSettings, IUser user, ISigningKey signingKey)
         {
-            List<Claim> claims = await CreateCommonUserClaims(user);
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.ReferenceId));
-            AddRoleClaims(claims, await GetRoles(coreSettings, user));
+            IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(coreSettings, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
@@ -214,15 +187,7 @@ namespace AuthorizationAPI.Controllers
         [NonAction]
         private async Task<string> CreateToken(CoreSettings coreSettings, IClient client, ISigningKey signingKey, IUser user = null)
         {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N"))
-            };
-            if (user != null)
-            {
-                claims.AddRange(await CreateCommonUserClaims(user));
-            }
-            AddRoleClaims(claims, await GetRoles(coreSettings, client));
+            IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(coreSettings, client, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)

@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 
-namespace LogRPC
+namespace BrassLoon.CommonAPI
 {
     public interface IMetaDataProcessor
     {

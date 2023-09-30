@@ -12,6 +12,9 @@ namespace BrassLoon.WorkTask.Core
             builder.RegisterModule(new BrassLoon.WorkTask.Data.WorkTaskDataModule());
             builder.RegisterType<Saver>().SingleInstance();
             builder.RegisterType<CommentSaver>().As<ICommentSaver>();
+            builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
+            builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();
+            builder.RegisterType<PurgeWorkerSaver>().As<IPurgeWorkerSaver>();
             builder.RegisterType<WorkGroupFactory>().As<IWorkGroupFactory>();
             builder.RegisterType<WorkGroupSaver>().As<IWorkGroupSaver>();
             builder.RegisterType<WorkTaskCommentFactory>().As<IWorkTaskCommentFactory>();
