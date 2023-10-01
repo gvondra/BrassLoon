@@ -50,9 +50,6 @@ namespace WorkTaskAPI
         }
 
         [NonAction]
-        protected BrassLoon.Interface.Account.ISettings CreateAccountSettings() => CreateAccountSettings(_settings.Value, GetAccessToken());
-
-        [NonAction]
         protected override BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken)
         {
             if (_accountSettings == null)
