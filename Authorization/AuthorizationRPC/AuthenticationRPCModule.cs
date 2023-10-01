@@ -11,15 +11,17 @@ namespace AuthorizationRPC
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Authorization.Core.AuthorizationCoreModule());
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
             builder.RegisterType<ClientService>();
             builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
+            builder.RegisterType<JwksService>();
             builder.RegisterType<MetaDataProcessor>()
                 .SingleInstance()
                 .As<IMetaDataProcessor>();
+            builder.RegisterType<RoleService>();
             builder.RegisterType<SettingsFactory>().SingleInstance();
             builder.RegisterType<SigningKeyService>();
             builder.RegisterType<TokenService>();
+            builder.RegisterType<UserService>();
         }
     }
 }

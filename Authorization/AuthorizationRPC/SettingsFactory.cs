@@ -12,8 +12,6 @@ namespace AuthorizationRPC
             _settings = settings;
         }
 
-        public AccountSettings CreateAccount() => CreateAccount(null);
-
         public AccountSettings CreateAccount(string accessToken)
         {
             return new AccountSettings(accessToken)
