@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using BrassLoon.CommonAPI;
 using WorkTaskRPC.Services;
 
 namespace WorkTaskRPC
@@ -10,6 +11,10 @@ namespace WorkTaskRPC
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
+            builder.RegisterType<MetaDataProcessor>()
+                .SingleInstance()
+                .As<IMetaDataProcessor>();
             builder.RegisterType<SettingsFactory>().SingleInstance();
             builder.RegisterType<WorkGroupService>();
             builder.RegisterType<WorkTaskCommentService>();

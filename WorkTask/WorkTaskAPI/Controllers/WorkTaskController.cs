@@ -190,7 +190,7 @@ namespace WorkTaskAPI.Controllers
                 {
                     if (workTask.WorkTaskType.WorkTaskTypeId.HasValue)
                     {
-                        innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTask.WorkTaskType.WorkTaskTypeId.Value);
+                        innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTask.WorkTaskType.WorkTaskTypeId.Value);
                     }
                     if (innerWorkTaskType == null)
                         result = BadRequest($"Work task type not found ({workTask.WorkTaskType?.WorkTaskTypeId})");
