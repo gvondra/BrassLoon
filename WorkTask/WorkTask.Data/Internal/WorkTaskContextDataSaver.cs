@@ -38,7 +38,7 @@ namespace BrassLoon.WorkTask.Data.Internal
 
                     await command.ExecuteNonQueryAsync();
                     data.WorkTaskId = (Guid)id.Value;
-                    data.CreateTimestamp = (DateTime)timestamp.Value;
+                    data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }
         }
