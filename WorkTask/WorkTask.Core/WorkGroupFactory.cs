@@ -36,11 +36,11 @@ namespace BrassLoon.WorkTask.Core
                 });
         }
 
-        public async Task<IWorkGroup> Get(ISettings settings, Guid id)
+        public async Task<IWorkGroup> Get(ISettings settings, Guid domainId, Guid id)
         {
             WorkGroup result = null;
             WorkGroupData data = await _dataFactory.Get(new DataSettings(settings), id);
-            if (data != null)
+            if (data != null && data.DomainId.Equals(domainId))
                 result = Create(data);
             return result;
         }
