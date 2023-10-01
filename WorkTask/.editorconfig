@@ -40,7 +40,7 @@ dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
 end_of_line = crlf
-dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_coalesce_expression = false:none
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_prefer_auto_properties = false:none
@@ -55,9 +55,11 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:none
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
+
 [*.{cs,vb}]
 
 dotnet_analyzer_diagnostic.severity = warning
+csharp_style_inlined_variable_declaration = true:none
 
 #### Naming styles ####
 
@@ -122,3 +124,6 @@ dotnet_diagnostic.IDE0032.severity = none
 
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none
+
+# CA2254: Template should be a static expression
+dotnet_diagnostic.CA2254.severity = none

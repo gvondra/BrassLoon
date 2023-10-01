@@ -104,7 +104,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkGroup innerWorkGroup = await _workGroupFactory.Get(settings, id.Value);
+                    IWorkGroup innerWorkGroup = await _workGroupFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkGroup == null)
                     {
                         result = NotFound();
@@ -189,7 +189,7 @@ namespace WorkTaskAPI.Controllers
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkGroup innerWorkGroup = await _workGroupFactory.Get(settings, id.Value);
+                    IWorkGroup innerWorkGroup = await _workGroupFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkGroup == null)
                     {
                         result = NotFound();
@@ -260,7 +260,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    await _workGroupSaver.CreateWorkTaskTypeGroup(settings, workTaskTypeId.Value, id.Value);
+                    await _workGroupSaver.CreateWorkTaskTypeGroup(settings, domainId.Value, workTaskTypeId.Value, id.Value);
                     result = Ok();
                 }
             }
@@ -298,7 +298,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    await _workGroupSaver.DeleteWorkTaskTypeGroup(settings, workTaskTypeId.Value, id.Value);
+                    await _workGroupSaver.DeleteWorkTaskTypeGroup(settings, domainId.Value, workTaskTypeId.Value, id.Value);
                     result = Ok();
                 }
             }
