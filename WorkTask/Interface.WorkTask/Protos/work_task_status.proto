@@ -38,8 +38,8 @@ message WorkTaskStatus {
     string Code = 4;
     string Name = 5;
     google.protobuf.StringValue Description = 6;
-    bool IsDefaultStatus = 7;
-    bool IsClosedStatus = 8;
+    google.protobuf.BoolValue IsDefaultStatus = 7;
+    google.protobuf.BoolValue IsClosedStatus = 8;
     google.protobuf.Timestamp CreateTimestamp = 9;
     google.protobuf.Timestamp UpdateTimestamp = 10;
     google.protobuf.Int32Value WorkTaskCount = 11;

@@ -53,8 +53,8 @@ namespace WorkTaskRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
-                IEnumerable<IWorkTaskType> innerWorkTaskType = await _workTaskTypeFactory.GetByDomainId(settings, domainId);
-                foreach (WorkTaskType workTaskType in innerWorkTaskType.Select(wtt => Map(wtt)))
+                IEnumerable<IWorkTaskType> innerWorkTaskTypes = await _workTaskTypeFactory.GetByDomainId(settings, domainId);
+                foreach (WorkTaskType workTaskType in innerWorkTaskTypes.Select(wtt => Map(wtt)))
                 {
                     await responseStream.WriteAsync(workTaskType);
                 }
