@@ -43,13 +43,13 @@ namespace BrassLoon.Interface.WorkTask.Models
                 Name = Name,
                 CreateTimestamp = CreateTimestamp.HasValue ? Timestamp.FromDateTime(CreateTimestamp.Value) : default,
                 Description = Description,
-                DomainId = DomainId?.ToString("D"),
+                DomainId = DomainId?.ToString("D") ?? string.Empty,
                 IsClosedStatus = IsClosedStatus,
                 IsDefaultStatus = IsDefaultStatus,
                 UpdateTimestamp = UpdateTimestamp.HasValue ? Timestamp.FromDateTime(UpdateTimestamp.Value) : default,
                 WorkTaskCount = WorkTaskCount,
-                WorkTaskStatusId = WorkTaskStatusId?.ToString("D"),
-                WorkTaskTypeId = WorkTaskTypeId?.ToString("D")
+                WorkTaskStatusId = WorkTaskStatusId?.ToString("D") ?? string.Empty,
+                WorkTaskTypeId = WorkTaskTypeId?.ToString("D") ?? string.Empty
             };
         }
     }
