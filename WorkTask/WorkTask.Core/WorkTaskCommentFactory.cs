@@ -38,9 +38,10 @@ namespace BrassLoon.WorkTask.Core
             workTaskId);
         }
 
-        public async Task<IEnumerable<IComment>> GetByWorkTaskId(ISettings settings, Guid workTaskId)
+        public async Task<IEnumerable<IComment>> GetByWorkTaskId(ISettings settings, Guid domainId, Guid workTaskId)
         {
             return (await _dataFactory.GetByWorkTaskId(new DataSettings(settings), workTaskId))
+                .Where(data => data.DomainId.Equals(domainId))
                 .Select<CommentData, IComment>(d => Create(d, workTaskId));
         }
     }

@@ -8,6 +8,6 @@ namespace BrassLoon.WorkTask.Framework
     public interface IWorkTaskCommentFactory
     {
         IComment Create(Guid domainId, Guid workTaskId, string text);
-        Task<IEnumerable<IComment>> GetByWorkTaskId(ISettings settings, Guid workTaskId);
+        Task<IEnumerable<IComment>> GetByWorkTaskId(ISettings settings, Guid domainId, Guid workTaskId);
     }
 }
