@@ -2,6 +2,7 @@
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "Protos/get_by_domain_request.proto";
 import "Protos/work_task_context.proto";
 import "Protos/work_task_status.proto";
 import "Protos/work_task_type.proto";
@@ -12,6 +13,7 @@ service WorkTaskService {
 	rpc Get(GetWorkTaskRequest) returns (WorkTask);
 	rpc GetByWorkGroupId(GetWorkTaskByWorkGroupIdRequest) returns (stream WorkTask);
 	rpc GetByContext(GetWorkTaskByContextRequest) returns (stream WorkTask);
+	rpc GetAll(GetByDomainRequest) returns (stream WorkTask);
 	rpc Create(WorkTask) returns (WorkTask);
 	rpc Update(WorkTask) returns (WorkTask);
 	rpc Claim(ClaimWorkTaskRequest) returns (ClaimWorkTaskResponse);

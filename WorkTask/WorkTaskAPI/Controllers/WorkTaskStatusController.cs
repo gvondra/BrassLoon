@@ -67,7 +67,7 @@ namespace WorkTaskAPI.Controllers
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, workTaskTypeId.Value))
+                        (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, workTaskTypeId.Value))
                         .Select<IWorkTaskStatus, WorkTaskStatus>(t => mapper.Map<WorkTaskStatus>(t))
                         );
                 }
@@ -107,7 +107,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();
@@ -215,7 +215,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();
@@ -272,7 +272,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();

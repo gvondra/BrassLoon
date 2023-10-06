@@ -59,7 +59,7 @@ namespace WorkTaskRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
-                IEnumerable<IWorkTaskStatus> innerWorkTaskStatuses = await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, workTaskTypeId);
+                IEnumerable<IWorkTaskStatus> innerWorkTaskStatuses = await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId, workTaskTypeId);
                 foreach (WorkTaskStatus workTaskStatus in innerWorkTaskStatuses.Select(wts => Map(wts)))
                 {
                     await responseStream.WriteAsync(workTaskStatus);
@@ -98,7 +98,7 @@ namespace WorkTaskRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id);
+                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
                 WorkTaskStatus workTaskStatus = null;
                 if (innerWorkTaskStatus != null)
                     workTaskStatus = Map(innerWorkTaskStatus);
@@ -180,7 +180,7 @@ namespace WorkTaskRPC.Services
                 IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId, workTaskTypeId);
                 if (innerWorkTaskType == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task type \"{request.WorkTaskTypeId}\" not found");
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id);
+                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
                 if (innerWorkTaskStatus == null || innerWorkTaskType.WorkTaskTypeId != innerWorkTaskStatus.WorkTaskTypeId)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task status \"{id}\" not found");
                 Map(request, innerWorkTaskStatus);
@@ -221,7 +221,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId, workTaskTypeId);
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id);
+                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
                 if (innerWorkTaskType != null
                     && innerWorkTaskStatus != null
                     && innerWorkTaskType.WorkTaskTypeId == innerWorkTaskStatus.WorkTaskTypeId)
@@ -260,7 +260,7 @@ namespace WorkTaskRPC.Services
             innerWorkTaskStatus.Name = workTaskStatus.Name;
         }
 
-        private static WorkTaskStatus Map(IWorkTaskStatus innerWorkTaskStatus)
+        internal static WorkTaskStatus Map(IWorkTaskStatus innerWorkTaskStatus)
         {
             return new WorkTaskStatus
             {

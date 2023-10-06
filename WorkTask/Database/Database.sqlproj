@@ -127,6 +127,8 @@
     <Build Include="Stored Procedure\blwt.PurgeWorkTask.sql" />
     <Build Include="Stored Procedure\blwt.CreateWorktTaskTypeGroup_v2.sql" />
     <Build Include="Stored Procedure\blwt.DeleteWorktTaskTypeGroup_v2.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTask_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_DomainId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

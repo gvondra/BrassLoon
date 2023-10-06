@@ -1,6 +1,4 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
-using BrassLoon.RestClient;
-using BrassLoon.RestClient.Internal;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
@@ -9,7 +7,6 @@ using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
@@ -72,7 +69,7 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{workTaskTypeId:N}{id:N}"));
         }
 
-        private async Task<WorkTaskStatus> GetUncached(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
+        private static async Task<WorkTaskStatus> GetUncached(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid id)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -105,7 +102,7 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{workTaskTypeId:N}"));
         }
 
-        private async Task<List<WorkTaskStatus>> GetAllUncached(ISettings settings, Guid domainId, Guid workTaskTypeId)
+        private static async Task<List<WorkTaskStatus>> GetAllUncached(ISettings settings, Guid domainId, Guid workTaskTypeId)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));

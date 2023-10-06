@@ -44,7 +44,7 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{id:N}"));
         }
 
-        private async Task<WorkTaskType> GetUncached(ISettings settings, Guid domainId, Guid id)
+        private static async Task<WorkTaskType> GetUncached(ISettings settings, Guid domainId, Guid id)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -92,7 +92,7 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{code}"));
         }
 
-        private async Task<WorkTaskType> GetByCodeUncached(ISettings settings, Guid domainId, string code)
+        private static async Task<WorkTaskType> GetByCodeUncached(ISettings settings, Guid domainId, string code)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
@@ -122,7 +122,7 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{workGroupId:N}"));
         }
 
-        private async Task<List<WorkTaskType>> GetByWorkGroupIdUncached(ISettings settings, Guid domainId, Guid workGroupId)
+        private static async Task<List<WorkTaskType>> GetByWorkGroupIdUncached(ISettings settings, Guid domainId, Guid workGroupId)
         {
             List<WorkTaskType> result = new List<WorkTaskType>();
             if (domainId.Equals(Guid.Empty))

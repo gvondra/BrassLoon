@@ -8,5 +8,6 @@ namespace BrassLoon.WorkTask.Framework
     public interface IWorkTaskPatcher
     {
         Task<IEnumerable<IWorkTask>> Apply(ISettings settings, Guid domainId, IEnumerable<Dictionary<string, object>> patchData);
+        Task<IWorkTask> Apply(ISettings settings, Guid domainId, IDictionary<string, string> patchData);
     }
 }

@@ -262,7 +262,7 @@ namespace WorkTaskRPC.Services
             innerWorkTaskType.Title = workTaskType.Title;
         }
 
-        private static WorkTaskType Map(IWorkTaskType innerWorkTaskType)
+        internal static WorkTaskType Map(IWorkTaskType innerWorkTaskType)
         {
             return new WorkTaskType
             {

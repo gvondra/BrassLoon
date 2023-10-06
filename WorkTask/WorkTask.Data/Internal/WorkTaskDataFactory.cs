@@ -10,7 +10,21 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskDataFactory : DataFactoryBase<WorkTaskData>, IWorkTaskDataFactory
     {
-        public WorkTaskDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        private readonly IWorkTaskTypeDataFactory _workTaskTypeDataFactory;
+        private readonly IWorkTaskStatusDataFactory _workTaskStatusDataFactory;
+        private readonly ILoaderFactory _loaderFactory;
+
+        public WorkTaskDataFactory(
+            IDbProviderFactory providerFactory,
+            IWorkTaskTypeDataFactory workTaskTypeDataFactory,
+            IWorkTaskStatusDataFactory workTaskStatusDataFactory,
+            ILoaderFactory loaderFactory)
+            : base(providerFactory)
+        {
+            _workTaskTypeDataFactory = workTaskTypeDataFactory;
+            _workTaskStatusDataFactory = workTaskStatusDataFactory;
+            _loaderFactory = loaderFactory;
+        }
 
         public async Task<WorkTaskData> Get(ISqlSettings settings, Guid id)
         {
@@ -112,6 +126,57 @@ namespace BrassLoon.WorkTask.Data.Internal
                 return tsk;
             });
             return result.ToList();
+        }
+
+        public async Task<IAsyncEnumerable<WorkTaskData>> GetAll(ISqlSettings settings, Guid domainId)
+        {
+            Dictionary<Guid, WorkTaskTypeData> workTaskTypes = (await _workTaskTypeDataFactory.GetByDomainId(settings, domainId))
+                .ToDictionary(d => d.WorkTaskTypeId);
+            Dictionary<Guid, WorkTaskStatusData> workTaskStatuses = (await _workTaskStatusDataFactory.GetByDomainId(settings, domainId))
+                .ToDictionary(d => d.WorkTaskStatusId);
+            return new WorkTaskDataEnumerable(
+                settings,
+                _providerFactory,
+                (connection) => GetAllBeginReader(connection, _providerFactory, domainId),
+                (reader) => GetAllLoadData(reader, settings, _providerFactory, _loaderFactory.CreateLoader(), workTaskTypes, workTaskStatuses));
+        }
+
+        private static async Task<DbDataReader> GetAllBeginReader(DbConnection connection, IDbProviderFactory providerFactory, Guid domainId)
+        {
+            using DbCommand command = connection.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "[blwt].[GetWorkTask_by_DomainId]";
+            command.Parameters.Add(DataUtil.CreateParameter(providerFactory, "domainId", DbType.Guid, domainId));
+            return await command.ExecuteReaderAsync();
+        }
+
+        private static async Task<WorkTaskData> GetAllLoadData(
+            DbDataReader reader,
+            ISqlSettings settings,
+            IDbProviderFactory providerFactory,
+            ILoader loader,
+            Dictionary<Guid, WorkTaskTypeData> workTaskTypes,
+            Dictionary<Guid, WorkTaskStatusData> workTaskStatuses)
+        {
+            WorkTaskData workTaskData = (WorkTaskData)await loader.Load(new WorkTaskData(), reader);
+            workTaskData.WorkTaskType = workTaskTypes[workTaskData.WorkTaskTypeId];
+            workTaskData.WorkTaskStatus = workTaskStatuses[workTaskData.WorkTaskStatusId];
+            workTaskData.WorkTaskContexts = (await GetContextByWorkTaskId(settings, providerFactory, workTaskData.WorkTaskId)).ToList();
+            workTaskData.Manager = new DataStateManager(workTaskData.Clone());
+            return workTaskData;
+        }
+
+        private static async Task<IEnumerable<WorkTaskContextData>> GetContextByWorkTaskId(ISqlSettings settings, IDbProviderFactory providerFactory, Guid workTaskId)
+        {
+            IGenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
+            IDataParameter parameter = DataUtil.CreateParameter(providerFactory, "workTaskId", DbType.Guid, workTaskId);
+            return await genericDataFactory.GetData(settings,
+                providerFactory,
+                "[blwt].[GetWorkTaskContext_by_WorkTaskId]",
+                () => new WorkTaskContextData(),
+                DataUtil.AssignDataStateManager,
+                new List<IDataParameter> { parameter })
+                ;
         }
     }
 }
