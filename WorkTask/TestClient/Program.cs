@@ -33,6 +33,16 @@ namespace BrassLoon.WorkTask.TestClient
                     () => WorkTaskTypeTest());
                 rootCommand.AddCommand(command);
 
+                command = new Command("work-group");
+                command.SetHandler(
+                    () => WorkGroupTest());
+                rootCommand.AddCommand(command);
+
+                command = new Command("task");
+                command.SetHandler(
+                    () => WorkTaskTest());
+                rootCommand.AddCommand(command);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
@@ -43,6 +53,20 @@ namespace BrassLoon.WorkTask.TestClient
                     logger.Error(ex, ex.Message);
                 }
             }
+        }
+
+        private static async Task WorkTaskTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkTaskTest test = scope.Resolve<WorkTaskTest>();
+            await test.Execute();
+        }
+
+        private static async Task WorkGroupTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkGroupTest test = scope.Resolve<WorkGroupTest>();
+            await test.Execute();
         }
 
         private static async Task WorkTaskTypeTest()
