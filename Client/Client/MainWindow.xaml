@@ -1,0 +1,25 @@
+﻿<Window x:Class="BrassLoon.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BrassLoon.Client"
+        mc:Ignorable="d"
+        Title="{Binding ElementName=navigationFrame, Path=Content.Title}" Style="{StaticResource DefaultWindowStyle}">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Close"
+                    Executed="CloseCommandBinding_Executed"/>
+        <CommandBinding Command="NavigationCommands.GoToPage"
+                    Executed="GoToPageCommandBinding_Executed" />
+    </Window.CommandBindings>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Options">
+                <MenuItem Header="_Home" Command="NavigationCommands.GoToPage" CommandParameter="NavigationPage/Home.xaml"/>
+                <MenuItem Header="_Google Login" Click="GoogleLoginMenuItem_Click"/>
+                <MenuItem Header="Close" Command="ApplicationCommands.Close"/>
+            </MenuItem>
+        </Menu>
+        <Frame x:Name="navigationFrame" Source="NavigationPage/Home.xaml" Margin="0,0,0,15" NavigationUIVisibility="Hidden" />
+    </DockPanel>
+</Window>
