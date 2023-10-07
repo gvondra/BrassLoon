@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Google.Protobuf.WellKnownTypes;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BrassLoon.Interface.WorkTask.Models
 {
@@ -13,5 +15,45 @@ namespace BrassLoon.Interface.WorkTask.Models
         public DateTime? UpdateTimestamp { get; set; }
         public List<string> MemberUserIds { get; set; }
         public List<Guid> WorkTaskTypeIds { get; set; }
+
+        internal static WorkGroup Create(Protos.WorkGroup workGroup)
+        {
+            return new WorkGroup
+            {
+                CreateTimestamp = workGroup.CreateTimestamp != null ? workGroup.CreateTimestamp.ToDateTime() : default,
+                Description = workGroup.Description,
+                DomainId = !string.IsNullOrEmpty(workGroup.DomainId) ? Guid.Parse(workGroup.DomainId) : default,
+                Title = workGroup.Title,
+                UpdateTimestamp = workGroup.UpdateTimestamp != null ? workGroup.UpdateTimestamp.ToDateTime() : default,
+                WorkGroupId = !string.IsNullOrEmpty(workGroup.WorkGroupId) ? Guid.Parse(workGroup.WorkGroupId) : default,
+                MemberUserIds = workGroup.MemberUserIds.ToList(),
+                WorkTaskTypeIds = workGroup.WorkTaskTypeIds
+                    .Where(i => !string.IsNullOrEmpty(i))
+                    .Select(i => Guid.Parse(i))
+                    .ToList()
+            };
+        }
+
+        internal Protos.WorkGroup ToProto()
+        {
+            Protos.WorkGroup result = new Protos.WorkGroup
+            {
+                CreateTimestamp = CreateTimestamp.HasValue ? Timestamp.FromDateTime(CreateTimestamp.Value) : null,
+                Description = Description,
+                DomainId = DomainId?.ToString("D") ?? string.Empty,
+                Title = Title,
+                UpdateTimestamp = UpdateTimestamp.HasValue ? Timestamp.FromDateTime(UpdateTimestamp.Value) : null,
+                WorkGroupId = WorkGroupId?.ToString("D") ?? string.Empty
+            };
+            if (MemberUserIds != null)
+            {
+                result.MemberUserIds.AddRange(MemberUserIds);
+            }
+            if (WorkTaskTypeIds != null)
+            {
+                result.WorkTaskTypeIds.AddRange(WorkTaskTypeIds.Select(i => i.ToString("D")));
+            }
+            return result;
+        }
     }
 }

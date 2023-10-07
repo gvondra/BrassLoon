@@ -1,99 +1,138 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
-using BrassLoon.RestClient;
+using Grpc.Core;
+using Grpc.Net.Client;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
 {
     public class WorkGroupService : IWorkGroupService
     {
-        private readonly RestUtil _restUtil;
-        private readonly IService _service;
-
-        public WorkGroupService(RestUtil restUtil, IService service)
-        {
-            _restUtil = restUtil;
-            _service = service;
-        }
-
         public async Task AddWorkTaskTypeLink(ISettings settings, Guid domainId, Guid workGroupId, Guid workTaskTypeId)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post)
-                .AddPath("WorkGroup/{domainId}/{workGroupId}/WorkTaskType")
-                .AddPathParameter("domainId", domainId.ToString("N"))
-                .AddPathParameter("workGroupId", workGroupId.ToString("N"))
-                .AddQueryParameter("workTaskTypeId", workTaskTypeId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            IResponse response = await _service.Send(request);
-            _restUtil.CheckSuccess(response);
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (workGroupId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workGroupId));
+            if (workTaskTypeId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workTaskTypeId));
+            Protos.WorkGroupTaskTypeLinkRequest request = new Protos.WorkGroupTaskTypeLinkRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkGroupId = workGroupId.ToString("D"),
+                WorkTaskTypeId = workTaskTypeId.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                await service.AddWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+            }
         }
 
-        public Task<WorkGroup> Create(ISettings settings, WorkGroup workGroup)
+        public async Task<WorkGroup> Create(ISettings settings, WorkGroup workGroup)
         {
             if (workGroup == null)
                 throw new ArgumentNullException(nameof(workGroup));
             if (!workGroup.DomainId.HasValue || workGroup.DomainId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"{nameof(workGroup.DomainId)} is null");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workGroup)
-                .AddPath("WorkGroup")
-                .AddPath(workGroup.DomainId.Value.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<WorkGroup>(_service, request);
+            Protos.WorkGroup request = workGroup.ToProto();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                Protos.WorkGroup response = await service.CreateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return WorkGroup.Create(response);
+            }
         }
 
         public async Task DeleteWorkTaskTypeLink(ISettings settings, Guid domainId, Guid workGroupId, Guid workTaskTypeId)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Delete)
-                .AddPath("WorkGroup/{domainId}/{workGroupId}/WorkTaskType")
-                .AddPathParameter("domainId", domainId.ToString("N"))
-                .AddPathParameter("workGroupId", workGroupId.ToString("N"))
-                .AddQueryParameter("workTaskTypeId", workTaskTypeId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            IResponse response = await _service.Send(request);
-            _restUtil.CheckSuccess(response);
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (workGroupId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workGroupId));
+            if (workTaskTypeId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(workTaskTypeId));
+            Protos.WorkGroupTaskTypeLinkRequest request = new Protos.WorkGroupTaskTypeLinkRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkGroupId = workGroupId.ToString("D"),
+                WorkTaskTypeId = workTaskTypeId.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                await service.DeleteWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+            }
         }
 
-        public Task<WorkGroup> Get(ISettings settings, Guid domainId, Guid id)
+        public async Task<WorkGroup> Get(ISettings settings, Guid domainId, Guid id)
         {
             if (id.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(id));
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkGroup")
-                .AddPath(domainId.ToString("N"))
-                .AddPath(id.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<WorkGroup>(_service, request);
+            Protos.GetWorkGroupRequest request = new Protos.GetWorkGroupRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkGroupId = id.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                Protos.WorkGroup response = await service.GetAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return WorkGroup.Create(response);
+            }
         }
 
-        private Task<List<WorkGroup>> InnerGetAll(ISettings settings, Guid domainId, string userId = null)
+        public async Task<List<WorkGroup>> GetAll(ISettings settings, Guid domainId)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkGroup")
-                .AddPath(domainId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            if (!string.IsNullOrEmpty(userId))
+            Protos.GetByDomainRequest request = new Protos.GetByDomainRequest
             {
-                request.AddQueryParameter("userId", userId);
+                DomainId = domainId.ToString("D")
+            };
+            List<WorkGroup> result = new List<WorkGroup>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                AsyncServerStreamingCall<Protos.WorkGroup> streamingCall = service.GetAll(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(
+                        WorkGroup.Create(streamingCall.ResponseStream.Current));
+                }
             }
-            return _restUtil.Send<List<WorkGroup>>(_service, request);
+            return result;
         }
 
-        public Task<List<WorkGroup>> GetAll(ISettings settings, Guid domainId) => InnerGetAll(settings, domainId);
+        public async Task<List<WorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId)
+        {
+            if (domainId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(domainId));
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException(nameof(userId));
+            Protos.GetWorkGroupByMeemberUserIdRequest request = new Protos.GetWorkGroupByMeemberUserIdRequest
+            {
+                DomainId = domainId.ToString("D"),
+                UserId = userId
+            };
+            List<WorkGroup> result = new List<WorkGroup>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                AsyncServerStreamingCall<Protos.WorkGroup> streamingCall = service.GetByMemberUserId(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(
+                        WorkGroup.Create(streamingCall.ResponseStream.Current));
+                }
+            }
+            return result;
+        }
 
-        public Task<List<WorkGroup>> GetByMemberUserId(ISettings settings, Guid domainId, string userId) => InnerGetAll(settings, domainId, userId);
-
-        public Task<WorkGroup> Update(ISettings settings, WorkGroup workGroup)
+        public async Task<WorkGroup> Update(ISettings settings, WorkGroup workGroup)
         {
             if (workGroup == null)
                 throw new ArgumentNullException(nameof(workGroup));
@@ -101,13 +140,13 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentException($"{nameof(workGroup.DomainId)} is null");
             if (!workGroup.WorkGroupId.HasValue || workGroup.WorkGroupId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"{nameof(workGroup.WorkGroupId)} is null");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workGroup)
-                .AddPath("WorkGroup")
-                .AddPath(workGroup.DomainId.Value.ToString("N"))
-                .AddPath(workGroup.WorkGroupId.Value.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<WorkGroup>(_service, request);
+            Protos.WorkGroup request = workGroup.ToProto();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
+                Protos.WorkGroup response = await service.UpdateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return WorkGroup.Create(response);
+            }
         }
     }
 }

@@ -1,55 +1,84 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
-using BrassLoon.RestClient;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Grpc.Net.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
 {
     public class WorkTaskCommentService : IWorkTaskCommentService
     {
-        private readonly RestUtil _restUtil;
-        private readonly IService _service;
-
-        public WorkTaskCommentService(RestUtil restUtil, IService service)
+        public async Task<List<Comment>> Create(ISettings settings, Guid workTaskId, params Comment[] comments)
         {
-            _restUtil = restUtil;
-            _service = service;
-        }
-
-        public Task<List<Comment>> Create(ISettings settings, Guid domainId, Guid workTaskId, params Comment[] comments)
-        {
-            if (domainId.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(domainId));
             if (workTaskId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(workTaskId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, comments)
-                .AddPath("WorkTask/{domainId}/{workTaskId}/WorkGroup")
-                .AddPathParameter("domainId", domainId.ToString("N"))
-                .AddPathParameter("workTaskId", workTaskId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<List<Comment>>(_service, request);
+            if (comments == null)
+                throw new ArgumentNullException(nameof(comments));
+            if (comments.Any(c => !c.DomainId.HasValue))
+                throw new ArgumentException("At least one comment is missing a domain id");
+            List<Comment> result = new List<Comment>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskCommentService.WorkTaskCommentServiceClient service = new Protos.WorkTaskCommentService.WorkTaskCommentServiceClient(channel);
+                AsyncDuplexStreamingCall<Protos.CreateWorkTaskCommentRequest, Protos.Comment> streamingCall = service.Create(await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                for (int i = 0; i < comments.Length; i += 1)
+                {
+                    await streamingCall.RequestStream.WriteAsync(
+                        new Protos.CreateWorkTaskCommentRequest
+                        {
+                            Comment = Map(comments[i]),
+                            WorkTaskId = workTaskId.ToString("D")
+                        });
+                }
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(
+                        Comment.Create(streamingCall.ResponseStream.Current));
+                }
+            }
+            return result;
         }
 
         public Task<List<Comment>> Create(ISettings settings, Guid domainId, Guid workTaskId, params string[] comments)
-        => Create(settings, domainId, workTaskId, comments.Select<string, Comment>(c => new Comment { DomainId = domainId, Text = c }).ToArray());
+        => Create(settings, workTaskId, comments.Select<string, Comment>(c => new Comment { DomainId = domainId, Text = c }).ToArray());
 
-        public Task<List<Comment>> GetAll(ISettings settings, Guid domainId, Guid workTaskId)
+        public async Task<List<Comment>> GetAll(ISettings settings, Guid domainId, Guid workTaskId)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             if (workTaskId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(workTaskId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkTask/{domainId}/{workTaskId}/WorkGroup")
-                .AddPathParameter("domainId", domainId.ToString("N"))
-                .AddPathParameter("workTaskId", workTaskId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<List<Comment>>(_service, request);
+            Protos.GetAllWorkTaskCommentsRequest request = new Protos.GetAllWorkTaskCommentsRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkTaskIdId = workTaskId.ToString("D")
+            };
+            List<Comment> result = new List<Comment>();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskCommentService.WorkTaskCommentServiceClient service = new Protos.WorkTaskCommentService.WorkTaskCommentServiceClient(channel);
+                AsyncServerStreamingCall<Protos.Comment> streamingCall = service.GetAll(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(
+                        Comment.Create(streamingCall.ResponseStream.Current));
+                }
+            }
+            return result;
+        }
+
+        private static Protos.Comment Map(Comment comment)
+        {
+            return new Protos.Comment
+            {
+                CommentId = comment.CommentId?.ToString("D") ?? string.Empty,
+                DomainId = comment.DomainId?.ToString("D") ?? string.Empty,
+                CreateTimestamp = comment.CreateTimestamp.HasValue ? Timestamp.FromDateTime(comment.CreateTimestamp.Value) : default,
+                Text = comment.Text
+            };
         }
     }
 }

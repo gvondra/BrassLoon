@@ -1,0 +1,46 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
+
+service WorkTaskStatusService {
+    rpc GetAll(GetAllWorkTaskStatusRequest) returns (stream WorkTaskStatus);
+    rpc Get(GetWorkTaskStatusRequest) returns (WorkTaskStatus);
+    rpc Create(WorkTaskStatus) returns (WorkTaskStatus);
+    rpc Update(WorkTaskStatus) returns (WorkTaskStatus);
+    rpc Delete(DateWorkTaskStatusRequest) returns (google.protobuf.Empty);
+}
+
+message GetAllWorkTaskStatusRequest {
+    string DomainId = 1;
+    string WorkTaskTypeId = 2;
+}
+
+message GetWorkTaskStatusRequest {
+    string DomainId = 1;
+    string WorkTaskTypeId = 2;
+    string WorkTaskStatusId = 3;
+}
+
+message DateWorkTaskStatusRequest {
+    string DomainId = 1;
+    string WorkTaskTypeId = 2;
+    string WorkTaskStatusId = 3;
+}
+
+message WorkTaskStatus {
+	string WorkTaskStatusId = 1;
+    string WorkTaskTypeId = 2;
+    string DomainId = 3;
+    string Code = 4;
+    string Name = 5;
+    google.protobuf.StringValue Description = 6;
+    google.protobuf.BoolValue IsDefaultStatus = 7;
+    google.protobuf.BoolValue IsClosedStatus = 8;
+    google.protobuf.Timestamp CreateTimestamp = 9;
+    google.protobuf.Timestamp UpdateTimestamp = 10;
+    google.protobuf.Int32Value WorkTaskCount = 11;
+}

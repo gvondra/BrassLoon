@@ -14,34 +14,18 @@ namespace BrassLoon.Authorization.TestClient
             DependencyInjection.ContainerFactory.Initialize(appSettings);
             try
             {
-                Option<bool> createToken = new Option<bool>(
-                    name: "--create-token",
-                    getDefaultValue: () => true
-                    );
-                Option<bool> createSigningKey = new Option<bool>(
-                    name: "--create-signing-key",
-                    getDefaultValue: () => true
-                    );
                 RootCommand rootCommand = new RootCommand("Authorization Test Harness");
 
                 Command command;
 
-                command = new Command("create_token")
-                {
-                    createToken
-                };
+                command = new Command("create_token");
                 command.SetHandler(
-                    (ct) => CreateTokenTest(),
-                    createToken);
+                    () => CreateTokenTest());
                 rootCommand.AddCommand(command);
 
-                command = new Command("signing_key")
-                {
-                    createSigningKey
-                };
+                command = new Command("signing_key");
                 command.SetHandler(
-                    (csk) => CreateSigningKeyTest(),
-                    createSigningKey);
+                    () => CreateSigningKeyTest());
                 rootCommand.AddCommand(command);
 
                 command = new Command("cient");

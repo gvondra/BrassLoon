@@ -36,11 +36,11 @@ namespace BrassLoon.WorkTask.Core
                 );
         }
 
-        public async Task<IWorkTaskType> Get(ISettings settings, Guid id)
+        public async Task<IWorkTaskType> Get(ISettings settings, Guid domainId, Guid id)
         {
             WorkTaskType workTaskType = null;
             WorkTaskTypeData data = await _dataFactory.Get(new DataSettings(settings), id);
-            if (data != null)
+            if (data != null && data.DomainId.Equals(domainId))
                 workTaskType = Create(data);
             return workTaskType;
         }
@@ -53,9 +53,10 @@ namespace BrassLoon.WorkTask.Core
 
         public IWorkTaskStatusFactory GetWorkTaskStatusFactory() => _workTaskStatusFactory;
 
-        public async Task<IEnumerable<IWorkTaskType>> GetByWorkGroupId(ISettings settings, Guid workGroupId)
+        public async Task<IEnumerable<IWorkTaskType>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId)
         {
             return (await _dataFactory.GetByWorkGroupId(new DataSettings(settings), workGroupId))
+                .Where(data => data.DomainId.Equals(domainId))
                 .Select(Create);
         }
 

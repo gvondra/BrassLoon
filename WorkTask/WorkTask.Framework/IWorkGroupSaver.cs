@@ -9,7 +9,7 @@ namespace BrassLoon.WorkTask.Framework
         Task Create(ISettings settings, params IWorkGroup[] workGroups);
         Task Update(ISettings settings, params IWorkGroup[] workGroups);
 
-        Task CreateWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId);
-        Task DeleteWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId);
+        Task CreateWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId);
+        Task DeleteWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId);
     }
 }

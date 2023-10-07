@@ -19,16 +19,30 @@ namespace BrassLoon.WorkTask.TestClient
                 logger: CreateLogger(appSettings.LogFile));
             try
             {
-                Option<bool> performanceTestCreateTask = new Option<bool>(
-                   name: "--perf-create-tasks",
-                   getDefaultValue: () => true);
-                RootCommand rootCommand = new RootCommand
-                {
-                    performanceTestCreateTask
-                };
-                rootCommand.SetHandler(
-                    createTasks => PerformanceTestCreateTask(),
-                    performanceTestCreateTask);
+                RootCommand rootCommand = new RootCommand();
+
+                Command command;
+
+                command = new Command("perf-create-tasks");
+                command.SetHandler(
+                    () => PerformanceTestCreateTask());
+                rootCommand.AddCommand(command);
+
+                command = new Command("task-type");
+                command.SetHandler(
+                    () => WorkTaskTypeTest());
+                rootCommand.AddCommand(command);
+
+                command = new Command("work-group");
+                command.SetHandler(
+                    () => WorkGroupTest());
+                rootCommand.AddCommand(command);
+
+                command = new Command("task");
+                command.SetHandler(
+                    () => WorkTaskTest());
+                rootCommand.AddCommand(command);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
@@ -41,13 +55,32 @@ namespace BrassLoon.WorkTask.TestClient
             }
         }
 
+        private static async Task WorkTaskTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkTaskTest test = scope.Resolve<WorkTaskTest>();
+            await test.Execute();
+        }
+
+        private static async Task WorkGroupTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkGroupTest test = scope.Resolve<WorkGroupTest>();
+            await test.Execute();
+        }
+
+        private static async Task WorkTaskTypeTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkTaskTypeTest test = scope.Resolve<WorkTaskTypeTest>();
+            await test.Execute();
+        }
+
         private static async Task PerformanceTestCreateTask()
         {
-            using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope())
-            {
-                WorkTaskPerformanceTest test = scope.Resolve<WorkTaskPerformanceTest>();
-                await test.Execute();
-            }
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            WorkTaskPerformanceTest test = scope.Resolve<WorkTaskPerformanceTest>();
+            await test.Execute();
         }
 
         private static AppSettings BindConfiguration(IConfiguration configuration)

@@ -1,44 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>disable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<AssemblyName>BrassLoon.WorkTaskAPI</AssemblyName>
-		<Authors>Greg Vondra</Authors>
-		<Company />
-		<Product>Brass Loon</Product>
-		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>BrassLoon.WorkTaskAPI</AssemblyName>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>full</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="7.1.*" />
-	<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.*" />
-	<PackageReference Include="AutoMapper" Version="12.0.*" />
-	<PackageReference Include="BrassLoon.Extensions.Logging" Version="1.0.0-beta.*" />
-	<PackageReference Include="BrassLoon.Interface.Account" Version="4.0.*" />
-	<PackageReference Include="BrassLoon.Interface.Log" Version="4.0.*" />
-    <PackageReference Include="BrassLoon.Interface.WorkTask" Version="2.2.0-prerelease.*" />
-	<PackageReference Include="BrassLoon.JwtUtility" Version="1.2.*" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.*" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.*" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="7.1.*" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.*" />
+        <PackageReference Include="AutoMapper" Version="12.0.*" />
+        <PackageReference Include="BrassLoon.Extensions.Logging" Version="1.0.0-beta.*" />
+        <PackageReference Include="BrassLoon.Interface.Account" Version="4.0.*" />
+        <PackageReference Include="BrassLoon.Interface.Log" Version="4.0.*" />
+        <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.0.0-prerelease.*" />
+        <PackageReference Include="BrassLoon.JwtUtility" Version="1.2.*" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.*" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.*" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\CommonAPI\CommonAPI.csproj" />
-    <ProjectReference Include="..\WorkTask.Core\WorkTask.Core.csproj" />
-    <ProjectReference Include="..\WorkTask.Framework\WorkTask.Framework.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\CommonAPI\CommonAPI.csproj" />
+        <ProjectReference Include="..\WorkTask.Core\WorkTask.Core.csproj" />
+        <ProjectReference Include="..\WorkTask.Framework\WorkTask.Framework.csproj" />
+    </ItemGroup>
 
 </Project>

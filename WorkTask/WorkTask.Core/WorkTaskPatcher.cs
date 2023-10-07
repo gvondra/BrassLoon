@@ -30,12 +30,22 @@ namespace BrassLoon.WorkTask.Core
                 .Where(wt => wt != null);
         }
 
+        public async Task<IWorkTask> Apply(ISettings settings, Guid domainId, IDictionary<string, string> patchData)
+        {
+            Guid id = Guid.Parse(patchData["WorkTaskId"]);
+            IWorkTask workTask = await _workTaskFactory.Get(settings, domainId, id);
+            if (workTask != null)
+            {
+                if (patchData.ContainsKey(KEY_WORKTASK_STATUS_ID))
+                    await SetWorkTaskStatus(settings, workTask, Guid.Parse(patchData[KEY_WORKTASK_STATUS_ID]));
+            }
+            return workTask;
+        }
+
         private async Task<IWorkTask> ApplyToWorkTask(ISettings settings, Guid domainId, Dictionary<string, object> patch)
         {
             Guid id = Guid.Parse(patch["WorkTaskId"].ToString());
-            IWorkTask workTask = await _workTaskFactory.Get(settings, id);
-            if (!workTask.DomainId.Equals(domainId))
-                workTask = null;
+            IWorkTask workTask = await _workTaskFactory.Get(settings, domainId, id);
             if (workTask != null)
             {
                 if (patch.ContainsKey(KEY_WORKTASK_STATUS_ID))
@@ -48,7 +58,7 @@ namespace BrassLoon.WorkTask.Core
         {
             if (workTask.WorkTaskStatus.WorkTaskStatusId != workTaskStatusId)
             {
-                IWorkTaskStatus workTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, workTask.WorkTaskType.WorkTaskTypeId))
+                IWorkTaskStatus workTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, workTask.DomainId, workTask.WorkTaskType.WorkTaskTypeId))
                     .FirstOrDefault(wts => wts.WorkTaskStatusId == workTaskStatusId);
                 if (workTaskStatus != null)
                     workTask.WorkTaskStatus = workTaskStatus;

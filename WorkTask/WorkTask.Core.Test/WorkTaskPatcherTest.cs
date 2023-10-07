@@ -41,8 +41,8 @@ namespace WorkTask.Core.Test
             workTask.Object.WorkTaskStatus = workTaskStatus.Object;
 
             Mock<IWorkTaskStatusFactory> workTaskStatusFactory = new Mock<IWorkTaskStatusFactory>();
-            workTaskStatusFactory.Setup(f => f.GetByWorkTaskTypeId(It.IsAny<ISettings>(), workTaskTypeId))
-                .Returns((ISettings s, Guid id) =>
+            workTaskStatusFactory.Setup(f => f.GetByWorkTaskTypeId(It.IsAny<ISettings>(), domainId, workTaskTypeId))
+                .Returns((ISettings s, Guid dId, Guid id) =>
                 {
                     Mock<IWorkTaskStatus> status = new Mock<IWorkTaskStatus>();
                     status.SetupGet(s => s.WorkTaskStatusId).Returns(targetStatusId);
@@ -51,7 +51,7 @@ namespace WorkTask.Core.Test
                 });
 
             Mock<IWorkTaskFactory> workTaskFactory = new Mock<IWorkTaskFactory>();
-            workTaskFactory.Setup(f => f.Get(It.IsAny<ISettings>(), workTaskId)).Returns(() => Task.FromResult(workTask.Object));
+            workTaskFactory.Setup(f => f.Get(It.IsAny<ISettings>(), domainId, workTaskId)).Returns(() => Task.FromResult(workTask.Object));
 
             WorkTaskPatcher workTaskPatcher = new WorkTaskPatcher(workTaskFactory.Object, workTaskStatusFactory.Object);
             IEnumerable<IWorkTask> result = await workTaskPatcher.Apply(null, domainId, patchData);

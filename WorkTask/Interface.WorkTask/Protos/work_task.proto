@@ -1,0 +1,73 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/get_by_domain_request.proto";
+import "Protos/work_task_context.proto";
+import "Protos/work_task_status.proto";
+import "Protos/work_task_type.proto";
+
+option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
+
+service WorkTaskService {
+	rpc Get(GetWorkTaskRequest) returns (WorkTask);
+	rpc GetByWorkGroupId(GetWorkTaskByWorkGroupIdRequest) returns (stream WorkTask);
+	rpc GetByContext(GetWorkTaskByContextRequest) returns (stream WorkTask);
+	rpc GetAll(GetByDomainRequest) returns (stream WorkTask);
+	rpc Create(WorkTask) returns (WorkTask);
+	rpc Update(WorkTask) returns (WorkTask);
+	rpc Claim(ClaimWorkTaskRequest) returns (ClaimWorkTaskResponse);
+	rpc Patch(stream PatchWorkTaskRequest) returns (stream WorkTask);
+}
+
+message ClaimWorkTaskRequest {
+	string DomainId = 1;
+	string WorkTaskId = 2;
+	google.protobuf.StringValue AssignToUserId = 3;
+	google.protobuf.StringValue AssignedDate = 4;
+}
+
+message ClaimWorkTaskResponse {
+	bool IsAssigned = 1;
+    google.protobuf.StringValue Message = 2;
+    google.protobuf.StringValue AssignedToUserId = 3;
+    google.protobuf.StringValue AssignedDate = 4;
+}
+
+message PatchWorkTaskRequest {
+	string DomainId = 1;
+	map<string, string> Data = 2;
+}
+
+message GetWorkTaskByContextRequest {
+	string DomainId = 1;
+	int32 ReferenceType = 2;
+	string ReferenceValue = 3;
+	bool IncludeClosed = 4;
+}
+
+message GetWorkTaskByWorkGroupIdRequest {
+	string DomainId = 1;
+	string WorkGroupId = 2;
+	bool IncludeClosed = 3;
+}
+
+message GetWorkTaskRequest {
+	string DomainId = 1;
+	string WorkTaskId = 2;
+}
+
+message WorkTask {
+	string WorkTaskId = 1;
+	string DomainId = 2;
+    google.protobuf.StringValue Title = 3;
+    google.protobuf.StringValue Text = 4;
+    google.protobuf.StringValue AssignedToUserId = 5;
+    google.protobuf.StringValue AssignedDate = 6;
+    google.protobuf.StringValue ClosedDate = 7;
+    google.protobuf.Timestamp CreateTimestamp = 8;
+    google.protobuf.Timestamp UpdateTimestamp = 9;
+    WorkTaskType WorkTaskType = 10;
+    WorkTaskStatus WorkTaskStatus = 11;
+    repeated WorkTaskContext WorkTaskContexts = 12;
+}

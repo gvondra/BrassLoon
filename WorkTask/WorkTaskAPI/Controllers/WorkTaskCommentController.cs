@@ -62,7 +62,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IEnumerable<IComment> comments = await _workTaskCommentFactory.GetByWorkTaskId(settings, workTaskId.Value);
+                    IEnumerable<IComment> comments = await _workTaskCommentFactory.GetByWorkTaskId(settings, domainId.Value, workTaskId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         comments.Select(c => mapper.Map<Comment>(c))

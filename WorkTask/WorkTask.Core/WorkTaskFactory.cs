@@ -71,18 +71,19 @@ namespace BrassLoon.WorkTask.Core
                 workTask);
         }
 
-        public async Task<IWorkTask> Get(ISettings settings, Guid id)
+        public async Task<IWorkTask> Get(ISettings settings, Guid domainId, Guid id)
         {
             WorkTask workTask = null;
             WorkTaskData data = await _dataFactory.Get(new DataSettings(settings), id);
-            if (data != null)
+            if (data != null && data.DomainId.Equals(domainId))
                 workTask = LoadWorkTask(data);
             return workTask;
         }
 
-        public async Task<IEnumerable<IWorkTask>> GetByWorkGroupId(ISettings settings, Guid workGroupId, bool includeClosed = false)
+        public async Task<IEnumerable<IWorkTask>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId, bool includeClosed = false)
         {
             return (await _dataFactory.GetByWorkGroupId(new DataSettings(settings), workGroupId, includeClosed))
+                .Where(data => data.DomainId.Equals(domainId))
                 .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
                 .ToList();
         }
@@ -103,6 +104,13 @@ namespace BrassLoon.WorkTask.Core
                 .Where(d => d.WorkTaskContexts.Any(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
                 .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
                 .ToList();
+        }
+
+        public Task<IAsyncEnumerable<IWorkTask>> GetAll(ISettings settings, Guid domainId)
+        {
+            return Task.FromResult<IAsyncEnumerable<IWorkTask>>(new WorkTaskEnumerator(
+                 async () => (await _dataFactory.GetAll(new DataSettings(settings), domainId)).GetAsyncEnumerator(),
+                (data) => LoadWorkTask(data)));
         }
     }
 }

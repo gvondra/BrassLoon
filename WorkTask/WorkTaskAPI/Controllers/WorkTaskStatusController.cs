@@ -67,7 +67,7 @@ namespace WorkTaskAPI.Controllers
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, workTaskTypeId.Value))
+                        (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, workTaskTypeId.Value))
                         .Select<IWorkTaskStatus, WorkTaskStatus>(t => mapper.Map<WorkTaskStatus>(t))
                         );
                 }
@@ -107,7 +107,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();
@@ -164,7 +164,7 @@ namespace WorkTaskAPI.Controllers
                     result = ValidateRequest(workTaskStatus);
                 if (result == null)
                 {
-                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTaskTypeId.Value);
+                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTaskTypeId.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
@@ -209,13 +209,13 @@ namespace WorkTaskAPI.Controllers
                     result = ValidateRequest(workTaskStatus);
                 if (result == null)
                 {
-                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTaskTypeId.Value);
+                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTaskTypeId.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
                 if (result == null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();
@@ -266,13 +266,13 @@ namespace WorkTaskAPI.Controllers
                 }
                 else
                 {
-                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTaskTypeId.Value);
+                    innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTaskTypeId.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
                 if (result == null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();

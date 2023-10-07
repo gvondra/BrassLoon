@@ -1,12 +1,12 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
-using BrassLoon.RestClient;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
@@ -16,14 +16,6 @@ namespace BrassLoon.Interface.WorkTask
         private static AsyncPolicy _getCache = CreateCachePolicy();
         private static AsyncPolicy _getByCodeCache = CreateCachePolicy();
         private static AsyncPolicy _getByWorkGroupIdCache = CreateCachePolicy();
-        private readonly RestUtil _restUtil;
-        private readonly IService _service;
-
-        public WorkTaskTypeService(RestUtil restUtil, IService service)
-        {
-            _restUtil = restUtil;
-            _service = service;
-        }
 
         public async Task<WorkTaskType> Create(ISettings settings, WorkTaskType workTaskType)
         {
@@ -31,14 +23,14 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentNullException(nameof(workTaskType));
             if (!workTaskType.DomainId.HasValue || workTaskType.DomainId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"{nameof(workTaskType.DomainId)} is null");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, workTaskType)
-                .AddPath("WorkTaskType")
-                .AddPath(workTaskType.DomainId.Value.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            WorkTaskType result = await _restUtil.Send<WorkTaskType>(_service, request);
-            ResetAllCaches();
-            return result;
+            Protos.WorkTaskType request = workTaskType.ToProto();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                Protos.WorkTaskType response = await service.CreateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                ResetAllCaches();
+                return WorkTaskType.Create(response);
+            }
         }
 
         public Task<WorkTaskType> Get(ISettings settings, Guid domainId, Guid id)
@@ -52,31 +44,41 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{id:N}"));
         }
 
-        private Task<WorkTaskType> GetUncached(ISettings settings, Guid domainId, Guid id)
+        private static async Task<WorkTaskType> GetUncached(ISettings settings, Guid domainId, Guid id)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             if (id.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(id));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkTaskType")
-                .AddPath(domainId.ToString("N"))
-                .AddPath(id.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<WorkTaskType>(_service, request);
+            Protos.GetWorkTaskTypeRequest request = new Protos.GetWorkTaskTypeRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkTaskTypeId = id.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                Protos.WorkTaskType response = await service.GetAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return WorkTaskType.Create(response);
+            }
         }
 
-        public Task<List<WorkTaskType>> GetAll(ISettings settings, Guid domainId)
+        public async Task<List<WorkTaskType>> GetAll(ISettings settings, Guid domainId)
         {
+            List<WorkTaskType> result = new List<WorkTaskType>();
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkTaskType")
-                .AddPath(domainId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<List<WorkTaskType>>(_service, request);
+            Protos.GetByDomainRequest request = new Protos.GetByDomainRequest { DomainId = domainId.ToString("D") };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                AsyncServerStreamingCall<Protos.WorkTaskType> streamingCall = service.GetAll(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(WorkTaskType.Create(streamingCall.ResponseStream.Current));
+                }
+            }
+            return result;
         }
 
         public Task<WorkTaskType> GetByCode(ISettings settings, Guid domainId, string code)
@@ -90,19 +92,23 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{code}"));
         }
 
-        private Task<WorkTaskType> GetByCodeUncached(ISettings settings, Guid domainId, string code)
+        private static async Task<WorkTaskType> GetByCodeUncached(ISettings settings, Guid domainId, string code)
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             if (string.IsNullOrEmpty(code))
                 throw new ArgumentNullException(nameof(code));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkTaskType")
-                .AddPath(domainId.ToString("N"))
-                .AddQueryParameter("code", code)
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<WorkTaskType>(_service, request);
+            Protos.GetWorkTaskTypeByCodeRequest request = new Protos.GetWorkTaskTypeByCodeRequest
+            {
+                DomainId = domainId.ToString("D"),
+                Code = code
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                Protos.WorkTaskType response = await service.GetByCodeAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                return WorkTaskType.Create(response);
+            }
         }
 
         public Task<List<WorkTaskType>> GetByWorkGroupId(ISettings settings, Guid domainId, Guid workGroupId)
@@ -116,19 +122,28 @@ namespace BrassLoon.Interface.WorkTask
                 new Context($"{domainId:N}|{workGroupId:N}"));
         }
 
-        private Task<List<WorkTaskType>> GetByWorkGroupIdUncached(ISettings settings, Guid domainId, Guid workGroupId)
+        private static async Task<List<WorkTaskType>> GetByWorkGroupIdUncached(ISettings settings, Guid domainId, Guid workGroupId)
         {
+            List<WorkTaskType> result = new List<WorkTaskType>();
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             if (workGroupId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(workGroupId));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
-                .AddPath("WorkGroup/{domainId}/{workGroupId}/WorkTaskType")
-                .AddPathParameter("domainId", domainId.ToString("N"))
-                .AddPathParameter("workGroupId", workGroupId.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            return _restUtil.Send<List<WorkTaskType>>(_service, request);
+            Protos.GetWorkTaskTypeByWorkGroupIdRequest request = new Protos.GetWorkTaskTypeByWorkGroupIdRequest
+            {
+                DomainId = domainId.ToString("D"),
+                WorkGroupId = workGroupId.ToString("D")
+            };
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                AsyncServerStreamingCall<Protos.WorkTaskType> streamingCall = service.GetByWorkGroupId(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                while (await streamingCall.ResponseStream.MoveNext())
+                {
+                    result.Add(WorkTaskType.Create(streamingCall.ResponseStream.Current));
+                }
+            }
+            return result;
         }
 
         public async Task<WorkTaskType> Update(ISettings settings, WorkTaskType workTaskType)
@@ -139,15 +154,14 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentException($"{nameof(workTaskType.DomainId)} is null");
             if (!workTaskType.WorkTaskTypeId.HasValue || workTaskType.WorkTaskTypeId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"{nameof(workTaskType.WorkTaskTypeId)} is null");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, workTaskType)
-                .AddPath("WorkTaskType")
-                .AddPath(workTaskType.DomainId.Value.ToString("N"))
-                .AddPath(workTaskType.WorkTaskTypeId.Value.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
-            WorkTaskType result = await _restUtil.Send<WorkTaskType>(_service, request);
-            ResetAllCaches();
-            return result;
+            Protos.WorkTaskType request = workTaskType.ToProto();
+            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            {
+                Protos.WorkTaskTypeService.WorkTaskTypeServiceClient service = new Protos.WorkTaskTypeService.WorkTaskTypeServiceClient(channel);
+                Protos.WorkTaskType response = await service.UpdateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                ResetAllCaches();
+                return WorkTaskType.Create(response);
+            }
         }
 
         private static AsyncPolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));

@@ -114,7 +114,7 @@ namespace WorkTaskAPI.Controllers
                 else
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, id.Value);
+                    IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskType == null)
                     {
                         result = NotFound();
@@ -161,7 +161,7 @@ namespace WorkTaskAPI.Controllers
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        (await _workTaskTypeFactory.GetByWorkGroupId(settings, workGroupId.Value))
+                        (await _workTaskTypeFactory.GetByWorkGroupId(settings, domainId.Value, workGroupId.Value))
                         .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
                         );
                 }
@@ -240,7 +240,7 @@ namespace WorkTaskAPI.Controllers
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, id.Value);
+                    IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                     if (result == null)

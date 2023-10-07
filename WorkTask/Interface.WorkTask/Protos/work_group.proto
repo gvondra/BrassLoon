@@ -1,0 +1,45 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/get_by_domain_request.proto";
+
+option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
+
+service WorkGroupService {
+	rpc GetAll(GetByDomainRequest) returns (stream WorkGroup);
+	rpc GetByMemberUserId(GetWorkGroupByMeemberUserIdRequest) returns (stream WorkGroup);
+	rpc Get(GetWorkGroupRequest) returns (WorkGroup);
+	rpc Create(WorkGroup) returns (WorkGroup);
+	rpc Update(WorkGroup) returns (WorkGroup);
+	rpc AddWorkTaskTypeLink(WorkGroupTaskTypeLinkRequest) returns (google.protobuf.Empty);
+	rpc DeleteWorkTaskTypeLink(WorkGroupTaskTypeLinkRequest) returns (google.protobuf.Empty);
+}
+
+message GetWorkGroupRequest {
+	string DomainId = 1;
+	string WorkGroupId = 2;
+}
+
+message GetWorkGroupByMeemberUserIdRequest {
+	string DomainId = 1;
+	string UserId = 2;
+}
+
+message WorkGroupTaskTypeLinkRequest {
+	string DomainId = 1;
+	string WorkGroupId = 2;
+	string WorkTaskTypeId = 3;
+}
+
+message WorkGroup {
+	string WorkGroupId = 1;
+    string DomainId = 2;
+    string Title = 3;
+    google.protobuf.StringValue Description = 4;
+    google.protobuf.Timestamp CreateTimestamp = 5;
+    google.protobuf.Timestamp UpdateTimestamp = 6;
+    repeated string MemberUserIds = 7;
+    repeated string WorkTaskTypeIds = 8;
+}

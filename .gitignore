@@ -369,6 +369,7 @@ FodyWeavers.xsd
 !/[Ll]og/[Ii]nterface.[Ll]og/
 !/[Ll]og/[Ii]nterface.[Ll]og/[Ii]nterface.[Ll]og.csproj
 /Account/AccountAPI/**/launchSettings.json
+/Account/TestClient/**/launchSettings.json
 /Authorization/AuthorizationAPI/**/launchSettings.json
 /Authorization/AuthorizationRPC/**/launchSettings.json
 /Authorization/TestClient/**/launchSettings.json
@@ -381,4 +382,4 @@ FodyWeavers.xsd
 /WorkTask/Purger/**/launchSettings.json
 /WorkTask/TestClient/**/launchSettings.json
 /WorkTask/WorkTaskAPI/**/launchSettings.json
-/Account/TestClient/**/launchSettings.json
+/WorkTask/WorkTaskRPC/**/launchSettings.json

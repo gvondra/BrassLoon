@@ -10,6 +10,7 @@ namespace BrassLoon.WorkTask.Data
         {
             base.Load(builder);
             builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
+            builder.RegisterType<BrassLoon.DataClient.LoaderFactory>().As<BrassLoon.DataClient.ILoaderFactory>();
             builder.RegisterType<PurgeDataSaver>().As<IPurgeDataSaver>();
             builder.RegisterType<PurgeWorkerDataFactory>().As<IPurgeWorkerDataFactory>();
             builder.RegisterType<PurgeWorkerDataSaver>().As<IPurgeWorkerDataSaver>();

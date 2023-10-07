@@ -31,11 +31,11 @@ namespace BrassLoon.WorkTask.Core
             });
         }
 
-        public Task CreateWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId)
-            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, workTaskTypeId, workGroupId));
+        public Task CreateWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
+            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, domainId, workTaskTypeId, workGroupId));
 
-        public Task DeleteWorkTaskTypeGroup(ISettings settings, Guid workTaskTypeId, Guid workGroupId)
-            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, workTaskTypeId, workGroupId));
+        public Task DeleteWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
+            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, domainId, workTaskTypeId, workGroupId));
 
         public Task Update(ISettings settings, params IWorkGroup[] workGroups)
         {

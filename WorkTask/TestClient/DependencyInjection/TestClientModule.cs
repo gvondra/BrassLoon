@@ -13,7 +13,10 @@ namespace BrassLoon.WorkTask.TestClient.DependencyInjection
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
+            builder.RegisterType<WorkGroupTest>();
+            builder.RegisterType<WorkTaskTest>();
             builder.RegisterType<WorkTaskPerformanceTest>();
+            builder.RegisterType<WorkTaskTypeTest>();
         }
     }
 }

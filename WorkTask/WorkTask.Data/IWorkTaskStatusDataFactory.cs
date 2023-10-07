@@ -8,6 +8,7 @@ namespace BrassLoon.WorkTask.Data
     public interface IWorkTaskStatusDataFactory
     {
         Task<WorkTaskStatusData> Get(ISqlSettings settings, Guid id);
+        Task<IEnumerable<WorkTaskStatusData>> GetByDomainId(ISqlSettings settings, Guid domainId);
         Task<IEnumerable<WorkTaskStatusData>> GetByWorkTaskType(ISqlSettings settings, Guid workTaskTypeId);
     }
 }

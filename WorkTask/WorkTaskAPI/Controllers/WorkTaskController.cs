@@ -111,7 +111,7 @@ namespace WorkTaskAPI.Controllers
                 if (result == null)
                 {
                     CoreSettings settings = CreateCoreSettings();
-                    IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, id.Value);
+                    IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, domainId.Value, id.Value);
                     if (!innerWorkTask.DomainId.Equals(domainId.Value))
                         innerWorkTask = null;
                     if (innerWorkTask == null)
@@ -151,7 +151,7 @@ namespace WorkTaskAPI.Controllers
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IEnumerable<IWorkTask> innerWorkTasks = await _workTaskFactory
-                        .GetByWorkGroupId(settings, workGroupId.Value, includeClosed ?? false);
+                        .GetByWorkGroupId(settings, domainId.Value, workGroupId.Value, includeClosed ?? false);
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         innerWorkTasks
@@ -190,14 +190,14 @@ namespace WorkTaskAPI.Controllers
                 {
                     if (workTask.WorkTaskType.WorkTaskTypeId.HasValue)
                     {
-                        innerWorkTaskType = await _workTaskTypeFactory.Get(settings, workTask.WorkTaskType.WorkTaskTypeId.Value);
+                        innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTask.WorkTaskType.WorkTaskTypeId.Value);
                     }
                     if (innerWorkTaskType == null)
                         result = BadRequest($"Work task type not found ({workTask.WorkTaskType?.WorkTaskTypeId})");
                 }
                 if (result == null && innerWorkTaskType != null)
                 {
-                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, innerWorkTaskType.WorkTaskTypeId))
+                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, innerWorkTaskType.WorkTaskTypeId))
                         .FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
                     if (innerWorkTaskStatus == null)
                         result = BadRequest("Invalid work task status. The status doesn't exist or is not valid for the task type");
@@ -276,7 +276,7 @@ namespace WorkTaskAPI.Controllers
                     result = ValidateWorkTask(workTask);
                 if (result == null)
                 {
-                    innerWorkTask = await _workTaskFactory.Get(settings, id.Value);
+                    innerWorkTask = await _workTaskFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTask == null)
                     {
                         result = NotFound();
@@ -284,7 +284,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null && innerWorkTask != null)
                 {
-                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, innerWorkTask.WorkTaskType.WorkTaskTypeId))
+                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, innerWorkTask.WorkTaskType.WorkTaskTypeId))
                         .FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
                     if (innerWorkTaskStatus == null)
                         result = BadRequest("Invalid work task status. The status doesn't exist or is not valid for the task type");
@@ -327,7 +327,7 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
                 {
-                    innerWorkTask = await _workTaskFactory.Get(settings, id.Value);
+                    innerWorkTask = await _workTaskFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTask == null)
                     {
                         result = NotFound();
