@@ -10,6 +10,7 @@ namespace BrassLoon.Interface.Account
             base.Load(builder);
             builder.RegisterType<RestUtil>();
             builder.RegisterType<Service>().As<IService>();
+            builder.RegisterType<AccountService>().As<IAccountService>();
             builder.RegisterType<DomainService>().As<IDomainService>();
             builder.RegisterType<TokenService>().As<ITokenService>();
         }

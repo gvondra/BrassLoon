@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace BrassLoon.Client.ViewModel
 {
@@ -6,6 +7,8 @@ namespace BrassLoon.Client.ViewModel
     {
         private Visibility _systemAdminVisibility = Visibility.Collapsed;
         private Visibility _accountAdminVisibility = Visibility.Collapsed;
+
+        public ObservableCollection<AccountVM> Accounts { get; } = new ObservableCollection<AccountVM>();
 
         public Visibility SystemAdminVisibility
         {
