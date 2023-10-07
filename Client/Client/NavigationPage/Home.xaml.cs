@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrassLoon.Client.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,21 @@ namespace BrassLoon.Client.NavigationPage
     {
         public Home()
         {
+            NavigationCommands.BrowseBack.InputGestures.Clear();
+            NavigationCommands.BrowseForward.InputGestures.Clear();
             InitializeComponent();
+            HomeVM = new HomeVM();
+            DataContext = HomeVM;
+            this.Loaded += Home_Loaded;
         }
+
+        private void Home_Loaded(object sender, RoutedEventArgs e)
+        {
+            GoogleLogin.ShowLoginDialog(owner: Window.GetWindow(this));
+            HomeVM.SystemAdminVisibility =  AccessToken.Get.UserHasSysAdminAccess() ? Visibility.Visible : Visibility.Collapsed;
+            HomeVM.AccountAdminVisibility = AccessToken.Get.UserHasActAdminAccess() ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        internal HomeVM HomeVM { get; set; }
     }
 }
