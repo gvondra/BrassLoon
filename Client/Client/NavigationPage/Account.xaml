@@ -15,7 +15,7 @@
             <Setter Property="Margin" Value="0,15,0,10"/>
         </Style>
     </Page.Resources>
-    <ScrollViewer>
+    <ScrollViewer Padding="15,0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -31,9 +31,22 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Style="{StaticResource PageTitle}">Account</TextBlock>
-            <Grid Grid.Row="1">
+            <Border Grid.Row="1" Margin="20" CornerRadius="5" BorderBrush="DarkGreen" BorderThickness="1" Background="LightGreen" Padding="10">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLocked}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock>This account is locked</TextBlock>
+            </Border>
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -46,15 +59,20 @@
                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MaxLength="1024" Style="{StaticResource TextBoxWithError}" />
                 <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}"/>
             </Grid>
-            <TextBlock Grid.Row="2" Style="{StaticResource SectionHeader}">Domains</TextBlock>
-            <TextBlock Grid.Row="4" Style="{StaticResource SectionHeader}">Clients</TextBlock>
-            <TextBlock Grid.Row="5" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
-            <TextBlock Grid.Row="7" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
-            <TextBlock Grid.Row="8">
+            <TextBlock Grid.Row="3" Style="{StaticResource SectionHeader}">Domains</TextBlock>
+            <TextBlock Grid.Row="5" Style="{StaticResource SectionHeader}">Clients</TextBlock>
+            <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
+            <TextBlock Grid.Row="8" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
+            <TextBlock Grid.Row="9">
                 <Hyperlink>Create Invite</Hyperlink>
             </TextBlock>
-            <TextBlock Grid.Row="9" Style="{StaticResource SectionHeader}">Admin</TextBlock>
-            <TextBlock Grid.Row="11" Style="{StaticResource SectionHeader}">Users</TextBlock>
+            <TextBlock Grid.Row="10" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Admin</TextBlock>
+            <Border Grid.Row="11" Margin="0,5" BorderBrush="Brown" BorderThickness="1" Background="LightYellow" CornerRadius="5" HorizontalAlignment="Left">
+                <Button Padding="15" Command="{Binding LockToggleCommand}" CommandParameter="{Binding .}" BorderBrush="{x:Null}" BorderThickness="0" Background="Transparent">
+                    <TextBlock Text="{Binding LockButtonText}" />
+                </Button>
+            </Border>
+            <TextBlock Grid.Row="12" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Users</TextBlock>
         </Grid>
     </ScrollViewer>
 </Page>

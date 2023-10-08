@@ -50,6 +50,9 @@ namespace BrassLoon.Client.NavigationPage
                 AccountVM.AddBehavior(new AccountValidator(AccountVM));
             if (AccountVM.SaveCommand == null)
                 AccountVM.SaveCommand = scope.Resolve<AccountSaver>();
+            if (AccountVM.LockToggleCommand == null)
+                AccountVM.LockToggleCommand = scope.Resolve<AccountLockToggler>();
+            AccountVM.AdminVisibility = AccessToken.Get.UserHasActAdminAccess() ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
