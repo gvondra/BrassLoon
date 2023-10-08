@@ -33,7 +33,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
-                            <Hyperlink>
+                            <Hyperlink Click="Hyperlink_Click">
                                 <TextBlock Text="{Binding Name}"/>
                             </Hyperlink>
                         </TextBlock>

@@ -10,6 +10,7 @@ namespace BrassLoon.Client.DependencyInjection
         {
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            builder.RegisterType<AccountSaver>();
             builder.RegisterType<AccountsLoader>();
             builder.RegisterInstance(AppSettingsLoader.Load());
             builder.RegisterType<HomeLoader>();

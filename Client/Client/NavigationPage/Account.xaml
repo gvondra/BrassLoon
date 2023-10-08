@@ -1,0 +1,60 @@
+﻿<Page x:Class="BrassLoon.Client.NavigationPage.Account"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BrassLoon.Client.NavigationPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      KeepAlive="True"
+      Title="Brass Loon: Account" Style="{StaticResource DefaultPageStyle}">
+
+    <Page.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,15,0,10"/>
+        </Style>
+    </Page.Resources>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Style="{StaticResource PageTitle}">Account</TextBlock>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Name</Label>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MaxLength="1024" Style="{StaticResource TextBoxWithError}" />
+                <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}"/>
+            </Grid>
+            <TextBlock Grid.Row="2" Style="{StaticResource SectionHeader}">Domains</TextBlock>
+            <TextBlock Grid.Row="4" Style="{StaticResource SectionHeader}">Clients</TextBlock>
+            <TextBlock Grid.Row="5" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
+            <TextBlock Grid.Row="7" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
+            <TextBlock Grid.Row="8">
+                <Hyperlink>Create Invite</Hyperlink>
+            </TextBlock>
+            <TextBlock Grid.Row="9" Style="{StaticResource SectionHeader}">Admin</TextBlock>
+            <TextBlock Grid.Row="11" Style="{StaticResource SectionHeader}">Users</TextBlock>
+        </Grid>
+    </ScrollViewer>
+</Page>

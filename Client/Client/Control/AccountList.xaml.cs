@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BrassLoon.Client.NavigationPage;
+using BrassLoon.Client.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,16 @@ namespace BrassLoon.Client.Control
         public AccountList()
         {
             InitializeComponent();
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink)
+            {
+                Account page = new Account((AccountVM)hyperlink.DataContext);
+                NavigationService navigationService = NavigationService.GetNavigationService(this);
+                navigationService.Navigate(page);
+            }
         }
     }
 }

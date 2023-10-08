@@ -17,7 +17,11 @@
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Accounts}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock>
+                        <Hyperlink Click="Hyperlink_Click">
+                            <TextBlock Text="{Binding Name}" />
+                        </Hyperlink>
+                    </TextBlock>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

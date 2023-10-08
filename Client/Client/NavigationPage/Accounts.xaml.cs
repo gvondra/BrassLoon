@@ -42,5 +42,15 @@ namespace BrassLoon.Client.NavigationPage
                 AccountsVM.SearchCommand = scope.Resolve<AccountsLoader>();
             SearchText.Focus();
         }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink)
+            {
+                Account page = new Account((AccountVM)hyperlink.DataContext);
+                NavigationService navigationService = NavigationService.GetNavigationService(this);
+                navigationService.Navigate(page);
+            }
+        }
     }
 }
