@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Client.Settings
 {
-    internal class AccountSettings : ISettings
+    public class AccountSettings : ISettings
     {
         public string BaseAddress { get; set; }
         public string Token { get; set; }

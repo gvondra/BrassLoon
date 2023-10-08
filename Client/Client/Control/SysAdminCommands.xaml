@@ -43,7 +43,7 @@
                 <StackPanel Orientation="Vertical" Style="{StaticResource CardPanel}">
                     <TextBlock FontWeight="Bold" Foreground="White" Padding="0,0,0,5">Search Users</TextBlock>
                     <TextBlock TextWrapping="WrapWithOverflow" Foreground="White" Padding="0,0,0,5">Find users and update roles.</TextBlock>
-                    <Button Style="{StaticResource CardButton}">View</Button>
+                    <Button Style="{StaticResource CardButton}" Command="NavigationCommands.GoToPage" CommandParameter="NavigationPage/Users.xaml">View</Button>
                 </StackPanel>
             </Border>
         </WrapPanel>

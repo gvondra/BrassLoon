@@ -2,7 +2,7 @@
 
 namespace BrassLoon.Client
 {
-    internal interface ISettingsFactory
+    public interface ISettingsFactory
     {
         AccountSettings CreateAccountSettings();
         AccountSettings CreateAccountSettings(string token);
