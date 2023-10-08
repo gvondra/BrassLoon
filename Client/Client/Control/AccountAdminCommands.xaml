@@ -17,7 +17,7 @@
                 <StackPanel Orientation="Vertical" Margin="10,15" MaxWidth="200">
                     <TextBlock FontWeight="Bold" Foreground="White" Padding="0,0,0,5">Accounts</TextBlock>
                     <TextBlock TextWrapping="WrapWithOverflow" Foreground="White" Padding="0,0,0,5">Account administration including domain restoration.</TextBlock>
-                    <Button HorizontalAlignment="Left" Padding="5" Background="#FF007BFF" Foreground="White">Search</Button>
+                    <Button HorizontalAlignment="Left" Padding="5" Background="#FF007BFF" Foreground="White" Command="NavigationCommands.GoToPage" CommandParameter="NavigationPage/Accounts.xaml">Search</Button>
                 </StackPanel>
             </Border>
         </WrapPanel>
