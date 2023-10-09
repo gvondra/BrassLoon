@@ -46,11 +46,24 @@ namespace BrassLoon.Client.NavigationPage
         private void Account_Loaded(object sender, RoutedEventArgs e)
         {
             using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
+            AccountLoader accountLoader = AccountVM.GetBehavior<AccountLoader>();
+            if (accountLoader == null)
+            {
+                accountLoader = scope.Resolve<Func<AccountVM, AccountLoader>>()(AccountVM);
+                AccountVM.AddBehavior(accountLoader);
+                accountLoader.LoadDomains();
+                if (AccessToken.Get.UserHasActAdminAccess())
+                {
+                    accountLoader.LoadDeletedDomains();
+                    accountLoader.LoadUsers();
+                    AccountVM.AccountUserRemover = scope.Resolve<AccountUserRemover>();
+                }
+            }
             if (AccountVM.GetBehavior<AccountValidator>() == null)
                 AccountVM.AddBehavior(new AccountValidator(AccountVM));
             if (AccountVM.SaveCommand == null)
                 AccountVM.SaveCommand = scope.Resolve<AccountSaver>();
-            if (AccountVM.LockToggleCommand == null)
+            if (AccessToken.Get.UserHasActAdminAccess() && AccountVM.LockToggleCommand == null)
                 AccountVM.LockToggleCommand = scope.Resolve<AccountLockToggler>();
             AccountVM.AdminVisibility = AccessToken.Get.UserHasActAdminAccess() ? Visibility.Visible : Visibility.Collapsed;
         }

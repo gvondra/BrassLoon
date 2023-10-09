@@ -32,6 +32,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Style="{StaticResource PageTitle}">Account</TextBlock>
             <Border Grid.Row="1" Margin="20" CornerRadius="5" BorderBrush="DarkGreen" BorderThickness="1" Background="LightGreen" Padding="10">
@@ -56,10 +58,35 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.Row="0">Name</Label>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MaxLength="1024" Style="{StaticResource TextBoxWithError}" />
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MaxLength="1024" Style="{StaticResource TextBoxWithError}" HorizontalAlignment="Left" MinWidth="200" />
                 <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}"/>
             </Grid>
             <TextBlock Grid.Row="3" Style="{StaticResource SectionHeader}">Domains</TextBlock>
+            <ListView Grid.Row="4" ItemsSource="{Binding Domains}">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Template" Value="{x:Null}" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding DomainId, StringFormat='D', Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Name, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
             <TextBlock Grid.Row="5" Style="{StaticResource SectionHeader}">Clients</TextBlock>
             <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
             <TextBlock Grid.Row="8" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
@@ -72,7 +99,38 @@
                     <TextBlock Text="{Binding LockButtonText}" />
                 </Button>
             </Border>
-            <TextBlock Grid.Row="12" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Users</TextBlock>
+            <TextBlock Grid.Row="12" Style="{StaticResource SectionHeader}" Visibility="{Binding DeletedDomainVisibility}">Deleted Domains</TextBlock>
+            <ListView Grid.Row="13" ItemsSource="{Binding DeletedDomains}" Visibility="{Binding DeletedDomainVisibility}">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Template" Value="{x:Null}" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn DisplayMemberBinding="{Binding DomainId, StringFormat='D'}"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBlock Grid.Row="14" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Users</TextBlock>
+            <ListView Grid.Row="15" ItemsSource="{Binding Users}" Visibility="{Binding AdminVisibility}" SelectedItem="{Binding SelectedUser}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Remove" Command="{Binding AccountUserRemover}" CommandParameter="{Binding .}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Template" Value="{x:Null}" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
     </ScrollViewer>
 </Page>

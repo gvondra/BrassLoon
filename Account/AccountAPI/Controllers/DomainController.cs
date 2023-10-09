@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;

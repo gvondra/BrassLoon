@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
 {
-    internal class UserVM : ViewModelBase
+    public class UserVM : ViewModelBase
     {
         private readonly User _user;
         private ICommand _saveCommand;
