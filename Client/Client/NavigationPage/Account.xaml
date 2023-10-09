@@ -59,7 +59,7 @@
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.Row="0">Name</Label>
                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MaxLength="1024" Style="{StaticResource TextBoxWithError}" HorizontalAlignment="Left" MinWidth="200" />
-                <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}"/>
+                <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}">Save</Button>
             </Grid>
             <TextBlock Grid.Row="3" Style="{StaticResource SectionHeader}">Domains</TextBlock>
             <ListView Grid.Row="4" ItemsSource="{Binding Domains}">
@@ -90,9 +90,25 @@
             <TextBlock Grid.Row="5" Style="{StaticResource SectionHeader}">Clients</TextBlock>
             <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
             <TextBlock Grid.Row="8" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
-            <TextBlock Grid.Row="9">
-                <Hyperlink>Create Invite</Hyperlink>
-            </TextBlock>
+            <Border Grid.Row="9" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
+                <WrapPanel Orientation="Horizontal">
+                    <ListView ItemsSource="{Binding Invitations}" BorderBrush="{x:Null}" BorderThickness="0">
+                        <ListView.Resources>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="Template" Value="{x:Null}" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn DisplayMemberBinding="{Binding EmailAddress}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                        <Hyperlink Click="CreateInvitation_Click">Create Invite</Hyperlink>
+                    </TextBlock>
+                </WrapPanel>
+            </Border>
             <TextBlock Grid.Row="10" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Admin</TextBlock>
             <Border Grid.Row="11" Margin="0,5" BorderBrush="Brown" BorderThickness="1" Background="LightYellow" CornerRadius="5" HorizontalAlignment="Left">
                 <Button Padding="15" Command="{Binding LockToggleCommand}" CommandParameter="{Binding .}" BorderBrush="{x:Null}" BorderThickness="0" Background="Transparent">

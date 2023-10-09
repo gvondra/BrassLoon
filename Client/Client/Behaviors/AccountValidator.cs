@@ -24,7 +24,7 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private void RequiredTextField(string propertyName, string value, ViewModelBase viewModel)
+        private static void RequiredTextField(string propertyName, string value, ViewModelBase viewModel)
         {
             if (string.IsNullOrEmpty(value))
                 viewModel[propertyName] = "Is required";

@@ -24,18 +24,14 @@ namespace BrassLoon.Client.NavigationPage
     public partial class Account : Page
     {
         public Account()
+            : this(null)
+        { }
+
+        internal Account(AccountVM accountVM)
         {
             NavigationCommands.BrowseBack.InputGestures.Clear();
             NavigationCommands.BrowseForward.InputGestures.Clear();
             InitializeComponent();
-            DataContext = null;
-            AccountVM = null;
-            this.Loaded += Account_Loaded;
-        }
-
-        internal Account(AccountVM accountVM)
-            : this()
-        {
             AccountVM = accountVM;
             DataContext = accountVM;
             this.Loaded += Account_Loaded;
@@ -59,6 +55,7 @@ namespace BrassLoon.Client.NavigationPage
                     AccountVM.AccountUserRemover = scope.Resolve<AccountUserRemover>();
                 }
             }
+            accountLoader.LoadInvitations();
             if (AccountVM.GetBehavior<AccountValidator>() == null)
                 AccountVM.AddBehavior(new AccountValidator(AccountVM));
             if (AccountVM.SaveCommand == null)
@@ -66,6 +63,21 @@ namespace BrassLoon.Client.NavigationPage
             if (AccessToken.Get.UserHasActAdminAccess() && AccountVM.LockToggleCommand == null)
                 AccountVM.LockToggleCommand = scope.Resolve<AccountLockToggler>();
             AccountVM.AdminVisibility = AccessToken.Get.UserHasActAdminAccess() ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void CreateInvitation_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                NavigationService navigationService = NavigationService.GetNavigationService(this);
+                CreateInvitation page = new CreateInvitation(AccountVM);
+                navigationService.Navigate(page);
+
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex, Window.GetWindow(this));
+            }
         }
     }
 }
