@@ -79,5 +79,22 @@ namespace BrassLoon.Client.NavigationPage
                 ErrorWindow.Open(ex, Window.GetWindow(this));
             }
         }
+
+        private void UserInvitation_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (sender is ListView listView)
+                {
+                    NavigationService navigationService = NavigationService.GetNavigationService(this);
+                    Invitation page = new Invitation((UserInvitationVM)listView.SelectedItem);
+                    navigationService.Navigate(page);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
     }
 }

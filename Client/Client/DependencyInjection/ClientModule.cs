@@ -21,6 +21,7 @@ namespace BrassLoon.Client.DependencyInjection
                 .SingleInstance()
                 .As<ISettingsFactory>();
             builder.RegisterType<CreateInvitationValidator>();
+            builder.RegisterType<InvitationCancel>();
             builder.RegisterType<InvitationCreator>();
             builder.RegisterType<UserRoleSaver>();
             builder.RegisterType<UsersLoader>();

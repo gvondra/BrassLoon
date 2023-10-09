@@ -91,8 +91,8 @@
             <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
             <TextBlock Grid.Row="8" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
             <Border Grid.Row="9" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
-                <WrapPanel Orientation="Horizontal">
-                    <ListView ItemsSource="{Binding Invitations}" BorderBrush="{x:Null}" BorderThickness="0">
+                <StackPanel Orientation="Vertical">
+                    <ListView ItemsSource="{Binding Invitations}" BorderBrush="{x:Null}" BorderThickness="0" MouseDoubleClick="UserInvitation_MouseDoubleClick">
                         <ListView.Resources>
                             <Style TargetType="GridViewColumnHeader">
                                 <Setter Property="Template" Value="{x:Null}" />
@@ -104,10 +104,10 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,2">
                         <Hyperlink Click="CreateInvitation_Click">Create Invite</Hyperlink>
                     </TextBlock>
-                </WrapPanel>
+                </StackPanel>
             </Border>
             <TextBlock Grid.Row="10" Style="{StaticResource SectionHeader}" Visibility="{Binding AdminVisibility}">Admin</TextBlock>
             <Border Grid.Row="11" Margin="0,5" BorderBrush="Brown" BorderThickness="1" Background="LightYellow" CornerRadius="5" HorizontalAlignment="Left">

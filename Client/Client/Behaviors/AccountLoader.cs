@@ -3,6 +3,7 @@ using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Account.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Client.Behaviors
@@ -125,7 +126,10 @@ namespace BrassLoon.Client.Behaviors
 
         private List<UserInvitation> LoadInvitations(Guid accountId)
         {
-            return _userInvitationService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
+            return _userInvitationService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId)
+                .Result
+                .Where(i => i.Status == 0 && DateTime.Today <= i.ExpirationTimestamp.Value.ToLocalTime().Date)
+                .ToList();
         }
 
         private async Task LoadInvitationsCallback(Task<List<UserInvitation>> loadUserInvitations, object state)
