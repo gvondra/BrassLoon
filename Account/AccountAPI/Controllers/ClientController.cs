@@ -24,7 +24,6 @@ namespace AccountAPI.Controllers
         private readonly ILogger<ClientController> _logger;
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
-        private readonly ISecretProcessor _secretProcessor;
 
         public ClientController(IOptions<Settings> settings,
             SettingsFactory settingsFactory,
@@ -32,14 +31,12 @@ namespace AccountAPI.Controllers
             ILogger<ClientController> logger,
             MapperFactory mapperFactory,
             IClientFactory clientFactory,
-            IClientSaver clientSaver,
-            ISecretProcessor secretProcessor)
+            IClientSaver clientSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
             _clientFactory = clientFactory;
             _clientSaver = clientSaver;
-            _secretProcessor = secretProcessor;
         }
 
         [HttpGet("/api/ClientSecret")]
