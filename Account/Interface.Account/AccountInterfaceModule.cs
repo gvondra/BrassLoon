@@ -11,6 +11,7 @@ namespace BrassLoon.Interface.Account
             builder.RegisterType<RestUtil>();
             builder.RegisterType<Service>().As<IService>();
             builder.RegisterType<AccountService>().As<IAccountService>();
+            builder.RegisterType<ClientService>().As<IClientService>();
             builder.RegisterType<DomainService>().As<IDomainService>();
             builder.RegisterType<TokenService>().As<ITokenService>();
             builder.RegisterType<UserInvitationService>().As<IUserInvitationService>();

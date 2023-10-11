@@ -10,7 +10,7 @@ namespace BrassLoon.Interface.Account
         Task<string> CreateSecret(ISettings settings);
         Task<Client> Get(ISettings settings, Guid id);
         Task<List<Client>> GetByAccountId(ISettings settings, Guid accountId);
-        Task<Client> Create(ISettings settings, Client client);
+        Task<Client> Create(ISettings settings, ClientCredentialRequest client);
         Task<Client> Update(ISettings settings, Client client);
     }
 }
