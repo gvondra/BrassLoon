@@ -17,6 +17,7 @@
             <MenuItem Header="_Options">
                 <MenuItem Header="_Home" Command="NavigationCommands.GoToPage" CommandParameter="NavigationPage/Home.xaml"/>
                 <MenuItem Header="_Google Login" Click="GoogleLoginMenuItem_Click"/>
+                <MenuItem Header="Accept Invitation" Command="NavigationCommands.GoToPage" CommandParameter="NavigationPage/AcceptInvitation.xaml"/>
                 <MenuItem Header="Close" Command="ApplicationCommands.Close"/>
             </MenuItem>
         </Menu>
