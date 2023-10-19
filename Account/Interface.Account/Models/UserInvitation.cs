@@ -5,6 +5,7 @@ namespace BrassLoon.Interface.Account.Models
     public class UserInvitation
     {
         public Guid? UserInvitationId { get; set; }
+        public Guid? AccountId { get; set; }
         public string EmailAddress { get; set; }
         public short? Status { get; set; }
         public DateTime? ExpirationTimestamp { get; set; }
