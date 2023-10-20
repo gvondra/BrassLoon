@@ -66,7 +66,7 @@ namespace BrassLoon.Interface.Account
             return _restUtil.Send<List<Client>>(_service, request);
         }
 
-        public Task<Client> Update(ISettings settings, Client client)
+        public Task<Client> Update(ISettings settings, ClientCredentialRequest client)
         {
             if (string.IsNullOrEmpty(client?.Name))
                 throw new ArgumentException($"Missing {nameof(Models.ClientCredentialRequest.Name)} value");
@@ -74,7 +74,7 @@ namespace BrassLoon.Interface.Account
                 throw new ArgumentException($"Missing or invalid {nameof(Models.ClientCredentialRequest.ClientId)} value");
             if (!client.AccountId.HasValue || client.AccountId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"Missing or invalid {nameof(Models.ClientCredentialRequest.AccountId)} value");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, client)
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, client)
                 .AddPath("Client/{id}")
                 .AddPathParameter("id", client.ClientId.Value.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
