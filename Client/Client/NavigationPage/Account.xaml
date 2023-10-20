@@ -89,6 +89,32 @@
             </ListView>
             <TextBlock Grid.Row="5" Style="{StaticResource SectionHeader}">Clients</TextBlock>
             <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
+            <Border Grid.Row="7" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
+                <StackPanel Orientation="Vertical">
+                    <ListView ItemsSource="{Binding Clients}" BorderBrush="{x:Null}" BorderThickness="0" MouseDoubleClick="ClientsListView_MouseDoubleClick">
+                        <ListView.Resources>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="Template" Value="{x:Null}" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding ClientId, StringFormat=D, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding Name}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,2">
+                        <Hyperlink Click="AddClientHyperlink_Click">Add Client</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
             <TextBlock Grid.Row="8" Style="{StaticResource SectionHeader}">User Invitations</TextBlock>
             <Border Grid.Row="9" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
                 <StackPanel Orientation="Vertical">

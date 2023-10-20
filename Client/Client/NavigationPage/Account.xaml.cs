@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Models = BrassLoon.Interface.Account.Models;
 
 namespace BrassLoon.Client.NavigationPage
 {
@@ -48,6 +49,7 @@ namespace BrassLoon.Client.NavigationPage
                 accountLoader = scope.Resolve<Func<AccountVM, AccountLoader>>()(AccountVM);
                 AccountVM.AddBehavior(accountLoader);
                 accountLoader.LoadDomains();
+                accountLoader.LoadClients();
                 if (AccessToken.Get.UserHasActAdminAccess())
                 {
                     accountLoader.LoadDeletedDomains();
@@ -90,6 +92,40 @@ namespace BrassLoon.Client.NavigationPage
                     Invitation page = new Invitation((UserInvitationVM)listView.SelectedItem);
                     navigationService.Navigate(page);
                 }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        private void ClientsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (sender is ListView listView && listView.SelectedItem != null)
+                {
+                    NavigationService navigationService = NavigationService.GetNavigationService(this);
+                    navigationService.Navigate(new Client((ClientVM)listView.SelectedItem));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        private void AddClientHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Models.Client client = new Models.Client
+                {
+                    AccountId = AccountVM.AccountId,
+                    Name = "New Client"
+                };
+                NavigationService navigationService = NavigationService.GetNavigationService(this);
+                navigationService.Navigate(new Client(new ClientVM(client)));
             }
             catch (System.Exception ex)
             {

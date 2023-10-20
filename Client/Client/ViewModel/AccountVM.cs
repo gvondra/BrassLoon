@@ -27,6 +27,7 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<DomainVM> DeletedDomains { get; } = new ObservableCollection<DomainVM>();
         public ObservableCollection<UserVM> Users { get; } = new ObservableCollection<UserVM>();
         public ObservableCollection<UserInvitationVM> Invitations { get; } = new ObservableCollection<UserInvitationVM>();
+        public ObservableCollection<ClientVM> Clients { get; } = new ObservableCollection<ClientVM>();
 
         public Guid AccountId => _account.AccountId.Value;
 

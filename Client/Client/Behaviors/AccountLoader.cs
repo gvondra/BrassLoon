@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Models = BrassLoon.Interface.Account.Models;
 
 namespace BrassLoon.Client.Behaviors
 {
@@ -14,6 +15,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly IAccountService _accountService;
         private readonly IDomainService _domainService;
         private readonly IUserInvitationService _userInvitationService;
+        private readonly IClientService _clientService;
         private readonly AccountUserRemover _accountUserRemover;
         private readonly AccountVM _accountVM;
 
@@ -22,6 +24,7 @@ namespace BrassLoon.Client.Behaviors
             IAccountService accountService,
             IDomainService domainService,
             IUserInvitationService userInvitationService,
+            IClientService clientService,
             AccountUserRemover accountUserRemover,
             AccountVM accountVM)
         {
@@ -30,6 +33,7 @@ namespace BrassLoon.Client.Behaviors
             _domainService = domainService;
             _userInvitationService = userInvitationService;
             _accountUserRemover = accountUserRemover;
+            _clientService = clientService;
             _accountVM = accountVM;
         }
 
@@ -119,9 +123,16 @@ namespace BrassLoon.Client.Behaviors
 
         public void LoadInvitations()
         {
-            _accountVM.Invitations.Clear();
-            Task.Run(() => LoadInvitations(_accountVM.AccountId))
-                .ContinueWith(LoadInvitationsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+            try 
+            {
+                _accountVM.Invitations.Clear();
+                Task.Run(() => LoadInvitations(_accountVM.AccountId))
+                    .ContinueWith(LoadInvitationsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
         }
 
         private List<UserInvitation> LoadInvitations(Guid accountId)
@@ -140,6 +151,42 @@ namespace BrassLoon.Client.Behaviors
                 foreach (UserInvitation invitation in await loadUserInvitations)
                 {
                     _accountVM.Invitations.Add(new UserInvitationVM(invitation));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        public void LoadClients()
+        {
+            try
+            {
+                _accountVM.Clients.Clear();
+                Task.Run(() => GetClients(_accountVM.AccountId))
+                    .ContinueWith(LoadClientsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        private List<Models.Client> GetClients(Guid accountId)
+        {
+            return _clientService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
+        }
+
+        private async Task LoadClientsCallback(Task<List<Models.Client>> loadClients, object state)
+        {
+            try
+            {
+                List<Models.Client> clients = await loadClients;
+                _accountVM.Clients.Clear();
+                foreach (Models.Client client in clients)
+                {
+                    _accountVM.Clients.Add(new ClientVM(client));
                 }
             }
             catch (System.Exception ex)
