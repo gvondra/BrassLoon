@@ -109,7 +109,7 @@ namespace BrassLoon.Interface.Account
                 throw new ArgumentException("Missing or invalid domain id");
             if (!domain.AccountId.HasValue || domain.AccountId.Value.Equals(Guid.Empty))
                 throw new ArgumentException("Missing or invalid account id");
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, domain)
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, domain)
                 .AddPath("Domain/{id}")
                 .AddPathParameter("id", domain.DomainId.Value.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
