@@ -62,31 +62,39 @@
                 <Button Grid.Column="1" Grid.Row="1" Command="{Binding SaveCommand}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}">Save</Button>
             </Grid>
             <TextBlock Grid.Row="3" Style="{StaticResource SectionHeader}">Domains</TextBlock>
-            <ListView Grid.Row="4" ItemsSource="{Binding Domains}">
-                <ListView.Resources>
-                    <Style TargetType="GridViewColumnHeader">
-                        <Setter Property="Template" Value="{x:Null}" />
-                    </Style>
-                </ListView.Resources>
-                <ListView.View>
-                    <GridView AllowsColumnReorder="False">
-                        <GridViewColumn>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding DomainId, StringFormat='D', Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding Name, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+            <Border Grid.Row="4" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
+                <StackPanel Orientation="Vertical">
+                    <ListView ItemsSource="{Binding Domains}" BorderBrush="{x:Null}" BorderThickness="0">
+                        <ListView.Resources>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="Template" Value="{x:Null}" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding DomainId, StringFormat='D', Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Name, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <WrapPanel Orientation="Horizontal">
+                        <TextBox x:Name="NewDomainName" MinWidth="250" MaxLength="2000" />
+                        <Button Margin="3,0" Padding="5,0" Click="AddDomainButton_Click" >Add</Button>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
             <TextBlock Grid.Row="5" Style="{StaticResource SectionHeader}">Clients</TextBlock>
             <TextBlock Grid.Row="6" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" MaxWidth="500">Clients are used for OAuth client credential requests. The client id and secrect can be exchanged for a security token. The security token can be used to access logging API's.</TextBlock>
             <Border Grid.Row="7" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
+using BrassLoon.Interface.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,6 +131,51 @@ namespace BrassLoon.Client.NavigationPage
             catch (System.Exception ex)
             {
                 ErrorWindow.Open(ex);
+            }
+        }
+
+        private void AddDomainButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string name = (NewDomainName.Text ?? string.Empty).Trim();
+                if (!string.IsNullOrEmpty(name))
+                {
+                    Models.Domain domain = new Models.Domain
+                    {
+                        AccountId = AccountVM.AccountId,
+                        Name = name
+                    };
+                    NewDomainName.Text = string.Empty;
+                    Task.Run(() => CreateDomain(domain))
+                        .ContinueWith(CreateDomainCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        private Models.Domain CreateDomain(Models.Domain domain)
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
+            ISettingsFactory settingsFactory = scope.Resolve<ISettingsFactory>();
+            IDomainService domainService = scope.Resolve<IDomainService>();
+            return domainService.Create(settingsFactory.CreateAccountSettings(), domain).Result;
+        }
+
+        private async Task CreateDomainCallback(Task<Models.Domain> createDomain, object state)
+        {
+            try
+            {
+                Models.Domain domain = await createDomain;
+                DomainVM domainVM = new DomainVM(domain);
+                AccountVM.Domains.Add(domainVM);
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex, Window.GetWindow(this));
             }
         }
     }
