@@ -19,6 +19,9 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<ClientSaver>();
             builder.RegisterType<ClientSecretGenreator>();
             builder.RegisterType<ClientValidator>();
+            builder.RegisterType<DomainDeleter>();
+            builder.RegisterType<DomainUpdater>();
+            builder.RegisterType<DomainValidator>();
             builder.RegisterType<HomeLoader>();
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()

@@ -13,6 +13,8 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _lockToggleCommand;
         private Visibility _adminVisibility = Visibility.Collapsed;
         private ICommand _accountUserRemover;
+        private ICommand _restoreDeletedDomain;
+        private DomainVM _selectedDeletedDomain;
         private UserVM _selectedUser;
 
         public AccountVM(Account account)
@@ -130,6 +132,32 @@ namespace BrassLoon.Client.ViewModel
                     _account.Locked = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(LockButtonText));
+                }
+            }
+        }
+
+        public ICommand RestoreDeletedDomain
+        {
+            get => _restoreDeletedDomain;
+            set
+            {
+                if (_restoreDeletedDomain != value)
+                {
+                    _restoreDeletedDomain = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public DomainVM SelectedDeletedDomain
+        {
+            get => _selectedDeletedDomain;
+            set
+            {
+                if (_selectedDeletedDomain != value)
+                {
+                    _selectedDeletedDomain = value;
+                    NotifyPropertyChanged();
                 }
             }
         }

@@ -64,7 +64,7 @@
             <TextBlock Grid.Row="3" Style="{StaticResource SectionHeader}">Domains</TextBlock>
             <Border Grid.Row="4" BorderThickness="1" BorderBrush="Gray" CornerRadius="5" Padding="5,2">
                 <StackPanel Orientation="Vertical">
-                    <ListView ItemsSource="{Binding Domains}" BorderBrush="{x:Null}" BorderThickness="0">
+                    <ListView ItemsSource="{Binding Domains}" BorderBrush="{x:Null}" BorderThickness="0" MouseDoubleClick="DomainListView_MouseDoubleClick">
                         <ListView.Resources>
                             <Style TargetType="GridViewColumnHeader">
                                 <Setter Property="Template" Value="{x:Null}" />
@@ -150,7 +150,12 @@
                 </Button>
             </Border>
             <TextBlock Grid.Row="12" Style="{StaticResource SectionHeader}" Visibility="{Binding DeletedDomainVisibility}">Deleted Domains</TextBlock>
-            <ListView Grid.Row="13" ItemsSource="{Binding DeletedDomains}" Visibility="{Binding DeletedDomainVisibility}">
+            <ListView Grid.Row="13" ItemsSource="{Binding DeletedDomains}" SelectedItem="{Binding SelectedDeletedDomain}" Visibility="{Binding DeletedDomainVisibility}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Restore" Command="{Binding RestoreDeletedDomain}" CommandParameter="{Binding .}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
                 <ListView.Resources>
                     <Style TargetType="GridViewColumnHeader">
                         <Setter Property="Template" Value="{x:Null}" />

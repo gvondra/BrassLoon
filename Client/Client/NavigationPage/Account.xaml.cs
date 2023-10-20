@@ -54,6 +54,8 @@ namespace BrassLoon.Client.NavigationPage
                 if (AccessToken.Get.UserHasActAdminAccess())
                 {
                     accountLoader.LoadDeletedDomains();
+                    if (AccountVM.RestoreDeletedDomain == null)
+                        AccountVM.RestoreDeletedDomain = scope.Resolve<Func<NavigationService, bool, DomainDeleter>>()(NavigationService.GetNavigationService(this), false);
                     accountLoader.LoadUsers();
                     AccountVM.AccountUserRemover = scope.Resolve<AccountUserRemover>();
                 }
@@ -172,6 +174,24 @@ namespace BrassLoon.Client.NavigationPage
                 Models.Domain domain = await createDomain;
                 DomainVM domainVM = new DomainVM(domain);
                 AccountVM.Domains.Add(domainVM);
+                NavigationService navigation = NavigationService.GetNavigationService(this);
+                navigation.Navigate(new Domain(domainVM));
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex, Window.GetWindow(this));
+            }
+        }
+
+        private void DomainListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (sender is ListView listView && listView.SelectedItem != null)
+                {
+                    NavigationService navigation = NavigationService.GetNavigationService(this);
+                    navigation.Navigate(new Domain((DomainVM)listView.SelectedItem));
+                }
             }
             catch (System.Exception ex)
             {
