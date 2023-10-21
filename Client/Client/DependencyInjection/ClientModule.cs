@@ -21,19 +21,21 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<ClientSaver>();
             builder.RegisterType<ClientSecretGenreator>();
             builder.RegisterType<ClientValidator>();
+            builder.RegisterType<CreateInvitationValidator>();
             builder.RegisterType<DomainDeleter>();
             builder.RegisterType<DomainLoader>();
             builder.RegisterType<DomainUpdater>();
             builder.RegisterType<DomainValidator>();
             builder.RegisterType<ExceptionsLoader>();
             builder.RegisterType<HomeLoader>();
+            builder.RegisterType<InvitationCancel>();
+            builder.RegisterType<InvitationCreator>();
             builder.RegisterType<MoreExceptionsLoader>();
+            builder.RegisterType<MoreTracesLoader>();
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
-            builder.RegisterType<CreateInvitationValidator>();
-            builder.RegisterType<InvitationCancel>();
-            builder.RegisterType<InvitationCreator>();
+            builder.RegisterType<TracesLoader>();
             builder.RegisterType<UserRoleSaver>();
             builder.RegisterType<UsersLoader>();
         }

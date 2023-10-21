@@ -1,6 +1,5 @@
 ﻿using BrassLoon.Client.ViewModel;
 using BrassLoon.Interface.Log;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LogModels = BrassLoon.Interface.Log.Models;
@@ -11,15 +10,18 @@ namespace BrassLoon.Client.Behaviors
     {
         private readonly DomainVM _domainVM;
         private readonly IExceptionService _exceptionService;
+        private readonly ITraceService _traceService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
             DomainVM domainVM,
             IExceptionService exceptionService,
+            ITraceService traceService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
             _exceptionService = exceptionService;
+            _traceService = traceService;
             _settingsFactory = settingsFactory;
         }
 
@@ -49,6 +51,33 @@ namespace BrassLoon.Client.Behaviors
             finally
             {
                 _domainVM.IsLoadingExceptions = false;
+            }
+        }
+
+        public void LoadTraceEventCodes()
+        {
+            _domainVM.TraceEventCodes.Clear();
+            Task.Run(() => _traceService.GetEventCodes(_settingsFactory.CreateLogSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadTraceEventCodesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadTraceEventCodesCallback(Task<List<string>> loadTraceEventCodes, object state)
+        {
+            try
+            {
+                _domainVM.TraceEventCodes.Clear();
+                foreach (string code in await loadTraceEventCodes)
+                {
+                    _domainVM.TraceEventCodes.Add(code);
+                }
+                if (_domainVM.TraceEventCodes.Count > 0)
+                {
+                    _domainVM.SelectedTraceEventCode = _domainVM.TraceEventCodes[0];
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
             }
         }
     }

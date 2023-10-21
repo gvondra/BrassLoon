@@ -12,21 +12,42 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _delete;
         private ICommand _exceptionLoad;
         private ICommand _moreExceptionLoad;
+        private ICommand _traceLoad;
+        private ICommand _moreTraceLoad;
         private bool _isLoadingExceptions;
         private DateTime _exceptionsMaxTimestamp;
+        private bool _isLoadingTraces;
+        private DateTime _tracesMaxTimestamp;
+        private string _selectedTraceEventCode;
 
         public DomainVM(Domain domain)
         {
             _domain = domain;
             _exceptionsMaxTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
             _exceptionsMaxTimestamp = _exceptionsMaxTimestamp.AddMinutes(1);
+            _tracesMaxTimestamp = _exceptionsMaxTimestamp;
         }
 
         internal Domain InnerDomain => _domain;
 
         public ObservableCollection<ExceptionVM> Exceptions { get; } = new ObservableCollection<ExceptionVM>();
+        public ObservableCollection<TraceVM> Traces { get; } = new ObservableCollection<TraceVM>();
+        public ObservableCollection<string> TraceEventCodes { get; } = new ObservableCollection<string>();
 
         public Guid DomainId => _domain.DomainId.Value;
+
+        public string SelectedTraceEventCode
+        {
+            get => _selectedTraceEventCode;
+            set
+            {
+                if (_selectedTraceEventCode != value)
+                {
+                    _selectedTraceEventCode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public DateTime ExceptionsMaxTimestamp
         {
@@ -49,6 +70,32 @@ namespace BrassLoon.Client.ViewModel
                 if (_isLoadingExceptions != value)
                 {
                     _isLoadingExceptions = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public DateTime TracesMaxTimestamp
+        {
+            get => _tracesMaxTimestamp;
+            set
+            {
+                if (_tracesMaxTimestamp != value)
+                {
+                    _tracesMaxTimestamp = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLoadingTraces
+        {
+            get => _isLoadingTraces;
+            set
+            {
+                if (_isLoadingTraces != value)
+                {
+                    _isLoadingTraces = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -114,6 +161,32 @@ namespace BrassLoon.Client.ViewModel
                 if (_moreExceptionLoad != value)
                 {
                     _moreExceptionLoad = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand TraceLoad
+        {
+            get => _traceLoad;
+            set
+            {
+                if (_traceLoad != value)
+                {
+                    _traceLoad = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand MoreTraceLoad
+        {
+            get => _moreTraceLoad;
+            set
+            {
+                if (_moreTraceLoad != value)
+                {
+                    _moreTraceLoad = value;
                     NotifyPropertyChanged();
                 }
             }

@@ -27,10 +27,10 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Exceptions">
-                <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <ctrl:DomainExceptions />
-                </ScrollViewer>-->
                 <ctrl:DomainExceptions />
+            </TabItem>
+            <TabItem Header="Trace">
+                <ctrl:DomainTraces />
             </TabItem>
         </TabControl>
     </Grid>
