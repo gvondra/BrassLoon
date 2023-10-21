@@ -20,5 +20,21 @@
                 Token = token
             };
         }
+
+        public ConfigSettings CreateConfigSettings()
+        {
+            return new ConfigSettings
+            {
+                BaseAddress = _appSettings.ConfigApiBaseAddress
+            };
+        }
+
+        public LogSettings CreateLogSettings()
+        {
+            return new LogSettings
+            {
+                BaseAddress = _appSettings.LogApiBaseAddress
+            };
+        }
     }
 }

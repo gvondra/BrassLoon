@@ -7,6 +7,7 @@
       xmlns:ctrl="clr-namespace:BrassLoon.Client.Control"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      KeepAlive="True"
       Title="Brass Loon: Domain" Style="{StaticResource DefaultPageStyle}">
 
     <Grid>
@@ -24,6 +25,12 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <ctrl:DomainDetail />
                 </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Exceptions">
+                <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:DomainExceptions />
+                </ScrollViewer>-->
+                <ctrl:DomainExceptions />
             </TabItem>
         </TabControl>
     </Grid>

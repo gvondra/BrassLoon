@@ -6,5 +6,7 @@ namespace BrassLoon.Client
     {
         AccountSettings CreateAccountSettings();
         AccountSettings CreateAccountSettings(string token);
+        ConfigSettings CreateConfigSettings();
+        LogSettings CreateLogSettings();
     }
 }

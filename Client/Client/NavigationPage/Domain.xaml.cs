@@ -46,12 +46,21 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.Save = scope.Resolve<DomainUpdater>();
             if (DomainVM.Delete == null)
                 DomainVM.Delete = scope.Resolve<Func<NavigationService, bool, DomainDeleter>>()(NavigationService.GetNavigationService(this), true);
+            if (DomainVM.ExceptionLoad == null)
+                DomainVM.ExceptionLoad = scope.Resolve<ExceptionsLoader>();
+            if (DomainVM.MoreExceptionLoad == null)
+                DomainVM.MoreExceptionLoad = scope.Resolve<MoreExceptionsLoader>();
             if (DomainVM.GetBehavior<DomainValidator>() == null)
             {
                 DomainVM.AddBehavior(
                     scope.Resolve<Func<DomainVM, DomainValidator>>()(DomainVM));
             }    
-
+            if (DomainVM.GetBehavior<DomainLoader>() == null)
+            {
+                DomainLoader loader = scope.Resolve<Func<DomainVM, DomainLoader>>()(DomainVM);
+                DomainVM.AddBehavior(loader);
+                loader.LoadExceptions();
+            }
         }
     }
 }
