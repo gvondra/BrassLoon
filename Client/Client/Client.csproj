@@ -38,6 +38,7 @@
     <ItemGroup>
         <PackageReference Include="Autofac" Version="7.1.*" />
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.0-prerelease.*" />
+        <PackageReference Include="BrassLoon.Interface.Authorization" Version="4.0.0-prerelease.*" />
         <PackageReference Include="BrassLoon.Interface.Config" Version="4.0.*" />
         <PackageReference Include="BrassLoon.Interface.Log" Version="4.0.*" />
         <PackageReference Include="FontAwesome.WPF" Version="4.7.*" />

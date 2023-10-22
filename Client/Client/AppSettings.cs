@@ -9,5 +9,6 @@
         public string AccountApiBaseAddress { get; set; }
         public string LogApiBaseAddress { get; set; }
         public string ConfigApiBaseAddress { get; set; }
+        public string AuthorizationApiBaseAddress { get; set; }
     }
 }

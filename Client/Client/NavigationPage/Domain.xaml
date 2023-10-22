@@ -45,6 +45,9 @@
                     <ctrl:ConfigCodes DataContext="{Binding ItemCodes}" />
                 </ScrollViewer>
             </TabItem>
+            <TabItem Header="Roles">
+                <ctrl:DomainRoles />
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>

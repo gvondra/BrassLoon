@@ -16,6 +16,7 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _moreTraceLoad;
         private ICommand _metricLoad;
         private ICommand _moreMetricLoad;
+        private ICommand _roleAdd;
         private bool _isLoadingExceptions;
         private DateTime _exceptionsMaxTimestamp;
         private bool _isLoadingTraces;
@@ -24,6 +25,8 @@ namespace BrassLoon.Client.ViewModel
         private bool _isLoadingMetrics;
         private DateTime _metricsMaxTimestamp;
         private string _selectedMetricEventCode;
+        private bool _isLoadingRoles;
+        private RoleVM _selectedRole;
 
         public DomainVM(Domain domain)
         {
@@ -43,8 +46,35 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<string> MetricEventCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> ItemCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> LookupCodes { get; } = new ObservableCollection<string>();
+        public ObservableCollection<RoleVM> Roles { get; } = new ObservableCollection<RoleVM>();
 
         public Guid DomainId => _domain.DomainId.Value;
+
+        public RoleVM SelectedRole
+        {
+            get => _selectedRole;
+            set
+            {
+                if (_selectedRole != value)
+                {
+                    _selectedRole = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLoadingRoles
+        {
+            get => _isLoadingRoles;
+            set
+            {
+                if (_isLoadingRoles != value)
+                {
+                    _isLoadingRoles = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string SelectedTraceEventCode
         {
@@ -262,6 +292,19 @@ namespace BrassLoon.Client.ViewModel
                 if (_moreMetricLoad != value)
                 {
                     _moreMetricLoad = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand RoleAdd
+        {
+            get => _roleAdd;
+            set
+            {
+                if (_roleAdd != value)
+                {
+                    _roleAdd = value;
                     NotifyPropertyChanged();
                 }
             }

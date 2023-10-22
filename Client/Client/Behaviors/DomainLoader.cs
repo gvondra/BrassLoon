@@ -1,7 +1,10 @@
 ﻿using BrassLoon.Client.ViewModel;
+using BrassLoon.Interface.Authorization;
+using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Config;
 using BrassLoon.Interface.Log;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using LogModels = BrassLoon.Interface.Log.Models;
 
@@ -15,6 +18,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly IMetricService _metricService;
         private readonly IItemService _itemService;
         private readonly ILookupService _lookupService;
+        private readonly IRoleService _roleService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
@@ -24,6 +28,7 @@ namespace BrassLoon.Client.Behaviors
             IMetricService metricService,
             IItemService itemService,
             ILookupService lookupService,
+            IRoleService roleService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
@@ -32,7 +37,9 @@ namespace BrassLoon.Client.Behaviors
             _metricService = metricService;
             _itemService = itemService;
             _lookupService = lookupService;
+            _roleService = roleService;
             _settingsFactory = settingsFactory;
+            domainVM.Roles.CollectionChanged += Roles_CollectionChanged;
         }
 
         public void LoadExceptions()
@@ -159,6 +166,54 @@ namespace BrassLoon.Client.Behaviors
             catch (System.Exception ex)
             {
                 ErrorWindow.Open(ex);
+            }
+        }
+
+        public void LoadRoles()
+        {
+            _domainVM.IsLoadingRoles = true;
+            _domainVM.Roles.Clear();
+            Task.Run(() => _roleService.GetByDomainId(_settingsFactory.CreateAuthorizationSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadRolesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadRolesCallback(Task<List<Role>> loadRoles, object state)
+        {
+            try
+            {
+                List<Role> roles = await loadRoles;
+                _domainVM.Roles.Clear();
+                foreach (Role role in roles)
+                {
+                    _domainVM.Roles.Add(new RoleVM(role, _domainVM));
+                }
+                if (_domainVM.Roles.Count > 0)
+                    _domainVM.SelectedRole = _domainVM.Roles[0];
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+            finally
+            {
+                _domainVM.IsLoadingRoles = false;
+            }
+        }
+
+        private void Roles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add
+                || e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (RoleVM roleVM in e.NewItems)
+                {
+                    if (roleVM.GetBehavior<RoleValidator>() == null)
+                    {
+                        roleVM.AddBehavior(new RoleValidator(roleVM));
+                    }
+                    if (roleVM.Save == null)
+                        roleVM.Save = new DomainRoleSaver(_settingsFactory, _roleService);
+                }
             }
         }
     }

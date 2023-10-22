@@ -21,6 +21,14 @@
             };
         }
 
+        public AuthorizationSettings CreateAuthorizationSettings()
+        {
+            return new AuthorizationSettings
+            {
+                BaseAddress = _appSettings.AuthorizationApiBaseAddress
+            };
+        }
+
         public ConfigSettings CreateConfigSettings()
         {
             return new ConfigSettings

@@ -10,6 +10,7 @@ namespace BrassLoon.Client.DependencyInjection
         {
             base.Load(builder);
             builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            builder.RegisterModule(new BrassLoon.Interface.Authorization.AuthorizationInterfaceModule());
             builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
             builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
             builder.RegisterType<AccountLoader>();
@@ -24,6 +25,8 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<CreateInvitationValidator>();
             builder.RegisterType<DomainDeleter>();
             builder.RegisterType<DomainLoader>();
+            builder.RegisterType<DomainRoleAdd>();
+            builder.RegisterType<DomainRoleSaver>();
             builder.RegisterType<DomainUpdater>();
             builder.RegisterType<DomainValidator>();
             builder.RegisterType<ExceptionsLoader>();
@@ -34,6 +37,7 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<MoreExceptionsLoader>();
             builder.RegisterType<MoreMetricsLoader>();
             builder.RegisterType<MoreTracesLoader>();
+            builder.RegisterType<RoleValidator>();
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();

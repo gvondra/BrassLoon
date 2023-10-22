@@ -9,14 +9,19 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MinWidth="250" MaxLength="2000" Style="{StaticResource TextBoxWithError}" />
-        <Button Grid.Column="1" Grid.Row="0" Command="{Binding Save}" CommandParameter="{Binding .}" Margin="3,0" Padding="5,0" HorizontalAlignment="Left">_Update</Button>
-        <Button Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="99" Command="{Binding Delete}" CommandParameter="{Binding .}" Margin="0,5" Padding="5,0" HorizontalAlignment="Left">_Delete…</Button>
+        <Label Grid.Column="0" Grid.Row="0">Domain Id</Label>
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding DomainId, StringFormat=D, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}"/>
+        <Label Grid.Column="0" Grid.Row="1">Name</Label>
+        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" MinWidth="250" MaxLength="2000" Style="{StaticResource TextBoxWithError}" />
+        <Button Grid.Column="2" Grid.Row="1" Command="{Binding Save}" CommandParameter="{Binding .}" Margin="3,0" Padding="5,0" HorizontalAlignment="Left">_Update</Button>
+        <Button Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="99" Command="{Binding Delete}" CommandParameter="{Binding .}" Margin="0,5" Padding="5,3" HorizontalAlignment="Left">_Delete…</Button>
     </Grid>
 </UserControl>
