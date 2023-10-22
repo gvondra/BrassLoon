@@ -30,7 +30,9 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<HomeLoader>();
             builder.RegisterType<InvitationCancel>();
             builder.RegisterType<InvitationCreator>();
+            builder.RegisterType<MetricsLoader>();
             builder.RegisterType<MoreExceptionsLoader>();
+            builder.RegisterType<MoreMetricsLoader>();
             builder.RegisterType<MoreTracesLoader>();
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()

@@ -50,6 +50,10 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.ExceptionLoad = scope.Resolve<ExceptionsLoader>();
             if (DomainVM.MoreExceptionLoad == null)
                 DomainVM.MoreExceptionLoad = scope.Resolve<MoreExceptionsLoader>();
+            if (DomainVM.MetricLoad == null)
+                DomainVM.MetricLoad = scope.Resolve<MetricsLoader>();
+            if (DomainVM.MoreMetricLoad == null)
+                DomainVM.MoreMetricLoad = scope.Resolve<MoreMetricsLoader>();
             if (DomainVM.TraceLoad == null)
                 DomainVM.TraceLoad = scope.Resolve<TracesLoader>();
             if (DomainVM.MoreTraceLoad == null)
@@ -65,6 +69,7 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.AddBehavior(loader);
                 loader.LoadExceptions();
                 loader.LoadTraceEventCodes();
+                loader.LoadMetricEventCodes();
             }
         }
     }

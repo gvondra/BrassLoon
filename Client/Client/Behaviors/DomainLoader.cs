@@ -11,17 +11,20 @@ namespace BrassLoon.Client.Behaviors
         private readonly DomainVM _domainVM;
         private readonly IExceptionService _exceptionService;
         private readonly ITraceService _traceService;
+        private readonly IMetricService _metricService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
             DomainVM domainVM,
             IExceptionService exceptionService,
             ITraceService traceService,
+            IMetricService metricService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
             _exceptionService = exceptionService;
             _traceService = traceService;
+            _metricService = metricService;
             _settingsFactory = settingsFactory;
         }
 
@@ -74,6 +77,31 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _domainVM.SelectedTraceEventCode = _domainVM.TraceEventCodes[0];
                 }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        public void LoadMetricEventCodes()
+        {
+            _domainVM.MetricEventCodes.Clear();
+            Task.Run(() => _metricService.GetEventCodes(_settingsFactory.CreateLogSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadMetricEventCodesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadMetricEventCodesCallback(Task<List<string>> loadMetricEventCodes, object state)
+        {
+            try
+            {
+                _domainVM.MetricEventCodes.Clear();
+                foreach (string code in await loadMetricEventCodes)
+                {
+                    _domainVM.MetricEventCodes.Add(code);
+                }
+                if (_domainVM.MetricEventCodes.Count > 0)
+                    _domainVM.SelectedMetricEventCode = _domainVM.MetricEventCodes[0];
             }
             catch (System.Exception ex)
             {

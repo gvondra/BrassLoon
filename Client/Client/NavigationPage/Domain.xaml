@@ -32,6 +32,9 @@
             <TabItem Header="Trace">
                 <ctrl:DomainTraces />
             </TabItem>
+            <TabItem Header="Metric">
+                <ctrl:DomainMetrics />
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>

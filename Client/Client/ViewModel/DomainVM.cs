@@ -14,11 +14,16 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _moreExceptionLoad;
         private ICommand _traceLoad;
         private ICommand _moreTraceLoad;
+        private ICommand _metricLoad;
+        private ICommand _moreMetricLoad;
         private bool _isLoadingExceptions;
         private DateTime _exceptionsMaxTimestamp;
         private bool _isLoadingTraces;
         private DateTime _tracesMaxTimestamp;
         private string _selectedTraceEventCode;
+        private bool _isLoadingMetrics;
+        private DateTime _metricsMaxTimestamp;
+        private string _selectedMetricEventCode;
 
         public DomainVM(Domain domain)
         {
@@ -26,6 +31,7 @@ namespace BrassLoon.Client.ViewModel
             _exceptionsMaxTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
             _exceptionsMaxTimestamp = _exceptionsMaxTimestamp.AddMinutes(1);
             _tracesMaxTimestamp = _exceptionsMaxTimestamp;
+            _metricsMaxTimestamp = _exceptionsMaxTimestamp;
         }
 
         internal Domain InnerDomain => _domain;
@@ -33,6 +39,8 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<ExceptionVM> Exceptions { get; } = new ObservableCollection<ExceptionVM>();
         public ObservableCollection<TraceVM> Traces { get; } = new ObservableCollection<TraceVM>();
         public ObservableCollection<string> TraceEventCodes { get; } = new ObservableCollection<string>();
+        public ObservableCollection<MetricVM> Metrics { get; } = new ObservableCollection<MetricVM>();
+        public ObservableCollection<string> MetricEventCodes { get; } = new ObservableCollection<string>();
 
         public Guid DomainId => _domain.DomainId.Value;
 
@@ -70,6 +78,45 @@ namespace BrassLoon.Client.ViewModel
                 if (_isLoadingExceptions != value)
                 {
                     _isLoadingExceptions = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string SelectedMetricEventCode
+        {
+            get => _selectedMetricEventCode;
+            set
+            {
+                if (_selectedMetricEventCode != value)
+                {
+                    _selectedMetricEventCode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public DateTime MetricsMaxTimestamp
+        {
+            get => _metricsMaxTimestamp;
+            set
+            {
+                if (_metricsMaxTimestamp != value)
+                {
+                    _metricsMaxTimestamp = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLoadingMetrics
+        {
+            get => _isLoadingMetrics;
+            set
+            {
+                if (_isLoadingMetrics != value)
+                {
+                    _isLoadingMetrics = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -187,6 +234,32 @@ namespace BrassLoon.Client.ViewModel
                 if (_moreTraceLoad != value)
                 {
                     _moreTraceLoad = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand MetricLoad
+        {
+            get => _metricLoad;
+            set
+            {
+                if (_metricLoad != value)
+                {
+                    _metricLoad = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand MoreMetricLoad
+        {
+            get => _moreMetricLoad;
+            set
+            {
+                if (_moreMetricLoad != value)
+                {
+                    _moreMetricLoad = value;
                     NotifyPropertyChanged();
                 }
             }
