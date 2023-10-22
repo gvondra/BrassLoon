@@ -41,6 +41,8 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<string> TraceEventCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<MetricVM> Metrics { get; } = new ObservableCollection<MetricVM>();
         public ObservableCollection<string> MetricEventCodes { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> ItemCodes { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> LookupCodes { get; } = new ObservableCollection<string>();
 
         public Guid DomainId => _domain.DomainId.Value;
 

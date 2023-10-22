@@ -35,6 +35,16 @@
             <TabItem Header="Metric">
                 <ctrl:DomainMetrics />
             </TabItem>
+            <TabItem Header="Lookup Codes">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:ConfigCodes DataContext="{Binding LookupCodes}" />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Item Codes">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:ConfigCodes DataContext="{Binding ItemCodes}" />
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>

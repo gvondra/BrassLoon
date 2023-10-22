@@ -1,4 +1,5 @@
 ﻿using BrassLoon.Client.ViewModel;
+using BrassLoon.Interface.Config;
 using BrassLoon.Interface.Log;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace BrassLoon.Client.Behaviors
         private readonly IExceptionService _exceptionService;
         private readonly ITraceService _traceService;
         private readonly IMetricService _metricService;
+        private readonly IItemService _itemService;
+        private readonly ILookupService _lookupService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
@@ -19,12 +22,16 @@ namespace BrassLoon.Client.Behaviors
             IExceptionService exceptionService,
             ITraceService traceService,
             IMetricService metricService,
+            IItemService itemService,
+            ILookupService lookupService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
             _exceptionService = exceptionService;
             _traceService = traceService;
             _metricService = metricService;
+            _itemService = itemService;
+            _lookupService = lookupService;
             _settingsFactory = settingsFactory;
         }
 
@@ -102,6 +109,52 @@ namespace BrassLoon.Client.Behaviors
                 }
                 if (_domainVM.MetricEventCodes.Count > 0)
                     _domainVM.SelectedMetricEventCode = _domainVM.MetricEventCodes[0];
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        public void LoadItemCodes()
+        {
+            _domainVM.ItemCodes.Clear();
+            Task.Run(() => _itemService.GetCodes(_settingsFactory.CreateConfigSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadItemCodesCodesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadItemCodesCodesCallback(Task<List<string>> loadMetricEventCodes, object state)
+        {
+            try
+            {
+                _domainVM.ItemCodes.Clear();
+                foreach (string code in await loadMetricEventCodes)
+                {
+                    _domainVM.ItemCodes.Add(code);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+        }
+
+        public void LoadLookupCodes()
+        {
+            _domainVM.LookupCodes.Clear();
+            Task.Run(() => _lookupService.GetCodes(_settingsFactory.CreateConfigSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadLookupCodesCodesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadLookupCodesCodesCallback(Task<List<string>> loadMetricEventCodes, object state)
+        {
+            try
+            {
+                _domainVM.LookupCodes.Clear();
+                foreach (string code in await loadMetricEventCodes)
+                {
+                    _domainVM.LookupCodes.Add(code);
+                }
             }
             catch (System.Exception ex)
             {

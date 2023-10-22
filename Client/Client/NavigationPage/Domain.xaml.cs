@@ -70,6 +70,8 @@ namespace BrassLoon.Client.NavigationPage
                 loader.LoadExceptions();
                 loader.LoadTraceEventCodes();
                 loader.LoadMetricEventCodes();
+                loader.LoadItemCodes();
+                loader.LoadLookupCodes();
             }
         }
     }
