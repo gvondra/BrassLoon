@@ -60,6 +60,8 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.MoreTraceLoad = scope.Resolve<MoreTracesLoader>();
             if (DomainVM.RoleAdd == null)
                 DomainVM.RoleAdd = scope.Resolve<DomainRoleAdd>();
+            if (DomainVM.ClientAdd == null)
+                DomainVM.ClientAdd = scope.Resolve<DomainClientAdd>();
             if (DomainVM.GetBehavior<DomainValidator>() == null)
             {
                 DomainVM.AddBehavior(
@@ -75,6 +77,7 @@ namespace BrassLoon.Client.NavigationPage
                 loader.LoadItemCodes();
                 loader.LoadLookupCodes();
                 loader.LoadRoles();
+                loader.LoadClients();
             }
         }
     }

@@ -17,6 +17,7 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _metricLoad;
         private ICommand _moreMetricLoad;
         private ICommand _roleAdd;
+        private ICommand _clientAdd;
         private bool _isLoadingExceptions;
         private DateTime _exceptionsMaxTimestamp;
         private bool _isLoadingTraces;
@@ -27,6 +28,8 @@ namespace BrassLoon.Client.ViewModel
         private string _selectedMetricEventCode;
         private bool _isLoadingRoles;
         private RoleVM _selectedRole;
+        private bool _isLoadingClients;
+        private DomainClientVM _selectedClient;
 
         public DomainVM(Domain domain)
         {
@@ -47,8 +50,35 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<string> ItemCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> LookupCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<RoleVM> Roles { get; } = new ObservableCollection<RoleVM>();
+        public ObservableCollection<DomainClientVM> Clients { get; } = new ObservableCollection<DomainClientVM>();
 
         public Guid DomainId => _domain.DomainId.Value;
+
+        public DomainClientVM SelectedClient
+        {
+            get => _selectedClient;
+            set
+            {
+                if (_selectedClient != value)
+                {
+                    _selectedClient = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLoadingClients
+        {
+            get => _isLoadingClients;
+            set
+            {
+                if (_isLoadingClients != value)
+                {
+                    _isLoadingClients = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public RoleVM SelectedRole
         {
@@ -305,6 +335,19 @@ namespace BrassLoon.Client.ViewModel
                 if (_roleAdd != value)
                 {
                     _roleAdd = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand ClientAdd
+        {
+            get => _clientAdd;
+            set
+            {
+                if (_clientAdd != value)
+                {
+                    _clientAdd = value;
                     NotifyPropertyChanged();
                 }
             }

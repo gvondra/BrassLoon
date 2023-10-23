@@ -23,6 +23,7 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<ClientSecretGenreator>();
             builder.RegisterType<ClientValidator>();
             builder.RegisterType<CreateInvitationValidator>();
+            builder.RegisterType<DomainClientAdd>();
             builder.RegisterType<DomainDeleter>();
             builder.RegisterType<DomainLoader>();
             builder.RegisterType<DomainRoleAdd>();

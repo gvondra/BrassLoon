@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using System;
@@ -12,13 +11,13 @@ namespace BrassLoon.Interface.Authorization
     {
         public async Task<Role> Create(ISettings settings, Guid domainId, Role role)
         {
-            Protos.Role request = Map(role);
+            Protos.Role request = role.ToProto();
             request.DomainId = domainId.ToString("D");
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.RoleService.RoleServiceClient roleService = new Protos.RoleService.RoleServiceClient(channel);
                 Protos.Role response = await roleService.CreateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                return Map(response);
+                return Role.Create(response);
             }
         }
 
@@ -43,7 +42,7 @@ namespace BrassLoon.Interface.Authorization
                 while (await stream.ResponseStream.MoveNext())
                 {
                     results.Add(
-                        Map(stream.ResponseStream.Current));
+                        Role.Create(stream.ResponseStream.Current));
                 }
             }
             return results;
@@ -51,14 +50,14 @@ namespace BrassLoon.Interface.Authorization
 
         public async Task<Role> Update(ISettings settings, Guid domainId, Guid roleId, Role role)
         {
-            Protos.Role request = Map(role);
+            Protos.Role request = role.ToProto();
             request.RoleId = roleId.ToString("D");
             request.DomainId = domainId.ToString("D");
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.RoleService.RoleServiceClient roleService = new Protos.RoleService.RoleServiceClient(channel);
                 Protos.Role response = await roleService.UpdateAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                return Map(response);
+                return Role.Create(response);
             }
         }
 
@@ -69,36 +68,6 @@ namespace BrassLoon.Interface.Authorization
             if (!role.RoleId.HasValue || role.RoleId.Value.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(role.RoleId));
             return Update(settings, role.DomainId.Value, role.RoleId.Value, role);
-        }
-
-        private static Role Map(Protos.Role role)
-        {
-            return new Role
-            {
-                Comment = role.Comment,
-                CreateTimestamp = role.CreateTimestamp?.ToDateTime(),
-                DomainId = !string.IsNullOrEmpty(role.DomainId) ? Guid.Parse(role.DomainId) : default(Guid?),
-                IsActive = role.IsActive,
-                Name = role.Name,
-                PolicyName = role.PolicyName,
-                RoleId = !string.IsNullOrEmpty(role.RoleId) ? Guid.Parse(role.RoleId) : default(Guid?),
-                UpdateTimestamp = role.UpdateTimestamp?.ToDateTime()
-            };
-        }
-
-        private static Protos.Role Map(Role innerRole)
-        {
-            return new Protos.Role
-            {
-                Comment = innerRole.Comment,
-                CreateTimestamp = innerRole.CreateTimestamp.HasValue ? Timestamp.FromDateTime(innerRole.CreateTimestamp.Value) : null,
-                DomainId = innerRole.DomainId?.ToString("D") ?? string.Empty,
-                IsActive = innerRole.IsActive,
-                Name = innerRole.Name,
-                PolicyName = innerRole.PolicyName,
-                RoleId = innerRole.RoleId?.ToString("D") ?? string.Empty,
-                UpdateTimestamp = innerRole.UpdateTimestamp.HasValue ? Timestamp.FromDateTime(innerRole.UpdateTimestamp.Value) : null
-            };
         }
     }
 }

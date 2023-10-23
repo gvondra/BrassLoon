@@ -6,6 +6,7 @@ using BrassLoon.Interface.Log;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using AuthModels = BrassLoon.Interface.Authorization.Models;
 using LogModels = BrassLoon.Interface.Log.Models;
 
 namespace BrassLoon.Client.Behaviors
@@ -19,6 +20,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly IItemService _itemService;
         private readonly ILookupService _lookupService;
         private readonly IRoleService _roleService;
+        private readonly IClientService _clientService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
@@ -29,6 +31,7 @@ namespace BrassLoon.Client.Behaviors
             IItemService itemService,
             ILookupService lookupService,
             IRoleService roleService,
+            IClientService clientService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
@@ -38,8 +41,10 @@ namespace BrassLoon.Client.Behaviors
             _itemService = itemService;
             _lookupService = lookupService;
             _roleService = roleService;
+            _clientService = clientService;
             _settingsFactory = settingsFactory;
             domainVM.Roles.CollectionChanged += Roles_CollectionChanged;
+            domainVM.Clients.CollectionChanged += Clients_CollectionChanged;
         }
 
         public void LoadExceptions()
@@ -214,6 +219,80 @@ namespace BrassLoon.Client.Behaviors
                     if (roleVM.Save == null)
                         roleVM.Save = new DomainRoleSaver(_settingsFactory, _roleService);
                 }
+            }
+        }
+
+        private void Clients_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add
+                || e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (DomainClientVM clientVM in e.NewItems)
+                {
+                    if (clientVM.GetBehavior<DomainClientValidator>() == null)
+                        clientVM.AddBehavior(new DomainClientValidator(clientVM));
+                    if (clientVM.GenerateSecret == null)
+                        clientVM.GenerateSecret = new DomainClientSecretGenerator(_settingsFactory, _clientService);
+                    if (clientVM.Save == null)
+                        clientVM.Save = new DomainClientSaver(_settingsFactory, _clientService);
+                }
+            }
+        }
+
+        public void LoadClients()
+        {
+            _domainVM.IsLoadingClients = true;
+            _domainVM.Clients.Clear();
+            Task.Run(() => _clientService.GetByDomain(_settingsFactory.CreateAuthorizationSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadClientsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadClientsCallback(Task<List<AuthModels.Client>> loadClients, object state)
+        {
+            try
+            {
+                List<AuthModels.Client> clients = await loadClients;
+                _ = Task.Run(() => _roleService.GetByDomainId(_settingsFactory.CreateAuthorizationSettings(), _domainVM.DomainId))
+                    .ContinueWith(LoadClientRollsCallback, clients, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+                _domainVM.IsLoadingClients = false;
+            }
+        }
+
+        private async Task LoadClientRollsCallback(Task<List<Role>> loadRoles, object state)
+        {
+            try
+            {
+                List<Role> roles = await loadRoles;
+                List<AuthModels.Client> clients = (List<AuthModels.Client>)state;
+                _domainVM.Clients.Clear();
+                foreach (AuthModels.Client client in clients)
+                {
+                    DomainClientVM vm = new DomainClientVM(client, _domainVM);
+                    foreach (Role role in roles)
+                    {
+                        AppliedRoleVM appliedRoleVM = new AppliedRoleVM(
+                            new AppliedRole { Name = role.Name, PolicyName = role.PolicyName });
+                        appliedRoleVM.IsApplied = client.Roles.Exists(r => string.Equals(r.PolicyName, role.PolicyName, System.StringComparison.OrdinalIgnoreCase));
+                        vm.AppliedRoles.Add(appliedRoleVM);
+                    }
+                    _domainVM.Clients.Add(vm);
+                }
+                if (_domainVM.Clients.Count > 0)
+                {
+                    _domainVM.SelectedClient = _domainVM.Clients[0];
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+            finally
+            {
+                _domainVM.IsLoadingClients = false;
             }
         }
     }

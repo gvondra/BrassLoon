@@ -48,6 +48,9 @@
             <TabItem Header="Roles">
                 <ctrl:DomainRoles />
             </TabItem>
+            <TabItem Header="Clients">
+                <ctrl:DomainClients />
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>
