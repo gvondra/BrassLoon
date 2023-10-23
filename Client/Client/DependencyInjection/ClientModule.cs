@@ -29,6 +29,7 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<DomainRoleAdd>();
             builder.RegisterType<DomainRoleSaver>();
             builder.RegisterType<DomainUpdater>();
+            builder.RegisterType<DomainUserSearcher>();
             builder.RegisterType<DomainValidator>();
             builder.RegisterType<ExceptionsLoader>();
             builder.RegisterType<HomeLoader>();

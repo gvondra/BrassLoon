@@ -34,10 +34,16 @@ namespace BrassLoon.Client.NavigationPage
             InitializeComponent();
             DomainVM = domainVM;
             DataContext = domainVM;
+            DomainUserSearchVM = domainVM != null ? new DomainUserSearchVM(domainVM) : null;
             this.Loaded += Domain_Loaded;
         }
 
         internal DomainVM DomainVM { get; private set; }
+        internal DomainUserSearchVM DomainUserSearchVM 
+        { 
+            get => (DomainUserSearchVM)DomainUserSearch?.DataContext;
+            private set => DomainUserSearch.DataContext = value;
+        }
 
         private void Domain_Loaded(object sender, RoutedEventArgs e)
         {
@@ -62,6 +68,8 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.RoleAdd = scope.Resolve<DomainRoleAdd>();
             if (DomainVM.ClientAdd == null)
                 DomainVM.ClientAdd = scope.Resolve<DomainClientAdd>();
+            if (DomainUserSearchVM.Search == null)
+                DomainUserSearchVM.Search = scope.Resolve<DomainUserSearcher>();
             if (DomainVM.GetBehavior<DomainValidator>() == null)
             {
                 DomainVM.AddBehavior(

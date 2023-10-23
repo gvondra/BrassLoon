@@ -18,7 +18,7 @@ namespace BrassLoon.Client.Behaviors
                 _domainVM[e.PropertyName] = null;
             switch (e.PropertyName)
             {
-                case nameof(ClientVM.Name):
+                case nameof(DomainVM.Name):
                     RequiredTextField(e.PropertyName, _domainVM.Name, _domainVM);
                     break;
             }

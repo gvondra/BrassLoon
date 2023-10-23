@@ -51,6 +51,9 @@
             <TabItem Header="Clients">
                 <ctrl:DomainClients />
             </TabItem>
+            <TabItem Header="Users">
+                <ctrl:DomainUserSearch x:Name="DomainUserSearch" />
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>
