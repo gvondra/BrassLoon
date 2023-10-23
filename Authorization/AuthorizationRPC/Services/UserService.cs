@@ -165,6 +165,8 @@ namespace AuthorizationRPC.Services
                 }
                 if (innerUser != null && innerUsers == null)
                     innerUsers = new List<IUser> { innerUser };
+                else if (innerUsers == null)
+                    innerUsers = new List<IUser>();
                 foreach (Task<Protos.User> getUser in innerUsers.Select<IUser, Task<Protos.User>>(u => Map(settings, u)))
                 {
                     await responseStream.WriteAsync(await getUser);

@@ -34,6 +34,7 @@ namespace BrassLoon.Authorization.TestClient
             {
                 Console.WriteLine($"found {user.UserId:D} {user.Name}");
             }
+            List<User> searchResult = await _userService.Search(settings, _settings.AuthorizationDomainId.Value, "x");
         }
     }
 }
