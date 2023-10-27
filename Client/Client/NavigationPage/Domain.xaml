@@ -54,6 +54,15 @@
             <TabItem Header="Users">
                 <ctrl:DomainUserSearch x:Name="DomainUserSearch" />
             </TabItem>
+            <TabItem Header="Signing Keys">
+                <ctrl:DomainSigningKeys />
+            </TabItem>
+            <TabItem Header="Task Types">
+                <ctrl:DomainTaskTypes />
+            </TabItem>
+            <TabItem Header="Work Groups">
+                <ctrl:DomainWorkGroups />
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>
