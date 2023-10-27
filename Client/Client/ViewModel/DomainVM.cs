@@ -30,6 +30,8 @@ namespace BrassLoon.Client.ViewModel
         private RoleVM _selectedRole;
         private bool _isLoadingClients;
         private DomainClientVM _selectedClient;
+        private bool _isLoadingSigningKeys;
+        private DomainSigningKeyVM _selectedSigningKey;
 
         public DomainVM(Domain domain)
         {
@@ -51,8 +53,35 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<string> LookupCodes { get; } = new ObservableCollection<string>();
         public ObservableCollection<RoleVM> Roles { get; } = new ObservableCollection<RoleVM>();
         public ObservableCollection<DomainClientVM> Clients { get; } = new ObservableCollection<DomainClientVM>();
+        public ObservableCollection<DomainSigningKeyVM> SigningKeys { get; } = new ObservableCollection<DomainSigningKeyVM>();
 
         public Guid DomainId => _domain.DomainId.Value;
+
+        public bool IsLoadingSigningKeys
+        {
+            get => _isLoadingSigningKeys;
+            set
+            {
+                if (_isLoadingSigningKeys != value)
+                {
+                    _isLoadingSigningKeys = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public DomainSigningKeyVM SelectedSigningKey
+        {
+            get => _selectedSigningKey;
+            set
+            {
+                if (_selectedSigningKey != value)
+                {
+                    _selectedSigningKey = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public DomainClientVM SelectedClient
         {

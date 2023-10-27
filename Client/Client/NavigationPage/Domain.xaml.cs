@@ -86,6 +86,7 @@ namespace BrassLoon.Client.NavigationPage
                 loader.LoadLookupCodes();
                 loader.LoadRoles();
                 loader.LoadClients();
+                loader.LoadSigningKeys();
             }
         }
     }

@@ -21,6 +21,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly ILookupService _lookupService;
         private readonly IRoleService _roleService;
         private readonly IClientService _clientService;
+        private readonly ISigningKeyService _signingKeyService;
         private readonly ISettingsFactory _settingsFactory;
 
         public DomainLoader(
@@ -32,6 +33,7 @@ namespace BrassLoon.Client.Behaviors
             ILookupService lookupService,
             IRoleService roleService,
             IClientService clientService,
+            ISigningKeyService signingKeyService,
             ISettingsFactory settingsFactory)
         {
             _domainVM = domainVM;
@@ -42,6 +44,8 @@ namespace BrassLoon.Client.Behaviors
             _lookupService = lookupService;
             _roleService = roleService;
             _clientService = clientService;
+            _signingKeyService = signingKeyService;
+            _domainVM.SigningKeys.Clear();
             _settingsFactory = settingsFactory;
             domainVM.Roles.CollectionChanged += Roles_CollectionChanged;
             domainVM.Clients.CollectionChanged += Clients_CollectionChanged;
@@ -293,6 +297,37 @@ namespace BrassLoon.Client.Behaviors
             finally
             {
                 _domainVM.IsLoadingClients = false;
+            }
+        }
+
+        public void LoadSigningKeys()
+        {
+            _domainVM.IsLoadingSigningKeys = true;
+            _domainVM.SigningKeys.Clear();
+            Task.Run(() => _signingKeyService.GetByDomain(_settingsFactory.CreateAuthorizationSettings(), _domainVM.DomainId).Result)
+                .ContinueWith(LoadSigningKeysCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadSigningKeysCallback(Task<List<SigningKey>> loadSigningKeys, object state)
+        {
+            try
+            {
+                List<SigningKey> signingKeys = await loadSigningKeys;
+                _domainVM.SigningKeys.Clear();
+                foreach (SigningKey signingKey in signingKeys)
+                {
+                    _domainVM.SigningKeys.Add(new DomainSigningKeyVM(signingKey, _domainVM));
+                }
+                if (_domainVM.SigningKeys.Count > 0)
+                    _domainVM.SelectedSigningKey = _domainVM.SigningKeys[0];
+            }
+            catch (System.Exception ex)
+            {
+                ErrorWindow.Open(ex);
+            }
+            finally
+            {
+                _domainVM.IsLoadingSigningKeys = false;
             }
         }
     }
