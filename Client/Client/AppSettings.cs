@@ -1,6 +1,6 @@
 ﻿namespace BrassLoon.Client
 {
-    internal class AppSettings
+    public class AppSettings
     {
         public string GoogleAuthorizationEndpoint { get; set; }
         public string GoogleTokenEndpoint { get; set; }
@@ -10,5 +10,6 @@
         public string LogApiBaseAddress { get; set; }
         public string ConfigApiBaseAddress { get; set; }
         public string AuthorizationApiBaseAddress { get; set; }
+        public string JwksBaseAddress { get; set; }
     }
 }

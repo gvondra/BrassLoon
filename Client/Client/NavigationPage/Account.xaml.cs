@@ -159,20 +159,21 @@ namespace BrassLoon.Client.NavigationPage
             }
         }
 
-        private Models.Domain CreateDomain(Models.Domain domain)
+        private (Models.Domain, AppSettings) CreateDomain(Models.Domain domain)
         {
             using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
             ISettingsFactory settingsFactory = scope.Resolve<ISettingsFactory>();
             IDomainService domainService = scope.Resolve<IDomainService>();
-            return domainService.Create(settingsFactory.CreateAccountSettings(), domain).Result;
+            return (domainService.Create(settingsFactory.CreateAccountSettings(), domain).Result,
+                scope.Resolve<AppSettings>());
         }
 
-        private async Task CreateDomainCallback(Task<Models.Domain> createDomain, object state)
+        private async Task CreateDomainCallback(Task<(Models.Domain, AppSettings)> createDomain, object state)
         {
             try
             {
-                Models.Domain domain = await createDomain;
-                DomainVM domainVM = new DomainVM(domain);
+                (Models.Domain, AppSettings) domainAppSettings = await createDomain;
+                DomainVM domainVM = new DomainVM(domainAppSettings.Item1, domainAppSettings.Item2);
                 AccountVM.Domains.Add(domainVM);
                 NavigationService navigation = NavigationService.GetNavigationService(this);
                 navigation.Navigate(new Domain(domainVM));

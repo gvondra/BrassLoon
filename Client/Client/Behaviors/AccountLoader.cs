@@ -11,6 +11,7 @@ namespace BrassLoon.Client.Behaviors
 {
     public class AccountLoader
     {
+        private readonly AppSettings _appSettings;
         private readonly ISettingsFactory _settingsFactory;
         private readonly IAccountService _accountService;
         private readonly IDomainService _domainService;
@@ -20,6 +21,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly AccountVM _accountVM;
 
         public AccountLoader(
+            AppSettings appSettings,
             ISettingsFactory settingsFactory,
             IAccountService accountService,
             IDomainService domainService,
@@ -28,6 +30,7 @@ namespace BrassLoon.Client.Behaviors
             AccountUserRemover accountUserRemover,
             AccountVM accountVM)
         {
+            _appSettings = appSettings;
             _settingsFactory = settingsFactory;
             _accountService = accountService;
             _domainService = domainService;
@@ -56,7 +59,7 @@ namespace BrassLoon.Client.Behaviors
                 _accountVM.Domains.Clear();
                 foreach (Domain domain in await loadDomains)
                 {
-                    _accountVM.Domains.Add(new DomainVM(domain));
+                    _accountVM.Domains.Add(new DomainVM(domain, _appSettings));
                 }
             }
             catch (System.Exception ex)
@@ -84,7 +87,7 @@ namespace BrassLoon.Client.Behaviors
                 _accountVM.DeletedDomains.Clear();
                 foreach (Domain domain in await loadDomains)
                 {
-                    _accountVM.DeletedDomains.Add(new DomainVM(domain));
+                    _accountVM.DeletedDomains.Add(new DomainVM(domain, _appSettings));
                 }
             }
             catch (System.Exception ex)

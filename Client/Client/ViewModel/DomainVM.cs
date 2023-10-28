@@ -8,6 +8,7 @@ namespace BrassLoon.Client.ViewModel
     public class DomainVM : ViewModelBase
     {
         private readonly Domain _domain;
+        private readonly AppSettings _appSettings;
         private ICommand _save;
         private ICommand _delete;
         private ICommand _exceptionLoad;
@@ -18,6 +19,7 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _moreMetricLoad;
         private ICommand _roleAdd;
         private ICommand _clientAdd;
+        private ICommand _signingKeyAdd;
         private bool _isLoadingExceptions;
         private DateTime _exceptionsMaxTimestamp;
         private bool _isLoadingTraces;
@@ -33,13 +35,14 @@ namespace BrassLoon.Client.ViewModel
         private bool _isLoadingSigningKeys;
         private DomainSigningKeyVM _selectedSigningKey;
 
-        public DomainVM(Domain domain)
+        public DomainVM(Domain domain, AppSettings appSettings)
         {
             _domain = domain;
             _exceptionsMaxTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
             _exceptionsMaxTimestamp = _exceptionsMaxTimestamp.AddMinutes(1);
             _tracesMaxTimestamp = _exceptionsMaxTimestamp;
             _metricsMaxTimestamp = _exceptionsMaxTimestamp;
+            _appSettings = appSettings;
         }
 
         internal Domain InnerDomain => _domain;
@@ -56,6 +59,8 @@ namespace BrassLoon.Client.ViewModel
         public ObservableCollection<DomainSigningKeyVM> SigningKeys { get; } = new ObservableCollection<DomainSigningKeyVM>();
 
         public Guid DomainId => _domain.DomainId.Value;
+
+        public string JWKS => string.Format("{0}/{1:D}", _appSettings.JwksBaseAddress.TrimEnd('/'), DomainId);
 
         public bool IsLoadingSigningKeys
         {
@@ -377,6 +382,19 @@ namespace BrassLoon.Client.ViewModel
                 if (_clientAdd != value)
                 {
                     _clientAdd = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand SigningKeyAdd
+        {
+            get => _signingKeyAdd;
+            set
+            {
+                if (_signingKeyAdd != value)
+                {
+                    _signingKeyAdd = value;
                     NotifyPropertyChanged();
                 }
             }

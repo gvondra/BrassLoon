@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
 using System;
+using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
 {
@@ -7,6 +8,7 @@ namespace BrassLoon.Client.ViewModel
     {
         private readonly SigningKey _signingKey;
         private readonly DomainVM _domainVM;
+        private ICommand _save;
 
         public DomainSigningKeyVM(SigningKey signingKey, DomainVM domainVM)
         {
@@ -22,6 +24,8 @@ namespace BrassLoon.Client.ViewModel
 
         public Guid? DomainId => _signingKey.DomainId;
 
+        public DateTime? CreateTimestamp => _signingKey.CreateTimestamp?.ToLocalTime() ?? DateTime.Now;
+
         public bool? IsActive
         {
             get => _signingKey.IsActive;
@@ -30,6 +34,19 @@ namespace BrassLoon.Client.ViewModel
                 if (_signingKey.IsActive != value)
                 {
                     _signingKey.IsActive = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand Save
+        {
+            get => _save;
+            set
+            {
+                if (_save != value)
+                {
+                    _save = value;
                     NotifyPropertyChanged();
                 }
             }

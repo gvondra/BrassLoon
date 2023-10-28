@@ -49,6 +49,7 @@ namespace BrassLoon.Client.Behaviors
             _settingsFactory = settingsFactory;
             domainVM.Roles.CollectionChanged += Roles_CollectionChanged;
             domainVM.Clients.CollectionChanged += Clients_CollectionChanged;
+            domainVM.SigningKeys.CollectionChanged += SigningKeys_CollectionChanged;
         }
 
         public void LoadExceptions()
@@ -328,6 +329,19 @@ namespace BrassLoon.Client.Behaviors
             finally
             {
                 _domainVM.IsLoadingSigningKeys = false;
+            }
+        }
+
+        private void SigningKeys_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add
+                || e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (DomainSigningKeyVM signingKeyVM in e.NewItems)
+                {
+                    if (signingKeyVM.Save == null)
+                        signingKeyVM.Save = new DomainSigningKeySaver(_settingsFactory, _signingKeyService);
+                }
             }
         }
     }

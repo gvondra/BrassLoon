@@ -29,14 +29,12 @@
                     </Style>
                 </fa:ImageAwesome.Style>
             </fa:ImageAwesome>
-            <TextBlock>
-                <TextBlock>Use this key set to verify signed tokens </TextBlock>
-                <Hyperlink>JWKS</Hyperlink>
-            </TextBlock>
+            <TextBlock>Use this key set to verify signed tokens</TextBlock>
+            <TextBox Text="{Binding JWKS, Mode=OneWay}" Style="{StaticResource ReadonlyTextBox}" />
         </StackPanel>
         <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto" >
             <StackPanel Orientation="Vertical">
-                <ListView  ItemsSource="{Binding SigningKeys}">
+                <ListView  ItemsSource="{Binding SigningKeys}" SelectedItem="{Binding SelectedSigningKey}">
                     <ListView.Resources>
                         <Style TargetType="GridViewColumnHeader">
                             <Setter Property="Template" Value="{x:Null}" />
@@ -48,8 +46,21 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Padding="5,3">Add</Button>
+                <Button Padding="5,3" Command="{Binding SigningKeyAdd}" CommandParameter="{Binding .}">Add</Button>
             </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <local:DomainSigningKey DataContext="{Binding SelectedSigningKey}" Margin="5,0">
+                <local:DomainSigningKey.Style>
+                    <Style TargetType="local:DomainSigningKey">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding .}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </local:DomainSigningKey.Style>
+            </local:DomainSigningKey>
         </ScrollViewer>
     </Grid>
 </UserControl>

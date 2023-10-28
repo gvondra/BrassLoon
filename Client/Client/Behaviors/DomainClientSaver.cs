@@ -1,9 +1,7 @@
 ﻿using BrassLoon.Client.ViewModel;
 using BrassLoon.Interface.Authorization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Models = BrassLoon.Interface.Authorization.Models;

@@ -70,6 +70,8 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM.ClientAdd = scope.Resolve<DomainClientAdd>();
             if (DomainUserSearchVM.Search == null)
                 DomainUserSearchVM.Search = scope.Resolve<DomainUserSearcher>();
+            if (DomainVM.SigningKeyAdd == null)
+                DomainVM.SigningKeyAdd = scope.Resolve<DomainSigningKeyAdd>();
             if (DomainVM.GetBehavior<DomainValidator>() == null)
             {
                 DomainVM.AddBehavior(
