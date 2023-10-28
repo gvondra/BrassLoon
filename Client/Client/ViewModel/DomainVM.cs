@@ -34,6 +34,7 @@ namespace BrassLoon.Client.ViewModel
         private DomainClientVM _selectedClient;
         private bool _isLoadingSigningKeys;
         private DomainSigningKeyVM _selectedSigningKey;
+        private WorkTaskTypesVM _taskTypes;
 
         public DomainVM(Domain domain, AppSettings appSettings)
         {
@@ -61,6 +62,19 @@ namespace BrassLoon.Client.ViewModel
         public Guid DomainId => _domain.DomainId.Value;
 
         public string JWKS => string.Format("{0}/{1:D}", _appSettings.JwksBaseAddress.TrimEnd('/'), DomainId);
+
+        public WorkTaskTypesVM TaskTypes
+        {
+            get => _taskTypes;
+            set
+            {
+                if (_taskTypes != value)
+                {
+                    _taskTypes = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public bool IsLoadingSigningKeys
         {

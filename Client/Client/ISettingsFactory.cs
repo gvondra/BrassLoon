@@ -9,5 +9,6 @@ namespace BrassLoon.Client
         AuthorizationSettings CreateAuthorizationSettings();
         ConfigSettings CreateConfigSettings();
         LogSettings CreateLogSettings();
+        WorkTaskSettings CreateWorkTaskSettings();
     }
 }

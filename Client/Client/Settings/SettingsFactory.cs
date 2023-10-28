@@ -44,5 +44,13 @@
                 BaseAddress = _appSettings.LogApiBaseAddress
             };
         }
+
+        public WorkTaskSettings CreateWorkTaskSettings()
+        {
+            return new WorkTaskSettings
+            {
+                BaseAddress = _appSettings.WorkTaskApiBaseAddress
+            };
+        }
     }
 }

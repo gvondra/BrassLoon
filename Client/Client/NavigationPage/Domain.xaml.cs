@@ -72,12 +72,12 @@ namespace BrassLoon.Client.NavigationPage
                 DomainUserSearchVM.Search = scope.Resolve<DomainUserSearcher>();
             if (DomainVM.SigningKeyAdd == null)
                 DomainVM.SigningKeyAdd = scope.Resolve<DomainSigningKeyAdd>();
-            if (DomainVM.GetBehavior<DomainValidator>() == null)
+            if (!DomainVM.ContainsBehavior<DomainValidator>())
             {
                 DomainVM.AddBehavior(
                     scope.Resolve<Func<DomainVM, DomainValidator>>()(DomainVM));
             }    
-            if (DomainVM.GetBehavior<DomainLoader>() == null)
+            if (!DomainVM.ContainsBehavior<DomainLoader>())
             {
                 DomainLoader loader = scope.Resolve<Func<DomainVM, DomainLoader>>()(DomainVM);
                 DomainVM.AddBehavior(loader);

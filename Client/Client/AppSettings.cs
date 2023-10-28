@@ -10,6 +10,7 @@
         public string LogApiBaseAddress { get; set; }
         public string ConfigApiBaseAddress { get; set; }
         public string AuthorizationApiBaseAddress { get; set; }
+        public string WorkTaskApiBaseAddress { get; set; }
         public string JwksBaseAddress { get; set; }
     }
 }
