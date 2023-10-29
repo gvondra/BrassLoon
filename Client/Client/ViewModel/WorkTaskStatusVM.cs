@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
 using System;
+using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
 {
@@ -7,6 +8,7 @@ namespace BrassLoon.Client.ViewModel
     {
         private readonly WorkTaskStatus _taskStatus;
         private readonly WorkTaskTypeVM _taskTypeVM;
+        private ICommand _save;
 
         public WorkTaskStatusVM(WorkTaskStatus taskStatus, WorkTaskTypeVM taskTypeVM)
         {
@@ -25,6 +27,8 @@ namespace BrassLoon.Client.ViewModel
         public Guid? DomainId => _taskStatus.DomainId;
 
         public int WorkTaskCount => _taskStatus.WorkTaskCount ?? 0;
+
+        public bool IsNotNew => WorkTaskStatusId.HasValue;
 
         public string Code 
         { 
@@ -86,6 +90,19 @@ namespace BrassLoon.Client.ViewModel
                 if (!_taskStatus.IsClosedStatus.HasValue || _taskStatus.IsClosedStatus.Value != value)
                 {
                     _taskStatus.IsClosedStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand Save
+        {
+            get => _save;
+            set
+            {
+                if (_save != value)
+                {
+                    _save = value;
                     NotifyPropertyChanged();
                 }
             }

@@ -38,7 +38,7 @@ namespace BrassLoon.Client.Behaviors
             taskTypesVM.SelectedTaskType = taskTypeVM;
             if (taskTypesVM.NavigationService != null)
             {
-                NavigationPage.TaskType taskType = new NavigationPage.TaskType();
+                NavigationPage.TaskType taskType = new NavigationPage.TaskType(taskTypeVM);
                 taskTypesVM.NavigationService.Navigate(taskType);
             }
         }

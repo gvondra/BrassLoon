@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrassLoon.Client.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,33 @@ namespace BrassLoon.Client.NavigationPage
     public partial class TaskType : Page
     {
         public TaskType()
+            : this(null)
+        { }
+
+        public TaskType(WorkTaskTypeVM taskTypeVM)
         {
             InitializeComponent();
+            TaskTypeVM = taskTypeVM;
+            DataContext = taskTypeVM;
+        }
+
+        public WorkTaskTypeVM TaskTypeVM { get; private set; }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (sender is ListView listView && TaskTypeVM.SelectedTaskStatus != null)
+                {
+                    NavigationService navigationService = NavigationService.GetNavigationService(this);
+                    NavigationPage.TaskStatus taskStatus = new NavigationPage.TaskStatus(TaskTypeVM.SelectedTaskStatus);
+                    navigationService.Navigate(taskStatus);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Open(ex, Window.GetWindow(this));
+            }
         }
     }
 }

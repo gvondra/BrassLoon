@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
 {
@@ -8,6 +9,9 @@ namespace BrassLoon.Client.ViewModel
     {
         private readonly WorkTaskType _taskType;
         private readonly WorkTaskTypesVM _taskTypesVM;
+        private WorkTaskStatusVM _selectedTaskStatus;
+        private ICommand _add;
+        private ICommand _save;
 
         public WorkTaskTypeVM(WorkTaskType taskType, WorkTaskTypesVM taskTypesVM)
         {
@@ -26,6 +30,21 @@ namespace BrassLoon.Client.ViewModel
         public Guid? DomainId => _taskType.DomainId;
 
         public int WorkTaskCount => _taskType.WorkTaskCount ?? 0;
+
+        public bool IsNotNew => WorkTaskTypeId.HasValue;
+
+        public WorkTaskStatusVM SelectedTaskStatus
+        {
+            get => _selectedTaskStatus;
+            set
+            {
+                if (_selectedTaskStatus != value)
+                {
+                    _selectedTaskStatus = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string Code
         {
@@ -75,6 +94,32 @@ namespace BrassLoon.Client.ViewModel
                     || (value.HasValue && _taskType.PurgePeriod.Value != value.Value))
                 {
                     _taskType.PurgePeriod = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand Add
+        {
+            get => _add;
+            set
+            {
+                if (_add != value)
+                {
+                    _add = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand Save
+        {
+            get => _save;
+            set
+            {
+                if (_save != value)
+                {
+                    _save = value;
                     NotifyPropertyChanged();
                 }
             }

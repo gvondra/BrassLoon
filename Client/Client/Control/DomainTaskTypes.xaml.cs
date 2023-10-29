@@ -55,7 +55,7 @@ namespace BrassLoon.Client.Control
         {
             if (sender is ListView && DomainVM?.TaskTypes?.NavigationService != null && DomainVM?.TaskTypes?.SelectedTaskType != null)
             {
-                NavigationPage.TaskType taskType = new NavigationPage.TaskType();
+                NavigationPage.TaskType taskType = new NavigationPage.TaskType(DomainVM.TaskTypes.SelectedTaskType);
                 DomainVM.TaskTypes.NavigationService.Navigate(taskType);
             }
         }
