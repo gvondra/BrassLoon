@@ -36,6 +36,8 @@ namespace BrassLoon.Client.DependencyInjection
             builder.RegisterType<DomainValidator>();
             builder.RegisterType<DomainTaskTypeAdd>();
             builder.RegisterType<DomainTaskTypeLoader>();
+            builder.RegisterType<DomainWorkGroupAdd>();
+            builder.RegisterType<DomainWorkGroupLoader>();
             builder.RegisterType<ExceptionsLoader>();
             builder.RegisterType<HomeLoader>();
             builder.RegisterType<InvitationCancel>();
