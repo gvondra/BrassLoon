@@ -4,6 +4,7 @@ using BrassLoon.Interface.WorkTask.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Client.Behaviors
@@ -13,12 +14,14 @@ namespace BrassLoon.Client.Behaviors
         private readonly DomainVM _domainVM;
         private readonly ISettingsFactory _settingsFactory;
         private readonly IWorkGroupService _workGroupService;
+        private readonly IWorkTaskTypeService _workTaskTypeService;
 
-        public DomainWorkGroupLoader(DomainVM domainVM, ISettingsFactory settingsFactory, IWorkGroupService workGroupService)
+        public DomainWorkGroupLoader(DomainVM domainVM, ISettingsFactory settingsFactory, IWorkGroupService workGroupService, IWorkTaskTypeService workTaskTypeService)
         {
             _domainVM = domainVM;
             _settingsFactory = settingsFactory;
             _workGroupService = workGroupService;
+            _workTaskTypeService = workTaskTypeService;
             domainVM.WorkGroups.Items.CollectionChanged += Items_CollectionChanged;
         }
 
@@ -43,6 +46,29 @@ namespace BrassLoon.Client.Behaviors
                 if (_domainVM.WorkGroups.Items.Count > 0)
                 {
                     _domainVM.WorkGroups.SelectedGroup = _domainVM.WorkGroups.Items[0];
+                }
+                _ = Task.Run(() => _workTaskTypeService.GetAll(_settingsFactory.CreateWorkTaskSettings(), _domainVM.DomainId).Result.ToDictionary(t => t.WorkTaskTypeId.Value))
+                    .ContinueWith(GetTaskTypesCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Open(ex);
+                _domainVM.WorkGroups.IsLoadingGroups = false;
+            }
+        }
+
+        private async Task GetTaskTypesCallback(Task<Dictionary<Guid, WorkTaskType>> getTaskTypes, object state)
+        {
+            try
+            {
+                Dictionary<Guid, WorkTaskType> taskTypes = await getTaskTypes;
+                foreach (WorkGroupVM workGroupVM in _domainVM.WorkGroups.Items)
+                {
+                    foreach (Guid id in workGroupVM.InnerWorkGroup.WorkTaskTypeIds ?? Enumerable.Empty<Guid>())
+                    {
+                        if (taskTypes.ContainsKey(id))
+                            workGroupVM.TaskTypeTitles.Add(taskTypes[id].Title);
+                    }
                 }
             }
             catch (Exception ex)

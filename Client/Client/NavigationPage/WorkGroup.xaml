@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="99">     
             <Hyperlink Command="NavigationCommands.BrowseBack">back</Hyperlink>
@@ -29,5 +30,13 @@
         <Label Grid.Column="0" Grid.Row="2">Description</Label>
         <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Description}" AcceptsReturn="True" MinLines="5" TextWrapping="WrapWithOverflow" />
         <Button Grid.Column="1" Grid.Row="3" Command="{Binding Save}" CommandParameter="{Binding .}" Style="{StaticResource SaveButtonStyle}" />
+        <Label Grid.Column="0" Grid.Row="4">Task Types</Label>
+        <ItemsControl Grid.Column="1" Grid.Row="4" ItemsSource="{Binding TaskTypeTitles}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding .}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Page>

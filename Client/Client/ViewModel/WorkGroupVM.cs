@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Interface.WorkTask.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
@@ -15,6 +16,8 @@ namespace BrassLoon.Client.ViewModel
             _workGroup = workGroup;
             _workGroupsVM = workGroupsVM;
         }
+        
+        public ObservableCollection<string> TaskTypeTitles { get; } = new ObservableCollection<string>();
 
         internal WorkGroup InnerWorkGroup => _workGroup;
 
@@ -53,10 +56,6 @@ namespace BrassLoon.Client.ViewModel
         public DateTime? CreateTimestamp => _workGroup.CreateTimestamp;
 
         public DateTime? UpdateTimestamp => _workGroup.UpdateTimestamp;
-
-        //public List<string> MemberUserIds { get; set; }
-
-        //public List<Guid> WorkTaskTypeIds { get; set; }
 
         public ICommand Save
         {
