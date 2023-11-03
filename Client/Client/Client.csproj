@@ -13,6 +13,7 @@
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <UseWPF>true</UseWPF>
         <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+        <Version>1.0.0.1</Version>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
