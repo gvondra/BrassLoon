@@ -11,10 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.1.0-prerelease.2</Version>
-		<AssemblyVersion>4.1.0.2</AssemblyVersion>
+		<Version>4.1.0-prerelease.13</Version>
+		<AssemblyVersion>4.1.0.13</AssemblyVersion>
 		<PackageReleaseNotes>
-            - v4.1 Added Create Token method
+            - v4.1 Added Create Token method; Added account, client, and user services
 			- v4.0 Upgrade RestClient.
 			- v3.0 Upgrade RestClient. To Client model, add IsActive property
 			- v2.3 Add client credential token caching
@@ -37,6 +37,8 @@
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="[7.0,8.0)" />
 		<PackageReference Include="BrassLoon.RestClient" Version="[4.1.0,5.0)" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[6.0.0,7.0)" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[6.0.1,7.0)" />
 		<PackageReference Include="Polly" Version="[7.2.3,8.0)" />
 		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
 	</ItemGroup>

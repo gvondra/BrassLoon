@@ -1,0 +1,68 @@
+﻿<Page x:Class="BrassLoon.Client.NavigationPage.Domain"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BrassLoon.Client.NavigationPage"
+      xmlns:ctrl="clr-namespace:BrassLoon.Client.Control"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      KeepAlive="True"
+      Title="Brass Loon: Domain" Style="{StaticResource DefaultPageStyle}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0">     
+            <Hyperlink Command="NavigationCommands.BrowseBack">back</Hyperlink>
+            <LineBreak/>
+            <TextBlock Style="{StaticResource PageTitle}">Domain</TextBlock>
+        </TextBlock>
+        <TabControl Grid.Row="1" TabStripPlacement="Left" >
+            <TabItem Header="Details">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:DomainDetail />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Exceptions">
+                <ctrl:DomainExceptions />
+            </TabItem>
+            <TabItem Header="Trace">
+                <ctrl:DomainTraces />
+            </TabItem>
+            <TabItem Header="Metric">
+                <ctrl:DomainMetrics />
+            </TabItem>
+            <TabItem Header="Lookup Codes">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:ConfigCodes DataContext="{Binding LookupCodes}" />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Item Codes">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ctrl:ConfigCodes DataContext="{Binding ItemCodes}" />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Roles">
+                <ctrl:DomainRoles />
+            </TabItem>
+            <TabItem Header="Clients">
+                <ctrl:DomainClients />
+            </TabItem>
+            <TabItem Header="Users">
+                <ctrl:DomainUserSearch x:Name="DomainUserSearch" />
+            </TabItem>
+            <TabItem Header="Signing Keys">
+                <ctrl:DomainSigningKeys />
+            </TabItem>
+            <TabItem Header="Task Types">
+                <ctrl:DomainTaskTypes />
+            </TabItem>
+            <TabItem Header="Work Groups">
+                <ctrl:DomainWorkGroups />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

@@ -1,8 +1,6 @@
 ﻿using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Framework

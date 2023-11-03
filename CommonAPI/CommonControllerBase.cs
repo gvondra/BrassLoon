@@ -39,7 +39,7 @@ namespace BrassLoon.CommonAPI
         [NonAction]
         protected virtual bool UserCanAccessAccount(Guid accountId)
         {
-            string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase);
+            string[] accountIds = Regex.Split(User.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200));
             return accountIds.Where(id => !string.IsNullOrEmpty(id)).Any(id => Guid.Parse(id).Equals(accountId));
         }
 
