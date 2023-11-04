@@ -13,8 +13,8 @@
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <UseWPF>true</UseWPF>
         <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-        <Version>1.0.0.1</Version>
-        <ApplicationVersion>1.0.0.1</ApplicationVersion>
+        <Version>1.0.1.0</Version>
+        <ApplicationVersion>1.0.1.0</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -39,11 +39,11 @@
 
     <ItemGroup>
         <PackageReference Include="Autofac" Version="7.1.*" />
-        <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.0-prerelease.*" />
-        <PackageReference Include="BrassLoon.Interface.Authorization" Version="4.0.0-prerelease.*" />
+        <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.*" />
+        <PackageReference Include="BrassLoon.Interface.Authorization" Version="4.0.*" />
         <PackageReference Include="BrassLoon.Interface.Config" Version="4.0.*" />
         <PackageReference Include="BrassLoon.Interface.Log" Version="4.0.*" />
-        <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.0.0-prerelease.*" />
+        <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.0.*" />
         <PackageReference Include="FontAwesome.WPF" Version="4.7.*" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.*" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.*" />

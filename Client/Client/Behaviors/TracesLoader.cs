@@ -36,7 +36,8 @@ namespace BrassLoon.Client.Behaviors
                 CanExecuteChanged.Invoke(this, new EventArgs());
                 domainVM.IsLoadingTraces = true;
                 domainVM.Traces.Clear();
-                Task.Run(() => _traceService.Search(_settingsFactory.CreateLogSettings(), domainVM.DomainId, domainVM.TracesMaxTimestamp, domainVM.SelectedTraceEventCode).Result)
+                DateTime tracesMaxTimestamp = DateTime.SpecifyKind(domainVM.TracesMaxTimestamp, DateTimeKind.Local);
+                Task.Run(() => _traceService.Search(_settingsFactory.CreateLogSettings(), domainVM.DomainId, tracesMaxTimestamp, domainVM.SelectedTraceEventCode).Result)
                     .ContinueWith(SearchCallback, domainVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }

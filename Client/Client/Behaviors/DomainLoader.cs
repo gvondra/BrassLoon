@@ -3,6 +3,7 @@ using BrassLoon.Interface.Authorization;
 using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Config;
 using BrassLoon.Interface.Log;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -56,7 +57,8 @@ namespace BrassLoon.Client.Behaviors
         {
             _domainVM.IsLoadingExceptions = true;
             _domainVM.Exceptions.Clear();
-            Task.Run(() => _exceptionService.Search(_settingsFactory.CreateLogSettings(), _domainVM.DomainId, _domainVM.ExceptionsMaxTimestamp.ToUniversalTime()))
+            DateTime exceptionsMaxTimestamp = DateTime.SpecifyKind(_domainVM.ExceptionsMaxTimestamp, DateTimeKind.Local);
+            Task.Run(() => _exceptionService.Search(_settingsFactory.CreateLogSettings(), _domainVM.DomainId, exceptionsMaxTimestamp.ToUniversalTime()))
                 .ContinueWith(LoadExceptionsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

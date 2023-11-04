@@ -34,7 +34,8 @@ namespace BrassLoon.Client.Behaviors
                 CanExecuteChanged.Invoke(this, new EventArgs());
                 domainVM.IsLoadingMetrics = true;
                 domainVM.Metrics.Clear();
-                Task.Run(() => _metricService.Search(_settingsFactory.CreateLogSettings(), domainVM.DomainId, domainVM.MetricsMaxTimestamp, domainVM.SelectedMetricEventCode).Result)
+                DateTime metricsMaxTimestamp = DateTime.SpecifyKind(domainVM.MetricsMaxTimestamp, DateTimeKind.Local);
+                Task.Run(() => _metricService.Search(_settingsFactory.CreateLogSettings(), domainVM.DomainId, metricsMaxTimestamp, domainVM.SelectedMetricEventCode).Result)
                     .ContinueWith(SearchCallback, domainVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
