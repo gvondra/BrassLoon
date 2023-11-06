@@ -14,7 +14,7 @@ namespace BrassLoon.Interface.WorkTask.Models
         {
             return new ClaimWorkTaskResponse
             {
-                AssignedDate = !string.IsNullOrEmpty(response.AssignedDate) ? DateTime.Parse(response.AssignedDate, CultureInfo.InvariantCulture) : default,
+                AssignedDate = !string.IsNullOrEmpty(response.AssignedDate) ? DateTime.Parse(response.AssignedDate, CultureInfo.InvariantCulture) : default(DateTime?),
                 Message = response.Message,
                 AssignedToUserId = response.AssignedToUserId,
                 IsAssigned = response.IsAssigned

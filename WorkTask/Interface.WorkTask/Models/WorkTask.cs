@@ -25,17 +25,17 @@ namespace BrassLoon.Interface.WorkTask.Models
         {
             WorkTask result = new WorkTask
             {
-                AssignedDate = !string.IsNullOrEmpty(workTask.AssignedDate) ? DateTime.Parse(workTask.AssignedDate, CultureInfo.InvariantCulture) : default,
+                AssignedDate = !string.IsNullOrEmpty(workTask.AssignedDate) ? DateTime.Parse(workTask.AssignedDate, CultureInfo.InvariantCulture) : default(DateTime?),
                 AssignedToUserId = workTask.AssignedToUserId,
-                ClosedDate = !string.IsNullOrEmpty(workTask.ClosedDate) ? DateTime.Parse(workTask.ClosedDate, CultureInfo.InvariantCulture) : default,
-                CreateTimestamp = workTask.CreateTimestamp?.ToDateTime() ?? default,
-                DomainId = !string.IsNullOrEmpty(workTask.DomainId) ? Guid.Parse(workTask.DomainId) : default,
+                ClosedDate = !string.IsNullOrEmpty(workTask.ClosedDate) ? DateTime.Parse(workTask.ClosedDate, CultureInfo.InvariantCulture) : default(DateTime?),
+                CreateTimestamp = workTask.CreateTimestamp?.ToDateTime(),
+                DomainId = !string.IsNullOrEmpty(workTask.DomainId) ? Guid.Parse(workTask.DomainId) : default(Guid?),
                 Text = workTask.Text,
                 Title = workTask.Title,
-                UpdateTimestamp = workTask.UpdateTimestamp?.ToDateTime() ?? default,
-                WorkTaskId = !string.IsNullOrEmpty(workTask.WorkTaskId) ? Guid.Parse(workTask.WorkTaskId) : default,
-                WorkTaskStatus = workTask.WorkTaskStatus != null ? WorkTaskStatus.Create(workTask.WorkTaskStatus) : default,
-                WorkTaskType = workTask.WorkTaskType != null ? WorkTaskType.Create(workTask.WorkTaskType) : default,
+                UpdateTimestamp = workTask.UpdateTimestamp?.ToDateTime(),
+                WorkTaskId = !string.IsNullOrEmpty(workTask.WorkTaskId) ? Guid.Parse(workTask.WorkTaskId) : default(Guid?),
+                WorkTaskStatus = workTask.WorkTaskStatus != null ? WorkTaskStatus.Create(workTask.WorkTaskStatus) : null,
+                WorkTaskType = workTask.WorkTaskType != null ? WorkTaskType.Create(workTask.WorkTaskType) : null,
                 WorkTaskContexts = new List<WorkTaskContext>(workTask.WorkTaskContexts.Select(c => WorkTaskContext.Create(c)))
             };
             return result;

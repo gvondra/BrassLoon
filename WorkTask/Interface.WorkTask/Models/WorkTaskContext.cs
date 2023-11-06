@@ -16,12 +16,12 @@ namespace BrassLoon.Interface.WorkTask.Models
         {
             return new WorkTaskContext
             {
-                CreateTimestamp = context.CreateTimestamp?.ToDateTime() ?? default,
-                DomainId = !string.IsNullOrEmpty(context.DomainId) ? Guid.Parse(context.DomainId) : default,
-                ReferenceType = context.ReferenceType.HasValue ? (short)context.ReferenceType.Value : default,
+                CreateTimestamp = context.CreateTimestamp?.ToDateTime(),
+                DomainId = !string.IsNullOrEmpty(context.DomainId) ? Guid.Parse(context.DomainId) : default(Guid?),
+                ReferenceType = context.ReferenceType.HasValue ? (short)context.ReferenceType.Value : default(short?),
                 ReferenceValue = context.ReferenceValue,
-                WorkTaskContextId = !string.IsNullOrEmpty(context.WorkTaskContextId) ? Guid.Parse(context.WorkTaskContextId) : default,
-                WorkTaskId = !string.IsNullOrEmpty(context.WorkTaskId) ? Guid.Parse(context.WorkTaskId) : default
+                WorkTaskContextId = !string.IsNullOrEmpty(context.WorkTaskContextId) ? Guid.Parse(context.WorkTaskContextId) : default(Guid?),
+                WorkTaskId = !string.IsNullOrEmpty(context.WorkTaskId) ? Guid.Parse(context.WorkTaskId) : default(Guid?)
             };
         }
 

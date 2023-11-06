@@ -13,9 +13,9 @@ namespace BrassLoon.Interface.WorkTask.Models
         {
             return new Comment
             {
-                CommentId = !string.IsNullOrEmpty(comment.CommentId) ? Guid.Parse(comment.CommentId) : default,
-                CreateTimestamp = comment.CreateTimestamp != null ? comment.CreateTimestamp.ToDateTime() : default,
-                DomainId = !string.IsNullOrEmpty(comment.DomainId) ? Guid.Parse(comment.DomainId) : default,
+                CommentId = !string.IsNullOrEmpty(comment.CommentId) ? Guid.Parse(comment.CommentId) : default(Guid?),
+                CreateTimestamp = comment.CreateTimestamp?.ToDateTime(),
+                DomainId = !string.IsNullOrEmpty(comment.DomainId) ? Guid.Parse(comment.DomainId) : default(Guid?),
                 Text = comment.Text
             };
         }

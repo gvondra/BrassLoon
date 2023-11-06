@@ -23,15 +23,15 @@ namespace BrassLoon.Interface.WorkTask.Models
             {
                 Code = workTaskStatus.Code,
                 Name = workTaskStatus.Name,
-                CreateTimestamp = workTaskStatus.CreateTimestamp != null ? workTaskStatus.CreateTimestamp.ToDateTime() : default,
+                CreateTimestamp = workTaskStatus.CreateTimestamp?.ToDateTime(),
                 Description = workTaskStatus.Description,
-                DomainId = !string.IsNullOrEmpty(workTaskStatus.DomainId) ? Guid.Parse(workTaskStatus.DomainId) : default,
+                DomainId = !string.IsNullOrEmpty(workTaskStatus.DomainId) ? Guid.Parse(workTaskStatus.DomainId) : default(Guid?),
                 IsClosedStatus = workTaskStatus.IsClosedStatus,
                 IsDefaultStatus = workTaskStatus.IsDefaultStatus,
-                UpdateTimestamp = workTaskStatus.UpdateTimestamp != null ? workTaskStatus.UpdateTimestamp.ToDateTime() : default,
+                UpdateTimestamp = workTaskStatus.UpdateTimestamp?.ToDateTime(),
                 WorkTaskCount = workTaskStatus.WorkTaskCount,
-                WorkTaskStatusId = !string.IsNullOrEmpty(workTaskStatus.WorkTaskStatusId) ? Guid.Parse(workTaskStatus.WorkTaskStatusId) : default,
-                WorkTaskTypeId = !string.IsNullOrEmpty(workTaskStatus.WorkTaskTypeId) ? Guid.Parse(workTaskStatus.WorkTaskTypeId) : default
+                WorkTaskStatusId = !string.IsNullOrEmpty(workTaskStatus.WorkTaskStatusId) ? Guid.Parse(workTaskStatus.WorkTaskStatusId) : default(Guid?),
+                WorkTaskTypeId = !string.IsNullOrEmpty(workTaskStatus.WorkTaskTypeId) ? Guid.Parse(workTaskStatus.WorkTaskTypeId) : default(Guid?)
             };
         }
 

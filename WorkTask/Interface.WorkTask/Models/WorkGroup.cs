@@ -20,12 +20,12 @@ namespace BrassLoon.Interface.WorkTask.Models
         {
             return new WorkGroup
             {
-                CreateTimestamp = workGroup.CreateTimestamp != null ? workGroup.CreateTimestamp.ToDateTime() : default,
+                CreateTimestamp = workGroup.CreateTimestamp?.ToDateTime(),
                 Description = workGroup.Description,
-                DomainId = !string.IsNullOrEmpty(workGroup.DomainId) ? Guid.Parse(workGroup.DomainId) : default,
+                DomainId = !string.IsNullOrEmpty(workGroup.DomainId) ? Guid.Parse(workGroup.DomainId) : default(Guid?),
                 Title = workGroup.Title,
-                UpdateTimestamp = workGroup.UpdateTimestamp != null ? workGroup.UpdateTimestamp.ToDateTime() : default,
-                WorkGroupId = !string.IsNullOrEmpty(workGroup.WorkGroupId) ? Guid.Parse(workGroup.WorkGroupId) : default,
+                UpdateTimestamp = workGroup.UpdateTimestamp?.ToDateTime(),
+                WorkGroupId = !string.IsNullOrEmpty(workGroup.WorkGroupId) ? Guid.Parse(workGroup.WorkGroupId) : default(Guid?),
                 MemberUserIds = workGroup.MemberUserIds.ToList(),
                 WorkTaskTypeIds = workGroup.WorkTaskTypeIds
                     .Where(i => !string.IsNullOrEmpty(i))
