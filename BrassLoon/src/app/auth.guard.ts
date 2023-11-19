@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map, flatMap } from 'rxjs/operators';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { HttpClientUtilService } from './http-client-util.service';
@@ -9,7 +9,7 @@ import { TokenService } from './services/token.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
 
 constructor (private oidcSecurityService: OidcSecurityService,
   private tokenService: TokenService,
