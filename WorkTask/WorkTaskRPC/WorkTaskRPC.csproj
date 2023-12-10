@@ -28,7 +28,7 @@
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.*" />
         <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.0.*" />
         <PackageReference Include="BrassLoon.JwtUtility" Version="1.2.*" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.58.*" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.59.*" />
     </ItemGroup>
 
     <ItemGroup>
