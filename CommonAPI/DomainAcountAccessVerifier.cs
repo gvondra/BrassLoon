@@ -23,12 +23,9 @@ namespace BrassLoon.CommonAPI
             return accountDomain != null && !accountDomain.Account.Locked && VerifyDomainAccount(accountDomain, accessToken);
         }
 
-        private bool VerifyDomainAccount(Domain domain, string accessToken)
-        {
-            return domain != null && UserCanAccessAccount(domain.AccountId.Value, accessToken);
-        }
+        private static bool VerifyDomainAccount(Domain domain, string accessToken) => domain != null && UserCanAccessAccount(domain.AccountId.Value, accessToken);
 
-        private bool UserCanAccessAccount(Guid accountId, string accessToken)
+        private static bool UserCanAccessAccount(Guid accountId, string accessToken)
         {
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(accessToken);
             string[] accountIds = Regex.Split(jwtSecurityToken.Claims.First(c => c.Type == "accounts").Value, @"\s+", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200));
@@ -41,7 +38,7 @@ namespace BrassLoon.CommonAPI
             {
                 return await domainService.GetAccountDomain(settings, domainId);
             }
-            catch (BrassLoon.RestClient.Exceptions.RequestError ex)
+            catch (RestClient.Exceptions.RequestError ex)
             {
                 if (ex.Response.StatusCode == HttpStatusCode.NotFound)
                     return null;

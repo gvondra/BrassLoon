@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace BrassLoon.CommonAPI
@@ -21,7 +22,7 @@ namespace BrassLoon.CommonAPI
             _settings = settings;
         }
 
-        public virtual bool UseDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
+        public virtual bool UseDefaultAzureSqlToken => _settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser);
 
         public virtual async Task<string> GetConnetionString()
         {
@@ -30,7 +31,7 @@ namespace BrassLoon.CommonAPI
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_settings.ConnectionString);
                 builder.UserID = _settings.ConnectionStringUser;
-                builder.Password = await _cache.Execute<Task<string>>(async context =>
+                builder.Password = await _cache.Execute(async context =>
                 {
                     SecretClientOptions options = new SecretClientOptions()
                     {
@@ -57,15 +58,12 @@ namespace BrassLoon.CommonAPI
                     KeyVaultSecret secret = await client.GetSecretAsync(_settings.ConnectionStringUser);
                     return secret.Value;
                 },
-                new Context(_settings.ConnectionString.ToLower().Trim()));
+                new Context(_settings.ConnectionString.ToLower(CultureInfo.InvariantCulture).Trim()));
                 result = builder.ConnectionString;
             }
             return result;
         }
 
-        public virtual Func<Task<string>> GetDatabaseAccessToken()
-        {
-            return null;
-        }
+        public virtual Func<Task<string>> GetDatabaseAccessToken() => null;
     }
 }

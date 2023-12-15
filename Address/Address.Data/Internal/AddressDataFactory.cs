@@ -1,11 +1,8 @@
 ﻿using BrassLoon.Address.Data.Models;
 using BrassLoon.DataClient;
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Address.Data.Internal
@@ -19,10 +16,10 @@ namespace BrassLoon.Address.Data.Internal
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
+                DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
-            return (await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            return (await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blad].[GetAddress]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -34,10 +31,10 @@ namespace BrassLoon.Address.Data.Internal
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "hash", DbType.Binary, hash)
+                DataUtil.CreateParameter(ProviderFactory, "hash", DbType.Binary, hash)
             };
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blad].[GetAddress_by_Hash]",
                 Create,
                 DataUtil.AssignDataStateManager,

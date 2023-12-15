@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.CommonAPI
 {
-    public class AuthorizationHandler : Microsoft.AspNetCore.Authorization.AuthorizationHandler<AuthorizationRequirement>, IAuthorizationHandler
+    public class AuthorizationHandler : AuthorizationHandler<AuthorizationRequirement>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AuthorizationRequirement requirement)
         {
@@ -18,7 +18,7 @@ namespace BrassLoon.CommonAPI
             return Task.CompletedTask;
         }
 
-        private bool RoleMatches(ClaimsPrincipal user, string[] roles)
+        private static bool RoleMatches(ClaimsPrincipal user, string[] roles)
         {
             if (roles != null && roles.Length > 0)
             {
@@ -29,11 +29,14 @@ namespace BrassLoon.CommonAPI
             return true;
         }
 
-        private bool IssuerMatches(ClaimsPrincipal user, string issuer)
+        private static bool IssuerMatches(ClaimsPrincipal user, string issuer)
         {
             if (!string.IsNullOrEmpty(issuer) && user.Claims.Any(c => string.Equals("iss", c.Type, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(issuer, c.Value, StringComparison.OrdinalIgnoreCase)))
+            {
                 return true;
+            }
+
             return false;
         }
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BrassLoon.CommonCore
+﻿namespace BrassLoon.CommonCore
 {
     public interface ITransactionHandler : BrassLoon.DataClient.ISqlTransactionHandler
     {

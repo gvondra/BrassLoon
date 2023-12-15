@@ -4,13 +4,17 @@ namespace BrassLoon.Address.Data.Internal
 {
     public abstract class DataFactoryBase<T> where T : new()
     {
-        protected readonly IDbProviderFactory _providerFactory;
-        protected readonly GenericDataFactory<T> _genericDataFactory = new GenericDataFactory<T>();
+        private readonly IDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<T> _genericDataFactory = new GenericDataFactory<T>();
 
         protected DataFactoryBase(IDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }
+
+        protected IDbProviderFactory ProviderFactory => _providerFactory;
+
+        protected GenericDataFactory<T> GenericDataFactory => _genericDataFactory;
 
         protected T Create() => new T();
     }
