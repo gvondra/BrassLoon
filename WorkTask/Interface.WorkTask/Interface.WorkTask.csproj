@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net6.0;netstandard2.0</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<AssemblyName>BrassLoon.Interface.WorkTask</AssemblyName>
@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>3.0.1</Version>
-		<AssemblyVersion>3.0.1.1</AssemblyVersion>
-		<PackageReleaseNotes>-v3 Switch to gRPC
+		<Version>3.1.0</Version>
+		<AssemblyVersion>3.1.0.0</AssemblyVersion>
+		<PackageReleaseNotes>-v3.1 add net 8.0 target
+            -v3.0 Switch to gRPC
             -2.2 Added purge period (months) to work task type
             -2.1 Added Work task closed date property
 			-v2.0 Upgrade ReestClient</PackageReleaseNotes>
@@ -33,7 +34,7 @@
 		<PackageReference Include="Autofac" Version="[7.0,8.0)" />
         <PackageReference Include="Google.Protobuf" Version="[3.25.0,4.0)" />
         <PackageReference Include="Grpc.Net.Client" Version="[2.58.0,3.0)" />
-        <PackageReference Include="Grpc.Tools" Version="2.59.*">
+        <PackageReference Include="Grpc.Tools" Version="2.60.*">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
