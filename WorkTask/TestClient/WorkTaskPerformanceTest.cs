@@ -111,7 +111,7 @@ namespace BrassLoon.WorkTask.TestClient
                     }
                 }
             };
-            await _workTaskService.Create(settings, workTask);
+            _ = await _workTaskService.Create(settings, workTask);
             double duration = DateTime.UtcNow.Subtract(start).TotalSeconds;
             Monitor.Enter(_lock);
             try
@@ -130,7 +130,7 @@ namespace BrassLoon.WorkTask.TestClient
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             List<WorkTaskType> workTaskTypes = (await _workTaskTypeService.GetAll(settings, _appSettings.Domain.Value)) ?? new List<WorkTaskType>();
             _logger.Information($"Found {workTaskTypes.Count} total work task types");
-            _workTaskType = workTaskTypes.FirstOrDefault(wtt => string.Equals(wtt.Title, _workTaskTypeTitle, StringComparison.OrdinalIgnoreCase));
+            _workTaskType = workTaskTypes.Find(wtt => string.Equals(wtt.Title, _workTaskTypeTitle, StringComparison.OrdinalIgnoreCase));
             if (_workTaskType == null)
             {
                 _logger.Information($"Creating work task type \"{_workTaskTypeTitle}\"");
@@ -149,7 +149,7 @@ namespace BrassLoon.WorkTask.TestClient
             }
             List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, _workTaskType.WorkTaskTypeId.Value);
             _logger.Information($"Found {workTaskStatuses.Count} total work task statuses");
-            _workTaskStatus = workTaskStatuses.FirstOrDefault(wts => string.Equals(wts.Name, _workTaskStatusTitle, StringComparison.OrdinalIgnoreCase));
+            _workTaskStatus = workTaskStatuses.Find(wts => string.Equals(wts.Name, _workTaskStatusTitle, StringComparison.OrdinalIgnoreCase));
             if (_workTaskStatus == null)
             {
                 _logger.Information($"Creating work task status \"{_workTaskStatusTitle}\"");

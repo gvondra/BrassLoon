@@ -165,7 +165,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IWorkGroup> innerWorkGroups = await _workGroupFactory.GetByDomainId(settings, domainId);
-                foreach (WorkGroup workGroup in innerWorkGroups.Select(wg => Map(wg)))
+                foreach (WorkGroup workGroup in innerWorkGroups.Select(Map))
                 {
                     await responseStream.WriteAsync(workGroup);
                 }
@@ -201,7 +201,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IWorkGroup> innerWorkGroups = await _workGroupFactory.GetByMemberUserId(settings, domainId, request.UserId);
-                foreach (WorkGroup workGroup in innerWorkGroups.Select(wg => Map(wg)))
+                foreach (WorkGroup workGroup in innerWorkGroups.Select(Map))
                 {
                     await responseStream.WriteAsync(workGroup);
                 }

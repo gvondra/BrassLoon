@@ -19,10 +19,10 @@ namespace BrassLoon.WorkTask.Purger.DependencyInjection
             AppSettings appSettings = null)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new ContainerModule());
+            _ = builder.RegisterModule(new ContainerModule());
             if (appSettings != null)
             {
-                builder.RegisterInstance<AppSettings>(appSettings);
+                _ = builder.RegisterInstance(appSettings);
                 if (!string.IsNullOrEmpty(appSettings.BrassLoonLogRpcBaseAddress) && appSettings.LoggingClientId.HasValue)
                 {
                     RegisterLogging(builder, appSettings);
@@ -33,9 +33,9 @@ namespace BrassLoon.WorkTask.Purger.DependencyInjection
 
         private static void RegisterLogging(ContainerBuilder builder, AppSettings appSettings)
         {
-            builder.Register<ILoggerFactory>(c => LoggerFactory.Create(b =>
+            _ = builder.Register(c => LoggerFactory.Create(b =>
             {
-                b.AddBrassLoonLogger(config =>
+                _ = b.AddBrassLoonLogger(config =>
                 {
                     config.LogApiBaseAddress = appSettings.BrassLoonLogRpcBaseAddress;
                     config.LogDomainId = appSettings.LoggingDomainId.Value;
@@ -44,7 +44,7 @@ namespace BrassLoon.WorkTask.Purger.DependencyInjection
                 })
                 .AddConsole();
             })).SingleInstance();
-            builder.RegisterGeneric((context, types) =>
+            _ = builder.RegisterGeneric((context, types) =>
             {
                 ILoggerFactory loggerFactory = context.Resolve<ILoggerFactory>();
                 Type factoryType = typeof(LoggerFactoryExtensions);
@@ -53,7 +53,7 @@ namespace BrassLoon.WorkTask.Purger.DependencyInjection
                 return methodInfo.Invoke(null, new object[] { loggerFactory });
 
             }).As(typeof(ILogger<>));
-            builder.Register<string, ILogger>((context, categoryName) =>
+            _ = builder.Register<string, ILogger>((context, categoryName) =>
             {
                 ILoggerFactory loggerFactory = context.Resolve<ILoggerFactory>();
                 return loggerFactory.CreateLogger(categoryName);

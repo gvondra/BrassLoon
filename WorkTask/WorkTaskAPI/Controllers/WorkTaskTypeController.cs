@@ -77,7 +77,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         result = Ok(
                             (await _workTaskTypeFactory.GetByDomainId(settings, domainId.Value))
-                            .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                            .Select(t => mapper.Map<WorkTaskType>(t))
                             );
 
                     }
@@ -162,7 +162,7 @@ namespace WorkTaskAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _workTaskTypeFactory.GetByWorkGroupId(settings, domainId.Value, workGroupId.Value))
-                        .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                        .Select(t => mapper.Map<WorkTaskType>(t))
                         );
                 }
             }
@@ -206,7 +206,7 @@ namespace WorkTaskAPI.Controllers
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IWorkTaskType innerWorkTaskType = _workTaskTypeFactory.Create(domainId.Value, workTaskType.Code);
-                    mapper.Map(workTaskType, innerWorkTaskType);
+                    _ = mapper.Map(workTaskType, innerWorkTaskType);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
                     result = Ok(
                         mapper.Map<WorkTaskType>(innerWorkTaskType)
@@ -246,7 +246,7 @@ namespace WorkTaskAPI.Controllers
                     if (result == null)
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map(workTaskType, innerWorkTaskType);
+                        _ = mapper.Map(workTaskType, innerWorkTaskType);
                         await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                         result = Ok(
                             mapper.Map<WorkTaskType>(innerWorkTaskType)

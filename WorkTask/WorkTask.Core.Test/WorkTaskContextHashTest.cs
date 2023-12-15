@@ -20,7 +20,7 @@ namespace WorkTask.Core.Test
         [ExpectedException(typeof(ArgumentNullException))]
         public void ComputeNullTest()
         {
-            WorkTaskContextHash.Compute(null);
+            _ = WorkTaskContextHash.Compute(null);
             Assert.Fail();
         }
     }

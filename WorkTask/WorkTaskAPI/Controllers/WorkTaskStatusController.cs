@@ -68,7 +68,7 @@ namespace WorkTaskAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, workTaskTypeId.Value))
-                        .Select<IWorkTaskStatus, WorkTaskStatus>(t => mapper.Map<WorkTaskStatus>(t))
+                        .Select(mapper.Map<WorkTaskStatus>)
                         );
                 }
             }
@@ -133,11 +133,11 @@ namespace WorkTaskAPI.Controllers
         private IActionResult ValidateRequest(WorkTaskStatus workTaskStatus)
         {
             IActionResult result = null;
-            if (result == null && workTaskStatus == null)
+            if (workTaskStatus == null)
                 result = BadRequest("Missing work task status body");
-            if (result == null && string.IsNullOrEmpty(workTaskStatus?.Name))
+            else if (string.IsNullOrEmpty(workTaskStatus.Name))
                 result = BadRequest("Missing work task status name value");
-            if (result == null && !workTaskStatus.IsClosedStatus.HasValue)
+            else if (!workTaskStatus.IsClosedStatus.HasValue)
                 result = BadRequest("Missing work task status is closed value");
             return result;
         }
@@ -162,17 +162,17 @@ namespace WorkTaskAPI.Controllers
                     result = BadRequest("Missing work task status code value");
                 else
                     result = ValidateRequest(workTaskStatus);
-                if (result == null)
+                if (result == null && domainId.HasValue && workTaskTypeId.HasValue)
                 {
                     innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTaskTypeId.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
-                if (result == null)
+                if (result == null && innerWorkTaskType != null && workTaskStatus != null)
                 {
                     IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.CreateWorkTaskStatus(workTaskStatus.Code);
                     IMapper mapper = CreateMapper();
-                    mapper.Map(workTaskStatus, innerWorkTaskStatus);
+                    _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskStatus);
                     result = Ok(
                         mapper.Map<WorkTaskStatus>(innerWorkTaskStatus)
@@ -207,13 +207,13 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 else
                     result = ValidateRequest(workTaskStatus);
-                if (result == null)
+                if (result == null && domainId.HasValue && workTaskTypeId.HasValue)
                 {
                     innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, workTaskTypeId.Value);
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
-                if (result == null)
+                if (result == null && id.HasValue && domainId.HasValue)
                 {
                     IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
@@ -223,7 +223,7 @@ namespace WorkTaskAPI.Controllers
                     else
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map(workTaskStatus, innerWorkTaskStatus);
+                        _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
                         await _workTaskTypeSaver.Update(settings, innerWorkTaskStatus);
                         result = Ok(
                             mapper.Map<WorkTaskStatus>(innerWorkTaskStatus)
@@ -270,7 +270,7 @@ namespace WorkTaskAPI.Controllers
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
-                if (result == null)
+                if (result == null && id.HasValue && domainId.HasValue)
                 {
                     IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
                     if (innerWorkTaskStatus == null)
@@ -283,7 +283,7 @@ namespace WorkTaskAPI.Controllers
                             result = BadRequest("Unable to delete status in use");
                     }
                 }
-                if (result == null)
+                if (result == null && id.HasValue)
                 {
                     await _workTaskTypeSaver.DeleteStatus(settings, id.Value);
                     result = Ok();

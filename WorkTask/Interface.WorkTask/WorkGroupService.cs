@@ -26,7 +26,7 @@ namespace BrassLoon.Interface.WorkTask
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
-                await service.AddWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                _ = await service.AddWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
             }
         }
 
@@ -62,7 +62,7 @@ namespace BrassLoon.Interface.WorkTask
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.WorkGroupService.WorkGroupServiceClient service = new Protos.WorkGroupService.WorkGroupServiceClient(channel);
-                await service.DeleteWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                _ = await service.DeleteWorkTaskTypeLinkAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
             }
         }
 

@@ -9,24 +9,24 @@ namespace BrassLoon.WorkTask.Data
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
-            builder.RegisterType<BrassLoon.DataClient.LoaderFactory>().As<BrassLoon.DataClient.ILoaderFactory>();
-            builder.RegisterType<PurgeDataSaver>().As<IPurgeDataSaver>();
-            builder.RegisterType<PurgeWorkerDataFactory>().As<IPurgeWorkerDataFactory>();
-            builder.RegisterType<PurgeWorkerDataSaver>().As<IPurgeWorkerDataSaver>();
-            builder.RegisterType<WorkGroupDataFactory>().As<IWorkGroupDataFactory>();
-            builder.RegisterType<WorkGroupDataSaver>().As<IWorkGroupDataSaver>();
-            builder.RegisterType<WorkGroupMemberDataSaver>().As<IWorkGroupMemberDataSaver>();
-            builder.RegisterType<WorkTaskCommentDataFactory>().As<IWorkTaskCommentDataFactory>();
-            builder.RegisterType<WorkTaskCommentDataSaver>().As<IWorkTaskCommentDataSaver>();
-            builder.RegisterType<WorkTaskContextDataSaver>().As<IWorkTaskContextDataSaver>();
-            builder.RegisterType<WorkTaskDataFactory>().As<IWorkTaskDataFactory>();
-            builder.RegisterType<WorkTaskDataSaver>().As<IWorkTaskDataSaver>();
-            builder.RegisterType<WorkTaskStatusDataFactory>().As<IWorkTaskStatusDataFactory>();
-            builder.RegisterType<WorkTaskStatusDataSaver>().As<IWorkTaskStatusDataSaver>();
-            builder.RegisterType<WorkTaskTypeDataFactory>().As<IWorkTaskTypeDataFactory>();
-            builder.RegisterType<WorkTaskTypeDataSaver>().As<IWorkTaskTypeDataSaver>();
-            builder.RegisterType<WorkTaskTypeGroupDataSaver>().As<IWorkTaskTypeGroupDataSaver>();
+            _ = builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
+            _ = builder.RegisterType<BrassLoon.DataClient.LoaderFactory>().As<BrassLoon.DataClient.ILoaderFactory>();
+            _ = builder.RegisterType<PurgeDataSaver>().As<IPurgeDataSaver>();
+            _ = builder.RegisterType<PurgeWorkerDataFactory>().As<IPurgeWorkerDataFactory>();
+            _ = builder.RegisterType<PurgeWorkerDataSaver>().As<IPurgeWorkerDataSaver>();
+            _ = builder.RegisterType<WorkGroupDataFactory>().As<IWorkGroupDataFactory>();
+            _ = builder.RegisterType<WorkGroupDataSaver>().As<IWorkGroupDataSaver>();
+            _ = builder.RegisterType<WorkGroupMemberDataSaver>().As<IWorkGroupMemberDataSaver>();
+            _ = builder.RegisterType<WorkTaskCommentDataFactory>().As<IWorkTaskCommentDataFactory>();
+            _ = builder.RegisterType<WorkTaskCommentDataSaver>().As<IWorkTaskCommentDataSaver>();
+            _ = builder.RegisterType<WorkTaskContextDataSaver>().As<IWorkTaskContextDataSaver>();
+            _ = builder.RegisterType<WorkTaskDataFactory>().As<IWorkTaskDataFactory>();
+            _ = builder.RegisterType<WorkTaskDataSaver>().As<IWorkTaskDataSaver>();
+            _ = builder.RegisterType<WorkTaskStatusDataFactory>().As<IWorkTaskStatusDataFactory>();
+            _ = builder.RegisterType<WorkTaskStatusDataSaver>().As<IWorkTaskStatusDataSaver>();
+            _ = builder.RegisterType<WorkTaskTypeDataFactory>().As<IWorkTaskTypeDataFactory>();
+            _ = builder.RegisterType<WorkTaskTypeDataSaver>().As<IWorkTaskTypeDataSaver>();
+            _ = builder.RegisterType<WorkTaskTypeGroupDataSaver>().As<IWorkTaskTypeGroupDataSaver>();
         }
     }
 }

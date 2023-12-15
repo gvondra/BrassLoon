@@ -25,25 +25,25 @@ namespace BrassLoon.WorkTask.TestClient
 
                 command = new Command("perf-create-tasks");
                 command.SetHandler(
-                    () => PerformanceTestCreateTask());
+                    PerformanceTestCreateTask);
                 rootCommand.AddCommand(command);
 
                 command = new Command("task-type");
                 command.SetHandler(
-                    () => WorkTaskTypeTest());
+                    WorkTaskTypeTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("work-group");
                 command.SetHandler(
-                    () => WorkGroupTest());
+                    WorkGroupTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("task");
                 command.SetHandler(
-                    () => WorkTaskTest());
+                    WorkTaskTest);
                 rootCommand.AddCommand(command);
 
-                await rootCommand.InvokeAsync(args);
+                _ = await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace BrassLoon.WorkTask.TestClient
         private static IConfiguration GetConfiguration()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appSettings.json", false)
+            _ = builder.AddJsonFile("appSettings.json", false)
                 .AddEnvironmentVariables();
             return builder.Build();
         }

@@ -323,7 +323,7 @@ namespace WorkTaskRPC.Services
                     {
                         throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                     }
-                    validDomains.Add(domainId);
+                    _ = validDomains.Add(domainId);
                     ValidatePatchData(requestStream.Current.Data);
                     IWorkTask innerWorkTask = await _workTaskPatcher.Apply(settings, domainId, requestStream.Current.Data);
                     await _workTaskSaver.Update(settings, innerWorkTask);
@@ -430,7 +430,7 @@ namespace WorkTaskRPC.Services
                 foreach (WorkTaskContext workTaskContext in workTask.WorkTaskContexts.Where(c => c.ReferenceType.HasValue && !string.IsNullOrEmpty(c.ReferenceValue)))
                 {
                     // the IWorkTask will filter out duplicates
-                    innerWorkTask.AddContext((short)workTaskContext.ReferenceType.Value, workTaskContext.ReferenceValue);
+                    _ = innerWorkTask.AddContext((short)workTaskContext.ReferenceType.Value, workTaskContext.ReferenceValue);
                 }
             }
         }
@@ -461,7 +461,7 @@ namespace WorkTaskRPC.Services
             };
             if (innerWorkTask.WorkTaskContexts != null)
             {
-                result.WorkTaskContexts.AddRange(innerWorkTask.WorkTaskContexts.Select(c => Map(c)));
+                result.WorkTaskContexts.AddRange(innerWorkTask.WorkTaskContexts.Select(Map));
             }
             return result;
         }

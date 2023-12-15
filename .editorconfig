@@ -53,7 +53,7 @@ dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
 end_of_line = crlf
-dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_coalesce_expression = true:none
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_prefer_auto_properties = true:none
@@ -61,7 +61,7 @@ dotnet_style_object_initializer = true:none
 dotnet_style_prefer_collection_expression = true:none
 dotnet_style_collection_initializer = true:suggestion
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
-dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_assignment = true:none
 dotnet_style_prefer_conditional_expression_over_return = true:none
 dotnet_style_explicit_tuple_names = true:suggestion
 dotnet_style_prefer_inferred_tuple_names = true:suggestion
@@ -102,6 +102,12 @@ dotnet_diagnostic.IDE0031.severity = suggestion
 
 # IDE0046: Convert to conditional expression
 dotnet_diagnostic.IDE0046.severity = none
+
+# IDE0045: Convert to conditional expression
+dotnet_diagnostic.IDE0045.severity = none
+
+# IDE0270: Use coalesce expression
+dotnet_diagnostic.IDE0270.severity = none
 
 [*.cs]
 csharp_indent_labels = one_less_than_current
@@ -164,3 +170,24 @@ dotnet_diagnostic.CA1707.severity = none
 
 # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.CA1716.severity = none
+
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = suggestion
+
+# CA2254: Template should be a static expression
+dotnet_diagnostic.CA2254.severity = none
+
+# IDE0018: Inline variable declaration
+dotnet_diagnostic.IDE0018.severity = suggestion
+
+# IDE0063: Use simple 'using' statement
+dotnet_diagnostic.IDE0063.severity = suggestion
+
+# S3267: Loops should be simplified with "LINQ" expressions
+dotnet_diagnostic.S3267.severity = suggestion
+
+# CA2201: Do not raise reserved exception types
+dotnet_diagnostic.CA2201.severity = none
+
+# S112: General or reserved exceptions should never be thrown
+dotnet_diagnostic.S112.severity = none

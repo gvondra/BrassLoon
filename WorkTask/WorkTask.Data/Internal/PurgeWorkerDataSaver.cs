@@ -12,37 +12,31 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task InitializePurgeWorker(ISqlSettings settings)
         {
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
-            {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[InitializePurgeWorker]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
+            using DbConnection connection = await ProviderFactory.OpenConnection(settings);
+            using DbCommand command = connection.CreateCommand();
+            command.CommandText = "[blwt].[InitializePurgeWorker]";
+            command.CommandType = CommandType.StoredProcedure;
+            _ = await command.ExecuteNonQueryAsync();
         }
         public async Task Update(ISqlTransactionHandler transactionHandler, PurgeWorkerData purgeWorkerData)
         {
             if (purgeWorkerData.Manager.GetState(purgeWorkerData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, purgeWorkerData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[UpdatePurgeWorker]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                await ProviderFactory.EstablishTransaction(transactionHandler, purgeWorkerData);
+                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                command.CommandText = "[blwt].[UpdatePurgeWorker]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "purgeWorkerId", DbType.Guid, DataUtil.GetParameterValue(purgeWorkerData.PurgeWorkerId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.Int16, DataUtil.GetParameterValue(purgeWorkerData.Status));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "purgeWorkerId", DbType.Guid, DataUtil.GetParameterValue(purgeWorkerData.PurgeWorkerId));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "status", DbType.Int16, DataUtil.GetParameterValue(purgeWorkerData.Status));
 
-                    await command.ExecuteNonQueryAsync();
-                    purgeWorkerData.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
-                }
+                _ = await command.ExecuteNonQueryAsync();
+                purgeWorkerData.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
         }
     }

@@ -72,7 +72,7 @@ namespace BrassLoon.WorkTask.Purger
         {
             CoreSettings settings = _settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
-            expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
+            expiration = new DateTime(expiration.Year, expiration.Month, 1, 0, 0, 0, DateTimeKind.Unspecified).AddMonths(1);
             _logger.LogInformation("Updating purge meta data for work tasks");
             await _purgeSaver.InitializeWorkTask(settings, domainId, expiration, _appSettings.DefaultPurgePeriod);
         }

@@ -52,7 +52,7 @@ namespace BrassLoon.WorkTask.Purger
         private static IConfiguration GetConfiguration(string[] args)
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appSettings.json", false)
+            _ = builder.AddJsonFile("appSettings.json", false)
                 .AddEnvironmentVariables()
                 .AddCommandLine(args);
             return builder.Build();

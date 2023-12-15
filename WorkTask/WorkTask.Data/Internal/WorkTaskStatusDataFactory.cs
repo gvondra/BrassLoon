@@ -13,9 +13,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<WorkTaskStatusData> Get(ISqlSettings settings, Guid id)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
-            return (await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id);
+            return (await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskStatus]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -25,9 +25,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<IEnumerable<WorkTaskStatusData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskStatus_by_DomainId]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -37,9 +37,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<IEnumerable<WorkTaskStatusData>> GetByWorkTaskType(ISqlSettings settings, Guid workTaskTypeId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "workTaskTypeId", DbType.Guid, workTaskTypeId);
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workTaskTypeId", DbType.Guid, workTaskTypeId);
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskStatus_by_WorkTaskTypeId]",
                 Create,
                 DataUtil.AssignDataStateManager,

@@ -6,11 +6,11 @@ namespace WorkTaskAPI
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterType<MapperFactory>().SingleInstance();
-            builder.RegisterType<SettingsFactory>().SingleInstance();
+            _ = builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
+            _ = builder.RegisterType<MapperFactory>().SingleInstance();
+            _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
 }

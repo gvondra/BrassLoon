@@ -23,14 +23,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTask.Core.Test", "WorkT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05A2D0DC-B788-471B-A141-0F55FF59EDD7}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		..\.editorconfig = ..\.editorconfig
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClient", "TestClient\TestClient.csproj", "{5E67B569-3FA6-43AA-8CDC-BAE0E3F96090}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Purger", "Purger\Purger.csproj", "{541BA26D-BF89-4642-A684-CEA30CE39618}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTaskRPC", "WorkTaskRPC\WorkTaskRPC.csproj", "{17E44973-EFA7-4F90-A4C5-F733E27662AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkTaskRPC", "WorkTaskRPC\WorkTaskRPC.csproj", "{17E44973-EFA7-4F90-A4C5-F733E27662AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

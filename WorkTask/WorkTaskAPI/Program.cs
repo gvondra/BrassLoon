@@ -17,7 +17,7 @@ using System;
 
 namespace WorkTaskAPI
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -114,7 +114,6 @@ namespace WorkTaskAPI
             app.UseAuthorization();
 
             app.MapControllers();
-            /*app.UseEndpoints(endpoints => endpoints.MapControllers());*/
 
             app.Run();
         }

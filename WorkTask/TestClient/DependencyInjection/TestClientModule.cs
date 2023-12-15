@@ -8,15 +8,15 @@ namespace BrassLoon.WorkTask.TestClient.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.WorkTask.WorkTaskInterfaceModule());
-            builder.RegisterType<SettingsFactory>()
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.WorkTask.WorkTaskInterfaceModule());
+            _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
-            builder.RegisterType<WorkGroupTest>();
-            builder.RegisterType<WorkTaskTest>();
-            builder.RegisterType<WorkTaskPerformanceTest>();
-            builder.RegisterType<WorkTaskTypeTest>();
+            _ = builder.RegisterType<WorkGroupTest>();
+            _ = builder.RegisterType<WorkTaskTest>();
+            _ = builder.RegisterType<WorkTaskPerformanceTest>();
+            _ = builder.RegisterType<WorkTaskTypeTest>();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace BrassLoon.Interface.WorkTask
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.WorkTaskStatusService.WorkTaskStatusServiceClient service = new Protos.WorkTaskStatusService.WorkTaskStatusServiceClient(channel);
-                await service.DeleteAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                _ = await service.DeleteAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
                 ResetAllCaches();
             }
         }

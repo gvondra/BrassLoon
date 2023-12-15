@@ -60,7 +60,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IWorkTaskStatus> innerWorkTaskStatuses = await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId, workTaskTypeId);
-                foreach (WorkTaskStatus workTaskStatus in innerWorkTaskStatuses.Select(wts => Map(wts)))
+                foreach (WorkTaskStatus workTaskStatus in innerWorkTaskStatuses.Select(Map))
                 {
                     await responseStream.WriteAsync(workTaskStatus);
                 }

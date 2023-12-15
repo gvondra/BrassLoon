@@ -14,45 +14,41 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[CreateWorkGroupMember]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                await ProviderFactory.EstablishTransaction(transactionHandler, data);
+                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                command.CommandText = "[blwt].[CreateWorkGroupMember]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
-                    IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
-                    id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
+                id.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(id);
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "workGroupId", DbType.Guid, DataUtil.GetParameterValue(data.WorkGroupId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.AnsiString, DataUtil.GetParameterValue(data.UserId));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "workGroupId", DbType.Guid, DataUtil.GetParameterValue(data.WorkGroupId));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "userId", DbType.AnsiString, DataUtil.GetParameterValue(data.UserId));
 
-                    await command.ExecuteNonQueryAsync();
-                    data.WorkGroupMemberId = (Guid)id.Value;
-                    data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
-                }
+                _ = await command.ExecuteNonQueryAsync();
+                data.WorkGroupMemberId = (Guid)id.Value;
+                data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
         }
 
         public async Task Delete(ISqlTransactionHandler transactionHandler, Guid id)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
-            {
-                command.CommandText = "[blwt].[DeleteWorkGroupMember]";
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+            await ProviderFactory.EstablishTransaction(transactionHandler);
+            using DbCommand command = transactionHandler.Connection.CreateCommand();
+            command.CommandText = "[blwt].[DeleteWorkGroupMember]";
+            command.CommandType = CommandType.StoredProcedure;
+            command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
+            DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
 
-                await command.ExecuteNonQueryAsync();
-            }
+            _ = await command.ExecuteNonQueryAsync();
         }
     }
 }

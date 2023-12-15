@@ -54,7 +54,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IWorkTaskType> innerWorkTaskTypes = await _workTaskTypeFactory.GetByDomainId(settings, domainId);
-                foreach (WorkTaskType workTaskType in innerWorkTaskTypes.Select(wtt => Map(wtt)))
+                foreach (WorkTaskType workTaskType in innerWorkTaskTypes.Select(Map))
                 {
                     await responseStream.WriteAsync(workTaskType);
                 }
@@ -155,7 +155,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IWorkTaskType> innerWorkTaskType = await _workTaskTypeFactory.GetByWorkGroupId(settings, domainId, workGroupId);
-                foreach (WorkTaskType workTaskType in innerWorkTaskType.Select(wtt => Map(wtt)))
+                foreach (WorkTaskType workTaskType in innerWorkTaskType.Select(Map))
                 {
                     await responseStream.WriteAsync(workTaskType);
                 }

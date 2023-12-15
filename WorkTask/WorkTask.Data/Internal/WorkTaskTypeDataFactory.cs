@@ -13,9 +13,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<WorkTaskTypeData> Get(ISqlSettings settings, Guid id)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
-            return (await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id);
+            return (await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskType]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -25,9 +25,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<IEnumerable<WorkTaskTypeData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_DomainId]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -39,11 +39,11 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
-                DataUtil.CreateParameter(_providerFactory, "code", DbType.String, code)
+                DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId),
+                DataUtil.CreateParameter(ProviderFactory, "code", DbType.String, code)
             };
-            return (await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            return (await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_DomainId_Code]",
                 Create,
                 DataUtil.AssignDataStateManager,
@@ -53,9 +53,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "workGroupId", DbType.Guid, workGroupId);
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workGroupId", DbType.Guid, workGroupId);
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_WorkGroupId]",
                 Create,
                 DataUtil.AssignDataStateManager,

@@ -101,7 +101,7 @@ namespace BrassLoon.WorkTask.Core
         public async Task<IEnumerable<IWorkTask>> GetByContextReference(ISettings settings, Guid domainId, short referenceType, string referenceValue, bool includeClosed = false)
         {
             return (await _dataFactory.GetByContextReference(new DataSettings(settings), domainId, referenceType, WorkTaskContextHash.Compute(referenceValue), includeClosed))
-                .Where(d => d.WorkTaskContexts.Any(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
+                .Where(d => d.WorkTaskContexts.Exists(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
                 .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
                 .ToList();
         }

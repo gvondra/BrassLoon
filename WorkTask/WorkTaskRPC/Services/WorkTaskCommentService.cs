@@ -133,7 +133,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IComment> innerComments = await _workTaskCommentFactory.GetByWorkTaskId(settings, domainId, workTaskId);
-                foreach (Protos.Comment comment in innerComments.Select(c => Map(c)))
+                foreach (Protos.Comment comment in innerComments.Select(Map))
                 {
                     await responseStream.WriteAsync(comment);
                 }
