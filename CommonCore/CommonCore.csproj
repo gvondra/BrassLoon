@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BrassLoon.DataClient" Version="3.3.*" />
+    <PackageReference Include="BrassLoon.DataClient" Version="3.4.*" />
   </ItemGroup>
 
 </Project>
