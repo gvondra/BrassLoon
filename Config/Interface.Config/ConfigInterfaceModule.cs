@@ -8,10 +8,10 @@ namespace BrassLoon.Interface.Config
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<RestUtil>().SingleInstance();
-            builder.RegisterType<Service>().As<IService>();
-            builder.RegisterType<ItemService>().As<IItemService>();
-            builder.RegisterType<LookupService>().As<ILookupService>();
+            _ = builder.RegisterType<RestUtil>().SingleInstance();
+            _ = builder.RegisterType<Service>().As<IService>();
+            _ = builder.RegisterType<ItemService>().As<IItemService>();
+            _ = builder.RegisterType<LookupService>().As<ILookupService>();
         }
     }
 }

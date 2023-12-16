@@ -29,7 +29,7 @@ namespace BrassLoon.Config.TestClient
                 rootCommand.SetHandler(
                     createTasks => LookupTest(),
                     lookupTest);
-                await rootCommand.InvokeAsync(args);
+                _ = await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
             {
@@ -61,7 +61,7 @@ namespace BrassLoon.Config.TestClient
         private static IConfiguration GetConfiguration()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appSettings.json", false)
+            _ = builder.AddJsonFile("appSettings.json", false)
                 .AddEnvironmentVariables();
             return builder.Build();
         }

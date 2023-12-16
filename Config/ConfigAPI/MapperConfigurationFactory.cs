@@ -4,20 +4,20 @@ using BrassLoon.Interface.Config.Models;
 
 namespace ConfigAPI
 {
-    public class MapperConfigurationFactory
+    public static class MapperConfigurationFactory
     {
-        private static readonly MapperConfiguration _mapperConfiguratin;
+        private static readonly MapperConfiguration _mapperConfiguratin = CreateMapperConfiguration();
 
-        static MapperConfigurationFactory()
+        private static MapperConfiguration CreateMapperConfiguration()
         {
-            _mapperConfiguratin = new MapperConfiguration(config =>
+            return new MapperConfiguration(config =>
             {
-                config.CreateMap<Item, IItem>();
-                config.CreateMap<IItem, Item>();
-                config.CreateMap<IItemHistory, ItemHistory>();
-                config.CreateMap<Lookup, ILookup>();
-                config.CreateMap<ILookup, Lookup>();
-                config.CreateMap<ILookupHistory, LookupHistory>();
+                _ = config.CreateMap<Item, IItem>();
+                _ = config.CreateMap<IItem, Item>();
+                _ = config.CreateMap<IItemHistory, ItemHistory>();
+                _ = config.CreateMap<Lookup, ILookup>();
+                _ = config.CreateMap<ILookup, Lookup>();
+                _ = config.CreateMap<ILookupHistory, LookupHistory>();
             });
         }
 

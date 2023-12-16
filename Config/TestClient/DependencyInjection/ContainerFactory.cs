@@ -15,11 +15,11 @@ namespace BrassLoon.Config.TestClient.DependencyInjection
             ILogger logger = null)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new TestClientModule());
+            _ = builder.RegisterModule(new TestClientModule());
             if (appSettings != null)
-                builder.RegisterInstance(appSettings);
+                _ = builder.RegisterInstance(appSettings);
             if (logger != null)
-                builder.RegisterInstance(logger);
+                _ = builder.RegisterInstance(logger);
             _container = builder.Build();
         }
 
