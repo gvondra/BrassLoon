@@ -9,20 +9,20 @@ namespace BrassLoon.Authorization.Core
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Authorization.Data.AuthorizationDataModule());
-            builder.RegisterType<Saver>().SingleInstance();
-            builder.RegisterType<KeyVault>().As<IKeyVault>().SingleInstance();
-            builder.RegisterType<ClientFactory>().As<IClientFactory>();
-            builder.RegisterType<ClientSaver>().As<IClientSaver>();
-            builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
-            builder.RegisterType<RoleFactory>().As<IRoleFactory>();
-            builder.RegisterType<RoleSaver>().As<IRoleSaver>();
-            builder.RegisterType<SecretGenerator>().As<ISecretGenerator>();
-            builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
-            builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
-            builder.RegisterType<TokenClaimGenerator>().As<ITokenClaimGenerator>();
-            builder.RegisterType<UserFactory>().As<IUserFactory>();
-            builder.RegisterType<UserSaver>().As<IUserSaver>();
+            _ = builder.RegisterModule(new Data.AuthorizationDataModule());
+            _ = builder.RegisterType<Saver>().SingleInstance();
+            _ = builder.RegisterType<KeyVault>().As<IKeyVault>().SingleInstance();
+            _ = builder.RegisterType<ClientFactory>().As<IClientFactory>();
+            _ = builder.RegisterType<ClientSaver>().As<IClientSaver>();
+            _ = builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
+            _ = builder.RegisterType<RoleFactory>().As<IRoleFactory>();
+            _ = builder.RegisterType<RoleSaver>().As<IRoleSaver>();
+            _ = builder.RegisterType<SecretGenerator>().As<ISecretGenerator>();
+            _ = builder.RegisterType<SigningKeyFactory>().As<ISigningKeyFactory>();
+            _ = builder.RegisterType<SigningKeySaver>().As<ISigningKeySaver>();
+            _ = builder.RegisterType<TokenClaimGenerator>().As<ITokenClaimGenerator>();
+            _ = builder.RegisterType<UserFactory>().As<IUserFactory>();
+            _ = builder.RegisterType<UserSaver>().As<IUserSaver>();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace BrassLoon.Authorization.Core
                     DomainId = domainId,
                     ReferenceId = referenceId
                 });
-            user.SetEmailAddress(emailAddress);
+            _ = user.SetEmailAddress(emailAddress);
             return user;
         }
 

@@ -1,15 +1,15 @@
-﻿using BrassLoon.Authorization.Data.Framework;
+﻿using Azure.Security.KeyVault.Secrets;
+using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using BrassLoon.CommonCore;
 using Konscious.Security.Cryptography;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Text;
-using Azure.Security.KeyVault.Secrets;
+using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
@@ -114,11 +114,11 @@ namespace BrassLoon.Authorization.Core
         }
 
         private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt)
-            => await _keyVault.SetSecret(settings, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
+            => await _keyVault.SetSecret(settings.ClientSecretVaultAddress, key.ToString("D"), Convert.ToBase64String(HashSecret(value, salt)));
 
         private async Task<byte[]> GetSecret(Framework.ISettings settings, Guid key)
         {
-            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings, key.ToString("D"));
+            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings.ClientSecretVaultAddress, key.ToString("D"));
             return Convert.FromBase64String(keyVaultSecret.Value);
         }
 
