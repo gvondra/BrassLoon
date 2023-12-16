@@ -56,7 +56,7 @@ namespace AuthorizationRPC.Services
                 CoreSettings settings = _settingsFactory.CreateCore();
                 await ValidatePolicyNameNotExists(settings, domainId, request);
                 IRole innerRole = _roleFactory.Create(domainId, request.PolicyName);
-                Map(request, innerRole);
+                _ = Map(request, innerRole);
                 await _roleSaver.Create(settings, innerRole);
                 return Map(innerRole);
             }
@@ -127,7 +127,7 @@ namespace AuthorizationRPC.Services
                 IRole innerRole = await _roleFactory.Get(settings, domainId, id);
                 if (innerRole == null)
                     throw new RpcException(new Status(StatusCode.NotFound, "Role Not Found"));
-                Map(request, innerRole);
+                _ = Map(request, innerRole);
                 await _roleSaver.Update(settings, innerRole);
                 return Map(innerRole);
             }

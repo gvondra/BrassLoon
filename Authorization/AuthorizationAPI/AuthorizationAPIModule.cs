@@ -1,6 +1,7 @@
 ﻿using Autofac;
 namespace AuthorizationAPI
 {
+#pragma warning disable S101 // Types should be named in PascalCase
     public class AuthorizationAPIModule : Module
     {
         protected override void Load(ContainerBuilder builder)
@@ -13,4 +14,5 @@ namespace AuthorizationAPI
             _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
+#pragma warning restore S101 // Types should be named in PascalCase
 }

@@ -4,24 +4,26 @@ using BrassLoon.CommonAPI;
 
 namespace AuthorizationRPC
 {
+#pragma warning disable S101 // Types should be named in PascalCase
     public class AuthenticationRPCModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Authorization.Core.AuthorizationCoreModule());
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterType<ClientService>();
-            builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
-            builder.RegisterType<JwksService>();
-            builder.RegisterType<MetaDataProcessor>()
+            _ = builder.RegisterModule(new BrassLoon.Authorization.Core.AuthorizationCoreModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterType<ClientService>();
+            _ = builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
+            _ = builder.RegisterType<JwksService>();
+            _ = builder.RegisterType<MetaDataProcessor>()
                 .SingleInstance()
                 .As<IMetaDataProcessor>();
-            builder.RegisterType<RoleService>();
-            builder.RegisterType<SettingsFactory>().SingleInstance();
-            builder.RegisterType<SigningKeyService>();
-            builder.RegisterType<TokenService>();
-            builder.RegisterType<UserService>();
+            _ = builder.RegisterType<RoleService>();
+            _ = builder.RegisterType<SettingsFactory>().SingleInstance();
+            _ = builder.RegisterType<SigningKeyService>();
+            _ = builder.RegisterType<TokenService>();
+            _ = builder.RegisterType<UserService>();
         }
     }
+#pragma warning restore S101 // Types should be named in PascalCase
 }

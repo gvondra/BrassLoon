@@ -61,7 +61,7 @@ namespace AuthorizationRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 Validate(request);
-                if (string.IsNullOrEmpty(request?.Secret))
+                if (string.IsNullOrEmpty(request.Secret))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing client secret value");
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IClient innerClient = _clientFactory.Create(domainId, request.Secret);
@@ -91,8 +91,8 @@ namespace AuthorizationRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.ClientId) || !Guid.TryParse(request.ClientId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request?.ClientId}\"");
+                if (string.IsNullOrEmpty(request.ClientId) || !Guid.TryParse(request.ClientId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request.ClientId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -185,8 +185,8 @@ namespace AuthorizationRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.ClientId) || !Guid.TryParse(request.ClientId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request?.ClientId}\"");
+                if (string.IsNullOrEmpty(request.ClientId) || !Guid.TryParse(request.ClientId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request.ClientId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -204,7 +204,7 @@ namespace AuthorizationRPC.Services
                     Map(request, innerClient);
                     IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(settings, innerClient, request.UserEmailAddress);
                     await ApplyRoleChanges(settings, innerClient, request.Roles);
-                    if (!string.IsNullOrEmpty(request?.Secret))
+                    if (!string.IsNullOrEmpty(request.Secret))
                         innerClient.SetSecret(request.Secret);
                     await _clientSaver.Update(settings, innerClient, userEmailAddress);
                     result = await MapClient(settings, innerClient);
@@ -260,7 +260,7 @@ namespace AuthorizationRPC.Services
                 UserEmailAddress = (await innerClient.GetUserEmailAddress(settings))?.Address ?? string.Empty
             };
             client.Roles.Add(
-                (await innerClient.GetRoles(settings)).Select<IRole, AppliedRole>(r => MapAppliedRole(r)));
+                (await innerClient.GetRoles(settings)).Select(r => MapAppliedRole(r)));
             return client;
         }
 
@@ -277,7 +277,7 @@ namespace AuthorizationRPC.Services
         {
             if (string.IsNullOrEmpty(client?.Name))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), "Missing client name value");
-            if (client?.Secret != null && client.Secret.Length < 32)
+            if (client.Secret != null && client.Secret.Length < 32)
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), "Client secret must be at least 32 characters in length");
         }
 

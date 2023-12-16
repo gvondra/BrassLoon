@@ -102,7 +102,7 @@ namespace AuthorizationRPC.Services
                 if (signingKey == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Signing key not found"), "No active signing key found");
                 IClient client = await _clientFactory.Get(settings, domainId, id);
-                if (client == null || await client.AuthenticateSecret(settings, request.Secret) == false)
+                if (client == null || !await client.AuthenticateSecret(settings, request.Secret))
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 IUser user = await GetUser(settings, client);
                 return new TokenResponse
