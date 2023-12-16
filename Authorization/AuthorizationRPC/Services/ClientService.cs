@@ -293,7 +293,7 @@ namespace AuthorizationRPC.Services
                 }
                 foreach (AppliedRole role in roles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentRoles.Exists(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerClient.AddRole(coreSettings, role.PolicyName);
                 }
             }

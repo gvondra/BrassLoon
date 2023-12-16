@@ -92,9 +92,9 @@ namespace BrassLoon.Interface.Authorization
             return new SigningKey
             {
                 CreateTimestamp = signingKey.CreateTimestamp != default ? signingKey.CreateTimestamp.ToDateTime() : default,
-                DomainId = !string.IsNullOrEmpty(signingKey.DomainId) ? Guid.Parse(signingKey.DomainId) : default,
+                DomainId = !string.IsNullOrEmpty(signingKey.DomainId) ? Guid.Parse(signingKey.DomainId) : default(Guid?),
                 IsActive = signingKey.IsActive,
-                SigningKeyId = !string.IsNullOrEmpty(signingKey.SigningKeyId) ? Guid.Parse(signingKey.SigningKeyId) : default,
+                SigningKeyId = !string.IsNullOrEmpty(signingKey.SigningKeyId) ? Guid.Parse(signingKey.SigningKeyId) : default(Guid?),
                 UpdateTimestamp = signingKey.UpdateTimestamp != default ? signingKey.UpdateTimestamp.ToDateTime() : default
             };
         }

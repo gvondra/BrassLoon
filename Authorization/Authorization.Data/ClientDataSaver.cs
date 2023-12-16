@@ -26,18 +26,18 @@ namespace BrassLoon.Authorization.Data
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                    _ = command.Parameters.Add(id);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "secretKey", DbType.Guid, DataUtil.GetParameterValue(data.SecretKey));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "secretSalt", DbType.Binary, DataUtil.GetParameterValue(data.SecretSalt));
                     AddCommonParameters(command.Parameters, data);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     data.ClientId = (Guid)id.Value;
                     data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                     data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
@@ -58,12 +58,12 @@ namespace BrassLoon.Authorization.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.ClientId));
                     AddCommonParameters(command.Parameters, data);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }

@@ -20,20 +20,20 @@ namespace AuthorizationAPI
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthorizationAPIModule()));
+            _ = builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthorizationAPIModule()));
             // Add services to the container.
-            builder.Services.Configure<Settings>(builder.Configuration);
+            _ = builder.Services.Configure<Settings>(builder.Configuration);
 
-            builder.Services.AddLogging(b =>
+            _ = builder.Services.AddLogging(b =>
             {
-                b.ClearProviders();
-                b.AddConsole();
+                _ = b.ClearProviders();
+                _ = b.AddConsole();
                 Settings settings = new Settings();
                 builder.Configuration.Bind(settings);
                 if (settings.LoggingDomainId.HasValue && !string.IsNullOrEmpty(settings.LogApiBaseAddress) && settings.LoggingClientId.HasValue)
                 {
-                    b.AddBrassLoonLogger(c =>
+                    _ = b.AddBrassLoonLogger(c =>
                     {
                         c.LogApiBaseAddress = settings.LogApiBaseAddress;
                         c.LogDomainId = settings.LoggingDomainId.Value;
@@ -43,7 +43,7 @@ namespace AuthorizationAPI
                 }
             });
 
-            builder.Services.AddControllers()
+            _ = builder.Services.AddControllers()
             .AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.ContractResolver = new DefaultContractResolver();
@@ -53,10 +53,10 @@ namespace AuthorizationAPI
                 o.JsonSerializerOptions.PropertyNamingPolicy = null;
             })
             ;
-            builder.Services.AddCors(builder.Configuration);
+            _ = builder.Services.AddCors(builder.Configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(o =>
+            _ = builder.Services.AddEndpointsApiExplorer();
+            _ = builder.Services.AddSwaggerGen(o =>
             {
                 o.SwaggerDoc(
                     "v1",
@@ -86,7 +86,7 @@ namespace AuthorizationAPI
                 }
                 });
             });
-            builder.Services.AddAuthentication(o =>
+            _ = builder.Services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,25 +94,25 @@ namespace AuthorizationAPI
             .AddBrassLoonAuthentication(builder.Configuration)
             .AddGoogleAuthentication(builder.Configuration)
             ;
-            builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
-            builder.Services.AddAuthorization(builder.Configuration);
+            _ = builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            _ = builder.Services.AddAuthorization(builder.Configuration);
 
             WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                _ = app.UseDeveloperExceptionPage();
+                _ = app.UseSwagger();
+                _ = app.UseSwaggerUI();
             }
 
-            app.UseRouting();
-            app.UseCors();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            _ = app.UseRouting();
+            _ = app.UseCors();
+            _ = app.UseAuthentication();
+            _ = app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
+            _ = app.UseEndpoints(endpoints => endpoints.MapControllers());
 
             app.Run();
         }

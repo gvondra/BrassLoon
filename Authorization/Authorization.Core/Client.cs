@@ -13,7 +13,7 @@ using Azure.Security.KeyVault.Secrets;
 
 namespace BrassLoon.Authorization.Core
 {
-    public class Client : IClient, BrassLoon.DataClient.IDbTransactionObserver
+    public class Client : IClient, DataClient.IDbTransactionObserver
     {
         private readonly ClientData _data;
         private readonly IClientDataSaver _dataSaver;
@@ -156,7 +156,7 @@ namespace BrassLoon.Authorization.Core
                 _roles = (await _roleFactory.GetByClientId(settings, ClientId)).ToList();
             return (_roles ?? new List<IRole>())
                 .Concat(_addRoles ?? new List<IRole>())
-                .Where(r => _removeRoles == null || !_removeRoles.Any(rr => r.RoleId.Equals(rr.RoleId)));
+                .Where(r => _removeRoles == null || !_removeRoles.Exists(rr => r.RoleId.Equals(rr.RoleId)));
         }
 
         public async Task AddRole(Framework.ISettings settings, string policyName)

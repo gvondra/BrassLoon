@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
-    public class User : IUser, BrassLoon.DataClient.IDbTransactionObserver
+    public class User : IUser, DataClient.IDbTransactionObserver
     {
         private readonly UserData _data;
         private readonly IUserDataSaver _dataSaver;
@@ -109,7 +109,7 @@ namespace BrassLoon.Authorization.Core
                 _roles = (await _roleFactory.GetByUserId(settings, UserId)).ToList();
             return (_roles ?? new List<IRole>())
                 .Concat(_addRoles ?? new List<IRole>())
-                .Where(r => _removeRoles == null || !_removeRoles.Any(rr => r.RoleId.Equals(rr.RoleId)));
+                .Where(r => _removeRoles == null || !_removeRoles.Exists(rr => r.RoleId.Equals(rr.RoleId)));
         }
 
         public async Task RemoveRole(Framework.ISettings settings, string policyName)

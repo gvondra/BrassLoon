@@ -119,7 +119,7 @@ namespace AuthorizationAPI.Controllers
                 {
                     IRole innerRole = _roleFactory.Create(domainId.Value, role.PolicyName);
                     IMapper mapper = CreateMapper();
-                    mapper.Map(role, innerRole);
+                    _ = mapper.Map(role, innerRole);
                     await _roleSaver.Create(coreSettings, innerRole);
                     result = Ok(mapper.Map<Role>(innerRole));
                 }
@@ -159,7 +159,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerRole != null)
                 {
                     IMapper mapper = CreateMapper();
-                    mapper.Map(role, innerRole);
+                    _ = mapper.Map(role, innerRole);
                     await _roleSaver.Update(coreSettings, innerRole);
                     result = Ok(mapper.Map<Role>(innerRole));
                 }

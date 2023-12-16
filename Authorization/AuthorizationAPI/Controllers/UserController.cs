@@ -78,9 +78,9 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerUsers != null)
                 {
                     IMapper mapper = CreateMapper();
-                    IEnumerable<Task<User>> users = innerUsers.Select<IUser, Task<User>>(u => MapUser(coreSettings, mapper, u));
+                    IEnumerable<Task<User>> users = innerUsers.Select(u => MapUser(coreSettings, mapper, u));
                     result = Ok(
-                        await Task.WhenAll<User>(users)
+                        await Task.WhenAll(users)
                         );
                 }
                 if (result == null)
@@ -198,7 +198,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerUser != null)
                 {
                     IMapper mapper = CreateMapper();
-                    mapper.Map(user, innerUser);
+                    _ = mapper.Map(user, innerUser);
                     if (user.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerUser, user.Roles);
                     await _userSaver.Update(coreSettings, innerUser);
@@ -222,7 +222,7 @@ namespace AuthorizationAPI.Controllers
             IEmailAddress emailAddress = await innerUser.GetEmailAddress(coreSettings);
             user.EmailAddress = emailAddress?.Address ?? string.Empty;
             user.Roles = (await innerUser.GetRoles(coreSettings))
-                .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
+                .Select(r => mapper.Map<AppliedRole>(r))
                 .ToList();
             return user;
         }
@@ -235,12 +235,12 @@ namespace AuthorizationAPI.Controllers
                 List<IRole> currentRoles = (await innerUser.GetRoles(coreSettings)).ToList();
                 foreach (IRole currentRole in currentRoles)
                 {
-                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!roles.Exists(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.RemoveRole(coreSettings, currentRole.PolicyName);
                 }
                 foreach (AppliedRole role in roles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentRoles.Exists(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.AddRole(coreSettings, role.PolicyName);
                 }
             }

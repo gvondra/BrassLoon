@@ -9,17 +9,17 @@ namespace BrassLoon.Authorization.Data
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
-            builder.RegisterType<ClientDataFactory>().As<IClientDataFactory>();
-            builder.RegisterType<ClientDataSaver>().As<IClientDataSaver>();
-            builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
-            builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
-            builder.RegisterType<RoleDataFactory>().As<IRoleDataFactory>();
-            builder.RegisterType<RoleDataSaver>().As<IRoleDataSaver>();
-            builder.RegisterType<SigningKeyDataFactory>().As<ISigningKeyDataFactory>();
-            builder.RegisterType<SigningKeyDataSaver>().As<ISigningKeyDataSaver>();
-            builder.RegisterType<UserDataFactory>().As<IUserDataFactory>();
-            builder.RegisterType<UserDataSaver>().As<IUserDataSaver>();
+            _ = builder.RegisterType<BrassLoon.DataClient.SqlClientProviderFactory>().As<IDbProviderFactory>();
+            _ = builder.RegisterType<ClientDataFactory>().As<IClientDataFactory>();
+            _ = builder.RegisterType<ClientDataSaver>().As<IClientDataSaver>();
+            _ = builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
+            _ = builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
+            _ = builder.RegisterType<RoleDataFactory>().As<IRoleDataFactory>();
+            _ = builder.RegisterType<RoleDataSaver>().As<IRoleDataSaver>();
+            _ = builder.RegisterType<SigningKeyDataFactory>().As<ISigningKeyDataFactory>();
+            _ = builder.RegisterType<SigningKeyDataSaver>().As<ISigningKeyDataSaver>();
+            _ = builder.RegisterType<UserDataFactory>().As<IUserDataFactory>();
+            _ = builder.RegisterType<UserDataSaver>().As<IUserDataSaver>();
         }
     }
 }

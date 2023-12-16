@@ -23,12 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authorization.CoreTest", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC07A027-6BD2-48E0-88B4-FF93A1B73B82}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		..\.editorconfig = ..\.editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationRPC", "AuthorizationRPC\AuthorizationRPC.csproj", "{7384A5E6-2E2C-4190-96D4-15DD328225DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationRPC", "AuthorizationRPC\AuthorizationRPC.csproj", "{7384A5E6-2E2C-4190-96D4-15DD328225DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "TestClient\TestClient.csproj", "{750C84E6-CF34-4BE9-8FD0-A34DD9ED74F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClient", "TestClient\TestClient.csproj", "{750C84E6-CF34-4BE9-8FD0-A34DD9ED74F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

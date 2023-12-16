@@ -2,7 +2,6 @@
 using BrassLoon.Interface.Authorization.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
@@ -31,7 +30,7 @@ namespace BrassLoon.Authorization.TestClient
             string accessToken = await _tokenService.Create(_settingsFactory.CreateAccount(AccessToken.Get.GetGoogleIdToken()));
             AuthorizationSettings settings = _settingsFactory.CreateAuthorization(accessToken);
             List<Role> roles = await _roleService.GetByDomainId(settings, _settings.AuthorizationDomainId.Value);
-            Role testRole = roles.FirstOrDefault(r => Regex.IsMatch(r.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            Role testRole = roles.Find(r => Regex.IsMatch(r.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testRole == null)
             {
                 testRole = new Role
@@ -50,7 +49,7 @@ namespace BrassLoon.Authorization.TestClient
             testRole = await _roleService.Update(settings, testRole);
             Console.WriteLine($"Update responded with name: {testRole.Name}");
             roles = await _roleService.GetByDomainId(settings, _settings.AuthorizationDomainId.Value);
-            testRole = roles.FirstOrDefault(r => Regex.IsMatch(r.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            testRole = roles.Find(r => Regex.IsMatch(r.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             Console.WriteLine($"Get responded with name: {testRole?.Name ?? string.Empty}");
         }
     }

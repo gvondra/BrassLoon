@@ -14,21 +14,21 @@ namespace AuthorizationAPI
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
-            config.CreateMap<IRole, AppliedRole>();
-            config.CreateMap<Client, IClient>()
+            _ = config.CreateMap<IRole, AppliedRole>();
+            _ = config.CreateMap<Client, IClient>()
                 .ForMember(c => c.IsActive, exp => exp.MapFrom(c => c.IsActive ?? true))
                 ;
-            config.CreateMap<IClient, Client>();
-            config.CreateMap<Role, IRole>()
+            _ = config.CreateMap<IClient, Client>();
+            _ = config.CreateMap<Role, IRole>()
                 .ForMember(r => r.IsActive, exp => exp.MapFrom(r => r.IsActive ?? true))
                 ;
-            config.CreateMap<IRole, Role>();
-            config.CreateMap<SigningKey, ISigningKey>()
+            _ = config.CreateMap<IRole, Role>();
+            _ = config.CreateMap<SigningKey, ISigningKey>()
             .ForMember(k => k.IsActive, exp => exp.MapFrom(k => k.IsActive ?? true))
                 ;
-            config.CreateMap<ISigningKey, SigningKey>();
-            config.CreateMap<User, IUser>();
-            config.CreateMap<IUser, User>();
+            _ = config.CreateMap<ISigningKey, SigningKey>();
+            _ = config.CreateMap<User, IUser>();
+            _ = config.CreateMap<IUser, User>();
         }
 
         public virtual IMapper Create() => new Mapper(_configuration);
