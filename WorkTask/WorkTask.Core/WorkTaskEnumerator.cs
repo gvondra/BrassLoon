@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
 {
-    internal class WorkTaskEnumerator : IAsyncEnumerable<IWorkTask>, IAsyncEnumerator<IWorkTask>
+    internal sealed class WorkTaskEnumerator : IAsyncEnumerable<IWorkTask>, IAsyncEnumerator<IWorkTask>
     {
         private readonly Func<Task<IAsyncEnumerator<WorkTaskData>>> _getDataEnumerator;
         private readonly Func<WorkTaskData, IWorkTask> _create;

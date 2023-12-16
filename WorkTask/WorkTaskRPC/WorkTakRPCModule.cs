@@ -4,6 +4,7 @@ using WorkTaskRPC.Services;
 
 namespace WorkTaskRPC
 {
+#pragma warning disable S101 // Types should be named in PascalCase
     public class WorkTakRPCModule : Module
     {
         protected override void Load(ContainerBuilder builder)
@@ -23,4 +24,5 @@ namespace WorkTaskRPC
             _ = builder.RegisterType<WorkTaskTypeService>();
         }
     }
+#pragma warning restore S101 // Types should be named in PascalCase
 }

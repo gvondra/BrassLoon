@@ -1,6 +1,7 @@
 ﻿using Autofac;
 namespace WorkTaskAPI
 {
+#pragma warning disable S101 // Types should be named in PascalCase
     public class WorkTaskAPIModule : Module
     {
         protected override void Load(ContainerBuilder builder)
@@ -13,4 +14,5 @@ namespace WorkTaskAPI
             _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
+#pragma warning restore S101 // Types should be named in PascalCase
 }

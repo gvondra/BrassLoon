@@ -2,8 +2,6 @@
 using BrassLoon.WorkTask.Core;
 using BrassLoon.WorkTask.Framework;
 using Moq;
-using Newtonsoft;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;

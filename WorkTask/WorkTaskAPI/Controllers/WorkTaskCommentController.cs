@@ -65,7 +65,7 @@ namespace WorkTaskAPI.Controllers
                     IEnumerable<IComment> comments = await _workTaskCommentFactory.GetByWorkTaskId(settings, domainId.Value, workTaskId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        comments.Select(c => mapper.Map<Comment>(c))
+                        comments.Select(mapper.Map<Comment>)
                         );
                 }
             }
@@ -112,7 +112,7 @@ namespace WorkTaskAPI.Controllers
                     await _commentSaver.Create(settings, innerComments.ToArray());
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerComments.Select(c => mapper.Map<Comment>(c))
+                        innerComments.Select(mapper.Map<Comment>)
                         );
                 }
             }

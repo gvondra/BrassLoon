@@ -77,7 +77,7 @@ namespace WorkTaskRPC.Services
                 Guid domainId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.Code))
+                if (string.IsNullOrEmpty(request.Code))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing work task type code value");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
@@ -110,8 +110,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request?.WorkTaskTypeId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request.WorkTaskTypeId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -143,8 +143,8 @@ namespace WorkTaskRPC.Services
                 Guid workGroupId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out workGroupId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out workGroupId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -212,8 +212,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request?.WorkTaskTypeId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request.WorkTaskTypeId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),

@@ -98,7 +98,7 @@ namespace BrassLoon.WorkTask.TestClient
             return builder.Build();
         }
 
-        private static ILogger CreateLogger(string fileName)
+        private static Serilog.Core.Logger CreateLogger(string fileName)
         {
             LoggerConfiguration configuration = new LoggerConfiguration()
                 .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);

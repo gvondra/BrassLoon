@@ -127,7 +127,7 @@ csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = false:silent
 csharp_space_around_binary_operators = before_and_after
-csharp_style_throw_expression = true:suggestion
+csharp_style_throw_expression = true:none
 csharp_style_prefer_null_check_over_type_check = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
 csharp_style_prefer_local_over_anonymous_function = true:suggestion
@@ -191,3 +191,9 @@ dotnet_diagnostic.CA2201.severity = none
 
 # S112: General or reserved exceptions should never be thrown
 dotnet_diagnostic.S112.severity = none
+
+# IDE0016: Use 'throw' expression
+dotnet_diagnostic.IDE0016.severity = none
+
+# CA1854: Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
+dotnet_diagnostic.CA1854.severity = none

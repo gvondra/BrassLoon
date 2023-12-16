@@ -1,6 +1,7 @@
 ﻿using BrassLoon.CommonAPI;
 using BrassLoon.Interface.WorkTask.Protos;
 using BrassLoon.WorkTask.Framework;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -57,8 +58,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskId) || !Guid.TryParse(request?.WorkTaskId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request?.WorkTaskId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskId) || !Guid.TryParse(request.WorkTaskId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request.WorkTaskId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -71,7 +72,7 @@ namespace WorkTaskRPC.Services
                 IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, domainId, id);
                 if (innerWorkTask == null)
                     throw new RpcException(new Status(StatusCode.NotFound, "Work Task Not Found"));
-                DateTime? assignedDate = !string.IsNullOrEmpty(request.AssignedDate) ? DateTime.Parse(request.AssignedDate, CultureInfo.InvariantCulture) : default;
+                DateTime? assignedDate = !string.IsNullOrEmpty(request.AssignedDate) ? DateTime.Parse(request.AssignedDate, CultureInfo.InvariantCulture) : default(DateTime?);
                 ClaimWorkTaskResponse response = null;
                 if (!string.IsNullOrEmpty(request.AssignToUserId)
                     && !string.IsNullOrEmpty(innerWorkTask.AssignedToUserId)
@@ -93,6 +94,7 @@ namespace WorkTaskRPC.Services
                 }
                 if (response == null)
                 {
+                    response = new ClaimWorkTaskResponse();
                     response.IsAssigned = await _workTaskSaver.Claim(settings, domainId, id, request.AssignToUserId, assignedDate);
                     if (response.IsAssigned)
                     {
@@ -172,8 +174,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskId) || !Guid.TryParse(request.WorkTaskId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task id \"{request?.WorkTaskId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskId) || !Guid.TryParse(request.WorkTaskId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task id \"{request.WorkTaskId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -240,7 +242,7 @@ namespace WorkTaskRPC.Services
                 Guid domainId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.ReferenceValue))
+                if (string.IsNullOrEmpty(request.ReferenceValue))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing reference value");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
@@ -276,8 +278,8 @@ namespace WorkTaskRPC.Services
                 Guid workGroupId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out workGroupId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out workGroupId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -341,7 +343,7 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        private static void ValidatePatchData(IDictionary<string, string> patchData)
+        private static void ValidatePatchData(MapField<string, string> patchData)
         {
             int i;
             string[] required = new string[] { "WorkTaskId" };
@@ -435,7 +437,7 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        private static void Map(Protos.WorkTask workTask, IWorkTask innerWorkTask)
+        private static void Map(WorkTask workTask, IWorkTask innerWorkTask)
         {
             innerWorkTask.AssignedDate = !string.IsNullOrEmpty(workTask.AssignedDate) ? DateTime.Parse(workTask.AssignedDate, CultureInfo.InvariantCulture) : default;
             innerWorkTask.AssignedToUserId = workTask.AssignedToUserId;
@@ -443,9 +445,9 @@ namespace WorkTaskRPC.Services
             innerWorkTask.Title = workTask.Title;
         }
 
-        private static Protos.WorkTask Map(IWorkTask innerWorkTask)
+        private static WorkTask Map(IWorkTask innerWorkTask)
         {
-            Protos.WorkTask result = new Protos.WorkTask
+            WorkTask result = new WorkTask
             {
                 AssignedDate = innerWorkTask.AssignedDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty,
                 AssignedToUserId = innerWorkTask.AssignedToUserId,
@@ -466,9 +468,9 @@ namespace WorkTaskRPC.Services
             return result;
         }
 
-        private static Protos.WorkTaskContext Map(IWorkTaskContext innerWorkTaskContext)
+        private static WorkTaskContext Map(IWorkTaskContext innerWorkTaskContext)
         {
-            return new Protos.WorkTaskContext
+            return new WorkTaskContext
             {
                 CreateTimestamp = Timestamp.FromDateTime(innerWorkTaskContext.CreateTimestamp),
                 DomainId = innerWorkTaskContext.DomainId.ToString("D"),

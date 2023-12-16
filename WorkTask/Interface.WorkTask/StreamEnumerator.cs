@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.WorkTask
 {
-    internal class StreamEnumerator<TProto, TModel> : IAsyncEnumerator<TModel>
+    internal sealed class StreamEnumerator<TProto, TModel> : IAsyncEnumerator<TModel>
     {
         private readonly GrpcChannel _channel;
         private readonly Func<GrpcChannel, Task<AsyncServerStreamingCall<TProto>>> _openStreamingCall;

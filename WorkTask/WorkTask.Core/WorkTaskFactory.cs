@@ -42,10 +42,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            if (workTaskType == null)
-                throw new ArgumentNullException(nameof(workTaskType));
-            if (workTaskStatus == null)
-                throw new ArgumentNullException(nameof(workTaskStatus));
+            ArgumentNullException.ThrowIfNull(workTaskType);
+            ArgumentNullException.ThrowIfNull(workTaskStatus);
             if (!workTaskStatus.WorkTaskTypeId.Equals(workTaskType.WorkTaskTypeId))
                 throw new ApplicationException("Invalid work task type and status combination");
             WorkTask workTask = Create(
@@ -84,7 +82,7 @@ namespace BrassLoon.WorkTask.Core
         {
             return (await _dataFactory.GetByWorkGroupId(new DataSettings(settings), workGroupId, includeClosed))
                 .Where(data => data.DomainId.Equals(domainId))
-                .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
+                .Select<WorkTaskData, IWorkTask>(LoadWorkTask)
                 .ToList();
         }
 
@@ -92,7 +90,7 @@ namespace BrassLoon.WorkTask.Core
         {
             WorkTaskType workTaskType = _typeFactory.Create(data.WorkTaskType);
             WorkTaskStatus workTaskStatus = _statusFactory.Create(data.WorkTaskStatus);
-            List<IWorkTaskContext> taskContexts = data.WorkTaskContexts.Select<WorkTaskContextData, IWorkTaskContext>(d => Create(d)).ToList();
+            List<IWorkTaskContext> taskContexts = data.WorkTaskContexts.Select<WorkTaskContextData, IWorkTaskContext>(Create).ToList();
             WorkTask workTask = Create(data, workTaskType, taskContexts);
             workTask.WorkTaskStatus = workTaskStatus;
             return workTask;
@@ -102,7 +100,7 @@ namespace BrassLoon.WorkTask.Core
         {
             return (await _dataFactory.GetByContextReference(new DataSettings(settings), domainId, referenceType, WorkTaskContextHash.Compute(referenceValue), includeClosed))
                 .Where(d => d.WorkTaskContexts.Exists(ctx => referenceType == ctx.ReferenceType && string.Equals(referenceValue, ctx.ReferenceValue, StringComparison.OrdinalIgnoreCase)))
-                .Select<WorkTaskData, IWorkTask>(d => LoadWorkTask(d))
+                .Select<WorkTaskData, IWorkTask>(LoadWorkTask)
                 .ToList();
         }
 
@@ -110,7 +108,7 @@ namespace BrassLoon.WorkTask.Core
         {
             return Task.FromResult<IAsyncEnumerable<IWorkTask>>(new WorkTaskEnumerator(
                  async () => (await _dataFactory.GetAll(new DataSettings(settings), domainId)).GetAsyncEnumerator(),
-                (data) => LoadWorkTask(data)));
+                LoadWorkTask));
         }
     }
 }

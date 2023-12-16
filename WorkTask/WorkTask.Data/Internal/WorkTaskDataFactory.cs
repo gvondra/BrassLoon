@@ -168,7 +168,7 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         private static async Task<IEnumerable<WorkTaskContextData>> GetContextByWorkTaskId(ISqlSettings settings, IDbProviderFactory providerFactory, Guid workTaskId)
         {
-            IGenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
+            GenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
             IDataParameter parameter = DataUtil.CreateParameter(providerFactory, "workTaskId", DbType.Guid, workTaskId);
             return await genericDataFactory.GetData(settings,
                 providerFactory,

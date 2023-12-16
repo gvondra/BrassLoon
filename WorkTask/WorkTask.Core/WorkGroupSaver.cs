@@ -20,8 +20,7 @@ namespace BrassLoon.WorkTask.Core
 
         public Task Create(ISettings settings, params IWorkGroup[] workGroups)
         {
-            if (workGroups == null)
-                throw new ArgumentNullException(nameof(workGroups));
+            ArgumentNullException.ThrowIfNull(workGroups);
             return _saver.Save(new TransactionHandler(settings), async th =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)
@@ -39,8 +38,7 @@ namespace BrassLoon.WorkTask.Core
 
         public Task Update(ISettings settings, params IWorkGroup[] workGroups)
         {
-            if (workGroups == null)
-                throw new ArgumentNullException(nameof(workGroups));
+            ArgumentNullException.ThrowIfNull(workGroups);
             return _saver.Save(new TransactionHandler(settings), async th =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)

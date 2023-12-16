@@ -49,10 +49,10 @@ namespace WorkTaskRPC.Services
                 Guid workTaskTypeId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request?.WorkTaskTypeId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request.WorkTaskTypeId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -86,10 +86,10 @@ namespace WorkTaskRPC.Services
                 Guid workTaskTypeId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request?.WorkTaskTypeId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task type id \"{request.WorkTaskTypeId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -122,8 +122,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -189,7 +189,7 @@ namespace WorkTaskRPC.Services
                 Guid domainId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.UserId))
+                if (string.IsNullOrEmpty(request.UserId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing member user id value");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
@@ -261,8 +261,8 @@ namespace WorkTaskRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request?.WorkGroupId}\"");
+                if (string.IsNullOrEmpty(request.WorkGroupId) || !Guid.TryParse(request.WorkGroupId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work group id \"{request.WorkGroupId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -292,7 +292,7 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        private static void Validate(Protos.WorkGroup workGroup)
+        private static void Validate(WorkGroup workGroup)
         {
             if (string.IsNullOrEmpty(workGroup?.Title))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), "Missing work group title value");
@@ -317,15 +317,15 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        private static void Map(Protos.WorkGroup workGroup, IWorkGroup innerWorkGroup)
+        private static void Map(WorkGroup workGroup, IWorkGroup innerWorkGroup)
         {
             innerWorkGroup.Description = workGroup.Description;
             innerWorkGroup.Title = workGroup.Title;
         }
 
-        private static Protos.WorkGroup Map(IWorkGroup innerWorkGroup)
+        private static WorkGroup Map(IWorkGroup innerWorkGroup)
         {
-            Protos.WorkGroup result = new Protos.WorkGroup
+            WorkGroup result = new WorkGroup
             {
                 CreateTimestamp = Timestamp.FromDateTime(innerWorkGroup.CreateTimestamp),
                 Description = innerWorkGroup.Description,

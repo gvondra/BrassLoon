@@ -164,7 +164,7 @@ namespace BrassLoon.Interface.WorkTask
             }
         }
 
-        private static AsyncPolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
+        private static AsyncCachePolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
 
         private static void ResetAllCaches()
         {

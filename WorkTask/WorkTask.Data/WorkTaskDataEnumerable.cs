@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data
 {
-    internal class WorkTaskDataEnumerable : IAsyncEnumerable<WorkTaskData>
+    internal sealed class WorkTaskDataEnumerable : IAsyncEnumerable<WorkTaskData>
     {
         private readonly ISqlSettings _settings;
         private readonly IDbProviderFactory ProviderFactory;
