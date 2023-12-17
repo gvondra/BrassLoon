@@ -27,10 +27,11 @@ namespace BrassLoon.Address.Data.Internal
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<AddressData>> GetByHash(ISqlSettings settings, byte[] hash)
+        public async Task<IEnumerable<AddressData>> GetByHash(ISqlSettings settings, Guid domainId, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
+                DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(ProviderFactory, "hash", DbType.Binary, hash)
             };
             return await GenericDataFactory.GetData(settings,

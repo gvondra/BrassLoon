@@ -7,15 +7,16 @@ namespace BrassLoon.Address.Data.Models
         [ColumnMapping(IsPrimaryKey = true)] public Guid AddressId { get; set; }
         [ColumnMapping] public Guid DomainId { get; set; }
         [ColumnMapping] public Guid KeyId { get; set; }
+        public byte[] InitializationVector { get; set; }
         [ColumnMapping] public byte[] Hash { get; set; }
-        public string Attention { get; set; }
-        public string Addressee { get; set; }
-        public string Delivery { get; set; }
-        public string City { get; set; }
-        public string Territory { get; set; }
-        public string PostalCode { get; set; }
-        public string Country { get; set; }
-        public string County { get; set; }
+        public byte[] Attention { get; set; }
+        public byte[] Addressee { get; set; }
+        public byte[] Delivery { get; set; }
+        public byte[] City { get; set; }
+        public byte[] Territory { get; set; }
+        public byte[] PostalCode { get; set; }
+        public byte[] Country { get; set; }
+        public byte[] County { get; set; }
         [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
     }
 }

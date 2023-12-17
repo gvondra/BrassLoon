@@ -8,6 +8,6 @@ namespace BrassLoon.Address.Data
     public interface IAddressDataFactory
     {
         Task<AddressData> Get(ISqlSettings settings, Guid id);
-        Task<IEnumerable<AddressData>> GetByHash(ISqlSettings settings, byte[] hash);
+        Task<IEnumerable<AddressData>> GetByHash(ISqlSettings settings, Guid domainId, byte[] hash);
     }
 }

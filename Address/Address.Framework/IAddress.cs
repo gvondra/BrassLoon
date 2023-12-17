@@ -1,9 +1,6 @@
-﻿using BrassLoon.CommonCore;
-using System.Threading.Tasks;
-
-namespace BrassLoon.Address.Framework
+﻿namespace BrassLoon.Address.Framework
 {
-    public interface IAddress
+    public interface IAddress : IEquatable<IAddress>
     {
         Guid AddressId { get; }
         Guid DomainId { get; }
@@ -16,7 +13,5 @@ namespace BrassLoon.Address.Framework
         string Country { get; set; }
         string County { get; set; }
         DateTime CreateTimestamp { get; }
-
-        Task<IAddress> Save(ITransactionHandler transactionHandler);
     }
 }

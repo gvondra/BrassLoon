@@ -197,3 +197,6 @@ dotnet_diagnostic.IDE0016.severity = none
 
 # CA1854: Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
 dotnet_diagnostic.CA1854.severity = none
+
+# S3249: Classes directly extending "object" should not call "base" in "GetHashCode" or "Equals"
+dotnet_diagnostic.S3249.severity = suggestion

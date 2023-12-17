@@ -1,6 +1,6 @@
 ﻿namespace BrassLoon.Authorization.Framework
 {
-    public interface ISettings : BrassLoon.CommonCore.ISettings
+    public interface ISettings : CommonCore.ISettings
     {
         string SigningKeyVaultAddress { get; }
         string ClientSecretVaultAddress { get; }
