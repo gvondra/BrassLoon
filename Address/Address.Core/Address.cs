@@ -5,9 +5,8 @@ namespace BrassLoon.Address.Core
     public sealed class Address : IAddress
     {
         public Guid AddressId { get; internal set; }
-
         public Guid DomainId { get; internal set; }
-
+        public byte[] Hash { get; internal set; }
         public string Attention { get; set; }
         public string Addressee { get; set; }
         public string Delivery { get; set; }

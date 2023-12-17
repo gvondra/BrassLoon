@@ -200,3 +200,6 @@ dotnet_diagnostic.CA1854.severity = none
 
 # S3249: Classes directly extending "object" should not call "base" in "GetHashCode" or "Equals"
 dotnet_diagnostic.S3249.severity = suggestion
+
+# S1168: Empty arrays and collections should be returned instead of null
+dotnet_diagnostic.S1168.severity = suggestion

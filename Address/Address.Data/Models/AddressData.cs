@@ -7,7 +7,7 @@ namespace BrassLoon.Address.Data.Models
         [ColumnMapping(IsPrimaryKey = true)] public Guid AddressId { get; set; }
         [ColumnMapping] public Guid DomainId { get; set; }
         [ColumnMapping] public Guid KeyId { get; set; }
-        public byte[] InitializationVector { get; set; }
+        [ColumnMapping] public byte[] InitializationVector { get; set; }
         [ColumnMapping] public byte[] Hash { get; set; }
         public byte[] Attention { get; set; }
         public byte[] Addressee { get; set; }

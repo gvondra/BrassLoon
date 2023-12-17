@@ -20,7 +20,7 @@ namespace BrassLoon.Address.Core
             _keyVault = keyVault;
         }
 
-        private async Task<Address> Create(Framework.ISettings settings, AddressData data)
+        internal async Task<Address> Create(Framework.ISettings settings, AddressData data)
         {
             KeyVaultSecret secret = await _keyVault.GetSecret(settings.KeyVaultAddress, data.KeyId.ToString("D"));
             byte[] key = Convert.FromBase64String(secret.Value);
@@ -28,6 +28,7 @@ namespace BrassLoon.Address.Core
             {
                 AddressId = data.AddressId,
                 DomainId = data.DomainId,
+                Hash = data.Hash,
                 Attention = AddressCryptography.Decrypt(key, data.InitializationVector, data.Attention),
                 Addressee = AddressCryptography.Decrypt(key, data.InitializationVector, data.Addressee),
                 Delivery = AddressCryptography.Decrypt(key, data.InitializationVector, data.Delivery),

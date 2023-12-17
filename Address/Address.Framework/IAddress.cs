@@ -4,6 +4,7 @@
     {
         Guid AddressId { get; }
         Guid DomainId { get; }
+        byte[] Hash { get; }
         string Attention { get; set; }
         string Addressee { get; set; }
         string Delivery { get; set; }
