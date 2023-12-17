@@ -75,7 +75,7 @@ namespace BrassLoon.Address.Core.Tet
             Assert.AreEqual(address.Object.Territory, result.Territory);
             Assert.AreEqual(address.Object.PostalCode, result.PostalCode);
             Assert.AreEqual(address.Object.Country, result.Country);
-            Assert.IsNull(result.County);
+            Assert.AreEqual(string.Empty, result.County);
             Assert.AreNotEqual(Guid.Empty, result.AddressId);
             Assert.AreNotEqual(DateTime.MinValue, result.CreateTimestamp);
             Assert.IsTrue(DateTime.UtcNow.AddMinutes(-2) <= result.CreateTimestamp && result.CreateTimestamp <= DateTime.UtcNow);

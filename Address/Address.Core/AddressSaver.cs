@@ -39,14 +39,14 @@ namespace BrassLoon.Address.Core
                     KeyId = _keyId.Value,
                     InitializationVector = iv,
                     Hash = AddressHash.Hash(address),
-                    Attention = AddressCryptography.Encrypt(key, iv, address.Attention),
-                    Addressee = AddressCryptography.Encrypt(key, iv, address.Addressee),
-                    Delivery = AddressCryptography.Encrypt(key, iv, address.Delivery),
-                    City = AddressCryptography.Encrypt(key, iv, address.City),
-                    Territory = AddressCryptography.Encrypt(key, iv, address.Territory),
-                    PostalCode = AddressCryptography.Encrypt(key, iv, address.PostalCode),
-                    Country = AddressCryptography.Encrypt(key, iv, address.Country),
-                    County = AddressCryptography.Encrypt(key, iv, address.County)
+                    Attention = AddressCryptography.Encrypt(key, iv, (address.Attention ?? string.Empty).Trim()),
+                    Addressee = AddressCryptography.Encrypt(key, iv, (address.Addressee ?? string.Empty).Trim()),
+                    Delivery = AddressCryptography.Encrypt(key, iv, (address.Delivery ?? string.Empty).Trim()),
+                    City = AddressCryptography.Encrypt(key, iv, (address.City ?? string.Empty).Trim()),
+                    Territory = AddressCryptography.Encrypt(key, iv, (address.Territory ?? string.Empty).Trim()),
+                    PostalCode = AddressCryptography.Encrypt(key, iv, (address.PostalCode ?? string.Empty).Trim()),
+                    Country = AddressCryptography.Encrypt(key, iv, (address.Country ?? string.Empty).Trim()),
+                    County = AddressCryptography.Encrypt(key, iv, (address.County ?? string.Empty).Trim())
                 };
                 await _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
                 result = await _addressFactory.Create(settings, data);

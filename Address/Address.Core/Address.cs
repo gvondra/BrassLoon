@@ -7,14 +7,14 @@ namespace BrassLoon.Address.Core
         public Guid AddressId { get; internal set; }
         public Guid DomainId { get; internal set; }
         public byte[] Hash { get; internal set; }
-        public string Attention { get; set; }
-        public string Addressee { get; set; }
-        public string Delivery { get; set; }
-        public string City { get; set; }
-        public string Territory { get; set; }
-        public string PostalCode { get; set; }
-        public string Country { get; set; }
-        public string County { get; set; }
+        public string Attention { get; set; } = string.Empty;
+        public string Addressee { get; set; } = string.Empty;
+        public string Delivery { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Territory { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public string County { get; set; } = string.Empty;
 
         public DateTime CreateTimestamp { get; internal set; }
 
