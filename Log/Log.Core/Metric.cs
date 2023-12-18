@@ -57,7 +57,9 @@ namespace BrassLoon.Log.Core
 
         public string Status { get => _data.Status; set => _data.Status = value; }
         public string Requestor { get => _data.Requestor; set => _data.Requestor = value; }
+#pragma warning disable S1144 // Unused private types or members should be removed
         private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+#pragma warning restore S1144 // Unused private types or members should be removed
         public string Category { get => _data.Category; set => _data.Category = value; }
         public string Level { get => _data.Level; set => _data.Level = value; }
 

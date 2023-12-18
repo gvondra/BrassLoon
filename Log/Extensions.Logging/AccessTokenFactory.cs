@@ -51,6 +51,7 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
+#pragma warning disable CA1850 // Prefer static 'HashData' method over 'ComputeHash'
         private static string GetCacheKey(LoggerConfiguration loggerConfiguration)
         {
             return string.Format(
@@ -62,5 +63,6 @@ namespace BrassLoon.Extensions.Logging
                         Encoding.UTF8.GetBytes(
                             loggerConfiguration.LogClientSecret))));
         }
+#pragma warning restore CA1850 // Prefer static 'HashData' method over 'ComputeHash'
     }
 }

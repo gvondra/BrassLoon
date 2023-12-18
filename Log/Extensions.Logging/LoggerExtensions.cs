@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
+#if !NETSTANDARD
 using System.Globalization;
+#endif
 using System.Text;
 
 namespace BrassLoon.Extensions.Logging

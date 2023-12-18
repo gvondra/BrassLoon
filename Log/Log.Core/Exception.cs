@@ -64,9 +64,13 @@ namespace BrassLoon.Log.Core
         }
 
         internal IException ParentException { get; set; }
+#pragma warning disable S1144 // Unused private types or members should be removed
         private long? ParentExceptionId { get => _data.ParentExceptionId; set => _data.ParentExceptionId = value; }
+#pragma warning restore S1144 // Unused private types or members should be removed
         public DateTime CreateTimestamp => _data.CreateTimestamp;
+#pragma warning disable S1144 // Unused private types or members should be removed
         private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+#pragma warning restore S1144 // Unused private types or members should be removed
         public string Category { get => _data.Category; set => _data.Category = value; }
         public string Level { get => _data.Level; set => _data.Level = value; }
 

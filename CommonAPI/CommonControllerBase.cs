@@ -49,8 +49,7 @@ namespace BrassLoon.CommonAPI
         {
             try
             {
-                using HashAlgorithm hashAlgorithm = SHA256.Create();
-                string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
+                string hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(accessToken)));
                 return await m_cache.Execute(async context =>
                 {
                     return await domainService.GetAccountDomain(
