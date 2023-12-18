@@ -9,7 +9,7 @@ namespace BrassLoon.Log.Data
 {
     public class EventIdDataSaver : IEventIdDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public EventIdDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -29,17 +29,17 @@ namespace BrassLoon.Log.Data
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "eventId", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                    _ = command.Parameters.Add(id);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Int32, DataUtil.GetParameterValue(data.Id));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     data.EventId = (Guid)id.Value;
                     data.CreateTimestamp = (DateTime)timestamp.Value;
                 }

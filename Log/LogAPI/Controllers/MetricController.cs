@@ -45,23 +45,31 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain id parameter value");
-                if (result == null && !maxTimestamp.HasValue)
-                    result = BadRequest("Missing max timestamp parameter value");
-                if (result == null && string.IsNullOrEmpty(eventCode))
-                    result = BadRequest("Missing event code parameter value");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value)))
+                    result = BadRequest("Missing domain id parameter value");
+                }
+                else if (!maxTimestamp.HasValue)
+                {
+                    result = BadRequest("Missing max timestamp parameter value");
+                }
+                else if (string.IsNullOrEmpty(eventCode))
+                {
+                    result = BadRequest("Missing event code parameter value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccount(domainId.Value))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         CoreSettings settings = CreateCoreSettings();
                         IMapper mapper = CreateMapper();
                         result = Ok(
                             (await _metricFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
-                            .Select<IMetric, LogModels.Metric>(innerMetric => mapper.Map<LogModels.Metric>(innerMetric))
+                            .Select(mapper.Map<LogModels.Metric>)
                             );
                     }
                 }
@@ -80,15 +88,19 @@ namespace LogAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain id parameter value");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value)))
+                    result = BadRequest("Missing domain id parameter value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccount(domainId.Value))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         CoreSettings settings = CreateCoreSettings();
@@ -114,11 +126,13 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!metric.DomainId.HasValue || metric.DomainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain guid value");
-                if (result == null)
+                if (!metric.DomainId.HasValue || metric.DomainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(metric.DomainId.Value, _settings.Value, _domainService)))
+                    result = BadRequest("Missing domain guid value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccountWriteAccess(metric.DomainId.Value, _settings.Value, _domainService))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
@@ -128,12 +142,12 @@ namespace LogAPI.Controllers
                         IEventId eventId = await GetInnerEventId(settings, metric.DomainId.Value, metric.EventId);
                         IMetric innerMetric = _metricFactory.Create(metric.DomainId.Value, metric.CreateTimestamp, metric.EventCode, eventId);
                         IMapper mapper = CreateMapper();
-                        mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
+                        _ = mapper.Map(metric, innerMetric);
                         await _metricSaver.Create(settings, innerMetric);
                         result = Ok(mapper.Map<LogModels.Metric>(innerMetric));
                     }
                 }
-            }    
+            }
             catch (Exception ex)
             {
                 await LogException(ex);
@@ -162,13 +176,17 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain guid value");
-                if (result == null && metrics == null)
-                    result = BadRequest("Missing metric list message body");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService)))
+                    result = BadRequest("Missing domain guid value");
+                }
+                else if (metrics == null)
+                {
+                    result = BadRequest("Missing metric list message body");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
@@ -179,9 +197,9 @@ namespace LogAPI.Controllers
                         List<IMetric> innerMetrics = new List<IMetric>(metrics.Count);
                         foreach (LogModels.Metric metric in metrics)
                         {
-                            IEventId eventId = await GetInnerEventId(settings,domainId.Value, metric.EventId);
+                            IEventId eventId = await GetInnerEventId(settings, domainId.Value, metric.EventId);
                             IMetric innerMetric = _metricFactory.Create(domainId.Value, metric.CreateTimestamp, metric.EventCode, eventId);
-                            mapper.Map<LogModels.Metric, IMetric>(metric, innerMetric);
+                            _ = mapper.Map(metric, innerMetric);
                             innerMetrics.Add(innerMetric);
                         }
                         await _metricSaver.Create(settings, innerMetrics.ToArray());

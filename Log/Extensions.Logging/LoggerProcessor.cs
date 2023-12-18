@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +20,8 @@ namespace BrassLoon.Extensions.Logging
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
         private readonly IAccessTokenFactory _accessTokenFactory;
         private bool _disposedValue;
-        private Queue<LogMessageEntry> _logEntries;
-        private bool _exit; 
+        private readonly Queue<LogMessageEntry> _logEntries;
+        private bool _exit;
 
         public LoggerProcessor(
             IOptionsMonitor<LoggerConfiguration> options,
@@ -44,7 +45,7 @@ namespace BrassLoon.Extensions.Logging
             {
                 while (_logEntries.Count >= MAX_QUEUE_LENGTH && !_exit)
                 {
-                    Monitor.Wait(_logEntries);
+                    _ = Monitor.Wait(_logEntries);
                 }
                 if (!_exit)
                 {
@@ -59,10 +60,7 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
-        private Task StartWriteMessage(LogMessageEntry[] entries)
-        {
-            return Task.Run(() => WriteMessages(in entries));
-        }
+        private Task StartWriteMessage(LogMessageEntry[] entries) => Task.Run(() => WriteMessages(in entries));
 
         private void ProcessQueue()
         {
@@ -82,35 +80,32 @@ namespace BrassLoon.Extensions.Logging
         private bool TryDeque(out LogMessageEntry[] entries)
         {
             bool result = false;
-            entries = new LogMessageEntry[0];
+            entries = Array.Empty<LogMessageEntry>();
             lock (_logEntries)
             {
                 while (_logEntries.Count == 0 && !_exit)
                 {
-                    Monitor.Wait(_logEntries);
+                    _ = Monitor.Wait(_logEntries);
                 }
                 if (_logEntries.Count > 16)
                 {
                     entries = new LogMessageEntry[Math.Min(_logEntries.Count, 256)];
                     for (int i = 0; i < entries.Length; i += 1)
                     {
-                        entries[i] = _logEntries.Dequeue(); 
+                        entries[i] = _logEntries.Dequeue();
                     }
                     result = true;
                 }
                 else if (_logEntries.Count > 0)
                 {
                     entries = new LogMessageEntry[] { _logEntries.Dequeue() };
-                    result = true;                      
+                    result = true;
                 }
-                if (result)
+                if (result && _logEntries.Count >= MAX_QUEUE_LENGTH - entries.Length)
                 {
-                    if (_logEntries.Count >= MAX_QUEUE_LENGTH - entries.Length)
-                    {
-                        Monitor.PulseAll(_logEntries);
-                    }
+                    Monitor.PulseAll(_logEntries);
                 }
-            }            
+            }
             return result;
         }
 
@@ -142,20 +137,20 @@ namespace BrassLoon.Extensions.Logging
                                 entries[i].EventId).Wait();
                         }
                     }
-                    if (traces.Count > 0) 
+                    if (traces.Count > 0)
                         SubmitTraces(traces).Wait();
                     if (metrics.Count > 0)
                         SubmitMetrics(metrics).Wait();
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
 
         private async Task SubmitExcepiton(
-            System.Exception exception,
+            Exception exception,
             DateTime? timestamp,
             string category,
             string level,
@@ -165,15 +160,15 @@ namespace BrassLoon.Extensions.Logging
             {
                 Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
+                        { "Authorization", string.Format(CultureInfo.InvariantCulture, "Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                 LogRPC.Protos.ExceptionService.ExceptionServiceClient client = new LogRPC.Protos.ExceptionService.ExceptionServiceClient(channel);
-                await client.CreateAsync(Map(exception, timestamp, category, level, eventId), headers: headers);
+                _ = await client.CreateAsync(Map(exception, timestamp, category, level, eventId), headers: headers);
             }
         }
 
         private LogRPC.Protos.LogException Map(
-            System.Exception exception,
+            Exception exception,
             DateTime? timestamp,
             string category,
             string level,
@@ -186,7 +181,7 @@ namespace BrassLoon.Extensions.Logging
             logException.CreateTimestamp = timestampConverted;
             MapExcpetionData(logException.Data, exception.Data);
             logException.DomainId = _options.CurrentValue.LogDomainId.ToString("D");
-            logException.EventId = eventId.HasValue && eventId.Value.Id != default(int) && !string.IsNullOrEmpty(eventId.Value.Name) ? new LogRPC.Protos.EventId { Id = eventId.Value.Id, Name = eventId.Value.Name} : null;
+            logException.EventId = eventId.HasValue && eventId.Value.Id != default(int) && !string.IsNullOrEmpty(eventId.Value.Name) ? new LogRPC.Protos.EventId { Id = eventId.Value.Id, Name = eventId.Value.Name } : null;
             logException.Level = level;
             logException.Message = exception.Message;
             logException.Source = exception.Source;
@@ -198,7 +193,7 @@ namespace BrassLoon.Extensions.Logging
             return logException;
         }
 
-        private void MapExcpetionData(MapField<string, string> map, IDictionary exceptionData)
+        private static void MapExcpetionData(MapField<string, string> map, IDictionary exceptionData)
         {
             if (exceptionData != null)
             {
@@ -218,7 +213,7 @@ namespace BrassLoon.Extensions.Logging
                 {
                     Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
+                        { "Authorization", string.Format(CultureInfo.InvariantCulture, "Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                     LogRPC.Protos.TraceService.TraceServiceClient client = new LogRPC.Protos.TraceService.TraceServiceClient(channel);
                     AsyncClientStreamingCall<LogRPC.Protos.Trace, Empty> call = client.Create(headers);
@@ -236,7 +231,7 @@ namespace BrassLoon.Extensions.Logging
                             });
                     }
                     await call.RequestStream.CompleteAsync();
-                    await call;
+                    _ = await call;
                 }
             }
         }
@@ -249,7 +244,7 @@ namespace BrassLoon.Extensions.Logging
                 {
                     Metadata headers = new Metadata()
                     {
-                        { "Authorization", string.Format("Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
+                        { "Authorization", string.Format(CultureInfo.InvariantCulture, "Bearer {0}", await _accessTokenFactory.GetAccessToken(_options.CurrentValue, channel)) }
                     };
                     LogRPC.Protos.MetricService.MetricServiceClient client = new LogRPC.Protos.MetricService.MetricServiceClient(channel);
                     AsyncClientStreamingCall<LogRPC.Protos.Metric, Empty> call = client.Create(headers);
@@ -272,12 +267,12 @@ namespace BrassLoon.Extensions.Logging
                         await call.RequestStream.WriteAsync(request);
                     }
                     await call.RequestStream.CompleteAsync();
-                    await call;
+                    _ = await call;
                 }
             }
         }
 
-        private void MapMetricData(MapField<string, string> map, Dictionary<string, string> sourceData)
+        private static void MapMetricData(MapField<string, string> map, Dictionary<string, string> sourceData)
         {
             if (sourceData != null)
             {
@@ -297,9 +292,12 @@ namespace BrassLoon.Extensions.Logging
                     Shutdown();
                     try
                     {
-                        _outputThread.Join(60000);
+                        _ = _outputThread.Join(60000);
                     }
-                    catch (ThreadStateException) { }                    
+                    catch (ThreadStateException)
+                    {
+                        // do nothing
+                    }
                 }
 
                 _disposedValue = true;

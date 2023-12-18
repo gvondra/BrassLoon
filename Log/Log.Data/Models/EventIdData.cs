@@ -9,6 +9,6 @@ namespace BrassLoon.Log.Data.Models
         [ColumnMapping()] public Guid DomainId { get; set; }
         [ColumnMapping()] public int Id { get; set; }
         [ColumnMapping()] public string Name { get; set; }
-        [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; } 
+        [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
     }
 }

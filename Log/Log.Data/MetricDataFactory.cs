@@ -10,7 +10,7 @@ namespace BrassLoon.Log.Data
     public class MetricDataFactory : IMetricDataFactory
     {
         private readonly ISqlDbProviderFactory _providerFactory;
-        private readonly IGenericDataFactory<MetricData> _genericDataFactory;
+        private readonly GenericDataFactory<MetricData> _genericDataFactory;
 
         public MetricDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -37,9 +37,9 @@ namespace BrassLoon.Log.Data
             };
 
             return await _genericDataFactory.GetData(
-                settings, 
+                settings,
                 _providerFactory,
-                "[bll].[GetTopMetricBeforeTimestamp]", 
+                "[bll].[GetTopMetricBeforeTimestamp]",
                 () => new MetricData(),
                 DataUtil.AssignDataStateManager,
                 parameters

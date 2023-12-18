@@ -8,7 +8,7 @@ namespace BrassLoon.Log.Data
 {
     public class TraceDataSaver : ITraceDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public TraceDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -28,7 +28,7 @@ namespace BrassLoon.Log.Data
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                    _ = command.Parameters.Add(id);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(traceData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "eventCode", DbType.AnsiString, DataUtil.GetParameterValue(traceData.EventCode));
@@ -39,7 +39,7 @@ namespace BrassLoon.Log.Data
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "category", DbType.String, DataUtil.GetParameterValue(traceData.Category));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "level", DbType.String, DataUtil.GetParameterValue(traceData.Level));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     traceData.TraceId = (long)id.Value;
                 }
             }

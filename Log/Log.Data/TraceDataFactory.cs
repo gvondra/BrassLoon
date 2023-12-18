@@ -10,7 +10,7 @@ namespace BrassLoon.Log.Data
     public class TraceDataFactory : ITraceDataFactory
     {
         private readonly ISqlDbProviderFactory _providerFactory;
-        private readonly IGenericDataFactory<TraceData> _genericDataFactory;
+        private readonly GenericDataFactory<TraceData> _genericDataFactory;
 
         public TraceDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -37,9 +37,9 @@ namespace BrassLoon.Log.Data
             };
 
             return await _genericDataFactory.GetData(
-                settings, 
+                settings,
                 _providerFactory,
-                "[bll].[GetTopTraceBeforeTimestamp]", 
+                "[bll].[GetTopTraceBeforeTimestamp]",
                 () => new TraceData(),
                 DataUtil.AssignDataStateManager,
                 parameters

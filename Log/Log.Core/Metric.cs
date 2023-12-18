@@ -12,7 +12,7 @@ namespace BrassLoon.Log.Core
     {
         private readonly MetricData _data;
         private readonly IMetricDataSaver _dataSaver;
-        private IEventId _eventId;
+        private readonly IEventId _eventId;
 
         public Metric(MetricData data,
             IMetricDataSaver dataSaver,
@@ -26,7 +26,7 @@ namespace BrassLoon.Log.Core
         public Metric(MetricData data,
             IMetricDataSaver dataSaver)
             : this(data, dataSaver, eventId: null)
-        {}
+        { }
 
         public long MetricId => _data.MetricId;
 
@@ -35,7 +35,7 @@ namespace BrassLoon.Log.Core
         public string EventCode => _data.EventCode;
 
         public double? Magnitude { get => _data.Magnitude; set => _data.Magnitude = value; }
-        public dynamic Data 
+        public dynamic Data
         {
             get
             {

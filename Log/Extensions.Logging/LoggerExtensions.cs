@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace BrassLoon.Extensions.Logging
@@ -10,13 +11,13 @@ namespace BrassLoon.Extensions.Logging
     {
         public static ILogger LogMetric(this ILogger logger, Metric metric)
         {
-            logger.LogMetric(0, metric);
+            _ = logger.LogMetric(0, metric);
             return logger;
         }
 
         public static ILogger LogMetric(this ILogger logger, EventId eventId, Metric metric)
         {
-            logger.Log(LogLevel.Information, eventId, metric, null, formatter: LoggerExtensions.FormatMetric);
+            logger.Log(LogLevel.Information, eventId, metric, null, formatter: FormatMetric);
             return logger;
         }
 
@@ -30,18 +31,26 @@ namespace BrassLoon.Extensions.Logging
         public static ILoggingBuilder AddBrassLoonLogger(this ILoggingBuilder builder,
             Action<LoggerConfiguration> configure)
         {
-            builder.AddBrassLoonLogger();
-            builder.Services.Configure(configure);
+            _ = builder.AddBrassLoonLogger();
+            _ = builder.Services.Configure(configure);
             return builder;
         }
 
-        public static string FormatMetric(Metric metric, System.Exception exception)
+        public static string FormatMetric(Metric metric, Exception exception)
         {
             StringBuilder stringBuilder = new StringBuilder(metric.EventCode);
             if (metric.Magnitude.HasValue)
-                stringBuilder.Append($" {Math.Round(metric.Magnitude.Value, 4)}");
+#if NETSTANDARD
+                _ = stringBuilder.Append($" {Math.Round(metric.Magnitude.Value, 4)}");
+#else
+                _ = stringBuilder.Append(CultureInfo.InvariantCulture, $" {Math.Round(metric.Magnitude.Value, 4)}");
+#endif
             if (!string.IsNullOrEmpty(metric.Status))
-                stringBuilder.Append($" (with status \"{metric.Status}\")");
+#if NETSTANDARD
+                _ = stringBuilder.Append($" (with status \"{metric.Status}\")");
+#else
+                _ = stringBuilder.Append(CultureInfo.InvariantCulture, $" (with status \"{metric.Status}\")");
+#endif
             return stringBuilder.ToString();
         }
     }

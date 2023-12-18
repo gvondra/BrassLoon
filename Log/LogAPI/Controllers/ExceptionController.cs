@@ -47,22 +47,28 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain id prameter value");
-                if (result == null && !maxTimestamp.HasValue)
-                    result = BadRequest("Missing max timestamp parameter value");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value)))
+                    result = BadRequest("Missing domain id prameter value");
+                }
+                else if (!maxTimestamp.HasValue)
+                {
+                    result = BadRequest("Missing max timestamp parameter value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccount(domainId.Value))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         CoreSettings settings = CreateCoreSettings();
                         IMapper mapper = CreateMapper();
-                        return Ok(  
-                            await Task.WhenAll<LogModels.Exception>(
+                        return Ok(
+                            await Task.WhenAll(
                             (await _exceptionFactory.GetTopBeforeTimestamp(settings, domainId.Value, maxTimestamp.Value))
-                            .Select<IException, Task<LogModels.Exception>>(async innerException => await Map(innerException, settings, mapper))
+                            .Select(async innerException => await Map(innerException, settings, mapper))
                             ));
                     }
                 }
@@ -83,17 +89,21 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && !id.HasValue)
+                if (!id.HasValue)
+                {
                     result = BadRequest("Missing exception id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id prameter value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IException exception = await _exceptionFactory.Get(settings, id.Value);
                     if (exception != null && !exception.DomainId.Equals(domainId.Value))
                         exception = null;
-                    if (result == null && !(await VerifyDomainAccount(domainId.Value)))
+                    if (!await VerifyDomainAccount(domainId.Value))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null && exception == null)
                         result = NotFound();
@@ -135,17 +145,19 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!exception.DomainId.HasValue || exception.DomainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain guid value");
-                if (result == null)
+                if (!exception.DomainId.HasValue || exception.DomainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(exception.DomainId.Value, _settings.Value, _domainService)))
+                    result = BadRequest("Missing domain guid value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccountWriteAccess(exception.DomainId.Value, _settings.Value, _domainService))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
                     if (result == null)
                     {
-                        CoreSettings settings = CreateCoreSettings();                        
+                        CoreSettings settings = CreateCoreSettings();
                         IMapper mapper = CreateMapper();
                         List<IException> allExceptions = new List<IException>();
                         IException innerException = await Map(settings, exception, exception.DomainId.Value, exception.CreateTimestamp, _exceptionFactory, mapper, allExceptions);
@@ -155,7 +167,7 @@ namespace LogAPI.Controllers
                             );
                     }
                 }
-            }    
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
@@ -168,7 +180,9 @@ namespace LogAPI.Controllers
         protected override Task<bool> VerifyDomainAccountWriteAccess(Guid domainId, CommonApiSettings settings, IDomainService domainService)
         {
             if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId) && Guid.Parse(settings.ExceptionLoggingDomainId).Equals(domainId))
+            {
                 return Task.FromResult(true);
+            }
             else
             {
                 return base.VerifyDomainAccountWriteAccess(domainId, settings, domainService);
@@ -178,25 +192,25 @@ namespace LogAPI.Controllers
         [NonAction]
         private async Task<IException> Map(
             CoreSettings settings,
-            LogModels.Exception exception, 
-            Guid domainId, 
+            LogModels.Exception exception,
+            Guid domainId,
             DateTime? timestamp,
-            IExceptionFactory exceptionFactory, 
+            IExceptionFactory exceptionFactory,
             IMapper mapper,
             List<IException> allExceptions,
             IException parentException = null)
         {
             IEventId innerEventId = await GetInnerEventId(settings, domainId, exception.EventId);
             IException innerException = exceptionFactory.Create(domainId, timestamp, parentException, innerEventId);
-            mapper.Map<LogModels.Exception, IException>(exception, innerException);
+            _ = mapper.Map(exception, innerException);
             allExceptions.Add(innerException);
             if (exception.InnerException != null)
-                await Map(settings, exception.InnerException, domainId, timestamp, exceptionFactory, mapper, allExceptions, innerException);
+                _ = await Map(settings, exception.InnerException, domainId, timestamp, exceptionFactory, mapper, allExceptions, innerException);
             return innerException;
         }
 
         [NonAction]
-        private async Task<LogModels.Exception> Map(IException innerException, CoreSettings settings, IMapper mapper)
+        private static async Task<LogModels.Exception> Map(IException innerException, CoreSettings settings, IMapper mapper)
         {
             LogModels.Exception exception = mapper.Map<LogModels.Exception>(innerException);
             IException innerException2 = await innerException.GetInnerException(settings);

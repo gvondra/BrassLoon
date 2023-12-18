@@ -8,15 +8,14 @@ using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Purger
 {
     public class CoreSettings : ISettings
     {
-        private static Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
+        private static readonly Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new RelativeTtl(TimeSpan.FromMinutes(6)));
         private readonly AppSettings _settings;
 
         public CoreSettings(AppSettings settings)
@@ -24,7 +23,7 @@ namespace BrassLoon.Log.Purger
             _settings = settings;
         }
 
-        public bool UseDefaultAzureSqlToken => (_settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser));
+        public bool UseDefaultAzureSqlToken => _settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser);
 
         public async Task<string> GetConnetionString()
         {
@@ -33,7 +32,7 @@ namespace BrassLoon.Log.Purger
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_settings.ConnectionString);
                 builder.UserID = _settings.ConnectionStringUser;
-                builder.Password = await _cache.Execute<Task<string>>(async context =>
+                builder.Password = await _cache.Execute(async context =>
                 {
                     SecretClientOptions options = new SecretClientOptions()
                     {
@@ -60,15 +59,12 @@ namespace BrassLoon.Log.Purger
                     KeyVaultSecret secret = await client.GetSecretAsync(_settings.ConnectionStringUser);
                     return secret.Value;
                 },
-                new Context(_settings.ConnectionString.ToLower().Trim()));
+                new Context(_settings.ConnectionString.ToLower(CultureInfo.InvariantCulture).Trim()));
                 result = builder.ConnectionString;
             }
             return result;
         }
 
-        public Func<Task<string>> GetDatabaseAccessToken()
-        {
-            return null;
-        }
+        public Func<Task<string>> GetDatabaseAccessToken() => null;
     }
 }

@@ -12,9 +12,9 @@ namespace BrassLoon.Log.Purger.DependencyInjection
             AppSettings appSettings = null)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new PurgerModule());
+            _ = builder.RegisterModule(new PurgerModule());
             if (appSettings != null)
-                builder.RegisterInstance(appSettings);
+                _ = builder.RegisterInstance(appSettings);
             _container = builder.Build();
         }
 

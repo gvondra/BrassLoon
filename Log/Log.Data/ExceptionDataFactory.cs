@@ -10,8 +10,8 @@ namespace BrassLoon.Log.Data
 {
     public class ExceptionDataFactory : IExceptionDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<ExceptionData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<ExceptionData> _genericDataFactory;
 
         public ExceptionDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -52,14 +52,14 @@ namespace BrassLoon.Log.Data
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(_providerFactory, "maxTimestamp", DbType.DateTime2, maxTimestamp)
             };
-            return (await _genericDataFactory.GetData(
+            return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
                 "[bll].[GetTopExceptionBeforeTimestamp]",
                 () => new ExceptionData(),
                 DataUtil.AssignDataStateManager,
                 parameters
-                ));
+                );
         }
     }
 }

@@ -3,11 +3,8 @@
 namespace LogAPI
 {
     public class SettingsFactory
-    {        
-        public CoreSettings CreateCore(Settings settings)
-        {
-            return new CoreSettings(settings);
-        }
+    {
+        public CoreSettings CreateCore(Settings settings) => new CoreSettings(settings);
 
         public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)
         {

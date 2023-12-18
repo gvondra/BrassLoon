@@ -129,7 +129,7 @@ csharp_style_expression_bodied_local_functions = false:silent
 csharp_space_around_binary_operators = before_and_after
 csharp_style_throw_expression = true:none
 csharp_style_prefer_null_check_over_type_check = true:suggestion
-csharp_prefer_simple_default_expression = true:suggestion
+csharp_prefer_simple_default_expression = true:none
 csharp_style_prefer_local_over_anonymous_function = true:suggestion
 csharp_style_prefer_index_operator = true:suggestion
 csharp_style_prefer_range_operator = true:suggestion
@@ -149,7 +149,7 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 csharp_style_conditional_delegate_call = true:suggestion
-csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_switch_expression = true:none
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
@@ -203,3 +203,15 @@ dotnet_diagnostic.S3249.severity = suggestion
 
 # S1168: Empty arrays and collections should be returned instead of null
 dotnet_diagnostic.S1168.severity = suggestion
+
+# IDE0034: Simplify 'default' expression
+dotnet_diagnostic.IDE0034.severity = none
+
+# IDE0066: Convert switch statement to expression
+dotnet_diagnostic.IDE0066.severity = none
+
+# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
+dotnet_diagnostic.SYSLIB1045.severity = suggestion
+
+# ASP0014: Suggest using top level route registrations
+dotnet_diagnostic.ASP0014.severity = none

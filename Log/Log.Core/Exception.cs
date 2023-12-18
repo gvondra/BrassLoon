@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core
 {
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
+#pragma warning disable S2166 // Classes named like "Exception" should extend "Exception" or a subclass
     public class Exception : IException
     {
         private readonly ExceptionData _data;
@@ -30,7 +32,7 @@ namespace BrassLoon.Log.Core
             IExceptionDataSaver dataSaver,
             IExceptionFactory exceptionFactory)
             : this(data, dataSaver, exceptionFactory, eventId: null)
-        {}
+        { }
 
         public long ExceptionId => _data.ExceptionId;
 
@@ -42,8 +44,8 @@ namespace BrassLoon.Log.Core
         public string AppDomain { get => _data.AppDomain; set => _data.AppDomain = value; }
         public string TargetSite { get => _data.TargetSite; set => _data.TargetSite = value; }
         public string StackTrace { get => _data.StackTrace; set => _data.StackTrace = value; }
-        
-        public dynamic Data 
+
+        public dynamic Data
         {
             get
             {
@@ -80,9 +82,8 @@ namespace BrassLoon.Log.Core
             await _dataSaver.Create(transactionHandler, _data);
         }
 
-        public async Task<IException> GetInnerException(ISettings settings)
-        {
-            return await _exceptionFactory.GetInnerException(settings, ExceptionId);
-        }
+        public async Task<IException> GetInnerException(ISettings settings) => await _exceptionFactory.GetInnerException(settings, ExceptionId);
     }
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
+#pragma warning restore S2166 // Classes named like "Exception" should extend "Exception" or a subclass
 }

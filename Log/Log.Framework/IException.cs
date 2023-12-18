@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Framework
 {
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
     public interface IException
     {
         long ExceptionId { get; }
@@ -22,4 +23,5 @@ namespace BrassLoon.Log.Framework
         Task<IException> GetInnerException(ISettings settings);
         Task Create(ITransactionHandler transactionHandler);
     }
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 }

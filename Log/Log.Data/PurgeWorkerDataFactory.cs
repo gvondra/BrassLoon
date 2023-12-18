@@ -12,7 +12,7 @@ namespace BrassLoon.Log.Data
     public class PurgeWorkerDataFactory : IPurgeWorkerDataFactory
     {
         private readonly ISqlDbProviderFactory _providerFactory;
-        private readonly IGenericDataFactory<PurgeWorkerData> _genericDataFactory;
+        private readonly GenericDataFactory<PurgeWorkerData> _genericDataFactory;
 
         public PurgeWorkerDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -32,8 +32,8 @@ namespace BrassLoon.Log.Data
                 {
                     command.CommandText = "[bll].[ClaimPurgeWorker]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(parameter);
-                    await command.ExecuteNonQueryAsync();
+                    _ = command.Parameters.Add(parameter);
+                    _ = await command.ExecuteNonQueryAsync();
                     if (parameter.Value != null && parameter.Value != DBNull.Value)
                         result = (Guid)parameter.Value;
                 }

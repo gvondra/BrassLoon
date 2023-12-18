@@ -10,7 +10,7 @@ namespace BrassLoon.Log.Core
     public class EventId : IEventId
     {
         private readonly EventIdData _data;
-        private readonly IEventIdDataSaver _dataSaver; 
+        private readonly IEventIdDataSaver _dataSaver;
 
         public EventId(EventIdData data, IEventIdDataSaver dataSaver)
         {
@@ -28,9 +28,6 @@ namespace BrassLoon.Log.Core
 
         Guid IEventId.EventId => _data.EventId;
 
-        public Task Create(ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Create(transactionHandler, _data);
-        }
+        public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
     }
 }

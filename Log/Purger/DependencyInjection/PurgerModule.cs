@@ -7,10 +7,10 @@ namespace BrassLoon.Log.Purger.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Log.Core.LogModule());
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterType<SettingsFactory>().SingleInstance();
+            _ = builder.RegisterModule(new Core.LogModule());
+            _ = builder.RegisterModule(new Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new Interface.Log.LogInterfaceModule());
+            _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
 }

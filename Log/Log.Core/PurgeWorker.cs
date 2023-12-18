@@ -30,9 +30,6 @@ namespace BrassLoon.Log.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public async Task Update(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Update(transactionHandler, _data);
-        }
+        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
     }
 }

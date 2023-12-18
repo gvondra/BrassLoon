@@ -11,7 +11,7 @@ namespace BrassLoon.Log.Data
     public class EventIdDataFactory : IEventIdDataFactory
     {
         private readonly ISqlDbProviderFactory _providerFactory;
-        private readonly IGenericDataFactory<EventIdData> _genericDataFactory;
+        private readonly GenericDataFactory<EventIdData> _genericDataFactory;
 
         public EventIdDataFactory(ISqlDbProviderFactory providerFactory)
         {

@@ -8,27 +8,18 @@ namespace BrassLoon.Log.Data
 {
     public class PurgeDataSaver : IPurgeDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public PurgeDataSaver(ISqlDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }
 
-        public Task DeleteExceptionByMinTimestamp(ISqlSettings settings, DateTime timestamp)
-        {
-            return DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteExceptionPurgeByMinTimestamp]");
-        }
+        public Task DeleteExceptionByMinTimestamp(ISqlSettings settings, DateTime timestamp) => DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteExceptionPurgeByMinTimestamp]");
 
-        public Task DeleteMetricByMinTimestamp(ISqlSettings settings, DateTime timestamp)
-        {
-            return DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteMetricPurgeByMinTimestamp]");
-        }
+        public Task DeleteMetricByMinTimestamp(ISqlSettings settings, DateTime timestamp) => DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteMetricPurgeByMinTimestamp]");
 
-        public Task DeleteTraceByMinTimestamp(ISqlSettings settings, DateTime timestamp)
-        {
-            return DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteTracePurgeByMinTimestamp]");
-        }
+        public Task DeleteTraceByMinTimestamp(ISqlSettings settings, DateTime timestamp) => DeleteByMinTimestamp(settings, timestamp, "[bll].[DeleteTracePurgeByMinTimestamp]");
 
         private async Task DeleteByMinTimestamp(ISqlSettings settings, DateTime timestamp, string procedureName)
         {
@@ -40,26 +31,17 @@ namespace BrassLoon.Log.Data
                     command.CommandText = procedureName;
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandTimeout = 150;
-                    command.Parameters.Add(parameter);
-                    await command.ExecuteNonQueryAsync();
+                    _ = command.Parameters.Add(parameter);
+                    _ = await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        public Task InitializeException(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeExceptionPurge]");
-        }
+        public Task InitializeException(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeExceptionPurge]");
 
-        public Task InitializeMetric(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeMetricPurge]");
-        }
+        public Task InitializeMetric(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeMetricPurge]");
 
-        public Task InitializeTrace(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeTracePurge]");
-        }
+        public Task InitializeTrace(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => Initialize(settings, domainId, expirationTimestamp, maxCreateTimestamp, "[bll].[InitializeTracePurge]");
 
         private async Task Initialize(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp, string procedureName)
         {
@@ -73,28 +55,19 @@ namespace BrassLoon.Log.Data
                     command.CommandText = procedureName;
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandTimeout = 150;
-                    command.Parameters.Add(parameterDomainId);
-                    command.Parameters.Add(parameterExpirationTimestamp);
-                    command.Parameters.Add(parameterMaxCcreateTimestamp);
-                    await command.ExecuteNonQueryAsync();
+                    _ = command.Parameters.Add(parameterDomainId);
+                    _ = command.Parameters.Add(parameterExpirationTimestamp);
+                    _ = command.Parameters.Add(parameterMaxCcreateTimestamp);
+                    _ = await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        public Task PurgeException(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeException]");
-        }
+        public Task PurgeException(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp) => Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeException]");
 
-        public Task PurgeMetric(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeMetric]");
-        }
+        public Task PurgeMetric(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp) => Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeMetric]");
 
-        public Task PurgeTrace(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeTrace]");
-        }
+        public Task PurgeTrace(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp) => Purge(settings, domainId, maxExpirationTimestamp, "[bll].[PurgeTrace]");
 
         private async Task Purge(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp, string procedureName)
         {
@@ -107,9 +80,9 @@ namespace BrassLoon.Log.Data
                     command.CommandText = procedureName;
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandTimeout = 150;
-                    command.Parameters.Add(parameterDomainId);
-                    command.Parameters.Add(parameterMaxExpirationTimestamp);
-                    await command.ExecuteNonQueryAsync();
+                    _ = command.Parameters.Add(parameterDomainId);
+                    _ = command.Parameters.Add(parameterMaxExpirationTimestamp);
+                    _ = await command.ExecuteNonQueryAsync();
                 }
             }
         }

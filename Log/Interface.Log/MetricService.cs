@@ -12,7 +12,7 @@ namespace BrassLoon.Interface.Log
 {
     public class MetricService : IMetricService
     {
-        private static readonly Polly.Policy _eventCodeCache = Polly.Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly Policy _eventCodeCache = Polly.Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -37,10 +37,7 @@ namespace BrassLoon.Interface.Log
             return response.Value;
         }
 
-        public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double magnitude, string status = "", string requestor = "", object data = null)
-        {
-            return Create(settings, domainId, null, eventCode, magnitude, status, requestor, data);
-        }
+        public Task<Metric> Create(ISettings settings, Guid domainId, string eventCode, double magnitude, string status = "", string requestor = "", object data = null) => Create(settings, domainId, null, eventCode, magnitude, status, requestor, data);
 
         public Task<Metric> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, string eventCode, double magnitude, string status = "", string requestor = "", object data = null)
         {

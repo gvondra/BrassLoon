@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Extensions.Logging
 {
-    internal class AccessTokenFactory : IAccessTokenFactory
+    internal sealed class AccessTokenFactory : IAccessTokenFactory
     {
-        private static object _cacheLock = new { };
+        private static readonly object _cacheLock = new { };
         private static readonly Dictionary<string, (DateTime expiration, string token)> _tokenCache = new Dictionary<string, (DateTime expiratin, string token)>();
 
         public async Task<string> GetAccessToken(LoggerConfiguration loggerConfiguration, GrpcChannel channel)
@@ -44,7 +45,7 @@ namespace BrassLoon.Extensions.Logging
                     foreach (string key in _tokenCache.Keys)
                     {
                         if (_tokenCache[key].expiration <= DateTime.UtcNow)
-                            _tokenCache.Remove(key);
+                            _ = _tokenCache.Remove(key);
                     }
                 }
             }
@@ -53,6 +54,7 @@ namespace BrassLoon.Extensions.Logging
         private static string GetCacheKey(LoggerConfiguration loggerConfiguration)
         {
             return string.Format(
+                CultureInfo.InvariantCulture,
                 "{0}|{1}",
                 loggerConfiguration.LogClientId.ToString("N"),
                 Convert.ToBase64String(

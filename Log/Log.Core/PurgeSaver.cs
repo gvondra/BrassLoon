@@ -18,49 +18,22 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public Task DeleteExceptionByMinTimestamp(ISettings settings, DateTime timestamp)
-        {
-            return _dataSaver.DeleteExceptionByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
-        }
+        public Task DeleteExceptionByMinTimestamp(ISettings settings, DateTime timestamp) => _dataSaver.DeleteExceptionByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
 
-        public Task DeleteMetricByMinTimestamp(ISettings settings, DateTime timestamp)
-        {
-            return _dataSaver.DeleteMetricByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
-        }
+        public Task DeleteMetricByMinTimestamp(ISettings settings, DateTime timestamp) => _dataSaver.DeleteMetricByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
 
-        public Task DeleteTraceByMinTimestamp(ISettings settings, DateTime timestamp)
-        {
-            return _dataSaver.DeleteTraceByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
-        }
+        public Task DeleteTraceByMinTimestamp(ISettings settings, DateTime timestamp) => _dataSaver.DeleteTraceByMinTimestamp(_settingsFactory.CreateData(settings), timestamp);
 
-        public Task InitializeException(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return _dataSaver.InitializeException(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
-        }
+        public Task InitializeException(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => _dataSaver.InitializeException(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
 
-        public Task InitializeMetric(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return _dataSaver.InitializeMetric(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
-        }
+        public Task InitializeMetric(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => _dataSaver.InitializeMetric(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
 
-        public Task InitializeTrace(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp)
-        {
-            return _dataSaver.InitializeTrace(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
-        }
+        public Task InitializeTrace(ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp) => _dataSaver.InitializeTrace(_settingsFactory.CreateData(settings), domainId, expirationTimestamp, maxCreateTimestamp);
 
-        public Task PurgeException(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return _dataSaver.PurgeException(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
-        }
+        public Task PurgeException(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp) => _dataSaver.PurgeException(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
 
-        public Task PurgeMetric(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return _dataSaver.PurgeMetric(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
-        }
+        public Task PurgeMetric(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp) => _dataSaver.PurgeMetric(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
 
-        public Task PurgeTrace(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp)
-        {
-            return _dataSaver.PurgeTrace(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
-        }
+        public Task PurgeTrace(ISettings settings, Guid domainId, DateTime maxExpirationTimestamp) => _dataSaver.PurgeTrace(_settingsFactory.CreateData(settings), domainId, maxExpirationTimestamp);
     }
 }

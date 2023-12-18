@@ -8,14 +8,14 @@ namespace BrassLoon.Log.TestClient.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterType<SettingsFactory>()
+            _ = builder.RegisterModule(new Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new Interface.Log.LogInterfaceModule());
+            _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
-            builder.RegisterType<LoggerExtensionTest>();
-            builder.RegisterType<LoggerRPCTest>();
-            builder.RegisterType<LogInterfaceTest>();
+            _ = builder.RegisterType<LoggerExtensionTest>();
+            _ = builder.RegisterType<LoggerRPCTest>();
+            _ = builder.RegisterType<LogInterfaceTest>();
         }
     }
 }

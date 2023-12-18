@@ -6,7 +6,7 @@ namespace BrassLoon.Log.Purger
     {
         public string ConnectionString { get; set; }
         public string ConnectionStringUser { get; set; }
-        public bool EnableDatabaseAccessToken { get; set; } = false;
+        public bool EnableDatabaseAccessToken { get; set; }
         public string KeyVaultAddress { get; set; }
         public string AccountApiBaseAddress { get; set; }
         public string LogApiBaseAddress { get; set; }

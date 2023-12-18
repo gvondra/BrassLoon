@@ -24,7 +24,7 @@ namespace BrassLoon.Log.Core
 
         public IEventId Create(Guid domainId, int id, string name)
         {
-            if (domainId.Equals(Guid.Empty)) 
+            if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
             return Create(new EventIdData { DomainId = domainId, Id = id, Name = name });
         }

@@ -41,7 +41,7 @@ namespace LogRPC.Services
         }
 
         [Authorize("BL:AUTH")]
-        public async override Task<Empty> Create(LogException request, ServerCallContext context)
+        public override async Task<Empty> Create(LogException request, ServerCallContext context)
         {
             try
             {
@@ -50,17 +50,17 @@ namespace LogRPC.Services
                 Guid domainId = Guid.Parse(request.DomainId);
                 if (domainId.Equals(Guid.Empty))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(LogException.DomainId)} parameter value");
-                if (!(await _domainAcountAccessVerifier.HasAccess(
+                if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(_settings.Value, _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders)),
                     domainId,
-                    _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders))))
+                    _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders)))
                 {
                     throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
-                IEventId eventId = await GetInnerEventId(settings, domainId, request.EventId);
+                _ = await GetInnerEventId(settings, domainId, request.EventId);
                 List<IException> allExceptions = new List<IException>();
-                IException innerException = await Map(
+                _ = await Map(
                     settings,
                     request,
                     domainId,
@@ -101,11 +101,11 @@ namespace LogRPC.Services
             innerException.TypeName = exception.TypeName;
             allExceptions.Add(innerException);
             if (exception.InnerException != null)
-                await Map(settings, exception.InnerException, domainId, timestamp, allExceptions, innerException);
+                _ = await Map(settings, exception.InnerException, domainId, timestamp, allExceptions, innerException);
             return innerException;
         }
 
-        private object GetExceptionData(Google.Protobuf.Collections.MapField<string, string> map)
+        private static Dictionary<string, object> GetExceptionData(Google.Protobuf.Collections.MapField<string, string> map)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             if (map != null)
@@ -118,7 +118,7 @@ namespace LogRPC.Services
             return result;
         }
 
-        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, Protos.EventId eventId)
+        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, EventId eventId)
         {
             IEventId innerEventId = null;
             if (eventId != null && (eventId.Id != 0 || !string.IsNullOrEmpty(eventId.Name)))
