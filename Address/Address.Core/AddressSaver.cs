@@ -28,7 +28,8 @@ namespace BrassLoon.Address.Core
 
         public async Task<IAddress> Save(Framework.ISettings settings, IAddress address)
         {
-            IAddress result = (await _addressFactory.GetByHash(settings, address.DomainId, address.Hash))
+            byte[] hash = address.Hash ?? AddressHash.Hash(address);
+            IAddress result = (await _addressFactory.GetByHash(settings, address.DomainId, hash))
                 .FirstOrDefault(address.Equals);
             if (result == null)
             {
@@ -38,7 +39,7 @@ namespace BrassLoon.Address.Core
                     DomainId = address.DomainId,
                     KeyId = _keyId.Value,
                     InitializationVector = iv,
-                    Hash = AddressHash.Hash(address),
+                    Hash = hash,
                     Attention = AddressCryptography.Encrypt(key, iv, (address.Attention ?? string.Empty).Trim()),
                     Addressee = AddressCryptography.Encrypt(key, iv, (address.Addressee ?? string.Empty).Trim()),
                     Delivery = AddressCryptography.Encrypt(key, iv, (address.Delivery ?? string.Empty).Trim()),

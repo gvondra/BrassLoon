@@ -48,11 +48,11 @@ namespace BrassLoon.Address.Core
             return new Address { DomainId = domainId };
         }
 
-        public async Task<IAddress> Get(Framework.ISettings settings, Guid id)
+        public async Task<IAddress> Get(Framework.ISettings settings, Guid domainId, Guid id)
         {
             AddressData data = await _dataFactory.Get(new DataSettings(settings), id);
             Address address = null;
-            if (data != null)
+            if (data != null && domainId.Equals(data.DomainId))
                 address = await Create(settings, data);
             return address;
         }

@@ -23,11 +23,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Protos\exception.proto" />
-	  <None Remove="Protos\metric.proto" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Include="..\.dockerignore" Link=".dockerignore">
 	    <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
 	  </None>
