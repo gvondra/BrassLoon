@@ -14,7 +14,7 @@ namespace BrassLoon.Address.Data.Internal
 
         public async Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData data)
         {
-            if (data.Manager.GetState(data) == DataState.New)
+            if (data.Manager.GetState(data) != DataState.Unchanged)
             {
                 await ProviderFactory.EstablishTransaction(transactionHandler, data);
                 using DbCommand command = transactionHandler.Connection.CreateCommand();

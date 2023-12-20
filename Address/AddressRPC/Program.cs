@@ -62,6 +62,7 @@ namespace AddressRPC
             _ = app.UseAuthorization();
 
             _ = app.MapGrpcService<AddressService>();
+            _ = app.MapGrpcService<EmailAddressService>();
 
             app.Run();
         }

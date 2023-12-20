@@ -15,7 +15,11 @@ namespace BrassLoon.Address.TestClient
                 Command command;
 
                 command = new Command("address");
-                command.SetHandler(SaveTest);
+                command.SetHandler(AddressTest);
+                rootCommand.AddCommand(command);
+
+                command = new Command("email-address");
+                command.SetHandler(EmailAddressTest);
                 rootCommand.AddCommand(command);
 
                 _ = await rootCommand.InvokeAsync(args);
@@ -26,11 +30,18 @@ namespace BrassLoon.Address.TestClient
             }
         }
 
-        private static async Task SaveTest()
+        private static async Task AddressTest()
         {
             using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
             AddressTest addressTest = scope.Resolve<AddressTest>();
             await addressTest.Execute();
+        }
+
+        private static async Task EmailAddressTest()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            EmailAddressTest emailAddressTest = scope.Resolve<EmailAddressTest>();
+            await emailAddressTest.Execute();
         }
     }
 }

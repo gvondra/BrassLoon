@@ -15,6 +15,7 @@ namespace AddressRPC
             _ = builder.RegisterModule(new AddressCoreModule());
             _ = builder.RegisterType<AddressService>();
             _ = builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
+            _ = builder.RegisterType<EmailAddressService>();
             _ = builder.RegisterType<MetaDataProcessor>()
                 .SingleInstance()
                 .As<IMetaDataProcessor>();

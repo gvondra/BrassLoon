@@ -1,5 +1,4 @@
-﻿using Azure.Security.KeyVault.Secrets;
-using BrassLoon.Address.Data;
+﻿using BrassLoon.Address.Data;
 using BrassLoon.Address.Data.Models;
 using BrassLoon.Address.Framework;
 using BrassLoon.CommonCore;
@@ -14,9 +13,6 @@ namespace BrassLoon.Address.Core
         private readonly IAddressDataSaver _dataSaver;
         private readonly Saver _saver;
         private readonly IKeyVault _keyVault;
-        private static Guid? _keyId;
-        private static DateTime _keyIdExpiration = DateTime.MinValue;
-        private static readonly object _lock = new { };
 
         public AddressSaver(AddressFactory addressFactory, IAddressDataSaver addressDataSaver, IKeyVault keyVault, Saver saver)
         {
@@ -33,11 +29,11 @@ namespace BrassLoon.Address.Core
                 .FirstOrDefault(address.Equals);
             if (result == null)
             {
-                (byte[] key, byte[] iv) = await GetKey(settings, _keyVault);
+                (Guid keyId, byte[] key, byte[] iv) = await SaverKeyCache.GetKey(settings, _keyVault);
                 AddressData data = new AddressData
                 {
                     DomainId = address.DomainId,
-                    KeyId = _keyId.Value,
+                    KeyId = keyId,
                     InitializationVector = iv,
                     Hash = hash,
                     Attention = AddressCryptography.Encrypt(key, iv, (address.Attention ?? string.Empty).Trim()),
@@ -53,31 +49,6 @@ namespace BrassLoon.Address.Core
                 result = await _addressFactory.Create(settings, data);
             }
             return result;
-        }
-
-        private static async Task<(byte[] k, byte[] iv)> GetKey(Framework.ISettings settings, IKeyVault keyVault)
-        {
-            (byte[] key, byte[] iv) = AddressCryptography.CreateKey();
-            bool isSet = false;
-            if (!_keyId.HasValue || _keyIdExpiration < DateTime.Now)
-            {
-                lock (_lock)
-                {
-                    if (!_keyId.HasValue || _keyIdExpiration < DateTime.Now)
-                    {
-                        _keyId = Guid.NewGuid();
-                        _keyIdExpiration = DateTime.Now.AddMinutes(60);
-                        keyVault.SetSecret(settings.KeyVaultAddress, _keyId.Value.ToString("D"), Convert.ToBase64String(key)).Wait();
-                        isSet = true;
-                    }
-                }
-            }
-            if (!isSet)
-            {
-                KeyVaultSecret keyVaultSecret = await keyVault.GetSecret(settings.KeyVaultAddress, _keyId.Value.ToString("D"));
-                key = Convert.FromBase64String(keyVaultSecret.Value);
-            }
-            return (key, iv);
         }
     }
 }

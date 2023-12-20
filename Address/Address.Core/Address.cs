@@ -26,7 +26,6 @@ namespace BrassLoon.Address.Core
                 return base.Equals(obj);
         }
 
-
         public bool Equals(IAddress other)
         {
             bool equals = true;

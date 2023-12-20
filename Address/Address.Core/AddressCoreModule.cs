@@ -14,6 +14,9 @@ namespace BrassLoon.Address.Core
             _ = builder.RegisterType<AddressFactory>();
             _ = builder.RegisterType<AddressFactory>().As<IAddressFactory>();
             _ = builder.RegisterType<AddressSaver>().As<IAddressSaver>();
+            _ = builder.RegisterType<EmailAddressFactory>();
+            _ = builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
+            _ = builder.RegisterType<EmailAddressSaver>().As<IEmailAddressSaver>();
             _ = builder.RegisterType<KeyVault>().As<IKeyVault>();
             _ = builder.RegisterType<Saver>();
         }

@@ -10,33 +10,33 @@ using Protos = BrassLoon.Interface.Address.Protos;
 
 namespace AddressRPC.Services
 {
-    public class AddressService : Protos.AddressService.AddressServiceBase
+    public class EmailAddressService : Protos.EmailAddressService.EmailAddressServiceBase
     {
         private readonly IDomainAcountAccessVerifier _domainAcountAccessVerifier;
         private readonly IMetaDataProcessor _metaDataProcessor;
         private readonly SettingsFactory _settingsFactory;
-        private readonly ILogger<AddressService> _logger;
-        private readonly IAddressFactory _addressFactory;
-        private readonly IAddressSaver _addressSaver;
+        private readonly ILogger<EmailAddressService> _logger;
+        private readonly IEmailAddressFactory _emailAddressFactory;
+        private readonly IEmailAddressSaver _emailAddressSaver;
 
-        public AddressService(
+        public EmailAddressService(
             IDomainAcountAccessVerifier domainAcountAccessVerifier,
             IMetaDataProcessor metaDataProcessor,
             SettingsFactory settingsFactory,
-            ILogger<AddressService> logger,
-            IAddressFactory addressFactory,
-            IAddressSaver addressSaver)
+            ILogger<EmailAddressService> logger,
+            IEmailAddressFactory emailAddressFactory,
+            IEmailAddressSaver emailAddressSaver)
         {
             _domainAcountAccessVerifier = domainAcountAccessVerifier;
             _metaDataProcessor = metaDataProcessor;
             _settingsFactory = settingsFactory;
             _logger = logger;
-            _addressFactory = addressFactory;
-            _addressSaver = addressSaver;
+            _emailAddressFactory = emailAddressFactory;
+            _emailAddressSaver = emailAddressSaver;
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
-        public override async Task<Address> Get(GetAddressRequest request, ServerCallContext context)
+        public override async Task<EmailAddress> Get(GetEmailAddressRequest request, ServerCallContext context)
         {
             try
             {
@@ -44,8 +44,8 @@ namespace AddressRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request.AddressId) || !Guid.TryParse(request.AddressId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request.AddressId}\"");
+                if (string.IsNullOrEmpty(request.EmailAddressId) || !Guid.TryParse(request.EmailAddressId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request.EmailAddressId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -55,11 +55,11 @@ namespace AddressRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
-                IAddress innerAddress = await _addressFactory.Get(settings, domainId, id);
-                Address address = null;
-                if (innerAddress != null)
-                    address = Map(innerAddress);
-                return address;
+                IEmailAddress innerEmailAddress = await _emailAddressFactory.Get(settings, domainId, id);
+                EmailAddress emailAddress = null;
+                if (innerEmailAddress != null)
+                    emailAddress = Map(innerEmailAddress);
+                return emailAddress;
             }
             catch (RpcException)
             {
@@ -73,17 +73,17 @@ namespace AddressRPC.Services
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
-        public override async Task<Address> Save(Address request, ServerCallContext context)
+        public override async Task<EmailAddress> Save(EmailAddress request, ServerCallContext context)
         {
             try
             {
                 Guid domainId;
                 Guid id = Guid.Empty;
-                bool newAddress = string.IsNullOrEmpty(request?.AddressId);
+                bool newAddress = string.IsNullOrEmpty(request?.EmailAddressId);
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (!newAddress && !Guid.TryParse(request.AddressId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Invalid address id \"{request.AddressId}\"");
+                if (!newAddress && !Guid.TryParse(request.EmailAddressId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Invalid email address id \"{request.EmailAddressId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -93,15 +93,15 @@ namespace AddressRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
-                IAddress innerAddress = newAddress ? _addressFactory.Create(domainId) : await _addressFactory.Get(settings, domainId, id);
-                if (innerAddress != null)
+                IEmailAddress innerEmailAddress = newAddress ? _emailAddressFactory.Create(domainId) : await _emailAddressFactory.Get(settings, domainId, id);
+                if (innerEmailAddress != null)
                 {
-                    Map(request, innerAddress);
-                    return Map(await _addressSaver.Save(settings, innerAddress));
+                    Map(request, innerEmailAddress);
+                    return Map(await _emailAddressSaver.Save(settings, innerEmailAddress));
                 }
                 else
                 {
-                    throw new RpcException(new Status(StatusCode.NotFound, "Address Not Found"));
+                    throw new RpcException(new Status(StatusCode.NotFound, "Email Address Not Found"));
                 }
             }
             catch (RpcException)
@@ -115,34 +115,18 @@ namespace AddressRPC.Services
             }
         }
 
-        private static Address Map(IAddress innerAddress)
+        private static EmailAddress Map(IEmailAddress innerEmailAddress)
         {
-            return new Address
+            return new EmailAddress
             {
-                Addressee = innerAddress.Addressee ?? string.Empty,
-                AddressId = innerAddress.AddressId.ToString("D"),
-                Attention = innerAddress.Attention ?? string.Empty,
-                City = innerAddress.City ?? string.Empty,
-                Country = innerAddress.Country ?? string.Empty,
-                County = innerAddress.County ?? string.Empty,
-                CreateTimestamp = Timestamp.FromDateTime(innerAddress.CreateTimestamp),
-                Delivery = innerAddress.Delivery ?? string.Empty,
-                DomainId = innerAddress.DomainId.ToString("D"),
-                PostalCode = innerAddress.PostalCode ?? string.Empty,
-                Territory = innerAddress.Territory ?? string.Empty
+                EmailAddressId = innerEmailAddress.EmailAddressId.ToString("D"),
+                Address = innerEmailAddress.Address ?? string.Empty,
+                CreateTimestamp = Timestamp.FromDateTime(innerEmailAddress.CreateTimestamp),
+                DomainId = innerEmailAddress.DomainId.ToString("D")
             };
         }
 
-        private static void Map(Address address, IAddress innerAddress)
-        {
-            innerAddress.Attention = address.Attention ?? string.Empty;
-            innerAddress.Addressee = address.Addressee ?? string.Empty;
-            innerAddress.City = address.City ?? string.Empty;
-            innerAddress.Country = address.Country ?? string.Empty;
-            innerAddress.County = address.County ?? string.Empty;
-            innerAddress.Delivery = address.Delivery ?? string.Empty;
-            innerAddress.PostalCode = address.PostalCode ?? string.Empty;
-            innerAddress.Territory = address.Territory ?? string.Empty;
-        }
+        private static void Map(EmailAddress emailAddress, IEmailAddress innerEmailAddress)
+            => innerEmailAddress.Address = emailAddress.Address ?? string.Empty;
     }
 }
