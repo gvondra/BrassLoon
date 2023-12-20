@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "BrassLoon.Interface.Address.Protos";
+
+service EmailAddressService {
+    rpc Get(GetEmailAddressRequest) returns (EmailAddress);
+    rpc Save(EmailAddress) returns (EmailAddress);
+}
+
+message EmailAddress {
+	string EmailAddressId = 1;
+	string DomainId = 2;
+	string Aaddress = 3;
+    google.protobuf.Timestamp CreateTimestamp = 4;
+}
+
+message GetEmailAddressRequest {
+    string DomainId = 1;
+    string EmailAddressId = 2;
+}

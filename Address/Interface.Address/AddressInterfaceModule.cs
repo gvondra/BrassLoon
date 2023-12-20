@@ -8,6 +8,7 @@ namespace BrassLoon.Interface.Address
         {
             base.Load(builder);
             _ = builder.RegisterType<AddressService>().As<IAddressService>();
+            _ = builder.RegisterType<EmailAddressService>().As<IEmailAddressService>();
         }
     }
 }
