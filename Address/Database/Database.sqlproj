@@ -69,6 +69,10 @@
     <Build Include="Stored Procedure\blad.CreateAddress.sql" />
     <Build Include="Stored Procedure\blad.GetAddress.sql" />
     <Build Include="Stored Procedure\blad.GetAddress_by_Hash.sql" />
+    <Build Include="Table\blad.EmailAddress.sql" />
+    <Build Include="Stored Procedure\blad.CreateEmailAddress.sql" />
+    <Build Include="Stored Procedure\blad.GetEmailAddress.sql" />
+    <Build Include="Stored Procedure\blad.GetEmailAddress_by_Hash.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />
