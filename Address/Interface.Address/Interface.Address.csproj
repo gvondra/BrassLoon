@@ -11,8 +11,8 @@
         <Product>Brass Loon</Product>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.0-prerelease.0</Version>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Version>1.0.0-prerelease.1</Version>
+        <AssemblyVersion>1.0.0.1</AssemblyVersion>
         <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
 
