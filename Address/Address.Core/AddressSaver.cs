@@ -41,7 +41,7 @@ namespace BrassLoon.Address.Core
                     Delivery = AddressCryptography.Encrypt(key, iv, (address.Delivery ?? string.Empty).Trim()),
                     City = AddressCryptography.Encrypt(key, iv, (address.City ?? string.Empty).Trim()),
                     Territory = AddressCryptography.Encrypt(key, iv, (address.Territory ?? string.Empty).Trim()),
-                    PostalCode = AddressCryptography.Encrypt(key, iv, (address.PostalCode ?? string.Empty).Trim()),
+                    PostalCode = AddressCryptography.Encrypt(key, iv, Formatter.UnformatPostalCode(address.PostalCode)),
                     Country = AddressCryptography.Encrypt(key, iv, (address.Country ?? string.Empty).Trim()),
                     County = AddressCryptography.Encrypt(key, iv, (address.County ?? string.Empty).Trim())
                 };

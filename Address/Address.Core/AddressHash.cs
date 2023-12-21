@@ -28,14 +28,11 @@ namespace BrassLoon.Address.Core
 
         private static string FormatPostalCode(string value)
         {
-            value = FormatAddressField(value);
-            return Regex.Replace(value, @"[^0-1A-Za-z]+", string.Empty, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
+            return Formatter.UnformatPostalCode(value)
+                .ToLower(CultureInfo.GetCultureInfo("en-us"));
         }
 
         private static string FormatAddressField(string value)
-        {
-            value = (value ?? string.Empty).Trim().ToLower(CultureInfo.GetCultureInfo("en-us"));
-            return Regex.Replace(value, @"\s{2,}", " ", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
-        }
+            => Formatter.TrimAndConsolidateWhiteSpace(value).ToLower(CultureInfo.GetCultureInfo("en-us"));
     }
 }
