@@ -15,6 +15,8 @@ namespace BrassLoon.Address.Data
             _ = builder.RegisterType<AddressDataSaver>().As<IAddressDataSaver>();
             _ = builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
             _ = builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
+            _ = builder.RegisterType<PhoneDataFactory>().As<IPhoneDataFactory>();
+            _ = builder.RegisterType<PhoneDataSaver>().As<IPhoneDataSaver>();
         }
     }
 }
