@@ -11,8 +11,8 @@
         <Product>Brass Loon</Product>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.0-prerelease.3</Version>
-        <AssemblyVersion>1.0.0.3</AssemblyVersion>
+        <Version>1.0.0-prerelease.4</Version>
+        <AssemblyVersion>1.0.0.4</AssemblyVersion>
         <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
 
@@ -27,11 +27,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Protos\address.proto" />
-      <None Remove="Protos\email-address.proto" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Autofac" Version="[7.0,8.0)" />
         <PackageReference Include="Google.Protobuf" Version="[3.25.0,4.0)" />
         <PackageReference Include="Grpc.Net.Client" Version="[2.58.0,3.0)" />
@@ -42,6 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Protobuf Include="Protos\phone.proto" />
       <Protobuf Include="Protos\email-address.proto" />
       <Protobuf Include="Protos\address.proto" />
     </ItemGroup>
