@@ -63,6 +63,7 @@ namespace AddressRPC
 
             _ = app.MapGrpcService<AddressService>();
             _ = app.MapGrpcService<EmailAddressService>();
+            _ = app.MapGrpcService<PhoneService>();
 
             app.Run();
         }

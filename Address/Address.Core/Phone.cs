@@ -27,8 +27,8 @@ namespace BrassLoon.Address.Core
         {
             bool equals = true;
             if (!DomainId.Equals(other.DomainId)
-                || !StringEquals(Number, other.Number)
-                || !StringEquals(CountryCode, other.CountryCode))
+                || !StringEquals(Formatter.UnformatPhoneNumber(Number), Formatter.UnformatPhoneNumber(other.Number))
+                || !StringEquals(Formatter.UnformatPhoneNumber(CountryCode), Formatter.UnformatPhoneNumber(other.CountryCode)))
             {
                 equals = false;
             }

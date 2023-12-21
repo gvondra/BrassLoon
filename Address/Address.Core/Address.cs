@@ -30,14 +30,14 @@ namespace BrassLoon.Address.Core
         {
             bool equals = true;
             if (!DomainId.Equals(other.DomainId)
-                || !StringEquals(Attention, other.Attention)
-                || !StringEquals(Addressee, other.Addressee)
-                || !StringEquals(Delivery, other.Delivery)
-                || !StringEquals(City, other.City)
-                || !StringEquals(Territory, other.Territory)
-                || !StringEquals(PostalCode, other.PostalCode)
-                || !StringEquals(Country, other.Country)
-                || !StringEquals(County, other.County))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Attention), Formatter.TrimAndConsolidateWhiteSpace(other.Attention))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Addressee), Formatter.TrimAndConsolidateWhiteSpace(other.Addressee))
+                || !StringEquals(Formatter.UnformatAddressDelivery(Delivery), Formatter.UnformatAddressDelivery(other.Delivery))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(City), Formatter.TrimAndConsolidateWhiteSpace(other.City))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Territory), Formatter.TrimAndConsolidateWhiteSpace(other.Territory))
+                || !StringEquals(Formatter.UnformatPostalCode(PostalCode), Formatter.UnformatPostalCode(other.PostalCode))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Country), Formatter.TrimAndConsolidateWhiteSpace(other.Country))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(County), Formatter.TrimAndConsolidateWhiteSpace(other.County)))
             {
                 equals = false;
             }

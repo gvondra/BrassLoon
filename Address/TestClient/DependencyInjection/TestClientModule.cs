@@ -12,6 +12,7 @@ namespace BrassLoon.Address.TestClient.DependencyInjection
 
             _ = builder.RegisterType<AddressTest>();
             _ = builder.RegisterType<EmailAddressTest>();
+            _ = builder.RegisterType<PhoneTest>();
             _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }

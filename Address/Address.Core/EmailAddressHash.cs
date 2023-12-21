@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace BrassLoon.Address.Core
 {
@@ -20,9 +19,6 @@ namespace BrassLoon.Address.Core
         }
 
         private static string FormatAddressField(string value)
-        {
-            value = (value ?? string.Empty).Trim().ToLower(CultureInfo.GetCultureInfo("en-us"));
-            return Regex.Replace(value, @"\s{2,}", " ", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
-        }
+            => Formatter.TrimAndConsolidateWhiteSpace(value).ToLower(CultureInfo.GetCultureInfo("en-us"));
     }
 }

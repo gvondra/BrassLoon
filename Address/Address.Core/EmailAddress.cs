@@ -26,7 +26,7 @@ namespace BrassLoon.Address.Core
         {
             bool equals = true;
             if (!DomainId.Equals(other.DomainId)
-                || !StringEquals(Address, other.Address))
+                || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Address), Formatter.TrimAndConsolidateWhiteSpace(other.Address)))
             {
                 equals = false;
             }
