@@ -22,5 +22,12 @@ namespace BrassLoon.Address.Core
             value = Regex.Replace(value, @"P\.?\s*O\.?\s*Box\s+", "PO Box ", RegexOptions.IgnoreCase);
             return value;
         }
+
+        public static string UnformatPhoneNumber(string value)
+        {
+            value = (value ?? string.Empty).Trim();
+            value = Regex.Replace(value, @"[^0-9]", string.Empty, RegexOptions.IgnoreCase);
+            return value;
+        }
     }
 }

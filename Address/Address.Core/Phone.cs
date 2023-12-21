@@ -2,31 +2,33 @@
 
 namespace BrassLoon.Address.Core
 {
-    public sealed class EmailAddress : IEmailAddress
+    public sealed class Phone : IPhone
     {
-        public Guid EmailAddressId { get; internal set; }
+        public Guid PhoneId { get; internal set; }
 
         public Guid DomainId { get; internal set; }
 
         public byte[] Hash { get; internal set; }
 
-        public string Address { get; set; }
+        public string Number { get; set; }
+        public string CountryCode { get; set; }
 
         public DateTime CreateTimestamp { get; internal set; }
 
         public override bool Equals(object obj)
         {
-            if (obj is IEmailAddress emailAddress)
-                return Equals(emailAddress);
+            if (obj is IPhone phone)
+                return Equals(phone);
             else
                 return base.Equals(obj);
         }
 
-        public bool Equals(IEmailAddress other)
+        public bool Equals(IPhone other)
         {
             bool equals = true;
             if (!DomainId.Equals(other.DomainId)
-                || !StringEquals(Address, other.Address))
+                || !StringEquals(Number, other.Number)
+                || !StringEquals(CountryCode, other.CountryCode))
             {
                 equals = false;
             }
@@ -39,9 +41,10 @@ namespace BrassLoon.Address.Core
         public override int GetHashCode()
         {
             HashCode hash = new HashCode();
-            hash.Add(EmailAddressId);
+            hash.Add(PhoneId);
             hash.Add(DomainId);
-            hash.Add(Address ?? string.Empty);
+            hash.Add(Number ?? string.Empty);
+            hash.Add(CountryCode ?? string.Empty);
             hash.Add(CreateTimestamp);
             return hash.ToHashCode();
         }
