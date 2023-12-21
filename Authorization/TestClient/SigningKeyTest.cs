@@ -39,13 +39,13 @@ namespace BrassLoon.Authorization.TestClient
             Console.WriteLine("Getting signing keys");
             List<SigningKey> signingKeys = await _signingKeyService.GetByDomain(settings, _settings.AuthorizationDomainId.Value);
             Console.WriteLine("Creating signing key");
-            await _signingKeyService.Create(settings, new SigningKey { DomainId = _settings.AuthorizationDomainId.Value, IsActive = true });
+            _ = await _signingKeyService.Create(settings, new SigningKey { DomainId = _settings.AuthorizationDomainId.Value, IsActive = true });
             string jwks = await _jwksService.GetJwks(settings, _settings.AuthorizationDomainId.Value);
             foreach (SigningKey signingKey in signingKeys.Where(sk => sk.IsActive ?? true))
             {
                 Console.WriteLine($"Inactivating existing signing key {signingKey.SigningKeyId.Value:D}");
                 signingKey.IsActive = false;
-                await _signingKeyService.Update(settings, signingKey);
+                _ = await _signingKeyService.Update(settings, signingKey);
             }
         }
     }

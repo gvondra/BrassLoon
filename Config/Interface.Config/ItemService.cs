@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Config
 {
+#pragma warning disable S2696 // Instance members should not write to "static" fields
     public class ItemService : IItemService
     {
         private static Policy _cache = CreateCache();
@@ -132,4 +133,5 @@ namespace BrassLoon.Interface.Config
             }
         }
     }
+#pragma warning restore S2696 // Instance members should not write to "static" fields
 }

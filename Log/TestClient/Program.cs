@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Log.TestClient
 {
-    public sealed class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -41,10 +41,10 @@ namespace BrassLoon.Log.TestClient
                     rootCommand.SetHandler(
                         logExtension => GenerateRPCEntries(),
                         loggerRpcTest);
-                    await rootCommand.InvokeAsync(args);
+                    _ = await rootCommand.InvokeAsync(args);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
             }
@@ -80,7 +80,7 @@ namespace BrassLoon.Log.TestClient
         private static AppSettings LoadSettings()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder
+            _ = builder
             .AddJsonFile("appSettings.json", false)
             .AddEnvironmentVariables()
             ;

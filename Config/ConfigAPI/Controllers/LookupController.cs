@@ -43,14 +43,18 @@ namespace ConfigAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> GetByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(code))
+                }
+                else if (string.IsNullOrEmpty(code))
+                {
                     result = BadRequest("Missing lookup code parameter value");
-                if (result == null)
+                }
+                else
                 {
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                     {
@@ -84,14 +88,18 @@ namespace ConfigAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> GetDataByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(code))
+                }
+                else if (string.IsNullOrEmpty(code))
+                {
                     result = BadRequest("Missing lookup code parameter value");
-                if (result == null)
+                }
+                else
                 {
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                     {
@@ -128,11 +136,15 @@ namespace ConfigAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(code))
+                }
+                else if (string.IsNullOrEmpty(code))
+                {
                     result = BadRequest("Missing lookup code parameter value");
-                if (result == null)
+                }
+                else
                 {
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                     {
@@ -150,7 +162,7 @@ namespace ConfigAPI.Controllers
                             IMapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(
                                 (await lookup.GetHistory(_settingsFactory.CreateCore(_settings.Value)))
-                                .Select<ILookupHistory, LookupHistory>(hist => mapper.Map<LookupHistory>(hist))
+                                .Select(hist => mapper.Map<LookupHistory>(hist))
                                 );
                         }
                     }
@@ -169,12 +181,14 @@ namespace ConfigAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> GetCodes([FromRoute] Guid? domainId)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                     {
@@ -204,11 +218,15 @@ namespace ConfigAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(code))
+                }
+                else if (string.IsNullOrEmpty(code))
+                {
                     result = BadRequest("Missing lookup code parameter value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     ILookup innerLookup = null;
@@ -245,14 +263,18 @@ namespace ConfigAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] string code)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || Guid.Empty.Equals(domainId.Value)))
+                if (!domainId.HasValue || Guid.Empty.Equals(domainId.Value))
+                {
                     result = BadRequest("Missing domain id parameter value");
-                if (result == null && string.IsNullOrEmpty(code))
+                }
+                else if (string.IsNullOrEmpty(code))
+                {
                     result = BadRequest("Missing lookup code parameter value");
-                if (result == null)
+                }
+                else
                 {
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                     {

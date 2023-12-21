@@ -2,7 +2,6 @@
 using BrassLoon.Interface.Authorization.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Account = BrassLoon.Interface.Account;
@@ -39,7 +38,7 @@ namespace BrassLoon.Authorization.TestClient
             Console.WriteLine(generatedSecret);
             Console.WriteLine("Getting clients");
             List<Client> clients = await _clientService.GetByDomain(settings, _settings.AuthorizationDomainId.Value);
-            Client testClient = clients.FirstOrDefault(c => Regex.IsMatch(c.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            Client testClient = clients.Find(c => Regex.IsMatch(c.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testClient == null)
             {
                 testClient = new Client

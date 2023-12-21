@@ -45,23 +45,31 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain id parameter value");
-                if (result == null && !maxTimestamp.HasValue)
-                    result = BadRequest("Missing max timestamp parameter value");
-                if (result == null && string.IsNullOrEmpty(eventCode))
-                    result = BadRequest("Missing event code parameter value");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value)))
+                    result = BadRequest("Missing domain id parameter value");
+                }
+                else if (!maxTimestamp.HasValue)
+                {
+                    result = BadRequest("Missing max timestamp parameter value");
+                }
+                else if (string.IsNullOrEmpty(eventCode))
+                {
+                    result = BadRequest("Missing event code parameter value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccount(domainId.Value))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         CoreSettings settings = CreateCoreSettings();
                         IMapper mapper = CreateMapper();
                         result = Ok(
                             (await _traceFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
-                            .Select<ITrace, LogModels.Trace>(innerTrace => mapper.Map<LogModels.Trace>(innerTrace))
+                            .Select(mapper.Map<LogModels.Trace>)
                             );
                     }
                 }
@@ -80,15 +88,19 @@ namespace LogAPI.Controllers
         [Authorize()]
         public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain id parameter value");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccount(domainId.Value)))
+                    result = BadRequest("Missing domain id parameter value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccount(domainId.Value))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
+                    }
                     else
                     {
                         CoreSettings settings = CreateCoreSettings();
@@ -127,11 +139,13 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!trace.DomainId.HasValue || trace.DomainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain guid value");
-                if (result == null)
+                if (!trace.DomainId.HasValue || trace.DomainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(trace.DomainId.Value, _settings.Value, _domainService)))
+                    result = BadRequest("Missing domain guid value");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccountWriteAccess(trace.DomainId.Value, _settings.Value, _domainService))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
@@ -141,12 +155,12 @@ namespace LogAPI.Controllers
                         IEventId innerEventId = await GetInnerEventId(settings, trace.DomainId.Value, trace.EventId);
                         ITrace innerTrace = _traceFactory.Create(trace.DomainId.Value, trace.CreateTimestamp, trace.EventCode, innerEventId);
                         IMapper mapper = CreateMapper();
-                        mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
+                        _ = mapper.Map(trace, innerTrace);
                         await _traceSaver.Create(settings, innerTrace);
                         result = Ok(mapper.Map<LogModels.Trace>(innerTrace));
                     }
                 }
-            }    
+            }
             catch (Exception ex)
             {
                 await LogException(ex);
@@ -162,13 +176,17 @@ namespace LogAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing domain guid value");
-                if (result == null && traces == null)
-                    result = BadRequest("Missing trace list message body");
-                if (result == null)
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                 {
-                    if (!(await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService)))
+                    result = BadRequest("Missing domain guid value");
+                }
+                else if (traces == null)
+                {
+                    result = BadRequest("Missing trace list message body");
+                }
+                else
+                {
+                    if (!await VerifyDomainAccountWriteAccess(domainId.Value, _settings.Value, _domainService))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
@@ -181,7 +199,7 @@ namespace LogAPI.Controllers
                         {
                             IEventId innerEventId = await GetInnerEventId(settings, domainId.Value, trace.EventId);
                             ITrace innerTrace = _traceFactory.Create(domainId.Value, trace.CreateTimestamp, trace.EventCode, innerEventId);
-                            mapper.Map<LogModels.Trace, ITrace>(trace, innerTrace);
+                            _ = mapper.Map(trace, innerTrace);
                             innerTraces.Add(innerTrace);
                         }
                         await _traceSaver.Create(settings, innerTraces.ToArray());

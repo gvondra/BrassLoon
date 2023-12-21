@@ -13,24 +13,24 @@ using Microsoft.Extensions.Logging;
 
 namespace AuthorizationRPC
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthenticationRPCModule()));
-            builder.Services.Configure<Settings>(builder.Configuration);
+            _ = builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthenticationRPCModule()));
+            _ = builder.Services.Configure<Settings>(builder.Configuration);
 
-            builder.Services.AddLogging(b =>
+            _ = builder.Services.AddLogging(b =>
             {
-                b.ClearProviders();
-                b.AddConsole();
+                _ = b.ClearProviders();
+                _ = b.AddConsole();
                 Settings settings = new Settings();
                 builder.Configuration.Bind(settings);
                 if (settings.LoggingDomainId.HasValue && !string.IsNullOrEmpty(settings.LogApiBaseAddress) && settings.LoggingClientId.HasValue)
                 {
-                    b.AddBrassLoonLogger(c =>
+                    _ = b.AddBrassLoonLogger(c =>
                     {
                         c.LogApiBaseAddress = settings.LogApiBaseAddress;
                         c.LogDomainId = settings.LoggingDomainId.Value;
@@ -40,7 +40,7 @@ namespace AuthorizationRPC
                 }
             });
 
-            builder.Services.AddAuthentication(o =>
+            _ = builder.Services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,29 +48,29 @@ namespace AuthorizationRPC
             .AddBrassLoonAuthentication(builder.Configuration)
             .AddGoogleAuthentication(builder.Configuration)
             ;
-            builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
-            builder.Services.AddAuthorization(builder.Configuration);
+            _ = builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
+            _ = builder.Services.AddAuthorization(builder.Configuration);
 
             // Additional configuration is required to successfully run gRPC on macOS.
             // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
             // Add services to the container.
-            builder.Services.AddGrpc();
+            _ = builder.Services.AddGrpc();
 
             WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+            _ = app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            _ = app.UseAuthentication();
+            _ = app.UseAuthorization();
 
-            app.MapGrpcService<ClientService>();
-            app.MapGrpcService<JwksService>();
-            app.MapGrpcService<RoleService>();
-            app.MapGrpcService<SigningKeyService>();
-            app.MapGrpcService<TokenService>();
-            app.MapGrpcService<UserService>();
+            _ = app.MapGrpcService<ClientService>();
+            _ = app.MapGrpcService<JwksService>();
+            _ = app.MapGrpcService<RoleService>();
+            _ = app.MapGrpcService<SigningKeyService>();
+            _ = app.MapGrpcService<TokenService>();
+            _ = app.MapGrpcService<UserService>();
 
             app.Run();
         }

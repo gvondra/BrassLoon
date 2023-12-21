@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
 {
     public class Saver
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         public async Task Save(ITransactionHandler transactionHandler, Func<ITransactionHandler, Task> save)
         {
             try
@@ -29,7 +28,7 @@ namespace BrassLoon.CommonCore
                 {
                     transactionHandler.Transaction.Dispose();
                     transactionHandler.Transaction = null;
-                }                    
+                }
                 if (transactionHandler.Connection != null)
                 {
                     transactionHandler.Connection.Dispose();

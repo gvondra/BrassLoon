@@ -34,7 +34,7 @@ namespace BrassLoon.Log.Core
             createTimestamp = createTimestamp.Value.ToUniversalTime();
             return Create(
                 new MetricData()
-                { 
+                {
                     DomainId = domainId,
                     EventCode = eventCode,
                     CreateTimestamp = createTimestamp.Value
@@ -43,10 +43,7 @@ namespace BrassLoon.Log.Core
                 );
         }
 
-        public async Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId)
-        {
-            return await _dataFactory.GetEventCodes(_settingsFactory.CreateData(settings), domainId);
-        }
+        public async Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId) => await _dataFactory.GetEventCodes(_settingsFactory.CreateData(settings), domainId);
 
         public async Task<IEnumerable<IMetric>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {

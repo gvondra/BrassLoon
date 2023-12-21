@@ -45,7 +45,7 @@ namespace BrassLoon.Authorization.TestClient
                 Verb = "Open"
             };
             // Opens request in the browser.
-            Process.Start(startInfo);
+            _ = Process.Start(startInfo);
 
             // Waits for the OAuth authorization response.
             HttpListenerContext context = await httpListener.GetContextAsync();
@@ -114,7 +114,7 @@ namespace BrassLoon.Authorization.TestClient
             byte[] byteVersion = Encoding.ASCII.GetBytes(tokenRequestBody);
             tokenRequest.ContentLength = byteVersion.Length;
             Stream stream = tokenRequest.GetRequestStream();
-            await stream.WriteAsync(byteVersion, 0, byteVersion.Length, default);
+            await stream.WriteAsync(byteVersion, default);
             stream.Close();
 
             try

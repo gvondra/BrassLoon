@@ -13,9 +13,9 @@ namespace BrassLoon.Log.TestClient.DependencyInjection
             AppSettings appSettings = null)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule(new TestClientModule());
+            _ = builder.RegisterModule(new TestClientModule());
             if (appSettings != null)
-                builder.RegisterInstance(appSettings);
+                _ = builder.RegisterInstance(appSettings);
             _container = builder.Build();
         }
 

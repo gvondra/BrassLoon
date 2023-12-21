@@ -9,7 +9,7 @@ namespace BrassLoon.Log.Data
 {
     public class PurgeWorkerDataSaver : IPurgeWorkerDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public PurgeWorkerDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -24,9 +24,9 @@ namespace BrassLoon.Log.Data
                 {
                     command.CommandText = "[bll].[InitializePurgeWorker]";
                     command.CommandType = CommandType.StoredProcedure;
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                 }
-            }            
+            }
         }
 
         public async Task Update(ISqlTransactionHandler transactionHandler, PurgeWorkerData purgeWorkerData)
@@ -42,12 +42,12 @@ namespace BrassLoon.Log.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "purgeWorkerId", DbType.Guid, DataUtil.GetParameterValue(purgeWorkerData.PurgeWorkerId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.Int16, DataUtil.GetParameterValue(purgeWorkerData.Status));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     purgeWorkerData.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }

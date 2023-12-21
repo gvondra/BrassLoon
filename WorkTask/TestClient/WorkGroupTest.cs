@@ -4,7 +4,6 @@ using BrassLoon.WorkTask.TestClient.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -34,7 +33,7 @@ namespace BrassLoon.WorkTask.TestClient
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting work groups");
             List<WorkGroup> workGroups = await _workGroupService.GetAll(settings, _appSettings.Domain.Value);
-            WorkGroup testGroup = workGroups.FirstOrDefault(grp => Regex.IsMatch(grp.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            WorkGroup testGroup = workGroups.Find(grp => Regex.IsMatch(grp.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testGroup == null)
             {
                 testGroup = new WorkGroup

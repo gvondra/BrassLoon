@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Log = BrassLoon.Interface.Log;
@@ -48,7 +49,7 @@ namespace LogAPI.Controllers
                 IMapper mapper = CreateMapper();
                 result = Ok(
                     (await _purgeWorkerFactory.GetAll(settings))
-                    .Select<IPurgeWorker, PurgeWorker>(innerPurgeWorker => mapper.Map<PurgeWorker>(innerPurgeWorker))
+                    .Select(mapper.Map<PurgeWorker>)
                     );
             }
             catch (System.Exception ex)
@@ -63,22 +64,26 @@ namespace LogAPI.Controllers
         [ProducesResponseType(typeof(PurgeWorker), 200)]
         public async Task<IActionResult> Get([FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<PurgeWorker>(innerPurgeWorker));
-                    }                    
+                    }
                 }
             }
             catch (System.Exception ex)
@@ -93,23 +98,29 @@ namespace LogAPI.Controllers
         [ProducesResponseType(typeof(PurgeWorker), 200)]
         public async Task<IActionResult> UpdateStatus([FromRoute] Guid? id, [FromBody] Dictionary<string, object> patch)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null && patch == null)
+                }
+                else if (patch == null)
+                {
                     result = BadRequest("Missing patch data");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IPurgeWorker innerPurgeWorker = await _purgeWorkerFactory.Get(settings, id.Value);
                     if (innerPurgeWorker == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         if (patch.ContainsKey("Status"))
-                            innerPurgeWorker.Status = (PurgeWorkerStatus)Convert.ChangeType(patch["Status"], typeof(short));
+                            innerPurgeWorker.Status = (PurgeWorkerStatus)Convert.ChangeType(patch["Status"], typeof(short), CultureInfo.InvariantCulture);
                         await _purgeWorkerSaver.Update(settings, innerPurgeWorker);
                         IMapper mapper = CreateMapper();
                         result = Ok(mapper.Map<PurgeWorker>(innerPurgeWorker));

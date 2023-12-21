@@ -5,16 +5,16 @@ namespace BrassLoon.CommonAPI
     {
         public AuthorizationRequirement(string policyName, string issuer)
         {
-            this.PolicyName = policyName;
-            this.Issuer = issuer;
-            this.Roles = new string[] { };
+            PolicyName = policyName;
+            Issuer = issuer;
+            Roles = Array.Empty<string>();
         }
 
         public AuthorizationRequirement(string policyName, string issuer, params string[] roles)
         {
-            this.PolicyName = policyName;
-            this.Issuer = issuer;
-            this.Roles = roles;
+            PolicyName = policyName;
+            Issuer = issuer;
+            Roles = roles;
         }
 
         public string PolicyName { get; set; }

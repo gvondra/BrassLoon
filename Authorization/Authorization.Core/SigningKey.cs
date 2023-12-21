@@ -2,6 +2,7 @@
 using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonCore;
 using BrassLoon.JwtUtility;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -37,27 +38,27 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        private async Task CreateKey(ISettings settings)
+        private async Task CreateKey(Framework.ISettings settings)
         {
             using (RSA serviceProvider = RSA.Create(2048))
             {
                 RSAParameters rsaParameters = serviceProvider.ExportParameters(true);
-                await _keyVault.SetSecret(settings, KeyVaultKey.ToString("D"), RsaSecurityKeySerializer.Serialize(rsaParameters));
+                _ = await _keyVault.SetSecret(settings.SigningKeyVaultAddress, KeyVaultKey.ToString("D"), RsaSecurityKeySerializer.Serialize(rsaParameters));
             }
         }
 
-        public async Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings)
+        public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
         {
             await CreateKey(settings);
             await _dataSaver.Create(transactionHandler, _data);
         }
 
-        public async Task<RsaSecurityKey> GetKey(ISettings settings, bool includePrivateKey = false)
+        public async Task<RsaSecurityKey> GetKey(Framework.ISettings settings, bool includePrivateKey = false)
         {
-            KeyVaultSecret secret = await _keyVault.GetSecret(settings, KeyVaultKey.ToString("D"));
+            KeyVaultSecret secret = await _keyVault.GetSecret(settings.SigningKeyVaultAddress, KeyVaultKey.ToString("D"));
             return RsaSecurityKeySerializer.GetSecurityKey(secret.Value, includePrivateKey);
         }
 
-        public Task Update(CommonCore.ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }
 }

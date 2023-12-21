@@ -43,7 +43,7 @@ namespace BrassLoon.Authorization.TestClient
                     () => UserTest());
                 rootCommand.AddCommand(command);
 
-                await rootCommand.InvokeAsync(args);
+                _ = await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
             {
@@ -89,7 +89,7 @@ namespace BrassLoon.Authorization.TestClient
         private static AppSettings LoadSettings()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder
+            _ = builder
             .AddJsonFile("appsettings.json", true)
             .AddEnvironmentVariables()
             ;

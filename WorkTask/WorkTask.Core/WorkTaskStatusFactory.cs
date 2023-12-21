@@ -25,8 +25,7 @@ namespace BrassLoon.WorkTask.Core
 
         public IWorkTaskStatus Create(IWorkTaskType workTaskType, string code)
         {
-            if (workTaskType == null)
-                throw new ArgumentNullException(nameof(workTaskType));
+            ArgumentNullException.ThrowIfNull(workTaskType);
             if (string.IsNullOrEmpty(code))
                 throw new ArgumentNullException(nameof(code));
             return Create(

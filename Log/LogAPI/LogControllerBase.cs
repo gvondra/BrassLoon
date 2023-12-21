@@ -11,6 +11,7 @@ namespace LogAPI
 {
     public abstract class LogControllerBase : CommonControllerBase
     {
+#pragma warning disable CA1051 // Do not declare visible instance fields
         protected readonly IOptions<Settings> _settings;
         protected readonly SettingsFactory _settingsFactory;
         protected readonly IExceptionService _exceptionService;
@@ -19,6 +20,7 @@ namespace LogAPI
         private BrassLoon.Interface.Log.ISettings _loggSettings;
         private BrassLoon.Interface.Account.ISettings _accountSettings;
         private CoreSettings _coreSettings;
+#pragma warning restore CA1051 // Do not declare visible instance fields
 
         protected LogControllerBase(IOptions<Settings> settings,
             SettingsFactory settingsFactory,

@@ -48,8 +48,8 @@ namespace AuthorizationRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.UserId) || !Guid.TryParse(request.UserId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request?.UserId}\"");
+                if (string.IsNullOrEmpty(request.UserId) || !Guid.TryParse(request.UserId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request.UserId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -60,7 +60,7 @@ namespace AuthorizationRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IUser innerUser = await _userFactory.Get(settings, domainId, id);
-                Protos.User user = null;
+                User user = null;
                 if (innerUser != null)
                     user = await Map(settings, innerUser);
                 return user;
@@ -81,8 +81,8 @@ namespace AuthorizationRPC.Services
         {
             try
             {
-                Protos.User user = await Get(request, context);
-                return new Protos.GetUserNameResponse
+                User user = await Get(request, context);
+                return new GetUserNameResponse
                 {
                     Name = user?.Name
                 };
@@ -116,7 +116,7 @@ namespace AuthorizationRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IUser> innerUsers = await _userFactory.GetByDomainId(settings, domainId);
-                foreach (Task<Protos.User> getUser in innerUsers.Select<IUser, Task<Protos.User>>(u => Map(settings, u)))
+                foreach (Task<User> getUser in innerUsers.Select(u => Map(settings, u)))
                 {
                     await responseStream.WriteAsync(await getUser);
                 }
@@ -167,7 +167,7 @@ namespace AuthorizationRPC.Services
                     innerUsers = new List<IUser> { innerUser };
                 else if (innerUsers == null)
                     innerUsers = new List<IUser>();
-                foreach (Task<Protos.User> getUser in innerUsers.Select<IUser, Task<Protos.User>>(u => Map(settings, u)))
+                foreach (Task<User> getUser in innerUsers.Select(u => Map(settings, u)))
                 {
                     await responseStream.WriteAsync(await getUser);
                 }
@@ -192,8 +192,8 @@ namespace AuthorizationRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.UserId) || !Guid.TryParse(request.UserId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request?.UserId}\"");
+                if (string.IsNullOrEmpty(request.UserId) || !Guid.TryParse(request.UserId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid user id \"{request.UserId}\"");
                 if (string.IsNullOrEmpty(request.Name))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing missing user name value");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
@@ -206,7 +206,7 @@ namespace AuthorizationRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IUser innerUser = await _userFactory.Get(settings, domainId, id);
-                Protos.User user = null;
+                User user = null;
                 if (innerUser != null)
                 {
                     Map(request, innerUser);
@@ -230,7 +230,7 @@ namespace AuthorizationRPC.Services
         private static string GetReferenceId(ClaimsPrincipal claimsPrincipal)
             => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        private static async Task ApplyRoleChanges(CoreSettings settings, IEnumerable<Protos.AppliedRole> appliedRoles, IUser innerUser)
+        private static async Task ApplyRoleChanges(CoreSettings settings, IEnumerable<AppliedRole> appliedRoles, IUser innerUser)
         {
             if (appliedRoles != null)
             {
@@ -242,18 +242,18 @@ namespace AuthorizationRPC.Services
                 }
                 foreach (AppliedRole role in appliedRoles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentRoles.Exists(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.AddRole(settings, role.PolicyName);
                 }
             }
         }
 
-        private static void Map(Protos.User user, IUser innerUser)
+        private static void Map(User user, IUser innerUser)
             => innerUser.Name = user.Name;
 
-        private static async Task<Protos.User> Map(CoreSettings settings, IUser innerUser)
+        private static async Task<User> Map(CoreSettings settings, IUser innerUser)
         {
-            Protos.User user = new Protos.User
+            User user = new User
             {
                 CreateTimestamp = Timestamp.FromDateTime(innerUser.CreateTimestamp),
                 DomainId = innerUser.DomainId.ToString("D"),
@@ -270,9 +270,9 @@ namespace AuthorizationRPC.Services
             return user;
         }
 
-        private static Protos.AppliedRole Map(IRole innerRole)
+        private static AppliedRole Map(IRole innerRole)
         {
-            return new Protos.AppliedRole
+            return new AppliedRole
             {
                 Name = innerRole.Name,
                 PolicyName = innerRole.PolicyName

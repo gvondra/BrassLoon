@@ -4,7 +4,6 @@ using BrassLoon.WorkTask.TestClient.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Models = BrassLoon.Interface.WorkTask.Models;
@@ -81,14 +80,14 @@ namespace BrassLoon.WorkTask.TestClient
         private async Task<WorkTaskType> GetWorkTaskType(WorkTaskSettings settings)
         {
             List<WorkTaskType> workTaskTypes = await _workTaskTypeService.GetAll(settings, _appSettings.Domain.Value);
-            return workTaskTypes.FirstOrDefault(wtt => Regex.IsMatch(wtt.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            return workTaskTypes.Find(wtt => Regex.IsMatch(wtt.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
         }
 
         private async Task<WorkTaskStatus> GetWorkTaskStatus(WorkTaskSettings settings, Guid workTaskTypeId)
         {
             _logger.Information("Getting work task status");
             List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, workTaskTypeId);
-            return workTaskStatuses.FirstOrDefault(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            return workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
         }
     }
 }

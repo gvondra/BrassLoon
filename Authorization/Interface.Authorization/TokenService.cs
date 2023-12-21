@@ -23,7 +23,7 @@ namespace BrassLoon.Interface.Authorization
             string token = await settings.GetToken();
             Metadata headers = new Metadata()
             {
-                { "Authorization", string.Format("Bearer {0}", token) }
+                { "Authorization", string.Format(CultureInfo.InvariantCulture, "Bearer {0}", token) }
             };
             return await _cache.ExecuteAsync(async context =>
             {

@@ -3,6 +3,7 @@ using Polly;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LogModels = BrassLoon.Interface.Log.Models;
@@ -22,7 +23,7 @@ namespace BrassLoon.Interface.Log
 
         public async Task<LogModels.Exception> Create(ISettings settings, LogModels.Exception exception)
         {
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, exception) 
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, exception)
             .AddPath("Exception")
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
@@ -35,12 +36,9 @@ namespace BrassLoon.Interface.Log
             return response.Value;
         }
 
-        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, System.Exception exception)
-        {
-            return Create(settings, domainId, null, exception);
-        }
+        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, Exception exception) => Create(settings, domainId, null, exception);
 
-        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, System.Exception exception)
+        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, Exception exception)
         {
             return Create(
                 settings,
@@ -50,11 +48,11 @@ namespace BrassLoon.Interface.Log
                 );
         }
 
-        public Task<LogModels.Exception> Create(ISettings settings, 
-            Guid domainId, 
-            System.Exception exception, 
-            DateTime? createTimestamp = null, 
-            string category = null, 
+        public Task<LogModels.Exception> Create(ISettings settings,
+            Guid domainId,
+            Exception exception,
+            DateTime? createTimestamp = null,
+            string category = null,
             string level = null,
             LogModels.EventId? eventId = null)
         {
@@ -69,7 +67,7 @@ namespace BrassLoon.Interface.Log
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
             .AddPath("Exception")
             .AddPath(domainId.ToString("N"))
-            .AddPath(id.ToString())
+            .AddPath(id.ToString(CultureInfo.InvariantCulture))
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
             return _restUtil.Send<LogModels.Exception>(_service, request);
@@ -86,10 +84,10 @@ namespace BrassLoon.Interface.Log
             return _restUtil.Send<List<LogModels.Exception>>(_service, request);
         }
 
-        private LogModels.Exception CreateException(Guid domainId, 
-            System.Exception exception, 
-            DateTime? createTimestamp, 
-            string category, 
+        private static LogModels.Exception CreateException(Guid domainId,
+            Exception exception,
+            DateTime? createTimestamp,
+            string category,
             string level,
             LogModels.EventId? eventId)
         {
@@ -102,7 +100,7 @@ namespace BrassLoon.Interface.Log
                 DomainId = domainId,
                 Message = exception.Message,
                 Source = exception.Source,
-                StackTrace = exception.StackTrace, 
+                StackTrace = exception.StackTrace,
                 TargetSite = exception.TargetSite?.ToString() ?? string.Empty,
                 TypeName = exception.GetType().FullName,
                 InnerException = innerException,
@@ -114,7 +112,7 @@ namespace BrassLoon.Interface.Log
             };
         }
 
-        private object GetData(IDictionary data)
+        private static Dictionary<string, string> GetData(IDictionary data)
         {
             Dictionary<string, string> result = null;
             if (data != null)

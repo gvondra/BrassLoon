@@ -8,14 +8,14 @@ namespace BrassLoon.Config.Core
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Config.Data.ConfigDataModule());
-            builder.RegisterInstance(new SettingsFactory());
-            builder.RegisterType<ItemFactory>().As<IItemFactory>();
-            builder.RegisterType<ItemSaver>().As<IItemSaver>();
-            builder.RegisterType<ItemHistoryFactory>().As<IItemHistoryFactory>();
-            builder.RegisterType<LookupFactory>().As<ILookupFactory>();
-            builder.RegisterType<LookupSaver>().As<ILookupSaver>();
-            builder.RegisterType<LookupHistoryFactory>().As<ILookupHistoryFactory>();
+            _ = builder.RegisterModule(new Data.ConfigDataModule());
+            _ = builder.RegisterInstance(new SettingsFactory());
+            _ = builder.RegisterType<ItemFactory>().As<IItemFactory>();
+            _ = builder.RegisterType<ItemSaver>().As<IItemSaver>();
+            _ = builder.RegisterType<ItemHistoryFactory>().As<IItemHistoryFactory>();
+            _ = builder.RegisterType<LookupFactory>().As<ILookupFactory>();
+            _ = builder.RegisterType<LookupSaver>().As<ILookupSaver>();
+            _ = builder.RegisterType<LookupHistoryFactory>().As<ILookupHistoryFactory>();
         }
     }
 }

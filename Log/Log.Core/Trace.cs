@@ -12,7 +12,7 @@ namespace BrassLoon.Log.Core
     {
         private readonly TraceData _data;
         private readonly ITraceDataSaver _dataSaver;
-        private IEventId _eventId;
+        private readonly IEventId _eventId;
 
         public Trace(TraceData data,
             ITraceDataSaver dataSaver,
@@ -26,7 +26,7 @@ namespace BrassLoon.Log.Core
         public Trace(TraceData data,
             ITraceDataSaver dataSaver)
             : this(data, dataSaver, eventId: null)
-        {}
+        { }
 
         public long TraceId => _data.TraceId;
 
@@ -35,7 +35,7 @@ namespace BrassLoon.Log.Core
         public string EventCode => _data.EventCode;
 
         public string Message { get => _data.Message; set => _data.Message = value; }
-        public dynamic Data 
+        public dynamic Data
         {
             get
             {
@@ -54,7 +54,9 @@ namespace BrassLoon.Log.Core
         }
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
+#pragma warning disable S1144 // Unused private types or members should be removed
         private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+#pragma warning restore S1144 // Unused private types or members should be removed
         public string Category { get => _data.Category; set => _data.Category = value; }
         public string Level { get => _data.Level; set => _data.Level = value; }
 
@@ -62,7 +64,7 @@ namespace BrassLoon.Log.Core
         {
             if (_eventId != null)
             {
-                await  _eventId.Create(transactionHandler);
+                await _eventId.Create(transactionHandler);
                 EventId = _eventId.EventId;
             }
             await _dataSaver.Create(transactionHandler, _data);

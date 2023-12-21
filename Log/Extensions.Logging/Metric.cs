@@ -13,7 +13,7 @@ namespace BrassLoon.Extensions.Logging
         public double? Magnitude { get; set; }
         public Dictionary<string, string> Data { get; set; }
         public DateTime CreateTimestamp
-        { 
+        {
             get => _createTimestamp;
             set => _createTimestamp = value.ToUniversalTime();
         }

@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,18 +50,18 @@ namespace BrassLoon.Authorization.Core
             return client;
         }
 
-        public async Task<IClient> Get(ISettings settings, Guid domainId, Guid id)
+        public async Task<IClient> Get(Framework.ISettings settings, Guid domainId, Guid id)
         {
             Client client = null;
-            ClientData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
+            ClientData data = await _dataFactory.Get(new DataSettings(settings), id);
             if (data != null && data.DomainId.Equals(domainId))
                 client = Create(data);
             return client;
         }
 
-        public async Task<IEnumerable<IClient>> GetByDomainId(ISettings settings, Guid domainId)
+        public async Task<IEnumerable<IClient>> GetByDomainId(Framework.ISettings settings, Guid domainId)
         {
-            return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+            return (await _dataFactory.GetByDomainId(new DataSettings(settings), domainId))
                 .Select<ClientData, IClient>(Create);
         }
     }

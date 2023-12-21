@@ -9,7 +9,7 @@ namespace BrassLoon.Log.Purger
         private readonly AppSettings _settings;
         private readonly AccountInterface.ITokenService _tokenService;
         private readonly SettingsFactory _settingsFactory;
-        private string _token = null;
+        private string _token;
 
         public LogSettings(AppSettings settings,
             AccountInterface.ITokenService tokenService,

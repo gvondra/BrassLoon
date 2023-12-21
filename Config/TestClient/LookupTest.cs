@@ -27,6 +27,7 @@ namespace BrassLoon.Config.TestClient
             _lookupService = lookupService;
         }
 
+#pragma warning disable S1854 // Unused assignments should be removed
         public async Task Execute()
         {
             try
@@ -54,5 +55,6 @@ namespace BrassLoon.Config.TestClient
                 _logger.Information("Lookup Test Ended");
             }
         }
+#pragma warning restore S1854 // Unused assignments should be removed
     }
 }

@@ -31,24 +31,24 @@ namespace BrassLoon.WorkTask.Data.Internal
             WorkTaskData workTaskData = null;
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
+                DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(settings, _providerFactory, "[blwt].[GetWorkTask]", CommandType.StoredProcedure,
+            await dataReaderProcess.Read(settings, ProviderFactory, "[blwt].[GetWorkTask]", CommandType.StoredProcedure,
                 parameters: parameters,
                 readAction: async (DbDataReader reader) =>
                 {
-                    workTaskData = (await _genericDataFactory.LoadData(reader, Create, DataUtil.AssignDataStateManager)).FirstOrDefault();
+                    workTaskData = (await GenericDataFactory.LoadData(reader, Create, DataUtil.AssignDataStateManager)).FirstOrDefault();
                     if (workTaskData != null)
                     {
                         GenericDataFactory<WorkTaskTypeData> typeFactory = new GenericDataFactory<WorkTaskTypeData>();
                         GenericDataFactory<WorkTaskStatusData> statusFactory = new GenericDataFactory<WorkTaskStatusData>();
                         GenericDataFactory<WorkTaskContextData> contextFactory = new GenericDataFactory<WorkTaskContextData>();
-                        reader.NextResult();
+                        _ = reader.NextResult();
                         workTaskData.WorkTaskType = (await typeFactory.LoadData(reader, () => new WorkTaskTypeData(), DataUtil.AssignDataStateManager)).FirstOrDefault();
-                        reader.NextResult();
+                        _ = reader.NextResult();
                         workTaskData.WorkTaskStatus = (await statusFactory.LoadData(reader, () => new WorkTaskStatusData(), DataUtil.AssignDataStateManager)).FirstOrDefault();
-                        reader.NextResult();
+                        _ = reader.NextResult();
                         workTaskData.WorkTaskContexts = (await contextFactory.LoadData(reader, () => new WorkTaskContextData(), DataUtil.AssignDataStateManager)).ToList();
                     }
                 });
@@ -60,11 +60,11 @@ namespace BrassLoon.WorkTask.Data.Internal
             IEnumerable<WorkTaskData> result = new List<WorkTaskData>();
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "workGroupId", DbType.Guid, workGroupId),
-                DataUtil.CreateParameter(_providerFactory, "includeClosed", DbType.Boolean, includeClosed)
+                DataUtil.CreateParameter(ProviderFactory, "workGroupId", DbType.Guid, workGroupId),
+                DataUtil.CreateParameter(ProviderFactory, "includeClosed", DbType.Boolean, includeClosed)
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(settings, _providerFactory, "[blwt].[GetWorkTask_by_WorkGroupId]", CommandType.StoredProcedure,
+            await dataReaderProcess.Read(settings, ProviderFactory, "[blwt].[GetWorkTask_by_WorkGroupId]", CommandType.StoredProcedure,
                 parameters: parameters,
                 readAction: async (DbDataReader reader) =>
                 {
@@ -78,15 +78,15 @@ namespace BrassLoon.WorkTask.Data.Internal
             IEnumerable<WorkTaskData> result = new List<WorkTaskData>();
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId)),
-                DataUtil.CreateParameter(_providerFactory, "referenceType", DbType.Int16, DataUtil.GetParameterValue(referenceType)),
-                DataUtil.CreateParameter(_providerFactory, "referenceValueHash", DbType.Binary, DataUtil.GetParameterValue(referenceValueHash)),
-                DataUtil.CreateParameter(_providerFactory, "includeClosed", DbType.Boolean, DataUtil.GetParameterValue(includeClosed))
+                DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId)),
+                DataUtil.CreateParameter(ProviderFactory, "referenceType", DbType.Int16, DataUtil.GetParameterValue(referenceType)),
+                DataUtil.CreateParameter(ProviderFactory, "referenceValueHash", DbType.Binary, DataUtil.GetParameterValue(referenceValueHash)),
+                DataUtil.CreateParameter(ProviderFactory, "includeClosed", DbType.Boolean, DataUtil.GetParameterValue(includeClosed))
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
             await dataReaderProcess.Read(
                 settings,
-                _providerFactory,
+                ProviderFactory,
                 "[blwt].[GetWorkTask_by_ContextReference]",
                 CommandType.StoredProcedure,
                 parameters: parameters,
@@ -104,11 +104,11 @@ namespace BrassLoon.WorkTask.Data.Internal
             GenericDataFactory<WorkTaskStatusData> statusFactory = new GenericDataFactory<WorkTaskStatusData>();
             GenericDataFactory<WorkTaskContextData> contextFactory = new GenericDataFactory<WorkTaskContextData>();
             IEnumerable<WorkTaskData> result = (await taskFactory.LoadData(reader, () => new WorkTaskData(), DataUtil.AssignDataStateManager)).ToList();
-            await reader.NextResultAsync();
+            _ = await reader.NextResultAsync();
             List<WorkTaskTypeData> types = (await typeFactory.LoadData(reader, () => new WorkTaskTypeData(), DataUtil.AssignDataStateManager)).ToList();
-            await reader.NextResultAsync();
+            _ = await reader.NextResultAsync();
             List<WorkTaskStatusData> statuses = (await statusFactory.LoadData(reader, () => new WorkTaskStatusData(), DataUtil.AssignDataStateManager)).ToList();
-            await reader.NextResultAsync();
+            _ = await reader.NextResultAsync();
             List<WorkTaskContextData> contexts = (await contextFactory.LoadData(reader, () => new WorkTaskContextData(), DataUtil.AssignDataStateManager)).ToList();
             result = result.GroupJoin(contexts, tsk => tsk.WorkTaskId, ctx => ctx.WorkTaskId, (tsk, ctxs) =>
             {
@@ -136,9 +136,9 @@ namespace BrassLoon.WorkTask.Data.Internal
                 .ToDictionary(d => d.WorkTaskStatusId);
             return new WorkTaskDataEnumerable(
                 settings,
-                _providerFactory,
-                (connection) => GetAllBeginReader(connection, _providerFactory, domainId),
-                (reader) => GetAllLoadData(reader, settings, _providerFactory, _loaderFactory.CreateLoader(), workTaskTypes, workTaskStatuses));
+                ProviderFactory,
+                (connection) => GetAllBeginReader(connection, ProviderFactory, domainId),
+                (reader) => GetAllLoadData(reader, settings, ProviderFactory, _loaderFactory.CreateLoader(), workTaskTypes, workTaskStatuses));
         }
 
         private static async Task<DbDataReader> GetAllBeginReader(DbConnection connection, IDbProviderFactory providerFactory, Guid domainId)
@@ -146,7 +146,7 @@ namespace BrassLoon.WorkTask.Data.Internal
             using DbCommand command = connection.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = "[blwt].[GetWorkTask_by_DomainId]";
-            command.Parameters.Add(DataUtil.CreateParameter(providerFactory, "domainId", DbType.Guid, domainId));
+            _ = command.Parameters.Add(DataUtil.CreateParameter(providerFactory, "domainId", DbType.Guid, domainId));
             return await command.ExecuteReaderAsync();
         }
 
@@ -168,7 +168,7 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         private static async Task<IEnumerable<WorkTaskContextData>> GetContextByWorkTaskId(ISqlSettings settings, IDbProviderFactory providerFactory, Guid workTaskId)
         {
-            IGenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
+            GenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
             IDataParameter parameter = DataUtil.CreateParameter(providerFactory, "workTaskId", DbType.Guid, workTaskId);
             return await genericDataFactory.GetData(settings,
                 providerFactory,

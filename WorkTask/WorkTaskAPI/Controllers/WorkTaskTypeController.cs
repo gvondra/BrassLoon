@@ -77,7 +77,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         result = Ok(
                             (await _workTaskTypeFactory.GetByDomainId(settings, domainId.Value))
-                            .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                            .Select(mapper.Map<WorkTaskType>)
                             );
 
                     }
@@ -162,7 +162,7 @@ namespace WorkTaskAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _workTaskTypeFactory.GetByWorkGroupId(settings, domainId.Value, workGroupId.Value))
-                        .Select<IWorkTaskType, WorkTaskType>(t => mapper.Map<WorkTaskType>(t))
+                        .Select(mapper.Map<WorkTaskType>)
                         );
                 }
             }
@@ -178,9 +178,9 @@ namespace WorkTaskAPI.Controllers
         private IActionResult ValidateRequest(WorkTaskType workTaskType)
         {
             IActionResult result = null;
-            if (result == null && workTaskType == null)
+            if (workTaskType == null)
                 result = BadRequest("Missing work task type body");
-            if (result == null && string.IsNullOrEmpty(workTaskType?.Title))
+            else if (string.IsNullOrEmpty(workTaskType.Title))
                 result = BadRequest("Missing work task type title value");
             return result;
         }
@@ -201,12 +201,12 @@ namespace WorkTaskAPI.Controllers
                     result = BadRequest("Missing work task type code value");
                 else
                     result = ValidateRequest(workTaskType);
-                if (result == null)
+                if (result == null && domainId.HasValue)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IWorkTaskType innerWorkTaskType = _workTaskTypeFactory.Create(domainId.Value, workTaskType.Code);
-                    mapper.Map(workTaskType, innerWorkTaskType);
+                    _ = mapper.Map(workTaskType, innerWorkTaskType);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
                     result = Ok(
                         mapper.Map<WorkTaskType>(innerWorkTaskType)
@@ -237,7 +237,7 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 else
                     result = ValidateRequest(workTaskType);
-                if (result == null)
+                if (result == null && id.HasValue && domainId.HasValue)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId.Value, id.Value);
@@ -246,7 +246,7 @@ namespace WorkTaskAPI.Controllers
                     if (result == null)
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map(workTaskType, innerWorkTaskType);
+                        _ = mapper.Map(workTaskType, innerWorkTaskType);
                         await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                         result = Ok(
                             mapper.Map<WorkTaskType>(innerWorkTaskType)

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data
 {
-    internal class WorkTaskDataEnumerable : IAsyncEnumerable<WorkTaskData>
+    internal sealed class WorkTaskDataEnumerable : IAsyncEnumerable<WorkTaskData>
     {
         private readonly ISqlSettings _settings;
-        private readonly IDbProviderFactory _providerFactory;
+        private readonly IDbProviderFactory ProviderFactory;
         private readonly Func<DbConnection, Task<DbDataReader>> _beginReader;
         private readonly Func<DbDataReader, Task<WorkTaskData>> _loadData;
 
@@ -21,7 +21,7 @@ namespace BrassLoon.WorkTask.Data
             Func<DbDataReader, Task<WorkTaskData>> loadData)
         {
             _settings = settings;
-            _providerFactory = providerFactory;
+            ProviderFactory = providerFactory;
             _beginReader = beginReader;
             _loadData = loadData;
         }
@@ -30,7 +30,7 @@ namespace BrassLoon.WorkTask.Data
         {
             return new WorkTaskDataEnumerator(
                 _settings,
-                _providerFactory,
+                ProviderFactory,
                 _beginReader,
                 _loadData);
         }

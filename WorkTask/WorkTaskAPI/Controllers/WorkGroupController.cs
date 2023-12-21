@@ -69,7 +69,7 @@ namespace WorkTaskAPI.Controllers
                         innerWorkGroups = await _workGroupFactory.GetByDomainId(settings, domainId.Value);
                     }
                     result = Ok(
-                        innerWorkGroups.Select<IWorkGroup, WorkGroup>(t => mapper.Map<WorkGroup>(t))
+                        innerWorkGroups.Select(mapper.Map<WorkGroup>)
                         );
                 }
             }
@@ -130,9 +130,9 @@ namespace WorkTaskAPI.Controllers
         private IActionResult ValidateRequest(WorkGroup workGroup)
         {
             IActionResult result = null;
-            if (result == null && workGroup == null)
+            if (workGroup == null)
                 result = BadRequest("Missing work group body");
-            if (result == null && string.IsNullOrEmpty(workGroup?.Title))
+            else if (string.IsNullOrEmpty(workGroup.Title))
                 result = BadRequest("Missing work group title value");
             return result;
         }
@@ -151,12 +151,12 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 else
                     result = ValidateRequest(workGroup);
-                if (result == null)
+                if (result == null && domainId.HasValue)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkGroup innerWorkGroup = _workGroupFactory.Create(domainId.Value);
                     IMapper mapper = CreateMapper();
-                    mapper.Map(workGroup, innerWorkGroup);
+                    _ = mapper.Map(workGroup, innerWorkGroup);
                     ApplyMemberChanges(innerWorkGroup, workGroup.MemberUserIds);
                     await _workGroupSaver.Create(settings, innerWorkGroup);
                     result = Ok(mapper.Map<WorkGroup>(innerWorkGroup));
@@ -186,7 +186,7 @@ namespace WorkTaskAPI.Controllers
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 else
                     result = ValidateRequest(workGroup);
-                if (result == null)
+                if (result == null && id.HasValue && domainId.HasValue)
                 {
                     CoreSettings settings = CreateCoreSettings();
                     IWorkGroup innerWorkGroup = await _workGroupFactory.Get(settings, domainId.Value, id.Value);
@@ -197,7 +197,7 @@ namespace WorkTaskAPI.Controllers
                     else
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map(workGroup, innerWorkGroup);
+                        _ = mapper.Map(workGroup, innerWorkGroup);
                         ApplyMemberChanges(innerWorkGroup, workGroup.MemberUserIds);
                         await _workGroupSaver.Update(settings, innerWorkGroup);
                         result = Ok(
@@ -226,7 +226,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 foreach (string userId in innerWorkGroup.MemberUserIds)
                 {
-                    if (!memberUserIds.Any(id => string.Equals(id, userId, StringComparison.OrdinalIgnoreCase)))
+                    if (!memberUserIds.Exists(id => string.Equals(id, userId, StringComparison.OrdinalIgnoreCase)))
                     {
                         innerWorkGroup.RemoveMember(userId);
                     }

@@ -81,7 +81,7 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     ISigningKey innerSigningKey = _signingKeyFactory.Create(domainId.Value);
                     IMapper mapper = CreateMapper();
-                    mapper.Map(signingKey, innerSigningKey);
+                    _ = mapper.Map(signingKey, innerSigningKey);
                     await _signingKeySaver.Create(coreSettings, innerSigningKey);
                     result = Ok(
                         mapper.Map<SigningKey>(innerSigningKey)
@@ -118,7 +118,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerSigningKey != null)
                 {
                     IMapper mapper = CreateMapper();
-                    mapper.Map(signingKey, innerSigningKey);
+                    _ = mapper.Map(signingKey, innerSigningKey);
                     await _signingKeySaver.Update(coreSettings, innerSigningKey);
                     result = Ok(
                         mapper.Map<SigningKey>(innerSigningKey)

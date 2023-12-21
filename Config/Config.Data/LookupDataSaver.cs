@@ -29,17 +29,17 @@ namespace BrassLoon.Config.Data
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                    _ = command.Parameters.Add(id);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(lookupData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(lookupData.Code));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "data", DbType.AnsiString, DataUtil.GetParameterValue(lookupData.Data));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     lookupData.LookupId = (Guid)id.Value;
                     lookupData.CreateTimestamp = (DateTime)timestamp.Value;
                     lookupData.UpdateTimestamp = (DateTime)timestamp.Value;
@@ -59,7 +59,7 @@ namespace BrassLoon.Config.Data
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(code));
 
-                await command.ExecuteNonQueryAsync();
+                _ = await command.ExecuteNonQueryAsync();
             }
         }
 
@@ -76,13 +76,13 @@ namespace BrassLoon.Config.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(lookupData.LookupId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(lookupData.Code));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "data", DbType.AnsiString, DataUtil.GetParameterValue(lookupData.Data));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     lookupData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }

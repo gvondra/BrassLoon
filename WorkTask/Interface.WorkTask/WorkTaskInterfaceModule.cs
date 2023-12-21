@@ -7,11 +7,11 @@ namespace BrassLoon.Interface.WorkTask
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<WorkGroupService>().As<IWorkGroupService>();
-            builder.RegisterType<WorkTaskCommentService>().As<IWorkTaskCommentService>();
-            builder.RegisterType<WorkTaskService>().As<IWorkTaskService>();
-            builder.RegisterType<WorkTaskStatusService>().As<IWorkTaskStatusService>();
-            builder.RegisterType<WorkTaskTypeService>().As<IWorkTaskTypeService>();
+            _ = builder.RegisterType<WorkGroupService>().As<IWorkGroupService>();
+            _ = builder.RegisterType<WorkTaskCommentService>().As<IWorkTaskCommentService>();
+            _ = builder.RegisterType<WorkTaskService>().As<IWorkTaskService>();
+            _ = builder.RegisterType<WorkTaskStatusService>().As<IWorkTaskStatusService>();
+            _ = builder.RegisterType<WorkTaskTypeService>().As<IWorkTaskTypeService>();
         }
     }
 }

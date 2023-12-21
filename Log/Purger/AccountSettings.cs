@@ -1,7 +1,4 @@
 ﻿using BrassLoon.Interface.Account;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Purger
@@ -10,7 +7,7 @@ namespace BrassLoon.Log.Purger
     {
         private readonly AppSettings _settings;
         private readonly ITokenService _tokenService;
-        private string _token = null;
+        private string _token;
 
         public AccountSettings(AppSettings settings,
             ITokenService tokenService)

@@ -8,10 +8,10 @@ namespace BrassLoon.Config.TestClient.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
-            builder.RegisterType<LookupTest>();
-            builder.RegisterType<SettingsFactory>()
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
+            _ = builder.RegisterType<LookupTest>();
+            _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
         }

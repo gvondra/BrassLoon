@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ namespace BrassLoon.CommonAPI
         [NonAction]
         protected string GetAccessToken()
         {
-            string token = this.Request.Headers.Where(h => string.Equals("Authorization", h.Key, StringComparison.OrdinalIgnoreCase))
+            string token = Request.Headers.Where(h => string.Equals("Authorization", h.Key, StringComparison.OrdinalIgnoreCase))
                 .Select(h => h.Value.FirstOrDefault())
                 .FirstOrDefault();
             token = (token ?? string.Empty).Trim();
@@ -48,19 +49,18 @@ namespace BrassLoon.CommonAPI
         {
             try
             {
-                using HashAlgorithm hashAlgorithm = SHA256.Create();
-                string hash = Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(accessToken)));
-                return await m_cache.Execute<Task<AccountDomain>>(async context =>
+                string hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(accessToken)));
+                return await m_cache.Execute(async context =>
                 {
                     return await domainService.GetAccountDomain(
                     CreateAccountSettings(settings, accessToken),
                     domainId
                     );
                 },
-                new Context(string.Format("{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
+                new Context(string.Format(CultureInfo.InvariantCulture, "{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
                 );
             }
-            catch (BrassLoon.RestClient.Exceptions.RequestError ex)
+            catch (RestClient.Exceptions.RequestError ex)
             {
                 if (ex.Response.StatusCode == HttpStatusCode.NotFound)
                     return null;
@@ -110,11 +110,11 @@ namespace BrassLoon.CommonAPI
 
 
         [NonAction]
-        protected abstract BrassLoon.Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken);
+        protected abstract Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken);
         [NonAction]
-        protected abstract BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings, string accessToken);
+        protected abstract Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings, string accessToken);
         [NonAction]
-        protected virtual BrassLoon.Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings) => throw new NotImplementedException();
+        protected virtual Interface.Log.ISettings CreateLogSettings(CommonApiSettings settings) => throw new NotImplementedException();
 
         [NonAction]
         protected async Task LogException(Exception ex, IExceptionService exceptionService, CommonApiSettings settings)
@@ -127,7 +127,7 @@ namespace BrassLoon.CommonAPI
                     && !string.IsNullOrEmpty(settings.LoggingClientSecret)
                     && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
                 {
-                    await exceptionService.Create(
+                    _ = await exceptionService.Create(
                         CreateLogSettings(settings),
                         settings.LoggingDomainId.Value,
                         ex);
@@ -139,10 +139,12 @@ namespace BrassLoon.CommonAPI
                     if (!string.IsNullOrEmpty(settings.ExceptionLoggingDomainId))
                         loggingDomainIdIsSet = Guid.TryParse(settings.ExceptionLoggingDomainId, out loggingDomainId);
                     if (loggingDomainIdIsSet && !string.IsNullOrEmpty(settings.LogApiBaseAddress))
-                        await exceptionService.Create(
+                    {
+                        _ = await exceptionService.Create(
                             CreateLogSettings(settings, GetAccessToken()),
                             loggingDomainId,
                             ex);
+                    }
                 }
             }
             catch (Exception innerException)

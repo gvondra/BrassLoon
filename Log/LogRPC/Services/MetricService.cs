@@ -41,7 +41,7 @@ namespace LogRPC.Services
         }
 
         [Authorize("BL:AUTH")]
-        public async override Task<Empty> Create(IAsyncStreamReader<Metric> requestStream, ServerCallContext context)
+        public override async Task<Empty> Create(IAsyncStreamReader<Metric> requestStream, ServerCallContext context)
         {
             while (await requestStream.MoveNext())
             {
@@ -52,10 +52,10 @@ namespace LogRPC.Services
                     Guid domainId = Guid.Parse(requestStream.Current.DomainId);
                     if (domainId.Equals(Guid.Empty))
                         throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing {nameof(Metric.DomainId)} parameter value");
-                    if (!(await _domainAcountAccessVerifier.HasAccess(
+                    if (!await _domainAcountAccessVerifier.HasAccess(
                         _settingsFactory.CreateAccount(_settings.Value, _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders)),
                         domainId,
-                        _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders))))
+                        _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders)))
                     {
                         throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthorized"));
                     }
@@ -83,7 +83,7 @@ namespace LogRPC.Services
             return new Empty();
         }
 
-        private object GetData(Google.Protobuf.Collections.MapField<string, string> map)
+        private static Dictionary<string, object> GetData(Google.Protobuf.Collections.MapField<string, string> map)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             if (map != null)
@@ -96,7 +96,7 @@ namespace LogRPC.Services
             return result;
         }
 
-        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, Protos.EventId eventId)
+        private async Task<IEventId> GetInnerEventId(CoreSettings settings, Guid domainId, EventId eventId)
         {
             IEventId innerEventId = null;
             if (eventId != null && (eventId.Id != 0 || !string.IsNullOrEmpty(eventId.Name)))

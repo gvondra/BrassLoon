@@ -4,7 +4,6 @@ using BrassLoon.WorkTask.TestClient.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -37,7 +36,7 @@ namespace BrassLoon.WorkTask.TestClient
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting all work task types");
             List<WorkTaskType> workTaskTypes = await _workTaskTypeService.GetAll(settings, _appSettings.Domain.Value);
-            WorkTaskType testType = workTaskTypes.FirstOrDefault(wtt => Regex.IsMatch(wtt.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            WorkTaskType testType = workTaskTypes.Find(wtt => Regex.IsMatch(wtt.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testType == null)
             {
                 testType = new WorkTaskType
@@ -74,7 +73,7 @@ namespace BrassLoon.WorkTask.TestClient
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting work task status");
             List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, testType.WorkTaskTypeId.Value);
-            WorkTaskStatus testStatus = workTaskStatuses.FirstOrDefault(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            WorkTaskStatus testStatus = workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testStatus == null)
             {
                 testStatus = new WorkTaskStatus
@@ -107,7 +106,7 @@ namespace BrassLoon.WorkTask.TestClient
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting work task status for delete test");
             List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, testType.WorkTaskTypeId.Value);
-            WorkTaskStatus testStatus = workTaskStatuses.FirstOrDefault(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*To\s*Delete", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            WorkTaskStatus testStatus = workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*To\s*Delete", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testStatus == null)
             {
                 testStatus = new WorkTaskStatus

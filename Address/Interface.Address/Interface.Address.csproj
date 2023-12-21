@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net6.0;netstandard2.0</TargetFrameworks>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>BrassLoon.Interface.Address</AssemblyName>
+        <RootNamespace>BrassLoon.Interface.Address</RootNamespace>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>1.0.0-prerelease.4</Version>
+        <AssemblyVersion>1.0.0.4</AssemblyVersion>
+        <PackageReleaseNotes></PackageReleaseNotes>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="[7.0,8.0)" />
+        <PackageReference Include="Google.Protobuf" Version="[3.25.0,4.0)" />
+        <PackageReference Include="Grpc.Net.Client" Version="[2.58.0,3.0)" />
+        <PackageReference Include="Grpc.Tools" Version="2.60.*">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos\phone.proto" />
+      <Protobuf Include="Protos\email-address.proto" />
+      <Protobuf Include="Protos\address.proto" />
+    </ItemGroup>
+
+</Project>

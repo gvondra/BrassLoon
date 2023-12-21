@@ -17,9 +17,6 @@ namespace BrassLoon.CommonAPI
 
         public string BaseAddress { get; set; }
 
-        public Task<string> GetToken()
-        {
-            return Task.FromResult(_accessToken);
-        }
+        public Task<string> GetToken() => Task.FromResult(_accessToken);
     }
 }

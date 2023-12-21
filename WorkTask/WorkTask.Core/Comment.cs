@@ -8,9 +8,9 @@ namespace BrassLoon.WorkTask.Core
 {
     public abstract class Comment : IComment
     {
-        protected readonly CommentData _data;
+        private readonly CommentData _data;
 
-        public Comment(CommentData data)
+        protected Comment(CommentData data)
         {
             _data = data;
         }

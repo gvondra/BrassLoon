@@ -12,9 +12,9 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         public async Task<IEnumerable<CommentData>> GetByWorkTaskId(ISqlSettings settings, Guid workTaskId)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "workTaskId", DbType.Guid, workTaskId);
-            return await _genericDataFactory.GetData(settings,
-                _providerFactory,
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workTaskId", DbType.Guid, workTaskId);
+            return await GenericDataFactory.GetData(settings,
+                ProviderFactory,
                 "[blwt].[GetWorkTaskComment_by_WorkTaskId]",
                 Create,
                 DataUtil.AssignDataStateManager,

@@ -47,7 +47,7 @@ namespace BrassLoon.WorkTask.Core
                 IEnumerable<WorkGroupMemberData> members = _data.Members ?? new List<WorkGroupMemberData>();
                 if (_newMemberData != null)
                     members = members.Concat(_newMemberData);
-                members = members.Where(m => _deletedMemberData == null || !_deletedMemberData.Any(d => string.Equals(m.UserId, d.UserId, StringComparison.OrdinalIgnoreCase)));
+                members = members.Where(m => _deletedMemberData == null || !_deletedMemberData.Exists(d => string.Equals(m.UserId, d.UserId, StringComparison.OrdinalIgnoreCase)));
                 return ImmutableList<string>.Empty.AddRange(
                     members
                     .Select(m => m.UserId)
@@ -73,8 +73,8 @@ namespace BrassLoon.WorkTask.Core
                 _data.Members = new List<WorkGroupMemberData>();
             if (_newMemberData == null)
                 _newMemberData = new List<WorkGroupMemberData>();
-            if (!_data.Members.Any(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase))
-                && !_newMemberData.Any(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase)))
+            if (!_data.Members.Exists(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase))
+                && !_newMemberData.Exists(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase)))
             {
                 _newMemberData.Add(new WorkGroupMemberData { DomainId = DomainId, UserId = userId });
             }
@@ -92,7 +92,7 @@ namespace BrassLoon.WorkTask.Core
                 _data.Members = new List<WorkGroupMemberData>();
             if (_deletedMemberData == null)
                 _deletedMemberData = new List<WorkGroupMemberData>();
-            _deletedMemberData.AddRange(_data.Members.Where(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase) && !_deletedMemberData.Any(d => d.WorkGroupMemberId.Equals(m.WorkGroupMemberId))));
+            _deletedMemberData.AddRange(_data.Members.Where(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase) && !_deletedMemberData.Exists(d => d.WorkGroupMemberId.Equals(m.WorkGroupMemberId))));
         }
 
         public async Task Update(ITransactionHandler transactionHandler)
@@ -117,7 +117,7 @@ namespace BrassLoon.WorkTask.Core
             {
                 for (int i = _data.Members.Count - 1; i >= 0; i -= 1)
                 {
-                    if (_deletedMemberData.Any(d => d.WorkGroupMemberId.Equals(_data.Members[i].WorkGroupMemberId)))
+                    if (_deletedMemberData.Exists(d => d.WorkGroupMemberId.Equals(_data.Members[i].WorkGroupMemberId)))
                         _data.Members.RemoveAt(i);
                 }
                 _deletedMemberData = new List<WorkGroupMemberData>();

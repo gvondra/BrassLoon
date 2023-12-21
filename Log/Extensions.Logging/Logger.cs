@@ -9,24 +9,21 @@ namespace BrassLoon.Extensions.Logging
     internal sealed class Logger : ILogger
     {
         private readonly string _name;
-        private readonly LoggerConfiguration _loggerConfiguration;
         private readonly MessageFormatter _messageFormatter;
         private readonly LoggerProcessor _loggerProcessor;
 
-        public Logger(string name, 
-            LoggerConfiguration loggerConfiguration,
+        public Logger(string name,
             MessageFormatter messageFormatter,
             LoggerProcessor loggerProcessor)
         {
             _name = name;
-            _loggerConfiguration = loggerConfiguration;
             _messageFormatter = messageFormatter;
             _loggerProcessor = loggerProcessor;
         }
 
         public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
 
-        public bool IsEnabled(LogLevel logLevel) => (logLevel != LogLevel.None);
+        public bool IsEnabled(LogLevel logLevel) => logLevel != LogLevel.None;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
@@ -47,7 +44,7 @@ namespace BrassLoon.Extensions.Logging
                 if (stringBuilder.Length > 0)
                 {
                     _loggerProcessor.Enque(new LogMessageEntry(_name, stringBuilder.ToString(), DateTime.UtcNow, eventId, exception, logLevel, metric));
-                }                
+                }
             }
         }
     }

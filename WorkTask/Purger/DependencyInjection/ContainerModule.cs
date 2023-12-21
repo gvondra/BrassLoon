@@ -7,9 +7,9 @@ namespace BrassLoon.WorkTask.Purger.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
-            builder.RegisterType<PurgeProcessor>();
-            builder.RegisterType<SettingsFactory>()
+            _ = builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
+            _ = builder.RegisterType<PurgeProcessor>();
+            _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
         }

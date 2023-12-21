@@ -6,9 +6,9 @@ namespace BrassLoon.CommonCore
 {
     public class DataSettings : ISqlSettings
     {
-        private readonly CommonCore.ISettings _settings;
+        private readonly ISettings _settings;
 
-        public DataSettings(CommonCore.ISettings settings)
+        public DataSettings(ISettings settings)
         {
             _settings = settings;
         }

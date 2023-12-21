@@ -4,11 +4,13 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public abstract class DataSaverBase
     {
-        protected readonly IDbProviderFactory _providerFactory;
+        private readonly IDbProviderFactory _providerFactory;
 
-        public DataSaverBase(IDbProviderFactory providerFactory)
+        protected DataSaverBase(IDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }
+
+        protected IDbProviderFactory ProviderFactory => _providerFactory;
     }
 }

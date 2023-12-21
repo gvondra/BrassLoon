@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,18 +37,18 @@ namespace BrassLoon.Authorization.Core
             });
         }
 
-        public async Task<ISigningKey> Get(ISettings settings, Guid domainId, Guid id)
+        public async Task<ISigningKey> Get(Framework.ISettings settings, Guid domainId, Guid id)
         {
             SigningKey signingKey = null;
-            SigningKeyData data = await _dataFactory.Get(new CommonCore.DataSettings(settings), id);
+            SigningKeyData data = await _dataFactory.Get(new DataSettings(settings), id);
             if (data != null && data.DomainId.Equals(domainId))
                 signingKey = Create(data);
             return signingKey;
         }
 
-        public async Task<IEnumerable<ISigningKey>> GetByDomainId(ISettings settings, Guid domainId)
+        public async Task<IEnumerable<ISigningKey>> GetByDomainId(Framework.ISettings settings, Guid domainId)
         {
-            return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+            return (await _dataFactory.GetByDomainId(new DataSettings(settings), domainId))
                 .Select<SigningKeyData, ISigningKey>(Create);
         }
     }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data
 {
-    internal class WorkTaskDataEnumerator : IAsyncEnumerator<WorkTaskData>
+    internal sealed class WorkTaskDataEnumerator : IAsyncEnumerator<WorkTaskData>
     {
         private readonly ISqlSettings _settings;
-        private readonly IDbProviderFactory _providerFactory;
+        private readonly IDbProviderFactory ProviderFactory;
         private readonly Func<DbConnection, Task<DbDataReader>> _beginReader;
         private readonly Func<DbDataReader, Task<WorkTaskData>> _loadData;
         private DbConnection _connection;
@@ -22,7 +22,7 @@ namespace BrassLoon.WorkTask.Data
             Func<DbDataReader, Task<WorkTaskData>> loadData)
         {
             _settings = settings;
-            _providerFactory = providerFactory;
+            ProviderFactory = providerFactory;
             _beginReader = beginReader;
             _loadData = loadData;
         }
@@ -32,7 +32,7 @@ namespace BrassLoon.WorkTask.Data
         public async ValueTask<bool> MoveNextAsync()
         {
             if (_connection == null)
-                _connection = await _providerFactory.OpenConnection(_settings);
+                _connection = await ProviderFactory.OpenConnection(_settings);
             if (_reader == null)
                 _reader = await _beginReader(_connection);
             bool result = await _reader.ReadAsync();

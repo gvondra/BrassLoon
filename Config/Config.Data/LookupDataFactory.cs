@@ -46,7 +46,7 @@ namespace BrassLoon.Config.Data
                 {
                     command.CommandText = "[blc].[GetLookupCodes]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(
+                    _ = command.Parameters.Add(
                         DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
                         );
                     using (DbDataReader reader = await command.ExecuteReaderAsync())

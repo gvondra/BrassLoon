@@ -14,20 +14,18 @@ namespace BrassLoon.WorkTask.Data.Internal
         public async Task<Guid?> ClaimPurgeWorker(ISqlSettings settings)
         {
             Guid? result = null;
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
             parameter.Direction = ParameterDirection.Output;
 
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
+            using (DbConnection connection = await ProviderFactory.OpenConnection(settings))
             {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[ClaimPurgeWorker]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(parameter);
-                    await command.ExecuteNonQueryAsync();
-                    if (parameter.Value != null && parameter.Value != DBNull.Value)
-                        result = (Guid)parameter.Value;
-                }
+                using DbCommand command = connection.CreateCommand();
+                command.CommandText = "[blwt].[ClaimPurgeWorker]";
+                command.CommandType = CommandType.StoredProcedure;
+                _ = command.Parameters.Add(parameter);
+                _ = await command.ExecuteNonQueryAsync();
+                if (parameter.Value != null && parameter.Value != DBNull.Value)
+                    result = (Guid)parameter.Value;
             }
             return result;
         }
@@ -36,12 +34,12 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
-                DataUtil.CreateParameter(_providerFactory, "purgeWorkerId", DbType.Guid, id),
+                DataUtil.CreateParameter(ProviderFactory, "purgeWorkerId", DbType.Guid, id),
             };
 
-            return (await _genericDataFactory.GetData(
+            return (await GenericDataFactory.GetData(
                 settings,
-                _providerFactory,
+                ProviderFactory,
                 "[blwt].[GetPurgeWorker]",
                 () => new PurgeWorkerData(),
                 DataUtil.AssignDataStateManager,

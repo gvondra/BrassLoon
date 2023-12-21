@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Config
 {
+#pragma warning disable S2696 // Instance members should not write to "static" fields
     public class LookupService : ILookupService
     {
         private static Policy _cache = CreateCache();
@@ -112,14 +113,18 @@ namespace BrassLoon.Interface.Config
             return response.Value;
         }
 
+#pragma warning disable IDE0078 // Use pattern matching
+#pragma warning disable IDE0083 // Use pattern matching
         public Task<Lookup> Save(ISettings settings, Guid domainId, string code, object data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            if (!typeof(Dictionary<string, string>).IsAssignableFrom(data.GetType()))
+            if (!(data is Dictionary<string, string>))
                 throw new ApplicationException("Parameter \"data\" must of type Dictionary<string, string>");
             return Save(settings, domainId, code, (Dictionary<string, string>)data);
         }
+#pragma warning restore IDE0078 // Use pattern matching
+#pragma warning restore IDE0083 // Use pattern matching
 
         public Task<Lookup> Save(ISettings settings, Guid domainId, string code, Dictionary<string, string> data)
         {
@@ -145,4 +150,5 @@ namespace BrassLoon.Interface.Config
             }
         }
     }
+#pragma warning restore S2696 // Instance members should not write to "static" fields
 }

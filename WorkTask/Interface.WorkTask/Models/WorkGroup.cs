@@ -29,7 +29,7 @@ namespace BrassLoon.Interface.WorkTask.Models
                 MemberUserIds = workGroup.MemberUserIds.ToList(),
                 WorkTaskTypeIds = workGroup.WorkTaskTypeIds
                     .Where(i => !string.IsNullOrEmpty(i))
-                    .Select(i => Guid.Parse(i))
+                    .Select(Guid.Parse)
                     .ToList()
             };
         }

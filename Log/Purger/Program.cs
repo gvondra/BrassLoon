@@ -4,12 +4,13 @@ using BrassLoon.Log.Framework;
 using BrassLoon.Log.Framework.Enumerations;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Purger
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -45,14 +46,17 @@ namespace BrassLoon.Log.Purger
                 {
                     await Purge(purgeWorker);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     purgeWorker.Status = PurgeWorkerStatus.Error;
                     try
                     {
-                        await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
+                        _ = await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
                     }
-                    catch { }
+                    catch
+                    {
+                        // do nothing
+                    }
                     throw;
                 }
                 finally
@@ -67,14 +71,17 @@ namespace BrassLoon.Log.Purger
                 await WriteTrace(traceService, appSettings, settingsFactory, "Purging meta data");
                 await PurgMetaData(appSettings, settingsFactory, scope.Resolve<IPurgeSaver>());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
                 try
                 {
-                    await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
+                    _ = await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
                 }
-                catch { }
+                catch
+                {
+                    // do nothing
+                }
             }
         }
 
@@ -168,7 +175,7 @@ namespace BrassLoon.Log.Purger
 
         private static async Task UpdateExceptionMetaData(
             AppSettings appSettings,
-            SettingsFactory settingsFactory, 
+            SettingsFactory settingsFactory,
             ITraceService traceService,
             IPurgeSaver purgeSaver,
             Guid domainId)
@@ -176,7 +183,7 @@ namespace BrassLoon.Log.Purger
             DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
             CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
-            expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
+            expiration = new DateTime(expiration.Year, expiration.Month, 1, 0, 0, 0, DateTimeKind.Unspecified).AddMonths(1);
             await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for exceptions created up to {minTimestamp}");
             await purgeSaver.InitializeException(settings, domainId, expiration, minTimestamp);
         }
@@ -191,7 +198,7 @@ namespace BrassLoon.Log.Purger
             DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
             CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
-            expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
+            expiration = new DateTime(expiration.Year, expiration.Month, 1, 0, 0, 0, DateTimeKind.Unspecified).AddMonths(1);
             await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for metrics created up to {minTimestamp}");
             await purgeSaver.InitializeMetric(settings, domainId, expiration, minTimestamp);
         }
@@ -206,7 +213,7 @@ namespace BrassLoon.Log.Purger
             DateTime minTimestamp = SubtractSettingsTimespan(DateTime.UtcNow.Date, appSettings.RetensionPeriod).ToUniversalTime();
             CoreSettings settings = settingsFactory.CreateCore();
             DateTime expiration = DateTime.UtcNow;
-            expiration = new DateTime(expiration.Year, expiration.Month, 1).AddMonths(1);
+            expiration = new DateTime(expiration.Year, expiration.Month, 1, 0, 0, 0, DateTimeKind.Unspecified).AddMonths(1);
             await WriteTrace(traceService, appSettings, settingsFactory, $"Updating meta data for traces created up to {minTimestamp}");
             await purgeSaver.InitializeTrace(settings, domainId, expiration, minTimestamp);
         }
@@ -246,10 +253,7 @@ namespace BrassLoon.Log.Purger
                 );
         }
 
-        private static DateTime SubtractSettingsTimespan(DateTime timestamp, string value)
-        {
-            return AddSettingsTimespan(timestamp, value, -1);
-        }
+        private static DateTime SubtractSettingsTimespan(DateTime timestamp, string value) => AddSettingsTimespan(timestamp, value, -1);
 
         private static DateTime AddSettingsTimespan(DateTime timestamp, string value, int multiplier)
         {
@@ -257,19 +261,19 @@ namespace BrassLoon.Log.Purger
             Match match = Regex.Match(value, @"^\s*(-?[0-9]{1,5})\s*(minute|hour|day|month)s?\s*$", RegexOptions.IgnoreCase);
             if (!match.Success)
                 throw new ApplicationException($"Invalid timespan {value}");
-            switch (match.Groups[2].Value.ToLower())
+            switch (match.Groups[2].Value.ToLower(CultureInfo.InvariantCulture))
             {
                 case "minute":
-                    result = timestamp.AddMinutes(int.Parse(match.Groups[1].Value) * multiplier);
+                    result = timestamp.AddMinutes(int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture) * multiplier);
                     break;
                 case "hour":
-                    result = timestamp.AddHours(int.Parse(match.Groups[1].Value) * multiplier);
+                    result = timestamp.AddHours(int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture) * multiplier);
                     break;
                 case "day":
-                    result = timestamp.AddDays(int.Parse(match.Groups[1].Value) * multiplier);
+                    result = timestamp.AddDays(int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture) * multiplier);
                     break;
                 case "month":
-                    result = timestamp.AddMonths(int.Parse(match.Groups[1].Value) * multiplier);
+                    result = timestamp.AddMonths(int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture) * multiplier);
                     break;
                 default:
                     result = timestamp;
@@ -281,7 +285,7 @@ namespace BrassLoon.Log.Purger
         private static AppSettings LoadSettings(string[] args)
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder
+            _ = builder
             .AddJsonFile("appSettings.json", false)
             .AddEnvironmentVariables()
             .AddCommandLine(args)
@@ -299,7 +303,7 @@ namespace BrassLoon.Log.Purger
             string value)
         {
             Console.WriteLine(value);
-            await traceService.Create(settingsFactory.CreateLog(), appSettings.TraceLoggingDomainId, "log-purger", value);
+            _ = await traceService.Create(settingsFactory.CreateLog(), appSettings.TraceLoggingDomainId, "log-purger", value);
         }
     }
 }

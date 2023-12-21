@@ -51,36 +51,37 @@ namespace AuthorizationAPI.Controllers
             try
             {
                 IUser innerUser = null;
-                List<IUser> innerUsers = null;
                 CoreSettings coreSettings = CreateCoreSettings();
                 if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
                 else if (!await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
-                if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(emailAddress))
+                if (result == null && !string.IsNullOrEmpty(emailAddress) && domainId.HasValue)
                 {
                     innerUser = await _userFactory.GetByEmailAddress(coreSettings, domainId.Value, emailAddress);
                 }
-                if (result == null && innerUser == null && innerUsers == null && !string.IsNullOrEmpty(referenceId))
+                if (result == null && innerUser == null && !string.IsNullOrEmpty(referenceId) && domainId.HasValue)
                 {
                     innerUser = await _userFactory.GetByReferenceId(coreSettings, domainId.Value, referenceId);
                 }
-                if (result == null && innerUser == null && innerUsers == null)
+                if (result == null && innerUser == null && domainId.HasValue)
                 {
                     innerUser = await _userFactory.GetByReferenceId(coreSettings, domainId.Value, GetCurrentUserReferenceId());
                 }
-                if (result == null && innerUser != null && innerUsers == null)
+                List<IUser> innerUsers = null;
+                if (result == null && innerUser != null)
                 {
-                    innerUsers = new List<IUser>();
-                    if (innerUser != null)
-                        innerUsers.Add(innerUser);
+                    innerUsers = new List<IUser>()
+                    {
+                        innerUser
+                    };
                 }
                 if (result == null && innerUsers != null)
                 {
                     IMapper mapper = CreateMapper();
-                    IEnumerable<Task<User>> users = innerUsers.Select<IUser, Task<User>>(u => MapUser(coreSettings, mapper, u));
+                    IEnumerable<Task<User>> users = innerUsers.Select(u => MapUser(coreSettings, mapper, u));
                     result = Ok(
-                        await Task.WhenAll<User>(users)
+                        await Task.WhenAll(users)
                         );
                 }
                 if (result == null)
@@ -101,16 +102,22 @@ namespace AuthorizationAPI.Controllers
         [ProducesResponseType(typeof(User), 200)]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                }
+                else if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IUser innerUser = await _userFactory.Get(coreSettings, domainId.Value, id.Value);
@@ -140,16 +147,22 @@ namespace AuthorizationAPI.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> GetName([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                }
+                else if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IUser innerUser = await _userFactory.Get(coreSettings, domainId.Value, id.Value);
@@ -181,15 +194,23 @@ namespace AuthorizationAPI.Controllers
             {
                 CoreSettings coreSettings = CreateCoreSettings();
                 IUser innerUser = null;
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                }
+                else if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid id parameter value");
-                if (result == null && string.IsNullOrEmpty(user?.Name))
+                }
+                else if (string.IsNullOrEmpty(user?.Name))
+                {
                     result = BadRequest("Missing user name value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     innerUser = await _userFactory.Get(coreSettings, domainId.Value, id.Value);
                     if (innerUser == null)
@@ -198,7 +219,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerUser != null)
                 {
                     IMapper mapper = CreateMapper();
-                    mapper.Map(user, innerUser);
+                    _ = mapper.Map(user, innerUser);
                     if (user.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerUser, user.Roles);
                     await _userSaver.Update(coreSettings, innerUser);
@@ -222,7 +243,7 @@ namespace AuthorizationAPI.Controllers
             IEmailAddress emailAddress = await innerUser.GetEmailAddress(coreSettings);
             user.EmailAddress = emailAddress?.Address ?? string.Empty;
             user.Roles = (await innerUser.GetRoles(coreSettings))
-                .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
+                .Select(r => mapper.Map<AppliedRole>(r))
                 .ToList();
             return user;
         }
@@ -235,12 +256,12 @@ namespace AuthorizationAPI.Controllers
                 List<IRole> currentRoles = (await innerUser.GetRoles(coreSettings)).ToList();
                 foreach (IRole currentRole in currentRoles)
                 {
-                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!roles.Exists(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.RemoveRole(coreSettings, currentRole.PolicyName);
                 }
                 foreach (AppliedRole role in roles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentRoles.Exists(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerUser.AddRole(coreSettings, role.PolicyName);
                 }
             }

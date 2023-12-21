@@ -3,7 +3,6 @@ using BrassLoon.Log.TestClient.Settings;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.CommandLine.Help;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.TestClient
@@ -24,7 +23,7 @@ namespace BrassLoon.Log.TestClient
             {
                 ILogger logger = loggerFactory.CreateLogger("LoggingTest");
                 logger.Log(LogLevel.Information, new EventId(1, "test client"), "test message");
-                logger.LogMetric(
+                _ = logger.LogMetric(
                     new EventId(1, "test client"),
                     new Metric
                     {
@@ -58,7 +57,7 @@ namespace BrassLoon.Log.TestClient
         {
             return LoggerFactory.Create(builder =>
             {
-                builder.AddBrassLoonLogger((config) =>
+                _ = builder.AddBrassLoonLogger((config) =>
                 {
                     config.LogApiBaseAddress = settings.LogAPIBaseAddress;
                     config.LogDomainId = settings.DomainId;
@@ -76,7 +75,7 @@ namespace BrassLoon.Log.TestClient
                 exception.Data.Add("test guid", Guid.NewGuid());
                 throw exception;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new ApplicationException("outer exception", ex);
             }

@@ -15,30 +15,28 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[CreateWorkTaskType]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                await ProviderFactory.EstablishTransaction(transactionHandler, data);
+                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                command.CommandText = "[blwt].[CreateWorkTaskType]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
-                    IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
-                    id.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(id);
+                IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
+                id.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(id);
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.String, DataUtil.GetParameterValue(data.Code));
-                    AddCommonParameters(command.Parameters, data);
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "code", DbType.String, DataUtil.GetParameterValue(data.Code));
+                AddCommonParameters(command.Parameters, data);
 
-                    await command.ExecuteNonQueryAsync();
-                    data.WorkTaskTypeId = (Guid)id.Value;
-                    data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
-                    data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
-                }
+                _ = await command.ExecuteNonQueryAsync();
+                data.WorkTaskTypeId = (Guid)id.Value;
+                data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
+                data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
         }
 
@@ -46,31 +44,29 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
-                {
-                    command.CommandText = "[blwt].[UpdateWorkTaskType]";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                await ProviderFactory.EstablishTransaction(transactionHandler, data);
+                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                command.CommandText = "[blwt].[UpdateWorkTaskType]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
-                    IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
-                    timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
+                timestamp.Direction = ParameterDirection.Output;
+                _ = command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.WorkTaskTypeId));
-                    AddCommonParameters(command.Parameters, data);
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.WorkTaskTypeId));
+                AddCommonParameters(command.Parameters, data);
 
-                    await command.ExecuteNonQueryAsync();
-                    data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
-                }
+                _ = await command.ExecuteNonQueryAsync();
+                data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
         }
 
         private void AddCommonParameters(IList commandParameters, WorkTaskTypeData data)
         {
-            DataUtil.AddParameter(_providerFactory, commandParameters, "title", DbType.String, DataUtil.GetParameterValue(data.Title));
-            DataUtil.AddParameter(_providerFactory, commandParameters, "description", DbType.String, DataUtil.GetParameterValue(data.Description));
-            DataUtil.AddParameter(_providerFactory, commandParameters, "purgePeriod", DbType.Int16, DataUtil.GetParameterValue(data.PurgePeriod));
+            DataUtil.AddParameter(ProviderFactory, commandParameters, "title", DbType.String, DataUtil.GetParameterValue(data.Title));
+            DataUtil.AddParameter(ProviderFactory, commandParameters, "description", DbType.String, DataUtil.GetParameterValue(data.Description));
+            DataUtil.AddParameter(ProviderFactory, commandParameters, "purgePeriod", DbType.Int16, DataUtil.GetParameterValue(data.PurgePeriod));
         }
     }
 }

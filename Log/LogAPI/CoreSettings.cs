@@ -1,8 +1,6 @@
-﻿using BrassLoon.CommonCore;
-
-namespace LogAPI
+﻿namespace LogAPI
 {
-    public class CoreSettings : BrassLoon.CommonAPI.CoreSettings, ISettings
+    public class CoreSettings : BrassLoon.CommonAPI.CoreSettings
     {
         public CoreSettings(Settings settings)
             : base(settings)

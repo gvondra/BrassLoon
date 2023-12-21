@@ -53,7 +53,7 @@ namespace BrassLoon.Log.TestClient
         {
             return LoggerFactory.Create(builder =>
             {
-                builder.AddBrassLoonLogger((config) =>
+                _ = builder.AddBrassLoonLogger((config) =>
                 {
                     config.LogApiBaseAddress = settings.LogAPIBaseAddress;
                     config.LogDomainId = settings.DomainId;
@@ -63,9 +63,6 @@ namespace BrassLoon.Log.TestClient
             });
         }
 
-        private static void RaiseException()
-        {
-            throw new ApplicationException("test exception");
-        }
+        private static void RaiseException() => throw new ApplicationException("test exception");
     }
 }

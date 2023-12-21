@@ -42,7 +42,7 @@ namespace BrassLoon.Log.Core
                         transactionHandler.Connection = null;
                     }
                 }
-            }            
+            }
         }
     }
 }

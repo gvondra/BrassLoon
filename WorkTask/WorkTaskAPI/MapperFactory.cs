@@ -7,31 +7,26 @@ namespace WorkTaskAPI
 {
     public class MapperFactory
     {
-        private static readonly MapperConfiguration _configuration;
-
-        static MapperFactory()
-        {
-            _configuration = new MapperConfiguration(LoadConfiguration);
-        }
+        private static readonly MapperConfiguration _configuration = new MapperConfiguration(LoadConfiguration);
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {
             config.CreateMap<IReadOnlyList<string>, List<string>>()
                 .ConvertUsing(rol => new List<string>(rol));
-            config.CreateMap<WorkGroup, IWorkGroup>()
+            _ = config.CreateMap<WorkGroup, IWorkGroup>()
                 .ForMember(g => g.MemberUserIds, exp => exp.Ignore())
                 .ForMember(g => g.WorkTaskTypeIds, exp => exp.Ignore());
-            config.CreateMap<IWorkGroup, WorkGroup>();
-            config.CreateMap<IWorkTask, WorkTask>();
-            config.CreateMap<WorkTask, IWorkTask>()
+            _ = config.CreateMap<IWorkGroup, WorkGroup>();
+            _ = config.CreateMap<IWorkTask, WorkTask>();
+            _ = config.CreateMap<WorkTask, IWorkTask>()
                 .ForMember(wt => wt.WorkTaskContexts, exp => exp.Ignore());
-            config.CreateMap<IComment, Comment>();
-            config.CreateMap<IWorkTaskContext, WorkTaskContext>();
-            config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
-            config.CreateMap<WorkTaskStatus, IWorkTaskStatus>()
+            _ = config.CreateMap<IComment, Comment>();
+            _ = config.CreateMap<IWorkTaskContext, WorkTaskContext>();
+            _ = config.CreateMap<IWorkTaskStatus, WorkTaskStatus>();
+            _ = config.CreateMap<WorkTaskStatus, IWorkTaskStatus>()
                 .ForMember(s => s.IsDefaultStatus, exp => exp.MapFrom(s => s.IsDefaultStatus ?? false));
-            config.CreateMap<IWorkTaskType, WorkTaskType>();
-            config.CreateMap<WorkTaskType, IWorkTaskType>();
+            _ = config.CreateMap<IWorkTaskType, WorkTaskType>();
+            _ = config.CreateMap<WorkTaskType, IWorkTaskType>();
         }
 
         public virtual IMapper Create() => new Mapper(_configuration);

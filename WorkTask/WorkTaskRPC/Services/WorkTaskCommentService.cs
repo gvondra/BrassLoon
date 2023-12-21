@@ -37,7 +37,8 @@ namespace WorkTaskRPC.Services
             _commentSaver = commentSaver;
         }
 
-        public override async Task Create(IAsyncStreamReader<Protos.CreateWorkTaskCommentRequest> requestStream, IServerStreamWriter<Protos.Comment> responseStream, ServerCallContext context)
+#pragma warning disable S2589 // Boolean expressions should not be gratuitous
+        public override async Task Create(IAsyncStreamReader<CreateWorkTaskCommentRequest> requestStream, IServerStreamWriter<Comment> responseStream, ServerCallContext context)
         {
             try
             {
@@ -99,8 +100,9 @@ namespace WorkTaskRPC.Services
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
             }
         }
+#pragma warning restore S2589 // Boolean expressions should not be gratuitous
 
-        private async Task CreateComments(List<IComment> comments, IServerStreamWriter<Protos.Comment> responseStream)
+        private async Task CreateComments(List<IComment> comments, IServerStreamWriter<Comment> responseStream)
         {
             if (comments != null && comments.Count > 0)
             {
@@ -113,7 +115,7 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        public override async Task GetAll(Protos.GetAllWorkTaskCommentsRequest request, IServerStreamWriter<Protos.Comment> responseStream, ServerCallContext context)
+        public override async Task GetAll(GetAllWorkTaskCommentsRequest request, IServerStreamWriter<Comment> responseStream, ServerCallContext context)
         {
             try
             {
@@ -121,8 +123,8 @@ namespace WorkTaskRPC.Services
                 Guid workTaskId;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.WorkTaskIdId) || !Guid.TryParse(request.WorkTaskIdId, out workTaskId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task id \"{request?.WorkTaskIdId}\"");
+                if (string.IsNullOrEmpty(request.WorkTaskIdId) || !Guid.TryParse(request.WorkTaskIdId, out workTaskId))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid work task id \"{request.WorkTaskIdId}\"");
                 string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
                 if (!await _domainAcountAccessVerifier.HasAccess(
                     _settingsFactory.CreateAccount(accessToken),
@@ -133,7 +135,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IEnumerable<IComment> innerComments = await _workTaskCommentFactory.GetByWorkTaskId(settings, domainId, workTaskId);
-                foreach (Protos.Comment comment in innerComments.Select(c => Map(c)))
+                foreach (Comment comment in innerComments.Select(Map))
                 {
                     await responseStream.WriteAsync(comment);
                 }
@@ -149,9 +151,9 @@ namespace WorkTaskRPC.Services
             }
         }
 
-        private static Protos.Comment Map(IComment innerComment)
+        private static Comment Map(IComment innerComment)
         {
-            return new Protos.Comment
+            return new Comment
             {
                 CommentId = innerComment.CommentId.ToString("D"),
                 CreateTimestamp = Timestamp.FromDateTime(innerComment.CreateTimestamp),

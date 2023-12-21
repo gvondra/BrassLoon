@@ -27,10 +27,7 @@ namespace BrassLoon.Log.Core
         private Exception Create(ExceptionData data) => new Exception(data, _dataSaver, this);
         private Exception Create(ExceptionData data, IEventId eventId) => new Exception(data, _dataSaver, this, eventId);
 
-        public IException Create(Guid domainId, DateTime? createTimestamp, IEventId eventId = null)
-        {
-            return Create(domainId, createTimestamp, parentException: null, eventId: eventId);
-        }
+        public IException Create(Guid domainId, DateTime? createTimestamp, IEventId eventId = null) => Create(domainId, createTimestamp, parentException: null, eventId: eventId);
 
         public IException Create(Guid domainId, DateTime? createTimestamp, IException parentException, IEventId eventId = null)
         {

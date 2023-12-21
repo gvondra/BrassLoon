@@ -24,10 +24,7 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public Task<Guid?> Claim(ISettings settings)
-        {
-            return _dataFactory.ClaimPurgeWorker(_settingsFactory.CreateData(settings));
-        }
+        public Task<Guid?> Claim(ISettings settings) => _dataFactory.ClaimPurgeWorker(_settingsFactory.CreateData(settings));
 
         public async Task<IPurgeWorker> Get(ISettings settings, Guid id)
         {

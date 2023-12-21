@@ -90,9 +90,9 @@ namespace AuthorizationRPC.Services
                 Guid id;
                 if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request?.ClientId) || !Guid.TryParse(request.ClientId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request?.ClientId}\"");
-                if (string.IsNullOrEmpty(request?.Secret))
+                if (string.IsNullOrEmpty(request.ClientId) || !Guid.TryParse(request.ClientId, out id))
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid client id \"{request.ClientId}\"");
+                if (string.IsNullOrEmpty(request.Secret))
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing client secret value");
                 CoreSettings settings = _settingsFactory.CreateCore();
                 ISigningKey signingKey = (await _signingKeyFactory.GetByDomainId(settings, domainId))
@@ -102,7 +102,7 @@ namespace AuthorizationRPC.Services
                 if (signingKey == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Signing key not found"), "No active signing key found");
                 IClient client = await _clientFactory.Get(settings, domainId, id);
-                if (client == null || await client.AuthenticateSecret(settings, request.Secret) == false)
+                if (client == null || !await client.AuthenticateSecret(settings, request.Secret))
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 IUser user = await GetUser(settings, client);
                 return new TokenResponse
@@ -120,6 +120,15 @@ namespace AuthorizationRPC.Services
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
             }
         }
+
+        private static string GetName(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value;
+
+        private static string GetEmail(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.Email)?.Value;
+
+        private static string GetReferenceId(ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
         private async Task<IUser> GetUser(CoreSettings coreSettings, Guid domainId, ClaimsPrincipal claimsPrincipal)
         {
@@ -141,22 +150,13 @@ namespace AuthorizationRPC.Services
             return user;
         }
 
-        private static string GetName(ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.Claims.First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))?.Value;
-
-        private static string GetEmail(ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.Email)?.Value;
-
-        private static string GetReferenceId(ClaimsPrincipal claimsPrincipal)
-            => claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
         private async Task<IUser> GetUser(CoreSettings coreSettings, IClient client)
         {
             IEmailAddress emailAddress = await client.GetUserEmailAddress(coreSettings);
             IUser user = null;
             if (emailAddress != null)
             {
-                Func<BrassLoon.Authorization.Framework.ISettings, IUser, Task> saveAction = _userSaver.Update;
+                Func<ISettings, IUser, Task> saveAction = _userSaver.Update;
                 user = await _userFactory.GetByEmailAddress(coreSettings, client.DomainId, emailAddress.Address);
                 if (user == null)
                 {

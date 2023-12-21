@@ -17,7 +17,7 @@ namespace BrassLoon.Interface.WorkTask
                 throw new ArgumentNullException(nameof(workTaskId));
             if (comments == null)
                 throw new ArgumentNullException(nameof(comments));
-            if (comments.Any(c => !c.DomainId.HasValue))
+            if (Array.Exists(comments, c => !c.DomainId.HasValue))
                 throw new ArgumentException("At least one comment is missing a domain id");
             List<Comment> result = new List<Comment>();
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))

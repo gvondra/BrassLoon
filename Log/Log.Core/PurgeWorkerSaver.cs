@@ -9,7 +9,7 @@ namespace BrassLoon.Log.Core
     {
         private readonly IPurgeWorkerDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
-        
+
         public PurgeWorkerSaver(IPurgeWorkerDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {
@@ -17,10 +17,7 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        public Task InitializePurgeWorker(ISettings settings)
-        {
-            return _dataSaver.InitializePurgeWorker(_settingsFactory.CreateData(settings));
-        }
+        public Task InitializePurgeWorker(ISettings settings) => _dataSaver.InitializePurgeWorker(_settingsFactory.CreateData(settings));
 
         public async Task Update(ISettings settings, params IPurgeWorker[] purgeWorker)
         {
@@ -34,7 +31,7 @@ namespace BrassLoon.Log.Core
                         await purgeWorker[i].Update(th);
                     }
                 });
-            }            
+            }
         }
     }
 }

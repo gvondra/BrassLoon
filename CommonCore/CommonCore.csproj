@@ -1,29 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>disable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <AssemblyName>BrassLoon.CommonCore</AssemblyName>
-    <RootNamespace>BrassLoon.CommonCore</RootNamespace>
-    <Authors>Greg Vondra</Authors>
-    <Company />
-    <Product>Brass Loon</Product>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>BrassLoon.CommonCore</AssemblyName>
+        <RootNamespace>BrassLoon.CommonCore</RootNamespace>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BrassLoon.DataClient" Version="3.4.*" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.*" />
+        <PackageReference Include="BrassLoon.DataClient" Version="3.4.*" />
+        <PackageReference Include="Polly" Version="7.2.*" />
+        <PackageReference Include="Polly.Caching.Memory" Version="3.0.*" />
+    </ItemGroup>
 
 </Project>

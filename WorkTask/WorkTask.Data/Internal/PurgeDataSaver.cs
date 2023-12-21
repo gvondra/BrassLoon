@@ -14,60 +14,48 @@ namespace BrassLoon.WorkTask.Data.Internal
 
         private async Task DeleteByMinTimestamp(ISqlSettings settings, DateTime timestamp, string procedureName)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "minTimestamp", DbType.DateTime2, timestamp);
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
-            {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = procedureName;
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 150;
-                    command.Parameters.Add(parameter);
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
+            IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "minTimestamp", DbType.DateTime2, timestamp);
+            using DbConnection connection = await ProviderFactory.OpenConnection(settings);
+            using DbCommand command = connection.CreateCommand();
+            command.CommandText = procedureName;
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = 150;
+            _ = command.Parameters.Add(parameter);
+            _ = await command.ExecuteNonQueryAsync();
         }
         public Task InitializeWorkTask(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, short defaultPurgePeriod)
             => Initialize(settings, domainId, expirationTimestamp, defaultPurgePeriod, "[blwt].[InitializeWorkTaskPurge]");
 
         private async Task Initialize(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, short defaultPurgePeriod, string procedureName)
         {
-            IDataParameter parameterDomainId = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            IDataParameter parameterExpirationTimestamp = DataUtil.CreateParameter(_providerFactory, "expirationTimestamp", DbType.DateTime2, expirationTimestamp);
-            IDataParameter parameterMaxCcreateTimestamp = DataUtil.CreateParameter(_providerFactory, "defaultPurgePeriod", DbType.Int16, defaultPurgePeriod);
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
-            {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = procedureName;
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 150;
-                    command.Parameters.Add(parameterDomainId);
-                    command.Parameters.Add(parameterExpirationTimestamp);
-                    command.Parameters.Add(parameterMaxCcreateTimestamp);
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
+            IDataParameter parameterDomainId = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
+            IDataParameter parameterExpirationTimestamp = DataUtil.CreateParameter(ProviderFactory, "expirationTimestamp", DbType.DateTime2, expirationTimestamp);
+            IDataParameter parameterMaxCcreateTimestamp = DataUtil.CreateParameter(ProviderFactory, "defaultPurgePeriod", DbType.Int16, defaultPurgePeriod);
+            using DbConnection connection = await ProviderFactory.OpenConnection(settings);
+            using DbCommand command = connection.CreateCommand();
+            command.CommandText = procedureName;
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = 150;
+            _ = command.Parameters.Add(parameterDomainId);
+            _ = command.Parameters.Add(parameterExpirationTimestamp);
+            _ = command.Parameters.Add(parameterMaxCcreateTimestamp);
+            _ = await command.ExecuteNonQueryAsync();
         }
         public Task PurgeWorkTask(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp)
             => Purge(settings, domainId, expirationTimestamp, "[blwt].[PurgeWorkTask]");
 
         private async Task Purge(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, string procedureName)
         {
-            IDataParameter parameterDomainId = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            IDataParameter parameterMaxExpirationTimestamp = DataUtil.CreateParameter(_providerFactory, "expirationTimestamp", DbType.DateTime2, expirationTimestamp);
-            using (DbConnection connection = await _providerFactory.OpenConnection(settings))
-            {
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = procedureName;
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 150;
-                    command.Parameters.Add(parameterDomainId);
-                    command.Parameters.Add(parameterMaxExpirationTimestamp);
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
+            IDataParameter parameterDomainId = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
+            IDataParameter parameterMaxExpirationTimestamp = DataUtil.CreateParameter(ProviderFactory, "expirationTimestamp", DbType.DateTime2, expirationTimestamp);
+            using DbConnection connection = await ProviderFactory.OpenConnection(settings);
+            using DbCommand command = connection.CreateCommand();
+            command.CommandText = procedureName;
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = 150;
+            _ = command.Parameters.Add(parameterDomainId);
+            _ = command.Parameters.Add(parameterMaxExpirationTimestamp);
+            _ = await command.ExecuteNonQueryAsync();
         }
     }
 }

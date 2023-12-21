@@ -15,19 +15,10 @@ namespace BrassLoon.Log.Purger
             _tokenService = tokenService;
         }
 
-        public CoreSettings CreateCore()
-        {
-            return new CoreSettings(_appSettings);
-        }
+        public CoreSettings CreateCore() => new CoreSettings(_appSettings);
 
-        public AccountSettings CreateAccount()
-        {
-            return new AccountSettings(_appSettings, _tokenService);
-        }
+        public AccountSettings CreateAccount() => new AccountSettings(_appSettings, _tokenService);
 
-        public LogSettings CreateLog()
-        {
-            return new LogSettings(_appSettings, _tokenService, this);
-        }
+        public LogSettings CreateLog() => new LogSettings(_appSettings, _tokenService, this);
     }
 }

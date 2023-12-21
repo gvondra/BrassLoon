@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>BrassLoon.Address.Core.Test</AssemblyName>
+        <RootNamespace>BrassLoon.Address.Core.Tet</RootNamespace>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.*" />
+        <PackageReference Include="Moq" Version="4.20.*" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.1.*" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.1.*" />
+        <PackageReference Include="coverlet.collector" Version="6.0.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
+      <ProjectReference Include="..\Address.Core\Address.Core.csproj" />
+      <ProjectReference Include="..\Address.Data\Address.Data.csproj" />
+      <ProjectReference Include="..\Address.Framework\Address.Framework.csproj" />
+    </ItemGroup>
+
+</Project>

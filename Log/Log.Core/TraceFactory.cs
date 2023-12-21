@@ -43,16 +43,12 @@ namespace BrassLoon.Log.Core
                 );
         }
 
-        public Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId)
-        {
-            return _dataFactory.GetEventCodes(_settingFactory.CreateData(settings), domainId);
-        }
+        public Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId) => _dataFactory.GetEventCodes(_settingFactory.CreateData(settings), domainId);
 
         public async Task<IEnumerable<ITrace>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
             return (await _dataFactory.GetTopBeforeTimestamp(_settingFactory.CreateData(settings), domainId, eventCode, maxTimestamp.ToUniversalTime()))
                 .Select<TraceData, ITrace>(Create);
-                ;
         }
     }
 }

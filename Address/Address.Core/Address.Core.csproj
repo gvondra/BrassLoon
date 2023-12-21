@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyName>BrassLoon.Address.Core</AssemblyName>
+        <RootNamespace>BrassLoon.Address.Core</RootNamespace>
+        <Authors>Greg Vondra</Authors>
+        <Company />
+        <Product>Brass Loon</Product>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
+      <ProjectReference Include="..\Address.Data\Address.Data.csproj" />
+      <ProjectReference Include="..\Address.Framework\Address.Framework.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="System" />
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="7.1.*" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.*" />
+    </ItemGroup>
+
+</Project>

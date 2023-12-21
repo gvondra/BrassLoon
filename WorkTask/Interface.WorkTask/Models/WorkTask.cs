@@ -36,7 +36,7 @@ namespace BrassLoon.Interface.WorkTask.Models
                 WorkTaskId = !string.IsNullOrEmpty(workTask.WorkTaskId) ? Guid.Parse(workTask.WorkTaskId) : default(Guid?),
                 WorkTaskStatus = workTask.WorkTaskStatus != null ? WorkTaskStatus.Create(workTask.WorkTaskStatus) : null,
                 WorkTaskType = workTask.WorkTaskType != null ? WorkTaskType.Create(workTask.WorkTaskType) : null,
-                WorkTaskContexts = new List<WorkTaskContext>(workTask.WorkTaskContexts.Select(c => WorkTaskContext.Create(c)))
+                WorkTaskContexts = new List<WorkTaskContext>(workTask.WorkTaskContexts.Select(WorkTaskContext.Create))
             };
             return result;
         }

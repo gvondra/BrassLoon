@@ -51,7 +51,7 @@ namespace BrassLoon.Interface.WorkTask
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
             {
                 Protos.WorkTaskStatusService.WorkTaskStatusServiceClient service = new Protos.WorkTaskStatusService.WorkTaskStatusServiceClient(channel);
-                await service.DeleteAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                _ = await service.DeleteAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
                 ResetAllCaches();
             }
         }
@@ -147,7 +147,7 @@ namespace BrassLoon.Interface.WorkTask
             }
         }
 
-        private static AsyncPolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
+        private static AsyncCachePolicy CreateCachePolicy() => Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(5)));
 
         private static void ResetAllCaches()
         {

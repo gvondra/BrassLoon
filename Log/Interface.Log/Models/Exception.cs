@@ -2,6 +2,8 @@
 
 namespace BrassLoon.Interface.Log.Models
 {
+#pragma warning disable S2166 // Classes named like "Exception" should extend "Exception" or a subclass
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
     public class Exception
     {
         public long? ExceptionId { get; set; }
@@ -19,4 +21,6 @@ namespace BrassLoon.Interface.Log.Models
         public string Category { get; set; }
         public string Level { get; set; }
     }
+#pragma warning restore S2166 // Classes named like "Exception" should extend "Exception" or a subclass
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 }

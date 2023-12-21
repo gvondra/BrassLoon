@@ -12,7 +12,7 @@ namespace BrassLoon.Log.Core
     {
         private readonly MetricData _data;
         private readonly IMetricDataSaver _dataSaver;
-        private IEventId _eventId;
+        private readonly IEventId _eventId;
 
         public Metric(MetricData data,
             IMetricDataSaver dataSaver,
@@ -26,7 +26,7 @@ namespace BrassLoon.Log.Core
         public Metric(MetricData data,
             IMetricDataSaver dataSaver)
             : this(data, dataSaver, eventId: null)
-        {}
+        { }
 
         public long MetricId => _data.MetricId;
 
@@ -35,7 +35,7 @@ namespace BrassLoon.Log.Core
         public string EventCode => _data.EventCode;
 
         public double? Magnitude { get => _data.Magnitude; set => _data.Magnitude = value; }
-        public dynamic Data 
+        public dynamic Data
         {
             get
             {
@@ -57,7 +57,9 @@ namespace BrassLoon.Log.Core
 
         public string Status { get => _data.Status; set => _data.Status = value; }
         public string Requestor { get => _data.Requestor; set => _data.Requestor = value; }
+#pragma warning disable S1144 // Unused private types or members should be removed
         private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
+#pragma warning restore S1144 // Unused private types or members should be removed
         public string Category { get => _data.Category; set => _data.Category = value; }
         public string Level { get => _data.Level; set => _data.Level = value; }
 

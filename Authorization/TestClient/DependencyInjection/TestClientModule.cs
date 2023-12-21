@@ -7,14 +7,14 @@ namespace BrassLoon.Authorization.TestClient.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Authorization.AuthorizationInterfaceModule());
-            builder.RegisterType<ClientTest>();
-            builder.RegisterType<CreateTokenTest>();
-            builder.RegisterType<RoleTest>();
-            builder.RegisterType<SettingsFactory>().SingleInstance();
-            builder.RegisterType<SigningKeyTest>();
-            builder.RegisterType<UserTest>();
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Authorization.AuthorizationInterfaceModule());
+            _ = builder.RegisterType<ClientTest>();
+            _ = builder.RegisterType<CreateTokenTest>();
+            _ = builder.RegisterType<RoleTest>();
+            _ = builder.RegisterType<SettingsFactory>().SingleInstance();
+            _ = builder.RegisterType<SigningKeyTest>();
+            _ = builder.RegisterType<UserTest>();
         }
     }
 }

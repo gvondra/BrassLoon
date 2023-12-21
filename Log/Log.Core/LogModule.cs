@@ -8,18 +8,18 @@ namespace BrassLoon.Log.Core
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Log.Data.LogDataModule());
-            builder.RegisterInstance(new SettingsFactory());
-            builder.RegisterType<EventIdFactory>().As<IEventIdFactory>();
-            builder.RegisterType<ExceptionFactory>().As<IExceptionFactory>();
-            builder.RegisterType<ExceptionSaver>().As<IExceptionSaver>();
-            builder.RegisterType<MetricFactory>().As<IMetricFactory>();
-            builder.RegisterType<MetricSaver>().As<IMetricSaver>();
-            builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
-            builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();
-            builder.RegisterType<PurgeWorkerSaver>().As<IPurgeWorkerSaver>();
-            builder.RegisterType<TraceFactory>().As<ITraceFactory>();
-            builder.RegisterType<TraceSaver>().As<ITraceSaver>();
+            _ = builder.RegisterModule(new Data.LogDataModule());
+            _ = builder.RegisterInstance(new SettingsFactory());
+            _ = builder.RegisterType<EventIdFactory>().As<IEventIdFactory>();
+            _ = builder.RegisterType<ExceptionFactory>().As<IExceptionFactory>();
+            _ = builder.RegisterType<ExceptionSaver>().As<IExceptionSaver>();
+            _ = builder.RegisterType<MetricFactory>().As<IMetricFactory>();
+            _ = builder.RegisterType<MetricSaver>().As<IMetricSaver>();
+            _ = builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
+            _ = builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();
+            _ = builder.RegisterType<PurgeWorkerSaver>().As<IPurgeWorkerSaver>();
+            _ = builder.RegisterType<TraceFactory>().As<ITraceFactory>();
+            _ = builder.RegisterType<TraceSaver>().As<ITraceSaver>();
         }
     }
 }

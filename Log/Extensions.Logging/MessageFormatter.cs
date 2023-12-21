@@ -1,16 +1,11 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrassLoon.Extensions.Logging
 {
-    internal class MessageFormatter
+    internal sealed class MessageFormatter
     {
+#pragma warning disable CA1822 // Mark members as static
         public void Write<TState>(in LogEntry<TState> logEntry, TextWriter textWriter)
         {
             string message = logEntry.Formatter(logEntry.State, logEntry.Exception);
@@ -25,5 +20,6 @@ namespace BrassLoon.Extensions.Logging
                 textWriter.Write(logEntry.Exception.Message?.TrimEnd());
             }
         }
+#pragma warning restore CA1822 // Mark members as static
     }
 }

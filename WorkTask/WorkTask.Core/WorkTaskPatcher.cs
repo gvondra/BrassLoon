@@ -34,11 +34,8 @@ namespace BrassLoon.WorkTask.Core
         {
             Guid id = Guid.Parse(patchData["WorkTaskId"]);
             IWorkTask workTask = await _workTaskFactory.Get(settings, domainId, id);
-            if (workTask != null)
-            {
-                if (patchData.ContainsKey(KEY_WORKTASK_STATUS_ID))
-                    await SetWorkTaskStatus(settings, workTask, Guid.Parse(patchData[KEY_WORKTASK_STATUS_ID]));
-            }
+            if (workTask != null && patchData.ContainsKey(KEY_WORKTASK_STATUS_ID))
+                await SetWorkTaskStatus(settings, workTask, Guid.Parse(patchData[KEY_WORKTASK_STATUS_ID]));
             return workTask;
         }
 
@@ -46,11 +43,8 @@ namespace BrassLoon.WorkTask.Core
         {
             Guid id = Guid.Parse(patch["WorkTaskId"].ToString());
             IWorkTask workTask = await _workTaskFactory.Get(settings, domainId, id);
-            if (workTask != null)
-            {
-                if (patch.ContainsKey(KEY_WORKTASK_STATUS_ID))
-                    await SetWorkTaskStatus(settings, workTask, Guid.Parse(patch[KEY_WORKTASK_STATUS_ID].ToString()));
-            }
+            if (workTask != null && patch.ContainsKey(KEY_WORKTASK_STATUS_ID))
+                await SetWorkTaskStatus(settings, workTask, Guid.Parse(patch[KEY_WORKTASK_STATUS_ID].ToString()));
             return workTask;
         }
 

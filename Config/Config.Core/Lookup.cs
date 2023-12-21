@@ -33,6 +33,7 @@ namespace BrassLoon.Config.Core
 
         public string Code { get => _data.Code; set => _data.Code = value; }
 
+#pragma warning disable S1168 // Empty arrays and collections should be returned instead of null
         public Dictionary<string, string> Data
         {
             get
@@ -50,6 +51,7 @@ namespace BrassLoon.Config.Core
                     _data.Data = JsonConvert.SerializeObject(value, new JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() });
             }
         }
+#pragma warning restore S1168 // Empty arrays and collections should be returned instead of null
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 

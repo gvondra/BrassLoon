@@ -16,17 +16,17 @@ namespace BrassLoon.CommonAPI
             IConfigurationSection section = configuration.GetSection("CorsOrigins");
             if (section != null)
             {
-                string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
-                if (corsOrigins != null && corsOrigins.Length > 0)
+                string[] corsOrigins = section.GetChildren().Select(child => child.Value).ToArray();
+                if (corsOrigins.Length > 0)
                 {
-                    services.AddCors(options =>
+                    _ = services.AddCors(options =>
                     {
                         options.AddDefaultPolicy(builder =>
                         {
-                            builder
+                            _ = builder
                             .AllowAnyHeader()
                             .AllowAnyMethod();
-                            builder.WithOrigins(corsOrigins);
+                            _ = builder.WithOrigins(corsOrigins);
                         });
                     });
                 }
@@ -40,9 +40,9 @@ namespace BrassLoon.CommonAPI
             JsonWebKeySet keySet = JsonWebKeySet.Create(
                 documentRetriever.GetDocumentAsync(configuration["JwkAddress"], new System.Threading.CancellationToken()).Result
                 );
-            builder.AddJwtBearer(Constants.AUTH_SCHEME_BRASSLOON, o =>
+            _ = builder.AddJwtBearer(Constants.AUTH_SCHEME_BRASSLOON, o =>
             {
-                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                o.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
@@ -71,9 +71,9 @@ namespace BrassLoon.CommonAPI
                 documentRetriever.GetDocumentAsync(configuration["GoogleJwksUrl"], new System.Threading.CancellationToken()).Result
                 );
             List<string> audiences = GetGoogleAudiences(configuration);
-            builder.AddJwtBearer(Constants.AUTH_SCHEME_GOOGLE, o =>
+            _ = builder.AddJwtBearer(Constants.AUTH_SCHEME_GOOGLE, o =>
             {
-                o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                o.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
@@ -102,14 +102,17 @@ namespace BrassLoon.CommonAPI
             IConfigurationSection section = configuration.GetSection("GoogleIdAudiences");
             if (section != null)
             {
-                googleIdAudiences = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToList();
+                googleIdAudiences = section.GetChildren().Select(child => child.Value).ToList();
             }
             if (googleIdAudiences == null)
             {
                 googleIdAudiences = new List<string>();
             }
-            if (!string.IsNullOrEmpty(googleIdAudience) && !googleIdAudiences.Contains(googleIdAudience)) 
+            if (!string.IsNullOrEmpty(googleIdAudience) && !googleIdAudiences.Contains(googleIdAudience))
+            {
                 googleIdAudiences.Add(googleIdAudience);
+            }
+
             return googleIdAudiences;
         }
 
@@ -121,10 +124,10 @@ namespace BrassLoon.CommonAPI
             {
                 Constants.AUTH_SCHEME_BRASSLOON
             };
-            if (!string.IsNullOrEmpty(googleIdIssuer)) 
+            if (!string.IsNullOrEmpty(googleIdIssuer))
                 authenticationSchemes.Add(Constants.AUTH_SCHEME_GOOGLE);
 
-            services.AddAuthorization(o =>
+            _ = services.AddAuthorization(o =>
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
@@ -132,12 +135,12 @@ namespace BrassLoon.CommonAPI
                 .Build();
                 if (!string.IsNullOrEmpty(googleIdIssuer))
                 {
-                    o.AddPolicyWithoutRoles(Constants.POLICY_CREATE_TOKEN, Constants.AUTH_SCHEME_GOOGLE, googleIdIssuer);
+                    _ = o.AddPolicyWithoutRoles(Constants.POLICY_CREATE_TOKEN, Constants.AUTH_SCHEME_GOOGLE, googleIdIssuer);
                 }
                 if (!string.IsNullOrEmpty(brassLoonIdIssuer))
                 {
-                    o.AddPolicyWithoutRoles(Constants.POLICY_BL_AUTH, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
-                    o.AddPolicy(Constants.POLICY_SYS_ADMIN, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
+                    _ = o.AddPolicyWithoutRoles(Constants.POLICY_BL_AUTH, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
+                    _ = o.AddPolicy(Constants.POLICY_SYS_ADMIN, Constants.AUTH_SCHEME_BRASSLOON, brassLoonIdIssuer);
                 }
             });
             return services;
@@ -156,7 +159,7 @@ namespace BrassLoon.CommonAPI
             authorizationOptions.AddPolicy(policyName,
                 configure =>
                 {
-                    configure.AddRequirements(new AuthorizationRequirement(policyName, issuer, additinalPolicies.ToArray()))
+                    _ = configure.AddRequirements(new AuthorizationRequirement(policyName, issuer, additinalPolicies.ToArray()))
                     .AddAuthenticationSchemes(schema)
                     .Build();
                 });
@@ -168,7 +171,7 @@ namespace BrassLoon.CommonAPI
             authorizationOptions.AddPolicy(policyName,
                 configure =>
                 {
-                    configure.AddRequirements(new AuthorizationRequirement(policyName, issuer))
+                    _ = configure.AddRequirements(new AuthorizationRequirement(policyName, issuer))
                     .AddAuthenticationSchemes(schema)
                     .Build();
                 });

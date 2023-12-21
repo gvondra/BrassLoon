@@ -97,8 +97,8 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IEnumerable<IClient> innerClients = await _clientFactory.GetByDomainId(coreSettings, domainId.Value);
-                    result = Ok(await Task.WhenAll<Client>(
-                        innerClients.Select<IClient, Task<Client>>(c => MapClient(coreSettings, mapper, c))
+                    result = Ok(await Task.WhenAll(
+                        innerClients.Select(c => MapClient(coreSettings, mapper, c))
                         ));
                 }
             }
@@ -159,7 +159,7 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     IClient innerClient = _clientFactory.Create(domainId.Value, client.Secret);
                     IMapper mapper = CreateMapper();
-                    mapper.Map<Client, IClient>(client, innerClient);
+                    _ = mapper.Map(client, innerClient);
                     IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
                     if (client.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
@@ -201,7 +201,7 @@ namespace AuthorizationAPI.Controllers
                 if (result == null && innerClient != null)
                 {
                     IMapper mapper = CreateMapper();
-                    mapper.Map(client, innerClient);
+                    _ = mapper.Map(client, innerClient);
                     IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
                     if (!string.IsNullOrEmpty(client?.Secret))
                         innerClient.SetSecret(client.Secret);
@@ -246,7 +246,7 @@ namespace AuthorizationAPI.Controllers
             Client client = mapper.Map<Client>(innerClient);
             client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address ?? string.Empty;
             client.Roles = (await innerClient.GetRoles(coreSettings))
-                .Select<IRole, AppliedRole>(r => mapper.Map<AppliedRole>(r))
+                .Select(r => mapper.Map<AppliedRole>(r))
                 .ToList();
             return client;
         }
@@ -259,12 +259,12 @@ namespace AuthorizationAPI.Controllers
                 List<IRole> currentRoles = (await innerClient.GetRoles(coreSettings)).ToList();
                 foreach (IRole currentRole in currentRoles)
                 {
-                    if (!roles.Any(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!roles.Exists(r => string.Equals(currentRole.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerClient.RemoveRole(coreSettings, currentRole.PolicyName);
                 }
                 foreach (AppliedRole role in roles)
                 {
-                    if (!currentRoles.Any(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentRoles.Exists(r => string.Equals(role.PolicyName, r.PolicyName, StringComparison.OrdinalIgnoreCase)))
                         await innerClient.AddRole(coreSettings, role.PolicyName);
                 }
             }

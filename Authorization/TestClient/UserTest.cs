@@ -22,6 +22,8 @@ namespace BrassLoon.Authorization.TestClient
             _userService = userService;
         }
 
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable S1481 // Unused local variables should be removed
         public async Task Execute()
         {
             if (string.IsNullOrEmpty(AccessToken.Get.GetGoogleIdToken()))
@@ -36,5 +38,7 @@ namespace BrassLoon.Authorization.TestClient
             }
             List<User> searchResult = await _userService.Search(settings, _settings.AuthorizationDomainId.Value, "x");
         }
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
+#pragma warning restore S1481 // Unused local variables should be removed
     }
 }
