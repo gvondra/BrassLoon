@@ -43,6 +43,11 @@ namespace BrassLoon.WorkTask.TestClient
                     WorkTaskTest);
                 rootCommand.AddCommand(command);
 
+                command = new Command("claim-work-task-debug");
+                command.SetHandler(
+                    ClaimWorkTaskDebug);
+                rootCommand.AddCommand(command);
+
                 _ = await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
@@ -53,6 +58,13 @@ namespace BrassLoon.WorkTask.TestClient
                     logger.Error(ex, ex.Message);
                 }
             }
+        }
+
+        private static async Task ClaimWorkTaskDebug()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            ClaimWorkTaskDebug test = scope.Resolve<ClaimWorkTaskDebug>();
+            await test.Execute();
         }
 
         private static async Task WorkTaskTest()

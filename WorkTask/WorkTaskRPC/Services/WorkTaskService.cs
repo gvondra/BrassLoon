@@ -68,6 +68,7 @@ namespace WorkTaskRPC.Services
                 {
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
+                _logger.LogTrace($"Claiming work task ({id}). After authorization");
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, domainId, id);
                 if (innerWorkTask == null)
@@ -92,10 +93,12 @@ namespace WorkTaskRPC.Services
                 {
                     assignedDate = DateTime.Today;
                 }
+                _logger.LogTrace($"Claiming work task ({id}). After check assigned date ({assignedDate})");
                 if (response == null)
                 {
                     response = new ClaimWorkTaskResponse();
                     response.IsAssigned = await _workTaskSaver.Claim(settings, domainId, id, request.AssignToUserId, assignedDate);
+                    _logger.LogTrace($"Claiming work task ({id}). After claim (assigned {response.IsAssigned})");
                     if (response.IsAssigned)
                     {
                         response.Message = "Work task assigned";
@@ -107,6 +110,7 @@ namespace WorkTaskRPC.Services
                         response.Message = "Failed to assign work task";
                     }
                 }
+                _logger.LogTrace($"Claiming work task ({id}). Before return (assigned {response.Message})");
                 return response;
             }
             catch (RpcException)

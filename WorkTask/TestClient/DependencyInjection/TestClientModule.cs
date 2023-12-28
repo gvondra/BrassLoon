@@ -10,6 +10,7 @@ namespace BrassLoon.WorkTask.TestClient.DependencyInjection
             base.Load(builder);
             _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
             _ = builder.RegisterModule(new BrassLoon.Interface.WorkTask.WorkTaskInterfaceModule());
+            _ = builder.RegisterType<ClaimWorkTaskDebug>();
             _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
