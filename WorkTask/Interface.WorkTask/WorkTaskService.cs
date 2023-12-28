@@ -172,6 +172,7 @@ namespace BrassLoon.Interface.WorkTask
                     await streamingCall.RequestStream.WriteAsync(
                         CreatePatchRequest(domainId, patchItem));
                 }
+                await streamingCall.RequestStream.CompleteAsync();
                 while (await streamingCall.ResponseStream.MoveNext())
                 {
                     result.Add(

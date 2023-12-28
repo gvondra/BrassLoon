@@ -69,6 +69,17 @@ namespace BrassLoon.WorkTask.TestClient
                 _logger.Information($"Title returned from update {task.Title}");
                 task = await _workTaskService.Get(settings, _appSettings.Domain.Value, task.WorkTaskId.Value);
                 _logger.Information($"Title returned from get {task.Title}");
+                _ = await _workTaskService.Patch(
+                    settings,
+                    _appSettings.Domain.Value,
+                    new List<Dictionary<string, object>>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            { "WorkTaskId", task.WorkTaskId.Value.ToString("D") },
+                            { "WorkTaskStatusId", testStatus.WorkTaskStatusId.Value.ToString("D") }
+                        }
+                    });
             }
             await foreach (Models.WorkTask task in await _workTaskService.GetAll(settings, _appSettings.Domain.Value))
             {
