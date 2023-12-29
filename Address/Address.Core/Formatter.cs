@@ -2,12 +2,12 @@
 
 namespace BrassLoon.Address.Core
 {
-    internal static class Formatter
+    public static class Formatter
     {
         public static string UnformatPostalCode(string value)
         {
             value = TrimAndConsolidateWhiteSpace(value);
-            return Regex.Replace(value, @"[^0-1A-Za-z]+", string.Empty, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
+            return Regex.Replace(value, @"[^0-9A-Za-z]+", string.Empty, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
         }
 
         public static string TrimAndConsolidateWhiteSpace(string value)
