@@ -98,6 +98,7 @@ namespace AddressRPC.Services
                 if (innerAddress != null)
                 {
                     Map(request, innerAddress);
+                    _logger.LogTrace($"Mapped address (before save) {innerAddress.Addressee}, {innerAddress.Delivery}, {innerAddress.City} {innerAddress.Territory} {innerAddress.PostalCode}");
                     return Map(await _addressSaver.Save(settings, innerAddress));
                 }
                 else
