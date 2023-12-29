@@ -2,7 +2,10 @@
 using BrassLoon.Address.Data.Models;
 using BrassLoon.Address.Framework;
 using BrassLoon.CommonCore;
+using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Address.Core
@@ -13,13 +16,20 @@ namespace BrassLoon.Address.Core
         private readonly IAddressDataSaver _dataSaver;
         private readonly Saver _saver;
         private readonly IKeyVault _keyVault;
+        private readonly ILogger<AddressSaver> _logger;
 
-        public AddressSaver(AddressFactory addressFactory, IAddressDataSaver addressDataSaver, IKeyVault keyVault, Saver saver)
+        public AddressSaver(
+            AddressFactory addressFactory,
+            IAddressDataSaver addressDataSaver,
+            IKeyVault keyVault,
+            Saver saver,
+            ILogger<AddressSaver> logger)
         {
             _addressFactory = addressFactory;
             _dataSaver = addressDataSaver;
             _keyVault = keyVault;
             _saver = saver;
+            _logger = logger;
         }
 
         public async Task<IAddress> Save(Framework.ISettings settings, IAddress address)
@@ -46,6 +56,13 @@ namespace BrassLoon.Address.Core
                     Country = AddressCryptography.Encrypt(key, iv, (address.Country ?? string.Empty).Trim()),
                     County = AddressCryptography.Encrypt(key, iv, (address.County ?? string.Empty).Trim())
                 };
+                StringBuilder message = new StringBuilder();
+                _ = message.Append(CultureInfo.InvariantCulture, $"Postal code in {address.PostalCode}; encoded ");
+                if (data.PostalCode != null)
+                {
+                    _ = message.Append(string.Join(" ", data.PostalCode.Select(i => i.ToString("X2", CultureInfo.InvariantCulture))));
+                }
+                _logger.LogTrace(message.ToString());
                 await _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
                 result = await _addressFactory.Create(settings, data);
             }
