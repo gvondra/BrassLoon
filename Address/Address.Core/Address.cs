@@ -10,6 +10,7 @@ namespace BrassLoon.Address.Core
         public string Attention { get; set; } = string.Empty;
         public string Addressee { get; set; } = string.Empty;
         public string Delivery { get; set; } = string.Empty;
+        public string Secondary { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Territory { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
@@ -33,6 +34,7 @@ namespace BrassLoon.Address.Core
                 || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Attention), Formatter.TrimAndConsolidateWhiteSpace(other.Attention))
                 || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Addressee), Formatter.TrimAndConsolidateWhiteSpace(other.Addressee))
                 || !StringEquals(Formatter.UnformatAddressDelivery(Delivery), Formatter.UnformatAddressDelivery(other.Delivery))
+                || !StringEquals(Formatter.UnformatAddressDelivery(Secondary), Formatter.UnformatAddressDelivery(other.Secondary))
                 || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(City), Formatter.TrimAndConsolidateWhiteSpace(other.City))
                 || !StringEquals(Formatter.TrimAndConsolidateWhiteSpace(Territory), Formatter.TrimAndConsolidateWhiteSpace(other.Territory))
                 || !StringEquals(Formatter.UnformatPostalCode(PostalCode), Formatter.UnformatPostalCode(other.PostalCode))
@@ -55,6 +57,7 @@ namespace BrassLoon.Address.Core
             hash.Add(Attention);
             hash.Add(Addressee);
             hash.Add(Delivery);
+            hash.Add(Secondary);
             hash.Add(City);
             hash.Add(Territory);
             hash.Add(PostalCode);

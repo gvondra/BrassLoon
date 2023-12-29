@@ -12,6 +12,7 @@ namespace BrassLoon.Address.Data.Models
         [ColumnMapping] public byte[] Attention { get; set; }
         [ColumnMapping] public byte[] Addressee { get; set; }
         [ColumnMapping] public byte[] Delivery { get; set; }
+        [ColumnMapping] public byte[] Secondary { get; set; }
         [ColumnMapping] public byte[] City { get; set; }
         [ColumnMapping] public byte[] Territory { get; set; }
         [ColumnMapping] public byte[] PostalCode { get; set; }

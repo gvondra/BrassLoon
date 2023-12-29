@@ -32,6 +32,7 @@ namespace BrassLoon.Address.Core
                 Attention = AddressCryptography.Decrypt(key, data.InitializationVector, data.Attention) ?? string.Empty,
                 Addressee = AddressCryptography.Decrypt(key, data.InitializationVector, data.Addressee) ?? string.Empty,
                 Delivery = AddressCryptography.Decrypt(key, data.InitializationVector, data.Delivery) ?? string.Empty,
+                Secondary = AddressCryptography.Decrypt(key, data.InitializationVector, data.Secondary) ?? string.Empty,
                 City = AddressCryptography.Decrypt(key, data.InitializationVector, data.City) ?? string.Empty,
                 Territory = AddressCryptography.Decrypt(key, data.InitializationVector, data.Territory) ?? string.Empty,
                 PostalCode = AddressCryptography.Decrypt(key, data.InitializationVector, data.PostalCode) ?? string.Empty,

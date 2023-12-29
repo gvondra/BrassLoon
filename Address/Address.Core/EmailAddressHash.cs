@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Address.Framework;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,9 +11,9 @@ namespace BrassLoon.Address.Core
     {
         internal static byte[] Hash(IEmailAddress emailAddress)
         {
-            object formattedEmail = new
+            List<object> formattedEmail = new List<object>
             {
-                Address = FormatAddressField(emailAddress.Address)
+                new { Address = FormatAddressField(emailAddress.Address) }
             };
             string json = JsonConvert.SerializeObject(formattedEmail, BaseHash.GetSerializerSettings());
             return SHA512.HashData(Encoding.UTF8.GetBytes(json));

@@ -8,6 +8,7 @@
 	[Attention] VARBINARY(8000) NULL,
 	[Addressee] VARBINARY(8000) NULL,
 	[Delivery] VARBINARY(8000) NULL,
+	[Secondary] VARBINARY(8000) NULL,
 	[City] VARBINARY(8000) NULL,
 	[Territory] VARBINARY(4000) NULL,
 	[PostalCode] VARBINARY(4000) NULL,

@@ -1,5 +1,6 @@
 ﻿using BrassLoon.Address.Framework;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,16 +11,17 @@ namespace BrassLoon.Address.Core
     {
         internal static byte[] Hash(IAddress address)
         {
-            object formattedAddress = new
+            List<object> formattedAddress = new List<object>
             {
-                Attention = FormatAddressField(address.Attention),
-                Addressee = FormatAddressField(address.Addressee),
-                Delivery = FormatAddressField(address.Delivery),
-                City = FormatAddressField(address.City),
-                Territory = FormatAddressField(address.Territory),
-                PostalCode = FormatPostalCode(address.PostalCode),
-                Country = FormatAddressField(address.Country),
-                County = FormatAddressField(address.County)
+                new { Attention = FormatAddressField(address.Attention) },
+                new { Addressee = FormatAddressField(address.Addressee) },
+                new { Delivery = FormatAddressField(address.Delivery) },
+                new { Secondary = FormatAddressField(address.Secondary) },
+                new { City = FormatAddressField(address.City) },
+                new { Territory = FormatAddressField(address.Territory) },
+                new { PostalCode = FormatPostalCode(address.PostalCode) },
+                new { Country = FormatAddressField(address.Country) },
+                new { County = FormatAddressField(address.County) }
             };
             string json = JsonConvert.SerializeObject(formattedAddress, BaseHash.GetSerializerSettings());
             return SHA512.HashData(Encoding.UTF8.GetBytes(json));

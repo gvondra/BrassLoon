@@ -3,7 +3,7 @@
 	@hash BINARY(64)
 AS
 SELECT [AddressId], [DomainId], [KeyId], [Hash], [InitializationVector], 
-	[Attention], [Addressee], [Delivery], [City], [Territory], [PostalCode], [Country], [County],
+	[Attention], [Addressee], [Delivery], [Secondary], [City], [Territory], [PostalCode], [Country], [County],
 	[CreateTimestamp]
 FROM [blad].[Address]
 WHERE [DomainId] = @domainId

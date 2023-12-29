@@ -15,12 +15,13 @@ message Address {
 	string Attention = 3;
     string Addressee = 4;
     string Delivery = 5;
-    string City = 6;
-    string Territory = 7;
-    string PostalCode = 8;
-    string Country = 9;
-    string County = 10;
-    google.protobuf.Timestamp CreateTimestamp = 11;
+    string Secondary = 6;
+    string City = 7;
+    string Territory = 8;
+    string PostalCode = 9;
+    string Country = 10;
+    string County = 11;
+    google.protobuf.Timestamp CreateTimestamp = 12;
 }
 
 message GetAddressRequest {

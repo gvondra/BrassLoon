@@ -10,6 +10,7 @@ namespace BrassLoon.Interface.Address.Models
         public string Attention { get; set; }
         public string Addressee { get; set; }
         public string Delivery { get; set; }
+        public string Secondary { get; set; }
         public string City { get; set; }
         public string Territory { get; set; }
         public string PostalCode { get; set; }
@@ -26,6 +27,7 @@ namespace BrassLoon.Interface.Address.Models
                 Attention = address.Attention ?? string.Empty,
                 Addressee = address.Addressee ?? string.Empty,
                 Delivery = address.Delivery ?? string.Empty,
+                Secondary = address.Secondary ?? string.Empty,
                 City = address.City ?? string.Empty,
                 Territory = address.Territory ?? string.Empty,
                 PostalCode = address.PostalCode ?? string.Empty,
@@ -44,6 +46,7 @@ namespace BrassLoon.Interface.Address.Models
                 Attention = Attention ?? string.Empty,
                 Addressee = Addressee ?? string.Empty,
                 Delivery = Delivery ?? string.Empty,
+                Secondary = Secondary ?? string.Empty,
                 City = City ?? string.Empty,
                 Territory = Territory ?? string.Empty,
                 PostalCode = PostalCode ?? string.Empty,

@@ -36,6 +36,7 @@ namespace BrassLoon.Address.Data.Internal
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "attention", DbType.Binary, DataUtil.GetParameterValue(data.Attention));
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "addressee", DbType.Binary, DataUtil.GetParameterValue(data.Addressee));
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "delivery", DbType.Binary, DataUtil.GetParameterValue(data.Delivery));
+                DataUtil.AddParameter(ProviderFactory, command.Parameters, "secondary", DbType.Binary, DataUtil.GetParameterValue(data.Secondary));
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "city", DbType.Binary, DataUtil.GetParameterValue(data.City));
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "territory", DbType.Binary, DataUtil.GetParameterValue(data.Territory));
                 DataUtil.AddParameter(ProviderFactory, command.Parameters, "postalCode", DbType.Binary, DataUtil.GetParameterValue(data.PostalCode));

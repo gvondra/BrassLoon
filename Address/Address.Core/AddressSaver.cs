@@ -39,6 +39,7 @@ namespace BrassLoon.Address.Core
                     Attention = AddressCryptography.Encrypt(key, iv, (address.Attention ?? string.Empty).Trim()),
                     Addressee = AddressCryptography.Encrypt(key, iv, (address.Addressee ?? string.Empty).Trim()),
                     Delivery = AddressCryptography.Encrypt(key, iv, (address.Delivery ?? string.Empty).Trim()),
+                    Secondary = AddressCryptography.Encrypt(key, iv, (address.Secondary ?? string.Empty).Trim()),
                     City = AddressCryptography.Encrypt(key, iv, (address.City ?? string.Empty).Trim()),
                     Territory = AddressCryptography.Encrypt(key, iv, (address.Territory ?? string.Empty).Trim()),
                     PostalCode = AddressCryptography.Encrypt(key, iv, Formatter.UnformatPostalCode(address.PostalCode)),
