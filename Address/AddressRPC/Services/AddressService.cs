@@ -93,6 +93,7 @@ namespace AddressRPC.Services
                     throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
+                _logger.LogTrace($"Saving address {request.Addressee}, {request.Delivery}, {request.City} {request.Territory} {request.PostalCode}");
                 IAddress innerAddress = newAddress ? _addressFactory.Create(domainId) : await _addressFactory.Get(settings, domainId, id);
                 if (innerAddress != null)
                 {
