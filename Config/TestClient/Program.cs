@@ -2,6 +2,7 @@
 using BrassLoon.Config.TestClient.Settings;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Core;
 using System;
 using System.CommandLine;
 using System.Globalization;
@@ -66,7 +67,7 @@ namespace BrassLoon.Config.TestClient
             return builder.Build();
         }
 
-        private static ILogger CreateLogger(string fileName)
+        private static Logger CreateLogger(string fileName)
         {
             LoggerConfiguration configuration = new LoggerConfiguration()
                 .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);

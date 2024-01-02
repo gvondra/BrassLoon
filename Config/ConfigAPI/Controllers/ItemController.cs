@@ -65,7 +65,7 @@ namespace ConfigAPI.Controllers
                         IItem item = await _itemFactory.GetByCode(_settingsFactory.CreateCore(_settings.Value), domainId.Value, code);
                         if (item == null)
                             item = _itemFactory.Create(domainId.Value, code);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        Mapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(mapper.Map<Item>(item));
                     }
                 }
@@ -148,11 +148,10 @@ namespace ConfigAPI.Controllers
                         }
                         else
                         {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                            Mapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(
                                 (await item.GetHistory(_settingsFactory.CreateCore(_settings.Value)))
-                                .Select(hist => mapper.Map<ItemHistory>(hist))
-                                );
+                                .Select(mapper.Map<ItemHistory>));
                         }
                     }
                 }
@@ -233,7 +232,7 @@ namespace ConfigAPI.Controllers
                     {
                         innerItem.Data = itemData;
                         await save(settings, _itemSaver, innerItem);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        Mapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
                             mapper.Map<Item>(innerItem)
                             );

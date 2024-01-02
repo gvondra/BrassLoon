@@ -2,6 +2,7 @@
 using BrassLoon.RestClient;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
+using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace BrassLoon.Interface.Config
             _restUtil = restUtil;
         }
 
-        private static Policy CreateCache() => Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
+        private static CachePolicy CreateCache() => Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromSeconds(45));
 
         public async Task Delete(ISettings settings, Guid domainId, string code)
         {

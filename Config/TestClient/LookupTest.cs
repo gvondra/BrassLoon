@@ -38,9 +38,9 @@ namespace BrassLoon.Config.TestClient
                 _logger.Information($"Lookup Codes {string.Join(", ", codes)}");
                 string code = "test-client-code";
                 Dictionary<string, string> values = new Dictionary<string, string>
-            {
-                { "key-1", "value-1" }
-            };
+                {
+                    { "key-1", "value-1" }
+                };
                 await _lookupService.Delete(settings, _appSettings.Domain.Value, code);
                 Lookup lookup = await _lookupService.Save(settings, _appSettings.Domain.Value, code, values);
                 lookup.Data["current"] = DateTime.Now.ToString("O");

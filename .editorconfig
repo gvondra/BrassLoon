@@ -215,3 +215,6 @@ dotnet_diagnostic.SYSLIB1045.severity = suggestion
 
 # ASP0014: Suggest using top level route registrations
 dotnet_diagnostic.ASP0014.severity = none
+
+# CA1510: Use ArgumentNullException throw helper
+dotnet_diagnostic.CA1510.severity = none

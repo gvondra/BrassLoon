@@ -69,7 +69,7 @@ namespace ConfigAPI.Controllers
                         }
                         else
                         {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                            Mapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(mapper.Map<Lookup>(lookup));
                         }
                     }
@@ -114,7 +114,7 @@ namespace ConfigAPI.Controllers
                         }
                         else
                         {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                            Mapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(mapper.Map<Dictionary<string, string>>(lookup.Data));
                         }
                     }
@@ -159,11 +159,10 @@ namespace ConfigAPI.Controllers
                         }
                         else
                         {
-                            IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                            Mapper mapper = MapperConfigurationFactory.CreateMapper();
                             result = Ok(
                                 (await lookup.GetHistory(_settingsFactory.CreateCore(_settings.Value)))
-                                .Select(hist => mapper.Map<LookupHistory>(hist))
-                                );
+                                .Select(mapper.Map<LookupHistory>));
                         }
                     }
                 }
@@ -244,7 +243,7 @@ namespace ConfigAPI.Controllers
                     {
                         innerLookup.Data = lookupData;
                         await save(settings, _lookupSaver, innerLookup);
-                        IMapper mapper = MapperConfigurationFactory.CreateMapper();
+                        Mapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
                             mapper.Map<Lookup>(innerLookup)
                             );
