@@ -32,8 +32,10 @@ namespace BrassLoon.Log.Purger
             AppSettings appSettings = scope.Resolve<AppSettings>();
             SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
             ITraceService traceService = scope.Resolve<ITraceService>();
-            await WriteTrace(traceService, appSettings, settingsFactory, "Start Purge");
-            await InitializeWorkers();
+            await Task.WhenAll(
+                WriteTrace(traceService, appSettings, settingsFactory, "Start Purge"),
+                InitializeWorkers(),
+                PurgeMetaData());
             CoreSettings settings = settingsFactory.CreateCore();
             IPurgeWorkerFactory workerFactory = scope.Resolve<IPurgeWorkerFactory>();
             IPurgeWorkerSaver workerSaver = scope.Resolve<IPurgeWorkerSaver>();
@@ -65,23 +67,6 @@ namespace BrassLoon.Log.Purger
                     await WriteTrace(traceService, appSettings, settingsFactory, $"Updated Worker {workerId.Value} Status {purgeWorker.Status}");
                 }
                 workerId = await workerFactory.Claim(settings);
-            }
-            try
-            {
-                await WriteTrace(traceService, appSettings, settingsFactory, "Purging meta data");
-                await PurgMetaData(appSettings, settingsFactory, scope.Resolve<IPurgeSaver>());
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.ToString());
-                try
-                {
-                    _ = await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
-                }
-                catch
-                {
-                    // do nothing
-                }
             }
         }
 
@@ -236,10 +221,35 @@ namespace BrassLoon.Log.Purger
             }
         }
 
+        private static async Task PurgeMetaData()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
+            AppSettings appSettings = scope.Resolve<AppSettings>();
+            SettingsFactory settingsFactory = scope.Resolve<SettingsFactory>();
+            ITraceService traceService = scope.Resolve<ITraceService>();
+            try
+            {
+                await WriteTrace(traceService, appSettings, settingsFactory, "Purging meta data");
+                await PurgMetaDataDetail(appSettings, settingsFactory, scope.Resolve<IPurgeSaver>());
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.ToString());
+                try
+                {
+                    _ = await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
+                }
+                catch
+                {
+                    // do nothing
+                }
+            }
+        }
+
         /// <summary>
         /// Calling stored procs to delete old purge meta data records
         /// </summary>
-        private static async Task PurgMetaData(
+        private static async Task PurgMetaDataDetail(
             AppSettings appSettings,
             SettingsFactory settingsFactory,
             IPurgeSaver saver)
