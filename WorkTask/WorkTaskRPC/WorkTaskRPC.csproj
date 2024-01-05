@@ -27,7 +27,7 @@
         <PackageReference Include="BrassLoon.Extensions.Logging" Version="1.0.0-beta.*" />
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.1.*" />
         <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.1.*" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.59.*" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.60.*" />
     </ItemGroup>
 
     <ItemGroup>

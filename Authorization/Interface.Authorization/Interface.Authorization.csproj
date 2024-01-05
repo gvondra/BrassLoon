@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net6.0;netstandard2.0</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<AssemblyName>BrassLoon.Interface.Authorization</AssemblyName>
@@ -32,7 +32,7 @@
 	  <PackageReference Include="Autofac" Version="[7.0,8.0)" />
 	  <PackageReference Include="Google.Protobuf" Version="[3.24.3,4.0)" />
 	  <PackageReference Include="Grpc.Net.Client" Version="[2.57.0,3.0)" />
-	  <PackageReference Include="Grpc.Tools" Version="2.59.*">
+	  <PackageReference Include="Grpc.Tools" Version="2.60.*">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
