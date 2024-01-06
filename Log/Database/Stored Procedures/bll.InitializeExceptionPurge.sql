@@ -12,7 +12,7 @@ BEGIN
             AND [CreateTimestamp] < @maxCreateTimestamp)
         AS [Source]
     ON [Target].[TargetId] = [Source].[TargetId]
-    WHEN MATCHED AND [Target].[Status] <> 0
+    WHEN MATCHED AND [Target].[Status] <> 0 AND [Target].[Status] <> 255
         THEN UPDATE SET 
             [Status] = 0,
             [UpdateTimestamp] = @timestamp
