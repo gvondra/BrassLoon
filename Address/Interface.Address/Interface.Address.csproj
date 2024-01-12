@@ -11,8 +11,8 @@
         <Product>Brass Loon</Product>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.0-prerelease.6</Version>
-        <AssemblyVersion>1.0.0.6</AssemblyVersion>
+        <Version>1.0.0-prerelease.7</Version>
+        <AssemblyVersion>1.0.0.7</AssemblyVersion>
         <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
 
@@ -34,6 +34,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Polly" Version="[7.2.3,9.0)" />
+		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
     </ItemGroup>
 
     <ItemGroup>

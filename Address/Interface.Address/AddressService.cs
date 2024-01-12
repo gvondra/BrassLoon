@@ -1,4 +1,8 @@
 ﻿using Grpc.Net.Client;
+using Microsoft.Extensions.Caching.Memory;
+using Polly.Caching.Memory;
+using Polly.Caching;
+using Polly;
 using System;
 using System.Threading.Tasks;
 
@@ -6,7 +10,9 @@ namespace BrassLoon.Interface.Address
 {
     public class AddressService : IAddressService
     {
-        public async Task<Models.Address> Get(ISettings settings, Guid domainId, Guid addressId)
+        private static readonly AsyncPolicy _cache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(150)));
+
+        public Task<Models.Address> Get(ISettings settings, Guid domainId, Guid addressId)
         {
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
@@ -14,6 +20,15 @@ namespace BrassLoon.Interface.Address
                 throw new ArgumentNullException(nameof(domainId));
             if (addressId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(addressId));
+            AsyncPolicy retry = Policy.Handle<Exception>()
+                .RetryAsync(2);
+            return _cache.ExecuteAsync(
+                context => retry.ExecuteAsync(() => InnerGet(settings, domainId, addressId)),
+                new Context($"{domainId:N} {addressId:N}"));
+        }
+
+        private static async Task<Models.Address> InnerGet(ISettings settings, Guid domainId, Guid addressId)
+        {
             Protos.GetAddressRequest request = new Protos.GetAddressRequest
             {
                 DomainId = domainId.ToString("D"),
@@ -33,12 +48,17 @@ namespace BrassLoon.Interface.Address
                 throw new ArgumentNullException(nameof(settings));
             if (address == null || (address.DomainId ?? Guid.Empty) == Guid.Empty)
                 throw new ArgumentException("Address missing domain id value");
-            using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            AsyncPolicy retry = Policy.Handle<Exception>()
+                .RetryAsync(2);
+            return await retry.ExecuteAsync(async () =>
             {
-                Protos.AddressService.AddressServiceClient service = new Protos.AddressService.AddressServiceClient(channel);
-                Protos.Address response = await service.SaveAsync(address.ToProto(), await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                return Models.Address.Create(response);
-            }
+                using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                {
+                    Protos.AddressService.AddressServiceClient service = new Protos.AddressService.AddressServiceClient(channel);
+                    Protos.Address response = await service.SaveAsync(address.ToProto(), await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                    return Models.Address.Create(response);
+                }
+            });
         }
     }
 }
