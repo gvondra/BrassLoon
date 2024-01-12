@@ -443,7 +443,7 @@ namespace WorkTaskRPC.Services
 
         private static void Map(WorkTask workTask, IWorkTask innerWorkTask)
         {
-            innerWorkTask.AssignedDate = !string.IsNullOrEmpty(workTask.AssignedDate) ? DateTime.Parse(workTask.AssignedDate, CultureInfo.InvariantCulture) : default;
+            innerWorkTask.AssignedDate = !string.IsNullOrEmpty(workTask.AssignedDate) ? DateTime.Parse(workTask.AssignedDate, CultureInfo.InvariantCulture) : null;
             innerWorkTask.AssignedToUserId = workTask.AssignedToUserId;
             innerWorkTask.Text = workTask.Text;
             innerWorkTask.Title = workTask.Title;
