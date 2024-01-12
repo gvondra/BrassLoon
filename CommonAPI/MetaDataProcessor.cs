@@ -13,7 +13,7 @@ namespace BrassLoon.CommonAPI
                 .FirstOrDefault(e => string.Equals(e.Key, "Authorization", StringComparison.OrdinalIgnoreCase));
             if (entry != null)
             {
-                Match match = Regex.Match(entry.Value, @"^\s*Bearer\s+(\S+)", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
+                Match match = Regex.Match(entry.Value, @"^\s*Bearer\s+(\S+)", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
                 if (match.Success)
                 {
                     result = match.Groups[1].Value;
