@@ -91,7 +91,7 @@ namespace BrassLoon.Interface.Account
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
             if (!string.IsNullOrEmpty(emailAddress))
-                request.AddQueryParameter("emailAddress", emailAddress);
+                _ = request.AddQueryParameter("emailAddress", emailAddress);
             return _restUtil.Send<List<Models.Account>>(_service, request);
         }
 

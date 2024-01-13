@@ -10,8 +10,8 @@ namespace BrassLoon.Account.Data
 {
     public class EmailAddressDataFactory : IEmailAddressDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<EmailAddressData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<EmailAddressData> _genericDataFactory;
 
         public EmailAddressDataFactory(ISqlDbProviderFactory providerFactory)
         {

@@ -68,7 +68,7 @@ namespace BrassLoon.Account.Core
                 Task<byte[]> storedHash = GetVaultedSecret(settings, SecretKey.Value); // hash of the stored secrect to verify against
                 byte[] parameterHash = _secretProcessor.HashSecretArgon2i(secret, SecretSalt); // hash of the incoming secrect to be verified
                 isAuthentic = parameterHash.SequenceEqual(await storedHash);
-            } 
+            }
             return isAuthentic;
         }
         private async Task<byte[]> GetVaultedSecret(Framework.ISettings settings, Guid key)
@@ -84,7 +84,7 @@ namespace BrassLoon.Account.Core
             if (SecretType == SecretType.Argon2 && string.IsNullOrEmpty(_newSecret))
                 throw new ApplicationException("Unable to create client. No secret value specified");
             if (!string.IsNullOrEmpty(_newSecret))
-                await SaveSecret(settings, _newSecret, _newSecretType   );
+                await SaveSecret(settings, _newSecret, _newSecretType);
             await _dataSaver.Create(transactionHandler, _data);
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(transactionHandler);
@@ -137,7 +137,7 @@ namespace BrassLoon.Account.Core
             SetSalt();
             if (!SecretKey.HasValue)
                 SecretKey = Guid.NewGuid();
-            await _keyVault.SetSecret(settings, SecretKey.Value.ToString("D"), Convert.ToBase64String(_secretProcessor.HashSecretArgon2i(value, SecretSalt)));
+            _ = await _keyVault.SetSecret(settings, SecretKey.Value.ToString("D"), Convert.ToBase64String(_secretProcessor.HashSecretArgon2i(value, SecretSalt)));
             SecretType = secretType;
         }
     }

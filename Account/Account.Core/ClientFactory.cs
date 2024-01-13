@@ -81,7 +81,7 @@ namespace BrassLoon.Account.Core
         public async Task<IEnumerable<IClient>> GetByAccountId(CommonCore.ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
-                .Select<ClientData, IClient>(data => Create(data));
+                .Select<ClientData, IClient>(Create);
         }
     }
 }

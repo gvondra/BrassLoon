@@ -55,7 +55,7 @@ namespace AccountAPI.Controllers
         }
 
         [NonAction]
-        private async Task<UserInvitation> Map(IMapper mapper, CoreSettings settings, IUserInvitation innerInvitation)
+        private static async Task<UserInvitation> Map(IMapper mapper, CoreSettings settings, IUserInvitation innerInvitation)
         {
             UserInvitation result = mapper.Map<UserInvitation>(innerInvitation);
             result.EmailAddress = (await innerInvitation.GetEmailAddress(settings)).Address;
@@ -70,18 +70,22 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!accountId.HasValue || accountId.Value.Equals(Guid.Empty)))
+                if (!accountId.HasValue || accountId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id parameter value");
-                if (result == null && !UserCanAccessAccount(accountId.Value))
+                }
+                else if (!UserCanAccessAccount(accountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUserInvitation> innerInvitations = await _userInvitationFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         await Task.WhenAll(
-                            innerInvitations.Select<IUserInvitation, Task<UserInvitation>>(innerInvitation => Map(mapper, settings, innerInvitation))
+                            innerInvitations.Select(innerInvitation => Map(mapper, settings, innerInvitation))
                             ));
                 }
             }
@@ -111,26 +115,30 @@ namespace AccountAPI.Controllers
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> Get([FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing invitation id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
-                    if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
+                    if (innerInvitation != null && !await UserCanAccessInvitation(settings, innerInvitation))
                         innerInvitation = null;
                     if (innerInvitation == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
                             await Map(mapper, settings, innerInvitation)
                             );
-                    }                        
+                    }
                 }
             }
             catch (Exception ex)
@@ -142,9 +150,9 @@ namespace AccountAPI.Controllers
         }
 
         [NonAction]
-        private async Task<IEmailAddress> GetEmailAddress(CoreSettings settings, 
-            IEmailAddressFactory emailAddressFactory, 
-            IEmailAddressSaver emailAddressSaver, 
+        private static async Task<IEmailAddress> GetEmailAddress(CoreSettings settings,
+            IEmailAddressFactory emailAddressFactory,
+            IEmailAddressSaver emailAddressSaver,
             string address)
         {
             IEmailAddress result = await emailAddressFactory.GetByAddress(settings, address);
@@ -152,7 +160,7 @@ namespace AccountAPI.Controllers
             {
                 result = emailAddressFactory.Create(address);
                 await emailAddressSaver.Create(settings, result);
-            }    
+            }
             return result;
         }
 
@@ -164,24 +172,38 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!accountId.HasValue || accountId.Value.Equals(Guid.Empty)))
+                if (!accountId.HasValue || accountId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id parameter value");
-                if (result == null && !UserCanAccessAccount(accountId.Value))
+                }
+                else if (!UserCanAccessAccount(accountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null && userInvitation == null)
+                }
+                else if (userInvitation == null)
+                {
                     result = BadRequest("Missing user invitation body");
-                if (result == null && string.IsNullOrEmpty(userInvitation.EmailAddress))
+                }
+                else if (string.IsNullOrEmpty(userInvitation.EmailAddress))
+                {
                     result = BadRequest("Missing user email address value");
-                if (result == null && !userInvitation.ExpirationTimestamp.HasValue)
+                }
+                else if (!userInvitation.ExpirationTimestamp.HasValue)
+                {
                     userInvitation.ExpirationTimestamp = DateTime.UtcNow.AddDays(7);
-                if (result == null && userInvitation.ExpirationTimestamp.HasValue && userInvitation.ExpirationTimestamp.Value.ToUniversalTime() <= DateTime.UtcNow)
+                }
+                else if (userInvitation.ExpirationTimestamp.HasValue && userInvitation.ExpirationTimestamp.Value.ToUniversalTime() <= DateTime.UtcNow)
+                {
                     result = BadRequest("Invalid expiration timestamp in the past");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount account = await _accountFactory.Get(settings, accountId.Value);
                     if (account == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IEmailAddress emailAddress = await GetEmailAddress(
@@ -192,11 +214,11 @@ namespace AccountAPI.Controllers
                             );
                         IUserInvitation innerInvitation = _userInvitationFactory.Create(account, emailAddress);
                         IMapper mapper = CreateMapper();
-                        mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
+                        _ = mapper.Map(userInvitation, innerInvitation);
                         innerInvitation.Status = UserInvitationStatus.Created;
                         await _userInvitationSaver.Create(settings, innerInvitation);
                         result = Ok(await Map(mapper, settings, innerInvitation));
-                    }                   
+                    }
                 }
             }
             catch (Exception ex)
@@ -212,39 +234,49 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Update([FromRoute] Guid? id, [FromBody] UserInvitation userInvitation)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null && userInvitation == null)
+                }
+                else if (userInvitation == null)
+                {
                     result = BadRequest("Missing user invitation body");
-                if (result == null && !userInvitation.ExpirationTimestamp.HasValue)
+                }
+                else if (!userInvitation.ExpirationTimestamp.HasValue)
+                {
                     result = BadRequest("Missing expiration timestamp value");
-                if (result == null && !userInvitation.Status.HasValue)
+                }
+                else if (!userInvitation.Status.HasValue)
+                {
                     result = BadRequest("Missing status value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUserInvitation innerInvitation = await _userInvitationFactory.Get(settings, id.Value);
-                    if (innerInvitation != null && !(await UserCanAccessInvitation(settings, innerInvitation)))
+                    if (innerInvitation != null && !await UserCanAccessInvitation(settings, innerInvitation))
                         innerInvitation = null;
                     if (innerInvitation == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
-                        if (DateTime.UtcNow < innerInvitation.ExpirationTimestamp && 
-                            innerInvitation.Status != UserInvitationStatus.Cancelled && 
+                        if (DateTime.UtcNow < innerInvitation.ExpirationTimestamp &&
+                            innerInvitation.Status != UserInvitationStatus.Cancelled &&
                             userInvitation.Status == (short)UserInvitationStatus.Completed &&
                             !UserTokenHasAccount(innerInvitation.AccountId))
                         {
                             await AddAccountUser(_userFactory, _accountSaver, settings, innerInvitation.AccountId);
                         }
                         IMapper mapper = CreateMapper();
-                        mapper.Map<UserInvitation, IUserInvitation>(userInvitation, innerInvitation);
+                        _ = mapper.Map(userInvitation, innerInvitation);
                         await _userInvitationSaver.Update(settings, innerInvitation);
                         result = Ok(await Map(mapper, settings, innerInvitation));
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace BrassLoon.Account.Core
         {
             Saver saver = new Saver();
             await saver.Save(
-                new TransactionHandler(settings), 
+                new TransactionHandler(settings),
                 async th => await _dataSaver.AddUser(th, userId, accountId)
                 );
         }
@@ -49,7 +49,7 @@ namespace BrassLoon.Account.Core
         {
             Saver saver = new Saver();
             await saver.Save(
-                new TransactionHandler(settings), 
+                new TransactionHandler(settings),
                 async th => await _dataSaver.UpdateLocked(th, accountId, locked)
                 );
         }

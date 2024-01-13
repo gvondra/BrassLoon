@@ -14,8 +14,8 @@ namespace BrassLoon.Account.Core
         private readonly IDomainDataFactory _dataFactory;
         private readonly IDomainDataSaver _dataSaver;
 
-        public DomainFactory(SettingsFactory settingsFactory, 
-            IDomainDataFactory dataFactory, 
+        public DomainFactory(SettingsFactory settingsFactory,
+            IDomainDataFactory dataFactory,
             IDomainDataSaver dataSaver)
         {
             _settingsFactory = settingsFactory;
@@ -29,9 +29,9 @@ namespace BrassLoon.Account.Core
                 new DomainData() { AccountGuid = accountId },
                 _dataSaver
                 )
-                {
-                    Deleted = false
-                });
+            {
+                Deleted = false
+            });
         }
 
         public async Task<IDomain> Get(Framework.ISettings settings, Guid id)

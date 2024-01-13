@@ -68,7 +68,7 @@ namespace AccountAPI.Controllers
         }
 
         [HttpGet("/api/Account/{id}/Client")]
-        [ProducesResponseType(typeof(Client[]), 200)]        
+        [ProducesResponseType(typeof(Client[]), 200)]
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> GetByAccountId([FromRoute] Guid? id)
         {
@@ -93,7 +93,7 @@ namespace AccountAPI.Controllers
             {
                 _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
-            }            
+            }
             return result;
         }
 
@@ -156,7 +156,7 @@ namespace AccountAPI.Controllers
                 {
                     IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret, _settings.Value.SecretType);
                     IMapper mapper = CreateMapper();
-                    mapper.Map<Client, IClient>(client, innerClient);
+                    _ = mapper.Map<Client, IClient>(client, innerClient);
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     await _clientSaver.Create(settings, innerClient);
                     result = Ok(mapper.Map<Client>(innerClient));
@@ -197,7 +197,7 @@ namespace AccountAPI.Controllers
                     if (result == null)
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map<Client, IClient>(client, innerClient);
+                        _ = mapper.Map<Client, IClient>(client, innerClient);
                         if (_settings.Value.SecretType == SecretType.Argon2 && !string.IsNullOrEmpty(client?.Secret))
                             innerClient.SetSecret(client.Secret, _settings.Value.SecretType);
                         await _clientSaver.Update(

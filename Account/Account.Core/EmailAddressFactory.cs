@@ -1,19 +1,16 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
 {
     public class EmailAddressFactory : IEmailAddressFactory
     {
-        private SettingsFactory _settingsFactory;
-        private IEmailAddressDataFactory _dataFactory;
-        private IEmailAddressDataSaver _dataSaver;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly IEmailAddressDataFactory _dataFactory;
+        private readonly IEmailAddressDataSaver _dataSaver;
 
         public EmailAddressFactory(SettingsFactory settingsFactory,
             IEmailAddressDataFactory dataFactory,
@@ -31,7 +28,7 @@ namespace BrassLoon.Account.Core
             return new EmailAddress(new EmailAddressData() { Address = address.Trim() }, _dataSaver);
         }
 
-        public async Task<IEmailAddress> Get(Framework.ISettings settings, Guid id)
+        public async Task<IEmailAddress> Get(ISettings settings, Guid id)
         {
             EmailAddress result = null;
             EmailAddressData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
@@ -40,7 +37,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEmailAddress> GetByAddress(Framework.ISettings settings, string address)
+        public async Task<IEmailAddress> GetByAddress(ISettings settings, string address)
         {
             EmailAddress result = null;
             EmailAddressData data = await _dataFactory.GetByAddress(_settingsFactory.CreateData(settings), address);

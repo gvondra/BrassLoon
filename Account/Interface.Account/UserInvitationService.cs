@@ -58,13 +58,12 @@ namespace BrassLoon.Interface.Account
 
         public Task<UserInvitation> Update(ISettings settings, UserInvitation invitation)
         {
-            if ((invitation?.UserInvitationId ?? Guid.Empty).Equals(Guid.Empty))
+            if (invitation == null || (invitation.UserInvitationId ?? Guid.Empty).Equals(Guid.Empty))
                 throw new ArgumentException("Missing invitation id value");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, invitation)
                 .AddPath("UserInvitation/{id}")
                 .AddPathParameter("id", invitation.UserInvitationId.Value.ToString("N"))
-                .AddJwtAuthorizationToken(settings.GetToken)
-                ;
+                .AddJwtAuthorizationToken(settings.GetToken);
             return _restUtil.Send<UserInvitation>(_service, request);
         }
     }

@@ -4,15 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class ClientCredentialDataFactory : IClientCredentialDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<ClientCredentialData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<ClientCredentialData> _genericDataFactory;
 
         public ClientCredentialDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -36,14 +35,14 @@ namespace BrassLoon.Account.Data
         public async Task<IEnumerable<ClientCredentialData>> GetByClientId(ISqlSettings settings, Guid clientId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "clientId", DbType.Guid, clientId);
-            return (await _genericDataFactory.GetData(
+            return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
                 "[bla].[GetClientCredential_by_ClientId]",
                 () => new ClientCredentialData(),
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter }
-                ));
+                );
         }
     }
 }

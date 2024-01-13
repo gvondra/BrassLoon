@@ -34,7 +34,7 @@ namespace BrassLoon.Interface.Account
                 IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
                 {
                     IRequest request = _service.CreateRequest(builder.Uri, HttpMethod.Post);
-                    request.AddJwtAuthorizationToken(token);
+                    _ = request.AddJwtAuthorizationToken(token);
                     IResponse<string> innerResponse = await _service.Send<string>(request);
                     _restUtil.CheckSuccess(innerResponse);
                     return innerResponse;
@@ -70,7 +70,7 @@ namespace BrassLoon.Interface.Account
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)
         {
-            if (clientId.Equals(Guid.Empty)) 
+            if (clientId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(clientId));
             if (string.IsNullOrEmpty(secret))
                 throw new ArgumentNullException(nameof(secret));
@@ -92,18 +92,21 @@ namespace BrassLoon.Interface.Account
         private static string GetCacheKey(ClientCredential clientCredential)
         {
             return string.Format(
+                CultureInfo.InvariantCulture,
                 "{0:N}_{1}",
                 clientCredential.ClientId.Value,
                 Hash(clientCredential.Secret));
         }
 
+#pragma warning disable CA1850 // Prefer static 'HashData' method over 'ComputeHash'
         private static string Hash(string value)
         {
             using (SHA256 sha256 = SHA256.Create())
             {
                 return Convert.ToBase64String(
                     sha256.ComputeHash(Encoding.UTF8.GetBytes(value)));
-            }   
+            }
         }
+#pragma warning restore CA1850 // Prefer static 'HashData' method over 'ComputeHash'
     }
 }

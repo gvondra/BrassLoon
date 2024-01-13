@@ -3,16 +3,14 @@ using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
 {
     public class EmailAddress : IEmailAddress
     {
-        private EmailAddressData _emailAddressData;
-        private IEmailAddressDataSaver _dataSaver;
+        private readonly EmailAddressData _emailAddressData;
+        private readonly IEmailAddressDataSaver _dataSaver;
 
         public EmailAddress(EmailAddressData emailAddressData,
             IEmailAddressDataSaver dataSaver)
@@ -27,9 +25,6 @@ namespace BrassLoon.Account.Core
 
         public DateTime CreateTimestamp => _emailAddressData.CreateTimestamp;
 
-        public async Task Create(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Create(transactionHandler, _emailAddressData);
-        }
+        public async Task Create(ITransactionHandler transactionHandler) => await _dataSaver.Create(transactionHandler, _emailAddressData);
     }
 }

@@ -4,8 +4,6 @@ using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -30,7 +28,7 @@ namespace BrassLoon.Account.Core
         public UserInvitation(UserInvitationData data,
             IUserInvitationDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory,
-            IAccount account, 
+            IAccount account,
             IEmailAddress emailAddress) : this(data, dataSaver, emailAddressFactory)
         {
             _account = account;
@@ -64,14 +62,11 @@ namespace BrassLoon.Account.Core
             {
                 if (EmailAddressId.Equals(Guid.Empty))
                     throw new ApplicationException($"Cannot get email address for empty address id {EmailAddressId}");
-                _emailAddress = await _emailAddressFactory.Get(settings, EmailAddressId); 
+                _emailAddress = await _emailAddressFactory.Get(settings, EmailAddressId);
             }
             return _emailAddress;
         }
 
-        public Task Update(ITransactionHandler transactionHandler)
-        {
-            return _dataSaver.Update(transactionHandler, _data);
-        }
+        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
     }
 }

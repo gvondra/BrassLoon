@@ -21,16 +21,16 @@ namespace BrassLoon.Interface.Account
         public Task<Client> Create(ISettings settings, ClientCredentialRequest client)
         {
             if (string.IsNullOrEmpty(client?.Name))
-                throw new ArgumentException($"Missing {nameof(Models.ClientCredentialRequest.Name)} value");
-            if (string.IsNullOrEmpty(client?.Secret))
-                throw new ArgumentException($"Missing {nameof(Models.ClientCredentialRequest.Secret)} value");
+                throw new ArgumentException($"Missing {nameof(ClientCredentialRequest.Name)} value");
+            if (string.IsNullOrEmpty(client.Secret))
+                throw new ArgumentException($"Missing {nameof(ClientCredentialRequest.Secret)} value");
             if (!client.AccountId.HasValue || client.AccountId.Value.Equals(Guid.Empty))
-                throw new ArgumentException($"Missing or invalid {nameof(Models.ClientCredentialRequest.AccountId)} value");
+                throw new ArgumentException($"Missing or invalid {nameof(ClientCredentialRequest.AccountId)} value");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Post, client)
                 .AddPath("Client")
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return _restUtil.Send<Models.Client>(_service, request);
+            return _restUtil.Send<Client>(_service, request);
         }
 
         public Task<string> CreateSecret(ISettings settings)
@@ -69,17 +69,17 @@ namespace BrassLoon.Interface.Account
         public Task<Client> Update(ISettings settings, ClientCredentialRequest client)
         {
             if (string.IsNullOrEmpty(client?.Name))
-                throw new ArgumentException($"Missing {nameof(Models.ClientCredentialRequest.Name)} value");
+                throw new ArgumentException($"Missing {nameof(ClientCredentialRequest.Name)} value");
             if (!client.ClientId.HasValue || client.ClientId.Value.Equals(Guid.Empty))
-                throw new ArgumentException($"Missing or invalid {nameof(Models.ClientCredentialRequest.ClientId)} value");
+                throw new ArgumentException($"Missing or invalid {nameof(ClientCredentialRequest.ClientId)} value");
             if (!client.AccountId.HasValue || client.AccountId.Value.Equals(Guid.Empty))
-                throw new ArgumentException($"Missing or invalid {nameof(Models.ClientCredentialRequest.AccountId)} value");
+                throw new ArgumentException($"Missing or invalid {nameof(ClientCredentialRequest.AccountId)} value");
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Put, client)
                 .AddPath("Client/{id}")
                 .AddPathParameter("id", client.ClientId.Value.ToString("N"))
                 .AddJwtAuthorizationToken(settings.GetToken)
                 ;
-            return _restUtil.Send<Models.Client>(_service, request);
+            return _restUtil.Send<Client>(_service, request);
         }
     }
 }

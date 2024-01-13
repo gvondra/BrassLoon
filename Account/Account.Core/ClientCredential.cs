@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
 {
-    internal class ClientCredential
+    internal sealed class ClientCredential
     {
         private readonly ClientCredentialData _data;
         private readonly IClientCredentialDataSaver _dataSaver;
@@ -22,8 +22,8 @@ namespace BrassLoon.Account.Core
             _dataSaver = dataSaver;
         }
 
-        private Guid ClientId { get => _data.ClientId; set => _data.ClientId = value; }
-        public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }        
+        private Guid ClientId { set => _data.ClientId = value; }
+        public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
 
         public async Task Create(ITransactionHandler transactionHandler)
         {

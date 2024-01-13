@@ -19,17 +19,17 @@ namespace AccountAPI
         public static IServiceCollection AddCors(this IServiceCollection services, IConfiguration configuration)
         {
             IConfigurationSection section = configuration.GetSection("CorsOrigins");
-            string[] corsOrigins = section.GetChildren().Select<IConfigurationSection, string>(child => child.Value).ToArray();
-            if (corsOrigins != null && corsOrigins.Length > 0)
+            string[] corsOrigins = section.GetChildren().Select(child => child.Value).ToArray();
+            if (corsOrigins.Length > 0)
             {
-                services.AddCors(options =>
+                _ = services.AddCors(options =>
                 {
                     options.AddDefaultPolicy(builder =>
                     {
-                        builder
+                        _ = builder
                         .AllowAnyHeader()
                         .AllowAnyMethod();
-                        builder.WithOrigins(corsOrigins);
+                        _ = builder.WithOrigins(corsOrigins);
                     });
                 });
             }
@@ -38,7 +38,7 @@ namespace AccountAPI
 
         public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(o =>
+            _ = services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,7 +69,7 @@ namespace AccountAPI
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthorization(o =>
+            _ = services.AddAuthorization(o =>
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
@@ -78,35 +78,35 @@ namespace AccountAPI
                 o.AddPolicy(POLICY_EDIT_USER,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["GoogleIdIssuer"]))
+                        _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["GoogleIdIssuer"]))
                         .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE)
                         .Build();
                     });
                 o.AddPolicy(POLICY_READ_ACCOUNT,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_READ_ACCOUNT, configuration["Issuer"]))
+                        _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_READ_ACCOUNT, configuration["Issuer"]))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
                 o.AddPolicy(POLICY_EDIT_ACCOUNT,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, configuration["Issuer"]))
+                        _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, configuration["Issuer"]))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
                 o.AddPolicy(POLICY_ADMIN_ACCOUNT,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_ACCOUNT, configuration["Issuer"], "actadmin"))
+                        _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_ACCOUNT, configuration["Issuer"], "actadmin"))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
                 o.AddPolicy(POLICY_ADMIN_SYS,
                     configure =>
                     {
-                        configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_SYS, configuration["Issuer"], "sysadmin"))
+                        _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_SYS, configuration["Issuer"], "sysadmin"))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });

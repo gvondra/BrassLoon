@@ -7,19 +7,18 @@
 using BrassLoon.JwtUtility;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace RsaSecurityKeyGenerator
 {
-    public class Program
+    public static class Program
     {
-        public static int Main(string[] args)
+        public static int Main()
         {
             RSAParameters rsaParameters;
-            using (RSA serviceProvider = RSACryptoServiceProvider.Create(2048))
+            using (RSA serviceProvider = RSA.Create(2048))
             {
                 rsaParameters = serviceProvider.ExportParameters(true);
             }

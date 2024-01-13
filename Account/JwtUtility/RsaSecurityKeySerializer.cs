@@ -22,17 +22,17 @@ namespace BrassLoon.JwtUtility
                 P = Base64UrlEncoder.DecodeBytes((string)tknCspData.p),
                 Q = Base64UrlEncoder.DecodeBytes((string)tknCspData.q)
             };
-#if (NETSTANDARD2_0)
+#if NETSTANDARD2_0
             using (RSA rsa = RSA.Create())
             {
                 rsa.ImportParameters(rsaParameters);
                 return new RsaSecurityKey(rsa.ExportParameters(includePrivateKey));
-            }  
+            }
 #else
             using (RSA rsa = RSA.Create(rsaParameters))
             {
                 return new RsaSecurityKey(rsa.ExportParameters(includePrivateKey));
-            }            
+            }
 #endif
         }
 
@@ -42,11 +42,11 @@ namespace BrassLoon.JwtUtility
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         }
 
-        private static JsonSerializerSettings CreateJsonSerializerSettings() 
-            => new JsonSerializerSettings 
-            { 
-                Formatting = Formatting.None, 
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() 
+        private static JsonSerializerSettings CreateJsonSerializerSettings()
+            => new JsonSerializerSettings
+            {
+                Formatting = Formatting.None,
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
             };
     }
 }

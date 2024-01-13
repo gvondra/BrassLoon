@@ -4,18 +4,16 @@ using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
 {
     public class User : IUser
     {
-        private UserData _data;
-        private IEmailAddressFactory _emailAddressFactory;
+        private readonly UserData _data;
+        private readonly IEmailAddressFactory _emailAddressFactory;
         private IEmailAddress _emailAddress;
-        private IUserDataSaver _dataSaver;
+        private readonly IUserDataSaver _dataSaver;
 
         public User(UserData userData,
             IEmailAddressFactory emailAddressFactory,
@@ -52,10 +50,7 @@ namespace BrassLoon.Account.Core
             await _dataSaver.Create(transactionHandler, _data);
         }
 
-        public async Task Update(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Update(transactionHandler, _data);
-        }
+        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
 
         public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
         {

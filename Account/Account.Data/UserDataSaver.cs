@@ -1,10 +1,8 @@
 ﻿using BrassLoon.Account.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
@@ -31,17 +29,17 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(guid);
+                    _ = command.Parameters.Add(guid);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "referenceId", DbType.AnsiString, userData.ReferenceId);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "emailAddressGuid", DbType.Guid, userData.EmailAddressGuid);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.AnsiString, userData.Name);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     userData.UserGuid = (Guid)guid.Value;
                     userData.CreateTimestamp = (DateTime)timestamp.Value;
                     userData.UpdateTimestamp = (DateTime)timestamp.Value;
@@ -62,14 +60,14 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, userData.UserGuid);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "emailAddressGuid", DbType.Guid, userData.EmailAddressGuid);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "roles", DbType.Int16, userData.Roles);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.AnsiString, userData.Name);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     userData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }

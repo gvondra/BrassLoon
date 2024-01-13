@@ -4,10 +4,7 @@ namespace AccountAPI
 {
     public class SettingsFactory
     {
-        public CoreSettings CreateCore(Settings settings)
-        {
-            return new CoreSettings(settings);
-        }
+        public CoreSettings CreateCore(Settings settings) => new CoreSettings(settings);
 
         public LogSettings CreateLog(CommonApiSettings settings, string accessToken)
         {

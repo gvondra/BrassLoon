@@ -5,15 +5,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class AccountDataFactory : IAccountDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<AccountData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<AccountData> _genericDataFactory;
 
         public AccountDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -44,7 +43,7 @@ namespace BrassLoon.Account.Data
                 {
                     command.CommandText = "[bla].[GetAccountGuidByUserGuid]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(parameter);
+                    _ = command.Parameters.Add(parameter);
                     using (DbDataReader reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())

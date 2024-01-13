@@ -70,7 +70,7 @@ namespace AccountAPI.Controllers
             IEnumerable<IAccount> accounts = await _accountFactory.GetByUserId(settings, user.UserId);
             IMapper mapper = CreateMapper();
             result = Ok(
-                accounts.Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                accounts.Select(mapper.Map<Account>)
                 );
             return result;
         }
@@ -85,10 +85,10 @@ namespace AccountAPI.Controllers
             users.AsParallel().ForAll(user => accounts.Add(_accountFactory.GetByUserId(settings, user.UserId)));
             IMapper mapper = CreateMapper();
             result = Ok(
-                (await Task.WhenAll<IEnumerable<IAccount>>(accounts))
+                (await Task.WhenAll(accounts))
                 .SelectMany(results => results)
                 .Where(a => UserCanAccessAccount(a.AccountId))
-                .Select<IAccount, Account>(innerAccount => mapper.Map<Account>(innerAccount))
+                .Select(innerAccount => mapper.Map<Account>(innerAccount))
                 .ToList()
                 );
             return result;
@@ -146,7 +146,7 @@ namespace AccountAPI.Controllers
                     IUser user = await GetUser(_userFactory, settings);
                     IAccount innerAccount = _accountFactory.Create();
                     IMapper mapper = CreateMapper();
-                    mapper.Map<Account, IAccount>(account, innerAccount);
+                    _ = mapper.Map(account, innerAccount);
                     await _accountSaver.Create(settings, user.UserId, innerAccount);
                     result = Ok(
                         mapper.Map<Account>(innerAccount)
@@ -186,7 +186,7 @@ namespace AccountAPI.Controllers
                     else
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map<Account, IAccount>(account, innerAccount);
+                        _ = mapper.Map(account, innerAccount);
                         await _accountSaver.Update(settings, innerAccount);
                         result = Ok(
                             mapper.Map<Account>(innerAccount)
@@ -205,7 +205,7 @@ namespace AccountAPI.Controllers
         [HttpPatch("{id}/Locked")]
         [Authorize("ADMIN:ACCOUNT")]
         public async Task<IActionResult> Update(Guid id, [FromBody] Dictionary<string, string> data)
-        {            
+        {
             IActionResult result = null;
             bool locked = default;
             try
@@ -281,12 +281,12 @@ namespace AccountAPI.Controllers
                 if (result == null && !UserCanAccessAccount(accountId.Value))
                     result = StatusCode(StatusCodes.Status401Unauthorized);
                 if (result == null)
-                {         
+                {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerUsers.Select<IUser, User>(innerUser => mapper.Map<User>(innerUser))
+                        innerUsers.Select(innerUser => mapper.Map<User>(innerUser))
                         );
                 }
             }

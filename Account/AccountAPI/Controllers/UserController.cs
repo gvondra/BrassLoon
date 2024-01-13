@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonCore;
 using BrassLoon.Interface.Account.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +30,7 @@ namespace AccountAPI.Controllers
             MapperFactory mapperFactory,
             IUserFactory userFactory,
             IUserSaver userSaver)
-            : base(settings, settingsFactory, exceptionService, mapperFactory) 
+            : base(settings, settingsFactory, exceptionService, mapperFactory)
         {
             _logger = logger;
             _userFactory = userFactory;
@@ -51,7 +50,7 @@ namespace AccountAPI.Controllers
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IMapper mapper = CreateMapper();
                     users = (await _userFactory.GetByEmailAddress(settings, emailAddress))
-                        .Select<IUser, User>(u => mapper.Map<User>(u));                    
+                        .Select<IUser, User>(u => mapper.Map<User>(u));
                 }
                 if (result == null)
                 {
@@ -83,7 +82,7 @@ namespace AccountAPI.Controllers
                 {
                     user = await _userFactory.Get(settings, id.Value);
                     if (user == null)
-                        result = NotFound();                        
+                        result = NotFound();
                 }
                 if (result == null && user != null)
                 {
@@ -145,7 +144,7 @@ namespace AccountAPI.Controllers
                 CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
                 if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
-                    result = BadRequest("Missing id parameter value");                
+                    result = BadRequest("Missing id parameter value");
                 if (result == null)
                 {
                     user = await _userFactory.Get(settings, id.Value);

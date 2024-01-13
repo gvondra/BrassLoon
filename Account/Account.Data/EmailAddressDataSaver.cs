@@ -1,17 +1,15 @@
 ﻿using BrassLoon.Account.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class EmailAddressDataSaver : IEmailAddressDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public EmailAddressDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -31,15 +29,15 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(guid);
+                    _ = command.Parameters.Add(guid);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "address", DbType.String, emailAddressData.Address);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     emailAddressData.EmailAddressGuid = (Guid)guid.Value;
                     emailAddressData.CreateTimestamp = (DateTime)timestamp.Value;
                 }

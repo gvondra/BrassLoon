@@ -1,6 +1,5 @@
 ﻿using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account.Models;
 using BrassLoon.Interface.Log;
 using BrassLoon.JwtUtility;
@@ -30,7 +29,6 @@ namespace AccountAPI.Controllers
         private readonly IClientFactory _clientFactory;
         private readonly IEmailAddressFactory _emailAddressFactory;
         private readonly IEmailAddressSaver _emailAddressSaver;
-        private readonly ISecretProcessor _secretProcessor;
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
@@ -43,7 +41,6 @@ namespace AccountAPI.Controllers
             IClientFactory clientFactory,
             IEmailAddressFactory emailAddressFactory,
             IEmailAddressSaver emailAddressSaver,
-            ISecretProcessor secretProcessor,
             IUserFactory userFactory,
             IUserSaver userSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory)
@@ -53,7 +50,6 @@ namespace AccountAPI.Controllers
             _clientFactory = clientFactory;
             _emailAddressFactory = emailAddressFactory;
             _emailAddressSaver = emailAddressSaver;
-            _secretProcessor = secretProcessor;
             _userFactory = userFactory;
             _userSaver = userSaver;
         }
@@ -71,7 +67,7 @@ namespace AccountAPI.Controllers
             {
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
-            }            
+            }
         }
 
         [HttpPost("ClientCredential")]
@@ -80,17 +76,23 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && clientCredential == null)
+                if (clientCredential == null)
+                {
                     result = BadRequest("Missing request data");
-                if (result == null && (!clientCredential.ClientId.HasValue || clientCredential.ClientId.Value.Equals(Guid.Empty)))
+                }
+                else if (!clientCredential.ClientId.HasValue || clientCredential.ClientId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing client id value");
-                if (result == null && string.IsNullOrEmpty(clientCredential.Secret))
+                }
+                else if (string.IsNullOrEmpty(clientCredential.Secret))
+                {
                     result = BadRequest("Missing secret value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient client = await _clientFactory.Get(settings, clientCredential.ClientId.Value);
-                    if (client == null || await client.AuthenticateSecret(settings, clientCredential.Secret) == false)
+                    if (client == null || !await client.AuthenticateSecret(settings, clientCredential.Secret))
                     {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     }
@@ -136,7 +138,7 @@ namespace AccountAPI.Controllers
             else
             {
                 user.Name = User.Claims
-                    .First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) 
+                    .First(c => string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(c.Type, ClaimTypes.Name, StringComparison.OrdinalIgnoreCase))
                     .Value;
                 SetSuperUser(user);
@@ -144,14 +146,14 @@ namespace AccountAPI.Controllers
             }
             return user;
         }
-        
+
         [NonAction]
         private void SetSuperUser(IUser user)
         {
             string email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
             if (!string.IsNullOrEmpty(_settings.Value.SuperUser) && string.Equals(email, _settings.Value.SuperUser, StringComparison.OrdinalIgnoreCase))
             {
-                user.Roles = user.Roles | 
+                user.Roles = user.Roles |
                     UserRole.SystemAdministrator |
                     UserRole.AccountAdministrator
                     ;
@@ -173,16 +175,6 @@ namespace AccountAPI.Controllers
                 claims.Add(new Claim("role", "actadmin"));
             return JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
-                ); 
-        }
-
-        [NonAction]
-        private async Task<string> GetAccountIdClaim(IAccountFactory accountFactory, SettingsFactory settingsFactory, Guid userId)
-        {
-            return string.Join(
-                ' ',
-                (await accountFactory.GetAccountIdsByUserId(settingsFactory.CreateCore(_settings.Value), userId))
-                .Select<Guid, string>(g => g.ToString("N"))
                 );
         }
 
@@ -194,9 +186,19 @@ namespace AccountAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, client.ClientId.ToString("N")),
                 new Claim("accounts", client.AccountId.ToString("N"))
             };
-            return Task.FromResult<string>(JwtSecurityTokenUtility.Write(
+            return Task.FromResult(JwtSecurityTokenUtility.Write(
                 JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
                 ));
+        }
+
+        [NonAction]
+        private async Task<string> GetAccountIdClaim(IAccountFactory accountFactory, SettingsFactory settingsFactory, Guid userId)
+        {
+            return string.Join(
+                ' ',
+                (await accountFactory.GetAccountIdsByUserId(settingsFactory.CreateCore(_settings.Value), userId))
+                .Select(g => g.ToString("N"))
+                );
         }
 
         private static DateTime GetJwtExpiration() => DateTime.Now.AddHours(6);

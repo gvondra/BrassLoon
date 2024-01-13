@@ -47,11 +47,15 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id value");
-                if (result == null && !UserCanAccessAccount(id.Value))
+                }
+                else if (!UserCanAccessAccount(id.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IDomain> domains;
@@ -61,7 +65,7 @@ namespace AccountAPI.Controllers
                         domains = await _domainFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        domains.Select<IDomain, Domain>(d => mapper.Map<Domain>(d))
+                        domains.Select(mapper.Map<Domain>)
                         );
                 }
             }
@@ -69,7 +73,7 @@ namespace AccountAPI.Controllers
             {
                 _logger.LogError(ex, ex.Message);
                 result = StatusCode(StatusCodes.Status500InternalServerError);
-            }            
+            }
             return result;
         }
 
@@ -78,19 +82,23 @@ namespace AccountAPI.Controllers
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> Get([FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
                     if (innerDomain == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
@@ -111,19 +119,23 @@ namespace AccountAPI.Controllers
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> GetAccountDomain([FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
                     if (innerDomain != null && !UserCanAccessAccount(innerDomain.AccountId))
                         innerDomain = null;
                     if (innerDomain == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
@@ -146,23 +158,31 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] Domain domain)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && domain == null)
+                if (domain == null)
+                {
                     result = BadRequest("Missing domain data");
-                if (result == null && string.IsNullOrEmpty(domain.Name))
+                }
+                else if (string.IsNullOrEmpty(domain.Name))
+                {
                     result = BadRequest("Missing domain name value");
-                if (result == null && (!domain.AccountId.HasValue || domain.AccountId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domain.AccountId.HasValue || domain.AccountId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id value");
-                if (result == null && !UserCanAccessAccount(domain.AccountId.Value))
+                }
+                else if (!UserCanAccessAccount(domain.AccountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Create(domain.AccountId.Value);
                     IMapper mapper = CreateMapper();
-                    mapper.Map<Domain, IDomain>(domain, innerDomain);
+                    _ = mapper.Map(domain, innerDomain);
                     await _domainSaver.Create(settings, innerDomain);
                     result = Ok(mapper.Map<Domain>(innerDomain));
                 }
@@ -180,27 +200,37 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Update([FromRoute] Guid? id, [FromBody] Domain domain)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id value");
-                if (result == null && domain == null)
+                }
+                else if (domain == null)
+                {
                     result = BadRequest("Missing domain data");
-                if (result == null && string.IsNullOrEmpty(domain.Name))
+                }
+                else if (string.IsNullOrEmpty(domain.Name))
+                {
                     result = BadRequest("Missing domain name value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain = await _domainFactory.Get(settings, id.Value);
-                    if (result == null && innerDomain == null)
+                    if (innerDomain == null)
+                    {
                         result = NotFound();
-                    if (result == null && !UserCanAccessAccount(innerDomain.AccountId))
+                    }
+                    else if (!UserCanAccessAccount(innerDomain.AccountId))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
+                    }
+                    else
                     {
                         IMapper mapper = CreateMapper();
-                        mapper.Map<Domain, IDomain>(domain, innerDomain);
+                        _ = mapper.Map(domain, innerDomain);
                         await _domainSaver.Update(settings, innerDomain);
                         result = Ok(mapper.Map<Domain>(innerDomain));
                     }
@@ -219,19 +249,27 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> UpdateDeleted([FromRoute] Guid? id, [FromBody] Dictionary<string, string> patch)
         {
-            bool deleted = default;
-            IActionResult result = null;
+            bool deleted;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing domain id value");
-                if (result == null && patch == null)
+                }
+                else if (patch == null)
+                {
                     result = BadRequest("Missing patch data");
-                if (result == null && !patch.ContainsKey("Deleted"))
+                }
+                else if (!patch.ContainsKey("Deleted"))
+                {
                     result = BadRequest("Missing deleted patch value");
-                if (result == null && !bool.TryParse(patch["Deleted"], out deleted))
+                }
+                else if (!bool.TryParse(patch["Deleted"], out deleted))
+                {
                     result = BadRequest("Invalid deleted patch value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IDomain innerDomain;
@@ -239,11 +277,15 @@ namespace AccountAPI.Controllers
                         innerDomain = await _domainFactory.GetDeleted(settings, id.Value);
                     else
                         innerDomain = await _domainFactory.Get(settings, id.Value);
-                    if (result == null && innerDomain == null)
+                    if (innerDomain == null)
+                    {
                         result = NotFound();
-                    if (result == null && !UserCanAccessAccount(innerDomain.AccountId))
+                    }
+                    else if (!UserCanAccessAccount(innerDomain.AccountId))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
+                    }
+                    else
                     {
                         innerDomain.Deleted = deleted;
                         await _domainSaver.Update(settings, innerDomain);

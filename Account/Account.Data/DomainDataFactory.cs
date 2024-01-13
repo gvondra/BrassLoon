@@ -4,15 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class DomainDataFactory : IDomainDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<DomainData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<DomainData> _genericDataFactory;
 
         public DomainDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -49,14 +48,14 @@ namespace BrassLoon.Account.Data
         public async Task<IEnumerable<DomainData>> GetByAccountId(ISqlSettings settings, Guid accountId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "accountId", DbType.Guid, accountId);
-            return (await _genericDataFactory.GetData(
+            return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
                 "[bla].[GetDomainByAccountId]",
                 () => new DomainData(),
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter }
-                ));
+                );
         }
     }
 }

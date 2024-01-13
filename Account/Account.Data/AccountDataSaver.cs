@@ -1,17 +1,15 @@
 ﻿using BrassLoon.Account.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class AccountDataSaver : IAccountDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public AccountDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -29,12 +27,12 @@ namespace BrassLoon.Account.Data
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
-                command.Parameters.Add(timestamp);
+                _ = command.Parameters.Add(timestamp);
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "accountGuid", DbType.Guid, DataUtil.GetParameterValue(accountGuid));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, DataUtil.GetParameterValue(userGuid));
 
-                await command.ExecuteNonQueryAsync();
+                _ = await command.ExecuteNonQueryAsync();
             }
         }
 
@@ -51,16 +49,16 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(guid);
+                    _ = command.Parameters.Add(guid);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, DataUtil.GetParameterValue(userGuid));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(accountData.Name));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     accountData.AccountGuid = (Guid)guid.Value;
                     accountData.CreateTimestamp = (DateTime)timestamp.Value;
                     accountData.UpdateTimestamp = (DateTime)timestamp.Value;
@@ -79,12 +77,12 @@ namespace BrassLoon.Account.Data
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
-                command.Parameters.Add(timestamp);
+                _ = command.Parameters.Add(timestamp);
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "accountGuid", DbType.Guid, DataUtil.GetParameterValue(accountGuid));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "userGuid", DbType.Guid, DataUtil.GetParameterValue(userGuid));
 
-                await command.ExecuteNonQueryAsync();
+                _ = await command.ExecuteNonQueryAsync();
             }
         }
 
@@ -101,12 +99,12 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, DataUtil.GetParameterValue(accountData.AccountGuid));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "name", DbType.String, DataUtil.GetParameterValue(accountData.Name));
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     accountData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }
@@ -123,12 +121,12 @@ namespace BrassLoon.Account.Data
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
-                command.Parameters.Add(timestamp);
+                _ = command.Parameters.Add(timestamp);
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "guid", DbType.Guid, DataUtil.GetParameterValue(accountId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "locked", DbType.Boolean, DataUtil.GetParameterValue(locked));
 
-                await command.ExecuteNonQueryAsync();
+                _ = await command.ExecuteNonQueryAsync();
             }
         }
     }

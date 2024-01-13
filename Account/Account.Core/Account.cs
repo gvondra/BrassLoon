@@ -10,8 +10,8 @@ namespace BrassLoon.Account.Core
 {
     public class Account : IAccount
     {
-        private AccountData _data;
-        private IAccountDataSaver _dataSaver;
+        private readonly AccountData _data;
+        private readonly IAccountDataSaver _dataSaver;
 
         public Account(AccountData accountData,
             IAccountDataSaver dataSaver)
@@ -30,19 +30,10 @@ namespace BrassLoon.Account.Core
 
         public bool Locked => _data.Locked;
 
-        public async Task Create(ITransactionHandler transactionHandler, Guid userId)
-        {
-            await _dataSaver.Create(transactionHandler, userId, _data);
-        }
+        public async Task Create(ITransactionHandler transactionHandler, Guid userId) => await _dataSaver.Create(transactionHandler, userId, _data);
 
-        public Task<IEnumerable<IDomain>> GetDomains(Framework.ISettings settings)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IEnumerable<IDomain>> GetDomains(Framework.ISettings settings) => throw new NotImplementedException();
 
-        public async Task Update(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Update(transactionHandler, _data);
-        }
+        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
     }
 }

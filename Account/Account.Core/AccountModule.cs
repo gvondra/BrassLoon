@@ -9,24 +9,24 @@ namespace BrassLoon.Account.Core
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new AccountDataModule());
-            builder.RegisterInstance<SettingsFactory>(new SettingsFactory());
-            builder.RegisterType<AccountFactory>().As<IAccountFactory>();
-            builder.RegisterType<AccountSaver>().As<IAccountSaver>();
-            builder.RegisterType<ClientFactory>().As<IClientFactory>();
-            builder.RegisterType<ClientSaver>().As<IClientSaver>();
-            builder.RegisterType<DomainFactory>().As<IDomainFactory>();
-            builder.RegisterType<DomainSaver>().As<IDomainSaver>();
-            builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
-            builder.RegisterType<EmailAddressSaver>().As<IEmailAddressSaver>();
-            builder.RegisterType<KeyVault>().As<IKeyVault>();
-            builder.RegisterType<SecretProcessor>()
+            _ = builder.RegisterModule(new AccountDataModule());
+            _ = builder.RegisterInstance(new SettingsFactory());
+            _ = builder.RegisterType<AccountFactory>().As<IAccountFactory>();
+            _ = builder.RegisterType<AccountSaver>().As<IAccountSaver>();
+            _ = builder.RegisterType<ClientFactory>().As<IClientFactory>();
+            _ = builder.RegisterType<ClientSaver>().As<IClientSaver>();
+            _ = builder.RegisterType<DomainFactory>().As<IDomainFactory>();
+            _ = builder.RegisterType<DomainSaver>().As<IDomainSaver>();
+            _ = builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
+            _ = builder.RegisterType<EmailAddressSaver>().As<IEmailAddressSaver>();
+            _ = builder.RegisterType<KeyVault>().As<IKeyVault>();
+            _ = builder.RegisterType<SecretProcessor>()
                 .SingleInstance()
                 .As<ISecretProcessor>();
-            builder.RegisterType<UserFactory>().As<IUserFactory>();
-            builder.RegisterType<UserSaver>().As<IUserSaver>();
-            builder.RegisterType<UserInvitationFactory>().As<IUserInvitationFactory>();
-            builder.RegisterType<UserInvitationSaver>().As<IUserInvitationSaver>();
+            _ = builder.RegisterType<UserFactory>().As<IUserFactory>();
+            _ = builder.RegisterType<UserSaver>().As<IUserSaver>();
+            _ = builder.RegisterType<UserInvitationFactory>().As<IUserInvitationFactory>();
+            _ = builder.RegisterType<UserInvitationSaver>().As<IUserInvitationSaver>();
         }
     }
 }

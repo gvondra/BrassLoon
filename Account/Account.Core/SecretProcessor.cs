@@ -11,17 +11,15 @@ namespace BrassLoon.Account.Core
         private const string PADDING = "brass-loon:";
 
         // this is an older method. Phasing this out
+#pragma warning disable CA1822 // Mark members as static
         public byte[] Hash(string secret)
         {
             if (string.IsNullOrEmpty(secret))
                 throw new ArgumentNullException(nameof(secret));
-            using (HashAlgorithm algorithm = SHA512.Create())
-            {
-                return algorithm.ComputeHash(
-                    Encoding.Unicode.GetBytes(string.Concat(PADDING, secret.Trim()))
-                    );
-            }
+            return SHA512.HashData(
+                    Encoding.Unicode.GetBytes(string.Concat(PADDING, secret.Trim())));
         }
+#pragma warning restore CA1822 // Mark members as static
 
         /// <summary>
         /// Verify that the hash of 'secrect' is equal to the given 'hash'
@@ -32,7 +30,7 @@ namespace BrassLoon.Account.Core
             bool result = false;
             if (!string.IsNullOrEmpty(secret) && hash != null)
             {
-                byte[] secretHash = this.Hash(secret);
+                byte[] secretHash = Hash(secret);
                 if (secretHash.Length == hash.Length)
                 {
                     bool isMatch = true;
@@ -47,7 +45,7 @@ namespace BrassLoon.Account.Core
                     }
                     result = isMatch;
                 }
-            }            
+            }
             return result;
         }
 

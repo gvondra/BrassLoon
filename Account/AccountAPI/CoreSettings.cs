@@ -8,7 +8,7 @@ namespace AccountAPI
 
         public CoreSettings(Settings settings)
             : base(settings)
-        { 
+        {
             _settings = settings;
         }
 

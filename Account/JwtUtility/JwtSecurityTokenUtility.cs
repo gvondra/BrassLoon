@@ -20,7 +20,7 @@ namespace BrassLoon.JwtUtility
         => Create(tknCsp, issuer, audience, claims, expiration, CreateJwtId);
 
         public static JwtSecurityToken Create(
-            string tknCsp, 
+            string tknCsp,
             string issuer,
             string audience,
             IEnumerable<Claim> claims,
@@ -36,10 +36,7 @@ namespace BrassLoon.JwtUtility
             string issuer,
             string audience,
             IEnumerable<Claim> claims,
-            Func<DateTime> expiration)
-        {
-            return Create(securityKey, issuer, audience, claims, expiration, CreateJwtId);
-        }
+            Func<DateTime> expiration) => Create(securityKey, issuer, audience, claims, expiration, CreateJwtId);
 
         public static JwtSecurityToken Create(
             RsaSecurityKey securityKey,

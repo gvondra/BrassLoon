@@ -218,3 +218,6 @@ dotnet_diagnostic.ASP0014.severity = none
 
 # CA1510: Use ArgumentNullException throw helper
 dotnet_diagnostic.CA1510.severity = none
+
+# S2376: Write-only properties should not be used
+dotnet_diagnostic.S2376.severity = none

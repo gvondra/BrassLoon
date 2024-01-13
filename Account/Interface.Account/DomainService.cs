@@ -36,7 +36,7 @@ namespace BrassLoon.Interface.Account
         {
             if (id.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(id));
-            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get) 
+            IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("Domain/{id}")
                 .AddPathParameter("id", id.ToString())
                 .AddJwtAuthorizationToken(settings.GetToken)

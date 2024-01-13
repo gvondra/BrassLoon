@@ -10,9 +10,9 @@ namespace BrassLoon.Account.Core
 {
     public class AccountFactory : IAccountFactory
     {
-        private IAccountDataFactory _dataFactory;
-        private IAccountDataSaver _dataSaver;
-        private SettingsFactory _settingsFactory;
+        private readonly IAccountDataFactory _dataFactory;
+        private readonly IAccountDataSaver _dataSaver;
+        private readonly SettingsFactory _settingsFactory;
 
         public AccountFactory(IAccountDataFactory dataFactory,
             IAccountDataSaver dataSaver,
@@ -23,10 +23,7 @@ namespace BrassLoon.Account.Core
             _settingsFactory = settingsFactory;
         }
 
-        public IAccount Create()
-        {
-            return new Account(new AccountData(), _dataSaver);
-        }
+        public IAccount Create() => new Account(new AccountData(), _dataSaver);
 
         public async Task<IAccount> Get(ISettings settings, Guid id)
         {
@@ -37,10 +34,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(ISettings settings, Guid userId)
-        {
-            return await _dataFactory.GetAccountIdsByUserId(_settingsFactory.CreateData(settings), userId);
-        }
+        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(ISettings settings, Guid userId) => await _dataFactory.GetAccountIdsByUserId(_settingsFactory.CreateData(settings), userId);
 
         public async Task<IEnumerable<IAccount>> GetByUserId(ISettings settings, Guid userId)
         {

@@ -4,15 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class UserInvitationDataFactory : IUserInvitationDataFactory
     {
-        private ISqlDbProviderFactory _providerFactory;
-        private GenericDataFactory<UserInvitationData> _genericDataFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
+        private readonly GenericDataFactory<UserInvitationData> _genericDataFactory;
 
         public UserInvitationDataFactory(ISqlDbProviderFactory providerFactory)
         {
@@ -22,7 +21,7 @@ namespace BrassLoon.Account.Data
 
         public async Task<UserInvitationData> Get(ISqlSettings settings, Guid id)
         {
-            IDataParameter[] parameters = 
+            IDataParameter[] parameters =
             {
                 DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
             };
@@ -42,14 +41,14 @@ namespace BrassLoon.Account.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "accountGuid", DbType.Guid, accountId)
             };
-            return (await _genericDataFactory.GetData(
+            return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
                 "[bla].[GetUserInvitationByAccountGuid]",
                 () => new UserInvitationData(),
                 DataUtil.AssignDataStateManager,
                 parameters
-                ));
+                );
         }
     }
 }

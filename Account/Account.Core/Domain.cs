@@ -3,8 +3,6 @@ using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.CommonCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Core
@@ -33,14 +31,8 @@ namespace BrassLoon.Account.Core
 
         public bool Deleted { get => _data.Deleted; set => _data.Deleted = value; }
 
-        public async Task Create(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Create(transactionHandler, _data);
-        }
+        public async Task Create(ITransactionHandler transactionHandler) => await _dataSaver.Create(transactionHandler, _data);
 
-        public async Task Update(ITransactionHandler transactionHandler)
-        {
-            await _dataSaver.Update(transactionHandler, _data);
-        }
+        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
     }
 }

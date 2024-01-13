@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +10,10 @@ namespace BrassLoon.Account.Core
 {
     public class UserFactory : IUserFactory
     {
-        private SettingsFactory _settingsFactory;
-        private IUserDataFactory _dataFactory;
-        private IUserDataSaver _dataSaver;
-        private IEmailAddressFactory _emailAddressFactory;
+        private readonly SettingsFactory _settingsFactory;
+        private readonly IUserDataFactory _dataFactory;
+        private readonly IUserDataSaver _dataSaver;
+        private readonly IEmailAddressFactory _emailAddressFactory;
 
         public UserFactory(SettingsFactory settingsFactory,
             IUserDataFactory dataFactory,

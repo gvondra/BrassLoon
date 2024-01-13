@@ -7,9 +7,6 @@ namespace BrassLoon.Account.TestClient.Settings
     {
         public string BaseAddress { get; set; }
 
-        public Task<string> GetToken()
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<string> GetToken() => throw new System.NotImplementedException();
     }
 }

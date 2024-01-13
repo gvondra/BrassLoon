@@ -2,17 +2,15 @@
 using BrassLoon.DataClient;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
 {
     public class ClientDataSaver : IClientDataSaver
     {
-        private ISqlDbProviderFactory _providerFactory;
+        private readonly ISqlDbProviderFactory _providerFactory;
 
         public ClientDataSaver(ISqlDbProviderFactory providerFactory)
         {
@@ -32,16 +30,16 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(guid);
+                    _ = command.Parameters.Add(guid);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "accountId", DbType.Guid, DataUtil.GetParameterValue(clientData.AccountId));
                     AddCommonParameters(command.Parameters, clientData);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     clientData.ClientId = (Guid)guid.Value;
                     clientData.CreateTimestamp = (DateTime)timestamp.Value;
                     clientData.UpdateTimestamp = (DateTime)timestamp.Value;
@@ -62,12 +60,12 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(clientData.ClientId));
                     AddCommonParameters(command.Parameters, clientData);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     clientData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }

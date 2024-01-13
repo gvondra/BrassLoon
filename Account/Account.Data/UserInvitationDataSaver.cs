@@ -1,10 +1,8 @@
 ﻿using BrassLoon.Account.Data.Models;
 using BrassLoon.DataClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Data
@@ -31,18 +29,18 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(guid);
+                    _ = command.Parameters.Add(guid);
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "accountGuid", DbType.Guid, userInvitationData.AccountId);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "emailAddressGuid", DbType.Guid, userInvitationData.EmailAddressId);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.Int16, userInvitationData.Status);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "expirationTimestamp", DbType.DateTime2, userInvitationData.ExpirationTimestamp);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     userInvitationData.UserInvitationId = (Guid)guid.Value;
                     userInvitationData.CreateTimestamp = (DateTime)timestamp.Value;
                     userInvitationData.UpdateTimestamp = (DateTime)timestamp.Value;
@@ -63,13 +61,13 @@ namespace BrassLoon.Account.Data
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(timestamp);
+                    _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, userInvitationData.UserInvitationId);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "status", DbType.Int16, userInvitationData.Status);
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "expirationTimestamp", DbType.DateTime2, userInvitationData.ExpirationTimestamp);
 
-                    await command.ExecuteNonQueryAsync();
+                    _ = await command.ExecuteNonQueryAsync();
                     userInvitationData.UpdateTimestamp = (DateTime)timestamp.Value;
                 }
             }

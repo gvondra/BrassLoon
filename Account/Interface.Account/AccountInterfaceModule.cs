@@ -8,14 +8,14 @@ namespace BrassLoon.Interface.Account
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<RestUtil>();
-            builder.RegisterType<Service>().As<IService>();
-            builder.RegisterType<AccountService>().As<IAccountService>();
-            builder.RegisterType<ClientService>().As<IClientService>();
-            builder.RegisterType<DomainService>().As<IDomainService>();
-            builder.RegisterType<TokenService>().As<ITokenService>();
-            builder.RegisterType<UserInvitationService>().As<IUserInvitationService>();
-            builder.RegisterType<UserService>().As<IUserService>();
+            _ = builder.RegisterType<RestUtil>();
+            _ = builder.RegisterType<Service>().As<IService>();
+            _ = builder.RegisterType<AccountService>().As<IAccountService>();
+            _ = builder.RegisterType<ClientService>().As<IClientService>();
+            _ = builder.RegisterType<DomainService>().As<IDomainService>();
+            _ = builder.RegisterType<TokenService>().As<ITokenService>();
+            _ = builder.RegisterType<UserInvitationService>().As<IUserInvitationService>();
+            _ = builder.RegisterType<UserService>().As<IUserService>();
         }
     }
 }
