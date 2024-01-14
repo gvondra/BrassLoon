@@ -243,7 +243,7 @@ namespace AuthorizationAPI.Controllers
             IEmailAddress emailAddress = await innerUser.GetEmailAddress(coreSettings);
             user.EmailAddress = emailAddress?.Address ?? string.Empty;
             user.Roles = (await innerUser.GetRoles(coreSettings))
-                .Select(r => mapper.Map<AppliedRole>(r))
+                .Select(mapper.Map<AppliedRole>)
                 .ToList();
             return user;
         }

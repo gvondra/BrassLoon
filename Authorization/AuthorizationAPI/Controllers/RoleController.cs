@@ -47,17 +47,21 @@ namespace AuthorizationAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _roleFactory.GetByDomainId(coreSettings, domainId.Value))
-                        .Select<IRole, Role>(r => mapper.Map<Role>(r))
+                        .Select(mapper.Map<Role>)
                         );
                 }
             }
@@ -82,9 +86,9 @@ namespace AuthorizationAPI.Controllers
         private IActionResult Validate(Role role)
         {
             IActionResult result = null;
-            if (result == null && role == null)
+            if (role == null)
                 result = BadRequest("Missing role data body");
-            if (result == null && string.IsNullOrEmpty(role.Name))
+            else if (string.IsNullOrEmpty(role.Name))
                 result = BadRequest("Missing role name value");
             return result;
         }
@@ -103,19 +107,19 @@ namespace AuthorizationAPI.Controllers
         [ProducesResponseType(typeof(Role), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromBody] Role role)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
                 CoreSettings coreSettings = CreateCoreSettings();
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
-                if (result == null)
+                else
                     result = ValidateCreate(role);
-                if (result == null)
+                if (result == null && domainId.HasValue)
                     result = await ValidatePolicyNameNotExists(coreSettings, domainId.Value, role);
-                if (result == null)
+                if (result == null && domainId.HasValue)
                 {
                     IRole innerRole = _roleFactory.Create(domainId.Value, role.PolicyName);
                     IMapper mapper = CreateMapper();
@@ -137,20 +141,20 @@ namespace AuthorizationAPI.Controllers
         [ProducesResponseType(typeof(Role), 200)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, [FromBody] Role role)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
                 CoreSettings coreSettings = CreateCoreSettings();
                 IRole innerRole = null;
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                else if (!id.HasValue || id.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid role id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
-                if (result == null)
+                else
                     result = Validate(role);
-                if (result == null)
+                if (result == null && domainId.HasValue && id.HasValue)
                 {
                     innerRole = await _roleFactory.Get(coreSettings, domainId.Value, id.Value);
                     if (innerRole == null)

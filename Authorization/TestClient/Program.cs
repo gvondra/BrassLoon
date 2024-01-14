@@ -20,27 +20,27 @@ namespace BrassLoon.Authorization.TestClient
 
                 command = new Command("create_token");
                 command.SetHandler(
-                    () => CreateTokenTest());
+                    CreateTokenTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("signing_key");
                 command.SetHandler(
-                    () => CreateSigningKeyTest());
+                    CreateSigningKeyTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("cient");
                 command.SetHandler(
-                    () => ClientTest());
+                    ClientTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("role");
                 command.SetHandler(
-                    () => RoleTest());
+                    RoleTest);
                 rootCommand.AddCommand(command);
 
                 command = new Command("user");
                 command.SetHandler(
-                    () => UserTest());
+                    UserTest);
                 rootCommand.AddCommand(command);
 
                 _ = await rootCommand.InvokeAsync(args);

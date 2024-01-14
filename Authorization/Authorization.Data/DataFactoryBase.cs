@@ -9,7 +9,7 @@ namespace BrassLoon.Authorization.Data
         protected readonly GenericDataFactory<T> _genericDataFactory = new GenericDataFactory<T>();
 #pragma warning restore CA1051 // Do not declare visible instance fields
 
-        public DataFactoryBase(IDbProviderFactory providerFactory)
+        protected DataFactoryBase(IDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

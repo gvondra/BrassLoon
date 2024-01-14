@@ -54,7 +54,7 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IEnumerable<ISigningKey> innerSigningKeys = await _signingKeyFactory.GetByDomainId(coreSettings, domainId.Value);
-                    result = Ok(innerSigningKeys.Select<ISigningKey, SigningKey>(k => mapper.Map<SigningKey>(k)));
+                    result = Ok(innerSigningKeys.Select<ISigningKey, SigningKey>(mapper.Map<SigningKey>));
                 }
             }
             catch (Exception ex)

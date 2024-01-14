@@ -52,7 +52,7 @@ namespace BrassLoon.Authorization.TestClient
 
             // Sends an HTTP response to the browser.
             HttpListenerResponse response = context.Response;
-            string responseString = string.Format(CultureInfo.InvariantCulture, "<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>");
+            string responseString = "<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>";
             byte[] buffer = Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
             Stream responseOutput = response.OutputStream;
@@ -140,8 +140,7 @@ namespace BrassLoon.Authorization.TestClient
             {
                 if (ex.Status == WebExceptionStatus.ProtocolError)
                 {
-                    HttpWebResponse response = ex.Response as HttpWebResponse;
-                    if (response != null)
+                    if (ex.Response is HttpWebResponse response)
                     {
                         Console.WriteLine("HTTP: " + response.StatusCode);
                         using (StreamReader reader = new StreamReader(response.GetResponseStream()))
@@ -168,8 +167,7 @@ namespace BrassLoon.Authorization.TestClient
         private static byte[] Sha256(string inputStirng)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(inputStirng);
-            using SHA256 sha256 = SHA256.Create();
-            return sha256.ComputeHash(bytes);
+            return SHA256.HashData(bytes);
         }
 
         private static string RandomDataBase64url(uint length)

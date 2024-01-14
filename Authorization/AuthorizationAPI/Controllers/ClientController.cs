@@ -49,16 +49,22 @@ namespace AuthorizationAPI.Controllers
         [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                }
+                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IClient innerClient = await _clientFactory.Get(coreSettings, domainId.Value, id.Value);
@@ -88,11 +94,15 @@ namespace AuthorizationAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                }
+                else if (!await VerifyDomainAccount(domainId.Value))
+                {
                     result = Unauthorized();
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
@@ -132,9 +142,9 @@ namespace AuthorizationAPI.Controllers
         private IActionResult Validate(Client client)
         {
             IActionResult result = null;
-            if (result == null && string.IsNullOrEmpty(client?.Name))
+            if (string.IsNullOrEmpty(client?.Name))
                 result = BadRequest("Client name is required.");
-            if (result == null && client?.Secret != null && client.Secret.Length < 32)
+            else if (client.Secret != null && client.Secret.Length < 32)
                 result = BadRequest("Client secret must be at least 32 characters in length");
             return result;
         }
@@ -143,18 +153,18 @@ namespace AuthorizationAPI.Controllers
         [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, Client client)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                else if (!await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
-                if (result == null)
+                else
                     result = Validate(client);
                 if (result == null && string.IsNullOrEmpty(client?.Secret))
                     result = BadRequest("Client secrect is required when creating a new client");
-                if (result == null)
+                if (result == null && domainId.HasValue && client != null)
                 {
                     CoreSettings coreSettings = CreateCoreSettings();
                     IClient innerClient = _clientFactory.Create(domainId.Value, client.Secret);
@@ -181,18 +191,18 @@ namespace AuthorizationAPI.Controllers
         [Authorize(Constants.POLICY_BL_AUTH)]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] Guid? id, Client client)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
                 CoreSettings coreSettings = CreateCoreSettings();
                 IClient innerClient = null;
-                if (result == null && (!domainId.HasValue || domainId.Value.Equals(Guid.Empty)))
+                if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
                     result = BadRequest("Missing or invalid domain id parameter value");
-                if (result == null)
+                else
                     result = Validate(client);
-                if (result == null && !await VerifyDomainAccount(domainId.Value))
+                if (result == null && domainId.HasValue && !await VerifyDomainAccount(domainId.Value))
                     result = Unauthorized();
-                if (result == null)
+                if (result == null && domainId.HasValue)
                 {
                     innerClient = await _clientFactory.Get(coreSettings, domainId.Value, id.Value);
                     if (innerClient == null)
@@ -203,7 +213,7 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     _ = mapper.Map(client, innerClient);
                     IEmailAddress userEmailAddress = await ConfigureUserEmailAddress(coreSettings, innerClient, client.UserEmailAddress);
-                    if (!string.IsNullOrEmpty(client?.Secret))
+                    if (!string.IsNullOrEmpty(client.Secret))
                         innerClient.SetSecret(client.Secret);
                     if (client.Roles != null)
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
@@ -246,7 +256,7 @@ namespace AuthorizationAPI.Controllers
             Client client = mapper.Map<Client>(innerClient);
             client.UserEmailAddress = (await innerClient.GetUserEmailAddress(coreSettings))?.Address ?? string.Empty;
             client.Roles = (await innerClient.GetRoles(coreSettings))
-                .Select(r => mapper.Map<AppliedRole>(r))
+                .Select(mapper.Map<AppliedRole>)
                 .ToList();
             return client;
         }

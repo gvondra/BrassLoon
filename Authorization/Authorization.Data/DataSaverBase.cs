@@ -8,7 +8,7 @@ namespace BrassLoon.Authorization.Data
         protected readonly IDbProviderFactory _providerFactory;
 #pragma warning restore CA1051 // Do not declare visible instance fields
 
-        public DataSaverBase(IDbProviderFactory providerFactory)
+        protected DataSaverBase(IDbProviderFactory providerFactory)
         {
             _providerFactory = providerFactory;
         }

@@ -39,8 +39,7 @@ namespace BrassLoon.Authorization.Core
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException(nameof(address));
             address = HashPrefix + address.Trim().ToLower(CultureInfo.InvariantCulture);
-            SHA512 alogrithm = SHA512.Create();
-            return alogrithm.ComputeHash(Encoding.UTF8.GetBytes(address));
+            return SHA512.HashData(Encoding.UTF8.GetBytes(address));
         }
     }
 }
