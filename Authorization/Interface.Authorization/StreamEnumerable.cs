@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Authorization
 {
-    internal class StreamEnumerable<TProto, TModel> : IAsyncEnumerable<TModel>
+    internal sealed class StreamEnumerable<TProto, TModel> : IAsyncEnumerable<TModel>
     {
         private readonly ISettings _settings;
         private readonly Func<GrpcChannel, Task<AsyncServerStreamingCall<TProto>>> _openStreamingCall;

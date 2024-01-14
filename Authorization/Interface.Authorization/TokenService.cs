@@ -4,6 +4,7 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching.Memory;
+using Polly.Retry;
 using System;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -86,7 +87,7 @@ namespace BrassLoon.Interface.Authorization
                 new ClientCredential { ClientId = clientId, Secret = secret });
         }
 
-        private static AsyncPolicy GetRetryPolicy()
+        private static AsyncRetryPolicy GetRetryPolicy()
         {
             return Policy.Handle<Exception>()
                 .WaitAndRetryAsync(new TimeSpan[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) });
@@ -109,11 +110,13 @@ namespace BrassLoon.Interface.Authorization
                 HashValue(clientCredential.Secret));
         }
 
+#pragma warning disable CA1850 // Prefer static 'HashData' method over 'ComputeHash'
         private static string HashValue(string value)
         {
             SHA256 sha256 = SHA256.Create();
             return Convert.ToBase64String(
                 sha256.ComputeHash(Encoding.UTF8.GetBytes(value)));
         }
+#pragma warning restore CA1850 // Prefer static 'HashData' method over 'ComputeHash'
     }
 }

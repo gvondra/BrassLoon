@@ -24,7 +24,7 @@ namespace BrassLoon.Interface.Authorization
         public Task<Role> Create(ISettings settings, Role role)
         {
             if (!role.DomainId.HasValue || role.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(role.DomainId));
+                throw new ArgumentException($"{nameof(role.DomainId)} property of Role is not set");
             return Create(settings, role.DomainId.Value, role);
         }
 
@@ -64,9 +64,9 @@ namespace BrassLoon.Interface.Authorization
         public Task<Role> Update(ISettings settings, Role role)
         {
             if (!role.DomainId.HasValue || role.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(role.DomainId));
+                throw new ArgumentException($"{nameof(role.DomainId)} property of Role is not set");
             if (!role.RoleId.HasValue || role.RoleId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(role.RoleId));
+                throw new ArgumentException($"{nameof(role.RoleId)} property of Role is not set");
             return Update(settings, role.DomainId.Value, role.RoleId.Value, role);
         }
     }

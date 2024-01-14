@@ -125,9 +125,9 @@ namespace BrassLoon.Interface.Authorization
         public Task<User> Update(ISettings settings, User user)
         {
             if (!user.DomainId.HasValue || user.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(user.DomainId));
+                throw new ArgumentException($"{nameof(user.DomainId)} property of Role is not set");
             if (!user.UserId.HasValue || user.UserId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(user.UserId));
+                throw new ArgumentException($"{nameof(user.UserId)} property of Role is not set");
             return Update(settings, user.DomainId.Value, user.UserId.Value, user);
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Polly;
 using Polly.Caching.Memory;
+using Polly.Retry;
 using System;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace BrassLoon.Interface.Authorization
             new Context());
         }
 
-        private static AsyncPolicy RetryPolicy()
+        private static AsyncRetryPolicy RetryPolicy()
         {
             return Policy.Handle<Exception>()
                 .WaitAndRetryAsync(new TimeSpan[] { TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(750) });

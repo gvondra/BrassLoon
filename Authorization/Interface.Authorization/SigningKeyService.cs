@@ -27,7 +27,7 @@ namespace BrassLoon.Interface.Authorization
         public Task<SigningKey> Create(ISettings settings, SigningKey signingKey)
         {
             if (!signingKey.DomainId.HasValue || signingKey.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(signingKey.DomainId));
+                throw new ArgumentException($"{nameof(signingKey.DomainId)} property of Role is not set");
             return Create(settings, signingKey.DomainId.Value, signingKey);
         }
 
@@ -69,9 +69,9 @@ namespace BrassLoon.Interface.Authorization
         public Task<SigningKey> Update(ISettings settings, SigningKey signingKey)
         {
             if (!signingKey.DomainId.HasValue || signingKey.DomainId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(signingKey.DomainId));
+                throw new ArgumentException($"{nameof(signingKey.DomainId)} property of Role is not set");
             if (!signingKey.SigningKeyId.HasValue || signingKey.SigningKeyId.Value.Equals(Guid.Empty))
-                throw new ArgumentNullException(nameof(signingKey.SigningKeyId));
+                throw new ArgumentException($"{nameof(signingKey.SigningKeyId)} property of Role is not set");
             return Update(settings, signingKey.DomainId.Value, signingKey.SigningKeyId.Value, signingKey);
         }
 
