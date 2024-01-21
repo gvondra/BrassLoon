@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BrassLoon.Account.Data;
 using BrassLoon.Account.Framework;
+using BrassLoon.CommonCore;
 
 namespace BrassLoon.Account.Core
 {
@@ -19,7 +20,9 @@ namespace BrassLoon.Account.Core
             _ = builder.RegisterType<DomainSaver>().As<IDomainSaver>();
             _ = builder.RegisterType<EmailAddressFactory>().As<IEmailAddressFactory>();
             _ = builder.RegisterType<EmailAddressSaver>().As<IEmailAddressSaver>();
-            _ = builder.RegisterType<KeyVault>().As<IKeyVault>();
+            _ = builder.RegisterType<KeyVault>()
+                .SingleInstance()
+                .As<IKeyVault>();
             _ = builder.RegisterType<SecretProcessor>()
                 .SingleInstance()
                 .As<ISecretProcessor>();

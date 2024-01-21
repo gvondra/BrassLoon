@@ -73,7 +73,7 @@ namespace BrassLoon.Account.Core
         }
         private async Task<byte[]> GetVaultedSecret(Framework.ISettings settings, Guid key)
         {
-            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings, key.ToString("D"));
+            KeyVaultSecret keyVaultSecret = await _keyVault.GetSecret(settings.ClientSecretVaultAddress, key.ToString("D"));
             return Convert.FromBase64String(keyVaultSecret.Value);
         }
 
@@ -137,7 +137,7 @@ namespace BrassLoon.Account.Core
             SetSalt();
             if (!SecretKey.HasValue)
                 SecretKey = Guid.NewGuid();
-            _ = await _keyVault.SetSecret(settings, SecretKey.Value.ToString("D"), Convert.ToBase64String(_secretProcessor.HashSecretArgon2i(value, SecretSalt)));
+            _ = await _keyVault.SetSecret(settings.ClientSecretVaultAddress, SecretKey.Value.ToString("D"), Convert.ToBase64String(_secretProcessor.HashSecretArgon2i(value, SecretSalt)));
             SecretType = secretType;
         }
     }

@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.3.0-prerelease.1</Version>
-		<AssemblyVersion>4.3.0.1</AssemblyVersion>
+		<Version>4.3.0-prerelease.2</Version>
+		<AssemblyVersion>4.3.0.2</AssemblyVersion>
 		<PackageReleaseNotes>
             - v4.3 Cache calls to get account domain
             - v4.2 Expanded support for Polly v8
@@ -37,7 +37,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="[7.0,8.0)" />
+		<PackageReference Include="Autofac" Version="[7.0,9.0)" />
 		<PackageReference Include="BrassLoon.RestClient" Version="[4.1.0,5.0)" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[6.0.0,9.0)" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[6.0.1,9.0)" />

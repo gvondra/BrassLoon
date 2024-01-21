@@ -45,15 +45,8 @@ namespace BrassLoon.CommonAPI
                     };
                     SecretClient client = new SecretClient(
                         new Uri(_settings.KeyVaultAddress),
-                        new DefaultAzureCredential(
-                            new DefaultAzureCredentialOptions()
-                            {
-                                ExcludeSharedTokenCacheCredential = true,
-                                ExcludeEnvironmentCredential = true,
-                                ExcludeVisualStudioCodeCredential = true,
-                                ExcludeVisualStudioCredential = true
-                            })
-                        , options)
+                        AzureCredential.DefaultAzureCredential,
+                        options)
                     ;
                     KeyVaultSecret secret = await client.GetSecretAsync(_settings.ConnectionStringUser);
                     return secret.Value;

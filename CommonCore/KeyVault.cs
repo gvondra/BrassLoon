@@ -14,7 +14,7 @@ namespace BrassLoon.CommonCore
 
         public async Task<KeyVaultSecret> SetSecret(string vaultAddress, string name, string value)
         {
-            SecretClient secretClient = new SecretClient(new Uri(vaultAddress), new DefaultAzureCredential());
+            SecretClient secretClient = new SecretClient(new Uri(vaultAddress), AzureCredential.DefaultAzureCredential);
             Azure.Response<KeyVaultSecret> kevaultSecret = await secretClient.SetSecretAsync(new KeyVaultSecret(name, value));
             return kevaultSecret.Value;
         }
@@ -23,7 +23,7 @@ namespace BrassLoon.CommonCore
         {
             return m_secretCache.Execute(async context =>
             {
-                SecretClient secretClient = new SecretClient(new Uri(vaultAddress), new DefaultAzureCredential());
+                SecretClient secretClient = new SecretClient(new Uri(vaultAddress), AzureCredential.DefaultAzureCredential);
                 Azure.Response<KeyVaultSecret> kevaultSecret = await secretClient.GetSecretAsync(name);
                 return kevaultSecret.Value;
             },

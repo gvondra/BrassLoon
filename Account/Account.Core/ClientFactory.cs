@@ -2,6 +2,7 @@
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
+using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
