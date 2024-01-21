@@ -1,15 +1,22 @@
 ﻿using BrassLoon.Interface.Account.Models;
 using BrassLoon.RestClient;
+using Microsoft.Extensions.Caching.Memory;
 using Polly;
+using Polly.Caching;
+using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Interface.Account
 {
     public class DomainService : IDomainService
     {
+        private readonly static AsyncPolicy _accountDomainCache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(10)));
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -54,11 +61,25 @@ namespace BrassLoon.Interface.Account
         {
             if (id.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(id));
+            string token = await settings.GetToken();
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
                 .AddPath("AccountDomain/{id}")
                 .AddPathParameter("id", id.ToString())
-                .AddJwtAuthorizationToken(settings.GetToken)
+                .AddJwtAuthorizationToken(token)
                 ;
+            using (SHA512 sha = SHA512.Create())
+            {
+                token = string.Join(
+                    string.Empty,
+                    sha.ComputeHash(Encoding.UTF8.GetBytes(token)).Select(i => i.ToString("X2")));
+            }
+            return await _accountDomainCache.ExecuteAsync(
+                (context) => InnerGetAccountDomain(request),
+                new Context($"{token}|{id:N}"));
+        }
+
+        private async Task<AccountDomain> InnerGetAccountDomain(IRequest request)
+        {
             IResponse<AccountDomain> response = await Policy
                 .HandleResult<IResponse<AccountDomain>>(res => !res.IsSuccessStatusCode)
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))

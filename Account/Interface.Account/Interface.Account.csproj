@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.2.0</Version>
-		<AssemblyVersion>4.2.0.0</AssemblyVersion>
+		<Version>4.3.0-prerelease.1</Version>
+		<AssemblyVersion>4.3.0.1</AssemblyVersion>
 		<PackageReleaseNotes>
+            - v4.3 Cache calls to get account domain
             - v4.2 Expanded support for Polly v8
             - v4.1 Added Create Token method; Added account, client, and user services
 			- v4.0 Upgrade RestClient.
