@@ -136,20 +136,16 @@ namespace BrassLoon.Address.TestClient
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
+                if (ex.Status == WebExceptionStatus.ProtocolError
+                    && ex.Response is HttpWebResponse response)
                 {
-                    HttpWebResponse response = ex.Response as HttpWebResponse;
-                    if (response != null)
+                    Console.WriteLine("HTTP: " + response.StatusCode);
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
-                        Console.WriteLine("HTTP: " + response.StatusCode);
-                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                        {
-                            // reads response body
-                            string responseText = await reader.ReadToEndAsync();
-                            Console.WriteLine(responseText);
-                        }
+                        // reads response body
+                        string responseText = await reader.ReadToEndAsync();
+                        Console.WriteLine(responseText);
                     }
-
                 }
             }
         }
