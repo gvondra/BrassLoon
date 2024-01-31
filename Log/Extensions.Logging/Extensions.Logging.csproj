@@ -12,7 +12,7 @@
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<LangVersion>10</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-prerelease.17</Version>
+		<Version>1.0.0</Version>
 		<AssemblyVersion>1.0.0.17</AssemblyVersion>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/gvondra/BrassLoon</PackageProjectUrl>
