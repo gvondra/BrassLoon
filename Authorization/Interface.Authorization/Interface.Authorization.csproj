@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.1.0</Version>
-		<AssemblyVersion>4.1.0.0</AssemblyVersion>
+		<Version>4.2.0</Version>
+		<AssemblyVersion>4.2.0.0</AssemblyVersion>
 		<PackageReleaseNotes>
+			- v4.2 Expand support for Autofac v8
             - v4.1 Expanded support for Polly v8
             - v4.0 Switch to gRPC
             - v3.0 Upgrade RestClient</PackageReleaseNotes>		
@@ -30,7 +31,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="[7.0,8.0)" />
+	  <PackageReference Include="Autofac" Version="[7.0,9.0)" />
 	  <PackageReference Include="Google.Protobuf" Version="[3.24.3,4.0)" />
 	  <PackageReference Include="Grpc.Net.Client" Version="[2.57.0,3.0)" />
 	  <PackageReference Include="Grpc.Tools" Version="2.60.*">
