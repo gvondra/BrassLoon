@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>3.1.1-prerelease.1</Version>
-		<AssemblyVersion>3.1.1.1</AssemblyVersion>
+		<Version>3.1.1</Version>
+		<AssemblyVersion>3.1.1.2</AssemblyVersion>
 		<PackageReleaseNotes>-v3.1 add net 8.0 target
             -v3.0 Switch to gRPC
             -2.2 Added purge period (months) to work task type
@@ -31,7 +31,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="[7.0,8.0)" />
+		<PackageReference Include="Autofac" Version="[7.0,9.0)" />
         <PackageReference Include="Google.Protobuf" Version="[3.25.0,4.0)" />
         <PackageReference Include="Grpc.Net.Client" Version="[2.58.0,3.0)" />
         <PackageReference Include="Grpc.Tools" Version="2.60.*">
