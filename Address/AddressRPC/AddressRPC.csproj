@@ -23,7 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="System"/>
+        <Using Include="System" />
     </ItemGroup>
     
     <ItemGroup>
@@ -33,6 +33,7 @@
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.3.0-prerelease.*" />
         <PackageReference Include="BrassLoon.Interface.Address" Version="1.1.*" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.60.*" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.*" />
     </ItemGroup>
 
     <ItemGroup>

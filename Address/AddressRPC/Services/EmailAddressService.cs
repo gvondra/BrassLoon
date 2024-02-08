@@ -5,6 +5,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Protos = BrassLoon.Interface.Address.Protos;
 
@@ -14,7 +15,9 @@ namespace AddressRPC.Services
     {
         private readonly IDomainAcountAccessVerifier _domainAcountAccessVerifier;
         private readonly IMetaDataProcessor _metaDataProcessor;
+        private readonly IMetricLogger _metricLogger;
         private readonly SettingsFactory _settingsFactory;
+        private readonly IOptions<Settings> _settings;
         private readonly ILogger<EmailAddressService> _logger;
         private readonly IEmailAddressFactory _emailAddressFactory;
         private readonly IEmailAddressSaver _emailAddressSaver;
@@ -22,14 +25,18 @@ namespace AddressRPC.Services
         public EmailAddressService(
             IDomainAcountAccessVerifier domainAcountAccessVerifier,
             IMetaDataProcessor metaDataProcessor,
+            IMetricLogger metricLogger,
             SettingsFactory settingsFactory,
+            IOptions<Settings> settings,
             ILogger<EmailAddressService> logger,
             IEmailAddressFactory emailAddressFactory,
             IEmailAddressSaver emailAddressSaver)
         {
             _domainAcountAccessVerifier = domainAcountAccessVerifier;
             _metaDataProcessor = metaDataProcessor;
+            _metricLogger = metricLogger;
             _settingsFactory = settingsFactory;
+            _settings = settings;
             _logger = logger;
             _emailAddressFactory = emailAddressFactory;
             _emailAddressSaver = emailAddressSaver;
@@ -38,6 +45,8 @@ namespace AddressRPC.Services
         [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<EmailAddress> Get(GetEmailAddressRequest request, ServerCallContext context)
         {
+            DateTime start = DateTime.UtcNow;
+            string status = string.Empty;
             try
             {
                 Guid domainId;
@@ -61,20 +70,29 @@ namespace AddressRPC.Services
                     emailAddress = Map(innerEmailAddress);
                 return emailAddress;
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
+                status = ex.StatusCode.ToString();
                 throw;
             }
             catch (Exception ex)
             {
+                status = StatusCode.Internal.ToString();
                 _logger.LogError(ex, ex.Message);
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
+            }
+            finally
+            {
+                if (_settings.Value.LoggingDomainId.HasValue)
+                    _metricLogger.ApiMethodStats(_logger, _settings.Value.LoggingDomainId.Value, "GetEmailAddress", status, start: start);
             }
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<EmailAddress> Save(EmailAddress request, ServerCallContext context)
         {
+            DateTime start = DateTime.UtcNow;
+            string status = string.Empty;
             try
             {
                 Guid domainId;
@@ -104,14 +122,21 @@ namespace AddressRPC.Services
                     throw new RpcException(new Status(StatusCode.NotFound, "Email Address Not Found"));
                 }
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
+                status = ex.StatusCode.ToString();
                 throw;
             }
             catch (Exception ex)
             {
+                status = StatusCode.Internal.ToString();
                 _logger.LogError(ex, ex.Message);
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
+            }
+            finally
+            {
+                if (_settings.Value.LoggingDomainId.HasValue)
+                    _metricLogger.ApiMethodStats(_logger, _settings.Value.LoggingDomainId.Value, "SaveEmailAddress", status, start: start);
             }
         }
 

@@ -19,6 +19,9 @@ namespace AddressRPC
             _ = builder.RegisterType<MetaDataProcessor>()
                 .SingleInstance()
                 .As<IMetaDataProcessor>();
+            _ = builder.RegisterType<MetricLogger>()
+                .SingleInstance()
+                .As<IMetricLogger>();
             _ = builder.RegisterType<SettingsFactory>().SingleInstance();
         }
     }
