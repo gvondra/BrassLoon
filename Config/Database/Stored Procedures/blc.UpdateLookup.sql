@@ -14,7 +14,7 @@ BEGIN
 	UPDATE [blc].[Lookup] 
 	SET
 		[Code] = @code, 
-		[Data] = @DATA, 
+		[Data] = @data, 
 		[UpdateTimestamp] = @timestamp
 	WHERE [LookupId] = @id
 	;
