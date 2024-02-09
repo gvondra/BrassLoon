@@ -5,6 +5,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Protos = BrassLoon.Interface.Address.Protos;
 
@@ -14,7 +15,9 @@ namespace AddressRPC.Services
     {
         private readonly IDomainAcountAccessVerifier _domainAcountAccessVerifier;
         private readonly IMetaDataProcessor _metaDataProcessor;
+        private readonly IMetricLogger _metricLogger;
         private readonly SettingsFactory _settingsFactory;
+        private readonly IOptions<Settings> _settings;
         private readonly ILogger<AddressService> _logger;
         private readonly IAddressFactory _addressFactory;
         private readonly IAddressSaver _addressSaver;
@@ -22,14 +25,18 @@ namespace AddressRPC.Services
         public AddressService(
             IDomainAcountAccessVerifier domainAcountAccessVerifier,
             IMetaDataProcessor metaDataProcessor,
+            IMetricLogger metricLogger,
             SettingsFactory settingsFactory,
+            IOptions<Settings> settings,
             ILogger<AddressService> logger,
             IAddressFactory addressFactory,
             IAddressSaver addressSaver)
         {
             _domainAcountAccessVerifier = domainAcountAccessVerifier;
             _metaDataProcessor = metaDataProcessor;
+            _metricLogger = metricLogger;
             _settingsFactory = settingsFactory;
+            _settings = settings;
             _logger = logger;
             _addressFactory = addressFactory;
             _addressSaver = addressSaver;
@@ -38,6 +45,8 @@ namespace AddressRPC.Services
         [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<Address> Get(GetAddressRequest request, ServerCallContext context)
         {
+            DateTime start = DateTime.UtcNow;
+            string status = string.Empty;
             try
             {
                 Guid domainId;
@@ -61,20 +70,29 @@ namespace AddressRPC.Services
                     address = Map(innerAddress);
                 return address;
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
+                status = ex.StatusCode.ToString();
                 throw;
             }
             catch (Exception ex)
             {
+                status = StatusCode.Internal.ToString();
                 _logger.LogError(ex, ex.Message);
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
+            }
+            finally
+            {
+                if (_settings.Value.LoggingDomainId.HasValue)
+                    _metricLogger.ApiMethodStats(_logger, _settings.Value.LoggingDomainId.Value, "GetAddress", status, start: start);
             }
         }
 
         [Authorize(Constants.POLICY_BL_AUTH)]
         public override async Task<Address> Save(Address request, ServerCallContext context)
         {
+            DateTime start = DateTime.UtcNow;
+            string status = string.Empty;
             try
             {
                 Guid domainId;
@@ -106,14 +124,21 @@ namespace AddressRPC.Services
                     throw new RpcException(new Status(StatusCode.NotFound, "Address Not Found"));
                 }
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
+                status = ex.StatusCode.ToString();
                 throw;
             }
             catch (Exception ex)
             {
+                status = StatusCode.Internal.ToString();
                 _logger.LogError(ex, ex.Message);
                 throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
+            }
+            finally
+            {
+                if (_settings.Value.LoggingDomainId.HasValue)
+                    _metricLogger.ApiMethodStats(_logger, _settings.Value.LoggingDomainId.Value, "SaveAddress", status, start: start);
             }
         }
 
