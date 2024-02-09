@@ -14,6 +14,7 @@ BEGIN
 		SELECT TOP 1 1 
 		FROM [blwt].[WorkTaskContext] [wtc]
 		WHERE [wtc].[WorkTaskId] = [tsk].[WorkTaskId]
+		AND [wtc].[DomainId] = @domainId
 		AND [wtc].[ReferenceType] = @referenceType
 		AND [wtc].[ReferenceValueHash] = @referenceValueHash
 	)
