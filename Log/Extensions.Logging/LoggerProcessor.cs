@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Extensions.Logging
 {
-    internal class LoggerProcessor : IDisposable
+    internal sealed class LoggerProcessor : IDisposable
     {
         private const int MAX_QUEUE_LENGTH = 10240;
         private readonly Thread _outputThread;
@@ -283,7 +283,7 @@ namespace BrassLoon.Extensions.Logging
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
