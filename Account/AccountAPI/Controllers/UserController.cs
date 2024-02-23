@@ -45,19 +45,16 @@ namespace AccountAPI.Controllers
             try
             {
                 IEnumerable<User> users = null;
-                if (result == null && !string.IsNullOrEmpty(emailAddress))
+                if (!string.IsNullOrEmpty(emailAddress))
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IMapper mapper = CreateMapper();
                     users = (await _userFactory.GetByEmailAddress(settings, emailAddress))
-                        .Select<IUser, User>(u => mapper.Map<User>(u));
+                        .Select(mapper.Map<User>);
                 }
-                if (result == null)
-                {
-                    if (users == null)
-                        users = new List<User>();
-                    result = Ok(users.ToList());
-                }
+                if (users == null)
+                    users = new List<User>();
+                result = Ok(users.ToList());
             }
             catch (Exception ex)
             {
@@ -76,9 +73,11 @@ namespace AccountAPI.Controllers
             {
                 CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     user = await _userFactory.Get(settings, id.Value);
                     if (user == null)
@@ -107,9 +106,11 @@ namespace AccountAPI.Controllers
             {
                 CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     user = await _userFactory.Get(settings, id.Value);
                     if (user == null)
@@ -143,9 +144,11 @@ namespace AccountAPI.Controllers
                 roles = roles ?? new List<string>();
                 CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                 IUser user = null;
-                if (result == null && (!id.HasValue || id.Value.Equals(Guid.Empty)))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing id parameter value");
-                if (result == null)
+                }
+                else
                 {
                     user = await _userFactory.Get(settings, id.Value);
                     if (user == null)
@@ -159,11 +162,11 @@ namespace AccountAPI.Controllers
                 }
                 if (result == null && user != null)
                 {
-                    if (roles.Any(r => string.Equals(r, "sysadmin", StringComparison.OrdinalIgnoreCase)))
+                    if (roles.Exists(r => string.Equals(r, "sysadmin", StringComparison.OrdinalIgnoreCase)))
                         user.Roles = user.Roles | UserRole.SystemAdministrator;
                     else
                         user.Roles = user.Roles & (~UserRole.SystemAdministrator);
-                    if (roles.Any(r => string.Equals(r, "actadmin", StringComparison.OrdinalIgnoreCase)))
+                    if (roles.Exists(r => string.Equals(r, "actadmin", StringComparison.OrdinalIgnoreCase)))
                         user.Roles = user.Roles | UserRole.AccountAdministrator;
                     else
                         user.Roles = user.Roles & (~UserRole.AccountAdministrator);

@@ -6,6 +6,7 @@ using Polly.Caching;
 using Polly.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -16,7 +17,7 @@ namespace BrassLoon.Interface.Account
 {
     public class DomainService : IDomainService
     {
-        private readonly static AsyncPolicy _accountDomainCache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(10)));
+        private static readonly AsyncPolicy _accountDomainCache = Policy.CacheAsync(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromMinutes(10)));
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -57,6 +58,8 @@ namespace BrassLoon.Interface.Account
             return response.Value;
         }
 
+        // not available in netstandard
+#pragma warning disable CA1850 // Prefer static 'HashData' method over 'ComputeHash'
         public async Task<AccountDomain> GetAccountDomain(ISettings settings, Guid id)
         {
             if (id.Equals(Guid.Empty))
@@ -71,12 +74,13 @@ namespace BrassLoon.Interface.Account
             {
                 token = string.Join(
                     string.Empty,
-                    sha.ComputeHash(Encoding.UTF8.GetBytes(token)).Select(i => i.ToString("X2")));
+                    sha.ComputeHash(Encoding.UTF8.GetBytes(token)).Select(i => i.ToString("X2", CultureInfo.InvariantCulture)));
             }
             return await _accountDomainCache.ExecuteAsync(
                 (context) => InnerGetAccountDomain(request),
                 new Context($"{token}|{id:N}"));
         }
+#pragma warning restore CA1850 // Prefer static 'HashData' method over 'ComputeHash'
 
         private async Task<AccountDomain> InnerGetAccountDomain(IRequest request)
         {

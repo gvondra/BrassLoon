@@ -88,7 +88,7 @@ namespace AccountAPI.Controllers
                 (await Task.WhenAll(accounts))
                 .SelectMany(results => results)
                 .Where(a => UserCanAccessAccount(a.AccountId))
-                .Select(innerAccount => mapper.Map<Account>(innerAccount))
+                .Select(mapper.Map<Account>)
                 .ToList()
                 );
             return result;
@@ -100,19 +100,25 @@ namespace AccountAPI.Controllers
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> Get(Guid id)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && Guid.Empty.Equals(id))
+                if (Guid.Empty.Equals(id))
+                {
                     result = BadRequest("Invalid account id");
-                if (result == null && !UserCanAccessAccount(id))
+                }
+                else if (!UserCanAccessAccount(id))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount account = await _accountFactory.Get(settings, id);
                     if (account == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
@@ -133,14 +139,18 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] Account account)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && account == null)
+                if (account == null)
+                {
                     result = BadRequest("Missing account data");
-                if (result == null && string.IsNullOrEmpty(account.Name))
+                }
+                else if (string.IsNullOrEmpty(account.Name))
+                {
                     result = BadRequest("Missing account name");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IUser user = await GetUser(_userFactory, settings);
@@ -166,23 +176,33 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Update(Guid id, [FromBody] Account account)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && account == null)
+                if (account == null)
+                {
                     result = BadRequest("Missing account data");
-                if (result == null && string.IsNullOrEmpty(account.Name))
+                }
+                else if (string.IsNullOrEmpty(account.Name))
+                {
                     result = BadRequest("Missing account name");
-                if (result == null && Guid.Empty.Equals(id))
+                }
+                else if (Guid.Empty.Equals(id))
+                {
                     result = BadRequest("Invalid account id");
-                if (result == null && !UserCanAccessAccount(id))
+                }
+                else if (!UserCanAccessAccount(id))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount innerAccount = await _accountFactory.Get(settings, id);
                     if (innerAccount == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         IMapper mapper = CreateMapper();
@@ -206,26 +226,38 @@ namespace AccountAPI.Controllers
         [Authorize("ADMIN:ACCOUNT")]
         public async Task<IActionResult> Update(Guid id, [FromBody] Dictionary<string, string> data)
         {
-            IActionResult result = null;
-            bool locked = default;
+            IActionResult result;
+            bool locked;
             try
             {
-                if (result == null && data == null)
+                if (data == null)
+                {
                     result = BadRequest("Missing patch data");
-                if (result == null && (!data.ContainsKey("Locked") || string.IsNullOrEmpty(data["Locked"])))
+                }
+                else if (!data.ContainsKey("Locked") || string.IsNullOrEmpty(data["Locked"]))
+                {
                     result = BadRequest("Missing Locked value");
-                if (result == null && Guid.Empty.Equals(id))
+                }
+                else if (Guid.Empty.Equals(id))
+                {
                     result = BadRequest("Invalid account id");
-                if (result == null && !UserCanAccessAccount(id))
+                }
+                else if (!UserCanAccessAccount(id))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null && !bool.TryParse(data["Locked"], out locked))
+                }
+                else if (!bool.TryParse(data["Locked"], out locked))
+                {
                     result = BadRequest("Invalid locked value.  Expecting 'True' or 'False'");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IAccount innerAccount = await _accountFactory.Get(settings, id);
                     if (innerAccount == null)
+                    {
                         result = NotFound();
+                    }
                     else
                     {
                         await _accountSaver.UpdateLocked(settings, innerAccount.AccountId, locked);
@@ -245,16 +277,22 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid? accountId, [FromRoute] Guid? userId)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && (!accountId.HasValue || Guid.Empty.Equals(accountId.Value)))
+                if (!accountId.HasValue || Guid.Empty.Equals(accountId.Value))
+                {
                     result = BadRequest("Missing account id parameter value");
-                if (result == null && (!userId.HasValue || Guid.Empty.Equals(userId.Value)))
+                }
+                else if (!userId.HasValue || Guid.Empty.Equals(userId.Value))
+                {
                     result = BadRequest("Missing user id parameter value");
-                if (result == null && !UserCanAccessAccount(accountId.Value))
+                }
+                else if (!UserCanAccessAccount(accountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     await _accountSaver.RemoveUser(settings, userId.Value, accountId.Value);
@@ -276,17 +314,21 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && (!accountId.HasValue || Guid.Empty.Equals(accountId.Value)))
+                if (!accountId.HasValue || Guid.Empty.Equals(accountId.Value))
+                {
                     result = BadRequest("Missing account id parameter value");
-                if (result == null && !UserCanAccessAccount(accountId.Value))
+                }
+                else if (!UserCanAccessAccount(accountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerUsers.Select(innerUser => mapper.Map<User>(innerUser))
+                        innerUsers.Select(mapper.Map<User>)
                         );
                 }
             }

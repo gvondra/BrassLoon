@@ -75,17 +75,21 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id value");
-                if (result == null && !UserCanAccessAccount(id.Value))
+                }
+                else if (!UserCanAccessAccount(id.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IEnumerable<IClient> clients = await _clientFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        clients.Select<IClient, Client>(d => mapper.Map<Client>(d))
+                        clients.Select(mapper.Map<Client>)
                         );
                 }
             }
@@ -105,15 +109,17 @@ namespace AccountAPI.Controllers
             IActionResult result = null;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing client id value");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient client = await _clientFactory.Get(settings, id.Value);
                     if (client == null)
                         result = NotFound();
-                    if (result == null && !UserCanAccessAccount(client.AccountId))
+                    else if (!UserCanAccessAccount(client.AccountId))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)
                     {
@@ -137,22 +143,34 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] ClientCredentialRequest client)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && client == null)
+                if (client == null)
+                {
                     result = BadRequest("Missing client data");
-                if (result == null && string.IsNullOrEmpty(client.Name))
+                }
+                else if (string.IsNullOrEmpty(client.Name))
+                {
                     result = BadRequest("Missing client name value");
-                if (result == null && (!client.AccountId.HasValue || client.AccountId.Value.Equals(Guid.Empty)))
+                }
+                else if (!client.AccountId.HasValue || client.AccountId.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing account id value");
-                if (result == null && !UserCanAccessAccount(client.AccountId.Value))
+                }
+                else if (!UserCanAccessAccount(client.AccountId.Value))
+                {
                     result = StatusCode(StatusCodes.Status401Unauthorized);
-                if (result == null && string.IsNullOrEmpty(client?.Secret))
+                }
+                else if (string.IsNullOrEmpty(client.Secret))
+                {
                     result = BadRequest("Missing secret value");
-                if (result == null && client.Secret.Trim().Length < 16)
+                }
+                else if (client.Secret.Trim().Length < 16)
+                {
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
-                if (result == null)
+                }
+                else
                 {
                     IClient innerClient = await _clientFactory.Create(client.AccountId.Value, client.Secret, _settings.Value.SecretType);
                     IMapper mapper = CreateMapper();
@@ -175,30 +193,42 @@ namespace AccountAPI.Controllers
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Update([FromRoute] Guid? id, [FromBody] ClientCredentialRequest client)
         {
-            IActionResult result = null;
+            IActionResult result;
             try
             {
-                if (result == null && !id.HasValue || id.Value.Equals(Guid.Empty))
+                if (!id.HasValue || id.Value.Equals(Guid.Empty))
+                {
                     result = BadRequest("Missing client id value");
-                if (result == null && client == null)
+                }
+                else if (client == null)
+                {
                     result = BadRequest("Missing client data");
-                if (result == null && string.IsNullOrEmpty(client.Name))
+                }
+                else if (string.IsNullOrEmpty(client.Name))
+                {
                     result = BadRequest("Missing client name value");
-                if (result == null && !string.IsNullOrEmpty(client.Secret) && client.Secret.Trim().Length < 16)
+                }
+                else if (!string.IsNullOrEmpty(client.Secret) && client.Secret.Trim().Length < 16)
+                {
                     result = BadRequest("Client secret must be at least 16 characters in lenth");
-                if (result == null)
+                }
+                else
                 {
                     CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IClient innerClient = await _clientFactory.Get(settings, id.Value);
                     if (innerClient == null)
+                    {
                         result = NotFound();
-                    if (result == null && !UserCanAccessAccount(innerClient.AccountId))
+                    }
+                    else if (!UserCanAccessAccount(innerClient.AccountId))
+                    {
                         result = StatusCode(StatusCodes.Status401Unauthorized);
-                    if (result == null)
+                    }
+                    else
                     {
                         IMapper mapper = CreateMapper();
                         _ = mapper.Map<Client, IClient>(client, innerClient);
-                        if (_settings.Value.SecretType == SecretType.Argon2 && !string.IsNullOrEmpty(client?.Secret))
+                        if (_settings.Value.SecretType == SecretType.Argon2 && !string.IsNullOrEmpty(client.Secret))
                             innerClient.SetSecret(client.Secret, _settings.Value.SecretType);
                         await _clientSaver.Update(
                             settings,
