@@ -18,7 +18,8 @@ namespace BrassLoon.Config.Core
         private readonly ILookupHistoryFactory _lookupHistoryFactory;
         private List<ILookupHistory> _lookupHistories;
 
-        public Lookup(LookupData data,
+        public Lookup(
+            LookupData data,
             ILookupDataSaver dataSaver,
             ILookupHistoryFactory lookupHistoryFactory)
         {

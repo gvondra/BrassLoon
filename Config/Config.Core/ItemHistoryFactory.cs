@@ -14,7 +14,8 @@ namespace BrassLoon.Config.Core
         private readonly IItemHistoryDataFactory _dataFactory;
         private readonly SettingsFactory _settingsFactory;
 
-        public ItemHistoryFactory(IItemHistoryDataFactory dataFactory,
+        public ItemHistoryFactory(
+            IItemHistoryDataFactory dataFactory,
             SettingsFactory settingsFactory)
         {
             _dataFactory = dataFactory;

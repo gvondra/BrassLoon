@@ -47,7 +47,8 @@ namespace BrassLoon.Interface.Config
 
         public async Task<Item> GetByCode(ISettings settings, Guid domainId, string code)
         {
-            return await _cache.Execute(async (context) => await InnerGetByCode(settings, domainId, code),
+            return await _cache.Execute(
+                async (context) => await InnerGetByCode(settings, domainId, code),
                 new Context($"Get{domainId:N}|{code}"));
         }
 
@@ -66,8 +67,9 @@ namespace BrassLoon.Interface.Config
 
         public async Task<List<string>> GetCodes(ISettings settings, Guid domainId)
         {
-            return await _cache.Execute(async (context) => await InnerGetCodes(settings, domainId),
-            new Context($"Codes{domainId:N}"));
+            return await _cache.Execute(
+                async (context) => await InnerGetCodes(settings, domainId),
+                new Context($"Codes{domainId:N}"));
         }
 
         private async Task<List<string>> InnerGetCodes(ISettings settings, Guid domainId)
@@ -84,7 +86,8 @@ namespace BrassLoon.Interface.Config
 
         public async Task<object> GetDataByCode(ISettings settings, Guid domainId, string code)
         {
-            return await _cache.Execute(async (context) => await InnerGetDataByCode(settings, domainId, code),
+            return await _cache.Execute(
+                async (context) => await InnerGetDataByCode(settings, domainId, code),
                 new Context($"GetData{domainId:N}|{code}"));
         }
 

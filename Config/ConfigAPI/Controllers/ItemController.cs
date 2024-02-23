@@ -24,7 +24,8 @@ namespace ConfigAPI.Controllers
         private readonly IItemFactory _itemFactory;
         private readonly IItemSaver _itemSaver;
 
-        public ItemController(IOptions<Settings> settings,
+        public ItemController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             ILogger<ItemController> logger,
             IDomainService domainService,
@@ -40,7 +41,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("{domainId}/{code}")]
         [ProducesResponseType(typeof(Item), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;
@@ -79,7 +80,7 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpGet("{domainId}/{code}/Data")]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetDataByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;
@@ -119,7 +120,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("{domainId}/{code}/History")]
         [ProducesResponseType(typeof(ItemHistory[]), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetHistoryByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result = null;
@@ -166,7 +167,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("/api/[controller]Code/{domainId}")]
         [ProducesResponseType(typeof(Item), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetCodes([FromRoute] Guid? domainId)
         {
             IActionResult result;
@@ -185,8 +186,7 @@ namespace ConfigAPI.Controllers
                     else
                     {
                         result = Ok(
-                            await _itemFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value)
-                            );
+                            await _itemFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value));
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace ConfigAPI.Controllers
 
         [HttpPut("{domainId}/{code}/Data")]
         [ProducesResponseType(typeof(Item), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Update([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] dynamic itemData)
         {
             IActionResult result = null;
@@ -234,8 +234,7 @@ namespace ConfigAPI.Controllers
                         await save(settings, _itemSaver, innerItem);
                         Mapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
-                            mapper.Map<Item>(innerItem)
-                            );
+                            mapper.Map<Item>(innerItem));
                     }
                 }
             }
@@ -248,7 +247,7 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpDelete("{domainId}/{code}")]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;

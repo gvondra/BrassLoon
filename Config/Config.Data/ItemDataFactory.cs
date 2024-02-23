@@ -33,8 +33,7 @@ namespace BrassLoon.Config.Data
                 "[blc].[GetItemByCode]",
                 () => new ItemData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                )).FirstOrDefault();
+                parameters)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<string>> GetCodes(ISqlSettings settings, Guid domainId)
@@ -47,8 +46,7 @@ namespace BrassLoon.Config.Data
                     command.CommandText = "[blc].[GetItemCodes]";
                     command.CommandType = CommandType.StoredProcedure;
                     _ = command.Parameters.Add(
-                        DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
-                        );
+                        DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId));
                     using (DbDataReader reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())

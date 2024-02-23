@@ -16,7 +16,8 @@ namespace BrassLoon.Config.Core
         private readonly SettingsFactory _settingsFactory;
         private readonly ILookupHistoryFactory _lookupHistoryFactory;
 
-        public LookupFactory(ILookupDataFactory dataFactory,
+        public LookupFactory(
+            ILookupDataFactory dataFactory,
             ILookupDataSaver dataSaver,
             SettingsFactory settingsFactory,
             ILookupHistoryFactory lookupHistoryFactory)

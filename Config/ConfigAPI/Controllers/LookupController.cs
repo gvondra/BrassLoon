@@ -24,7 +24,8 @@ namespace ConfigAPI.Controllers
         private readonly ILookupFactory _lookupFactory;
         private readonly ILookupSaver _lookupSaver;
 
-        public LookupController(IOptions<Settings> settings,
+        public LookupController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             ILogger<LookupController> logger,
             IDomainService domainService,
@@ -40,7 +41,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("{domainId}/{code}")]
         [ProducesResponseType(typeof(Lookup), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;
@@ -85,7 +86,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("{domainId}/{code}/Data")]
         [ProducesResponseType(typeof(Dictionary<string, string>), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetDataByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;
@@ -130,7 +131,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("{domainId}/{code}/History")]
         [ProducesResponseType(typeof(LookupHistory[]), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetHistoryByCode([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result = null;
@@ -177,7 +178,7 @@ namespace ConfigAPI.Controllers
 
         [HttpGet("/api/[controller]Code/{domainId}")]
         [ProducesResponseType(typeof(Lookup), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetCodes([FromRoute] Guid? domainId)
         {
             IActionResult result;
@@ -196,8 +197,7 @@ namespace ConfigAPI.Controllers
                     else
                     {
                         result = Ok(
-                            await _lookupFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value)
-                            );
+                            await _lookupFactory.GetCodes(_settingsFactory.CreateCore(_settings.Value), domainId.Value));
                     }
                 }
             }
@@ -211,7 +211,7 @@ namespace ConfigAPI.Controllers
 
         [HttpPut("{domainId}/{code}/Data")]
         [ProducesResponseType(typeof(Lookup), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Save([FromRoute] Guid? domainId, [FromRoute] string code, [FromBody] Dictionary<string, string> lookupData)
         {
             IActionResult result = null;
@@ -245,8 +245,7 @@ namespace ConfigAPI.Controllers
                         await save(settings, _lookupSaver, innerLookup);
                         Mapper mapper = MapperConfigurationFactory.CreateMapper();
                         result = Ok(
-                            mapper.Map<Lookup>(innerLookup)
-                            );
+                            mapper.Map<Lookup>(innerLookup));
                     }
                 }
             }
@@ -259,7 +258,7 @@ namespace ConfigAPI.Controllers
         }
 
         [HttpDelete("{domainId}/{code}")]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid? domainId, [FromRoute] string code)
         {
             IActionResult result;

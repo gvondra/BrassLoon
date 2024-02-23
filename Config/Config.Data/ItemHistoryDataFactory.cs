@@ -29,8 +29,7 @@ namespace BrassLoon.Config.Data
                 _providerFactory,
                 "[blc].[GetItemHistoryByItemId]",
                 () => new ItemHistoryData(),
-                parameters
-                );
+                parameters);
         }
     }
 }

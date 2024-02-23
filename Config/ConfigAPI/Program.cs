@@ -21,7 +21,6 @@ namespace ConfigAPI
     {
         public static void Main(string[] args)
         {
-
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new ConfigAPIModule()));
@@ -76,18 +75,19 @@ namespace ConfigAPI
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
-                o.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                o.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    new OpenApiSecurityScheme
                     {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        new OpenApiSecurityScheme
+                        {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                        },
+                        Array.Empty<string>()
                     }
-                    },
-                    Array.Empty<string>()
-                }
                 });
             });
             builder.Services.AddAuthentication(o =>

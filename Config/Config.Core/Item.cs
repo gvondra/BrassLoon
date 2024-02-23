@@ -18,7 +18,8 @@ namespace BrassLoon.Config.Core
         private readonly IItemHistoryFactory _itemHistoryFactory;
         private List<IItemHistory> _itemHistories;
 
-        public Item(ItemData data,
+        public Item(
+            ItemData data,
             IItemDataSaver dataSaver,
             IItemHistoryFactory itemHistoryFactory)
         {
