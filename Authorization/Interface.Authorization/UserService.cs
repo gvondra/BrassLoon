@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Interface.Authorization.Models;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
@@ -58,16 +57,17 @@ namespace BrassLoon.Interface.Authorization
                 DomainId = domainId.ToString("D"),
                 UserId = userId.ToString("D")
             };
-            return await _userNameCache.ExecuteAsync(async context =>
-            {
-                using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+            return await _userNameCache.ExecuteAsync(
+                async context =>
                 {
-                    Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
-                    Protos.GetUserNameResponse response = await userService.GetNameAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
-                    return response.Name;
-                }
-            },
-            new Context(string.Concat(domainId.ToString("N"), "|", userId.ToString("N"))));
+                    using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                    {
+                        Protos.UserService.UserServiceClient userService = new Protos.UserService.UserServiceClient(channel);
+                        Protos.GetUserNameResponse response = await userService.GetNameAsync(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
+                        return response.Name;
+                    }
+                },
+                new Context(string.Concat(domainId.ToString("N"), "|", userId.ToString("N"))));
         }
 
         public Task<IAsyncEnumerable<User>> GetByDomainId(ISettings settings, Guid domainId)
@@ -111,7 +111,7 @@ namespace BrassLoon.Interface.Authorization
 
         public async Task<User> Update(ISettings settings, Guid domainId, Guid userId, User user)
         {
-            Protos.User request = Map(user);
+            Protos.User request = user.ToProto();
             request.UserId = userId.ToString("D");
             request.DomainId = domainId.ToString("D");
             using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
@@ -129,34 +129,6 @@ namespace BrassLoon.Interface.Authorization
             if (!user.UserId.HasValue || user.UserId.Value.Equals(Guid.Empty))
                 throw new ArgumentException($"{nameof(user.UserId)} property of Role is not set");
             return Update(settings, user.DomainId.Value, user.UserId.Value, user);
-        }
-
-        private static Protos.User Map(User user)
-        {
-            Protos.User result = new Protos.User
-            {
-                CreateTimestamp = user.CreateTimestamp.HasValue ? Timestamp.FromDateTime(user.CreateTimestamp.Value) : null,
-                DomainId = user.DomainId?.ToString("D"),
-                UserId = user.UserId?.ToString("D"),
-                EmailAddress = user.EmailAddress,
-                Name = user.Name,
-                ReferenceId = user.ReferenceId,
-                UpdateTimestamp = user.UpdateTimestamp.HasValue ? Timestamp.FromDateTime(user.UpdateTimestamp.Value) : null
-            };
-            foreach (AppliedRole role in user.Roles ?? new List<AppliedRole>())
-            {
-                result.Roles.Add(Map(role));
-            }
-            return result;
-        }
-
-        private static Protos.AppliedRole Map(AppliedRole role)
-        {
-            return new Protos.AppliedRole
-            {
-                Name = role.Name,
-                PolicyName = role.PolicyName
-            };
         }
     }
 }

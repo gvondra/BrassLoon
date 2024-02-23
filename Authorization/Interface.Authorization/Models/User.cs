@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.WellKnownTypes;
+using System;
 using System.Collections.Generic;
 
 namespace BrassLoon.Interface.Authorization.Models
@@ -30,6 +31,25 @@ namespace BrassLoon.Interface.Authorization.Models
             foreach (Protos.AppliedRole role in user.Roles)
             {
                 result.Roles.Add(AppliedRole.Create(role));
+            }
+            return result;
+        }
+
+        internal Protos.User ToProto()
+        {
+            Protos.User result = new Protos.User
+            {
+                CreateTimestamp = CreateTimestamp.HasValue ? Timestamp.FromDateTime(CreateTimestamp.Value) : null,
+                DomainId = DomainId?.ToString("D") ?? string.Empty,
+                UserId = UserId?.ToString("D") ?? string.Empty,
+                EmailAddress = EmailAddress ?? string.Empty,
+                Name = Name ?? string.Empty,
+                ReferenceId = ReferenceId ?? string.Empty,
+                UpdateTimestamp = UpdateTimestamp.HasValue ? Timestamp.FromDateTime(UpdateTimestamp.Value) : null
+            };
+            foreach (AppliedRole role in Roles ?? new List<AppliedRole>())
+            {
+                result.Roles.Add(role.ToProto());
             }
             return result;
         }

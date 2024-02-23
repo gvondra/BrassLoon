@@ -13,5 +13,14 @@
                 PolicyName = role.PolicyName
             };
         }
+
+        internal Protos.AppliedRole ToProto()
+        {
+            return new Protos.AppliedRole
+            {
+                Name = Name ?? string.Empty,
+                PolicyName = PolicyName ?? string.Empty
+            };
+        }
     }
 }
