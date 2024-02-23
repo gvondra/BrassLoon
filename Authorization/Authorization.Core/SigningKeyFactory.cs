@@ -15,7 +15,8 @@ namespace BrassLoon.Authorization.Core
         private readonly ISigningKeyDataSaver _dataSaver;
         private readonly IKeyVault _keyVault;
 
-        public SigningKeyFactory(ISigningKeyDataFactory dataFactory,
+        public SigningKeyFactory(
+            ISigningKeyDataFactory dataFactory,
             ISigningKeyDataSaver dataSaver,
             IKeyVault keyVault)
         {

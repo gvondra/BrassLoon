@@ -11,7 +11,8 @@ namespace BrassLoon.Authorization.Data
 {
     public class SigningKeyDataSaver : DataSaverBase, ISigningKeyDataSaver
     {
-        public SigningKeyDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public SigningKeyDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, SigningKeyData data)
         {

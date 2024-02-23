@@ -18,7 +18,8 @@ namespace BrassLoon.Authorization.Core
         private readonly IRoleDataSaver _roleDataSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
 
-        public ClientFactory(IClientDataFactory dataFactory,
+        public ClientFactory(
+            IClientDataFactory dataFactory,
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,
@@ -31,7 +32,6 @@ namespace BrassLoon.Authorization.Core
             _roleFactory = roleFactory;
             _roleDataSaver = roleDataSaver;
             _emailAddressFactory = emailAddressFactory;
-
         }
 
         private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault, _roleFactory, _roleDataSaver, _emailAddressFactory);

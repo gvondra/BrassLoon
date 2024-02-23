@@ -12,17 +12,20 @@ namespace AuthorizationAPI
     public abstract class AuthorizationContollerBase : CommonControllerBase
     {
 #pragma warning disable CA1051 // Do not declare visible instance fields
+#pragma warning disable SA1401 // Fields should be private
         protected readonly IOptions<Settings> _settings;
         protected readonly SettingsFactory _settingsFactory;
         protected readonly IExceptionService _exceptionService;
         protected readonly IDomainService _domainService;
+#pragma warning restore SA1401 // Fields should be private
 #pragma warning restore CA1051 // Do not declare visible instance fields
         private readonly MapperFactory _mapperFactory;
         private BrassLoon.Interface.Log.ISettings _loggSettings;
         private BrassLoon.Interface.Account.ISettings _accountSettings;
         private CoreSettings _coreSettings;
 
-        protected AuthorizationContollerBase(IOptions<Settings> settings,
+        protected AuthorizationContollerBase(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,

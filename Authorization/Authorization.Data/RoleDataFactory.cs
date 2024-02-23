@@ -11,7 +11,8 @@ namespace BrassLoon.Authorization.Data
 {
     public class RoleDataFactory : DataFactoryBase<RoleData>, IRoleDataFactory
     {
-        public RoleDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public RoleDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task<RoleData> Get(ISqlSettings settings, Guid id)
         {
@@ -19,7 +20,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
             };
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetRole]",
                 Create,
@@ -34,7 +36,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId)
             };
-            return await _genericDataFactory.GetData(settings,
+            return await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetRole_by_DomainId]",
                 Create,
@@ -49,7 +52,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "clientId", DbType.Guid, clientId)
             };
-            return await _genericDataFactory.GetData(settings,
+            return await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetRole_by_ClientId]",
                 Create,
@@ -64,7 +68,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "userId", DbType.Guid, userId)
             };
-            return await _genericDataFactory.GetData(settings,
+            return await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetRole_by_UserId]",
                 Create,

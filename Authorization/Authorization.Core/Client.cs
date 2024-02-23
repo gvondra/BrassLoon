@@ -28,7 +28,8 @@ namespace BrassLoon.Authorization.Core
         private IEmailAddress _userEmailAddress;
         private bool _userEmailChanged;
 
-        public Client(ClientData data,
+        public Client(
+            ClientData data,
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,
@@ -125,8 +126,7 @@ namespace BrassLoon.Authorization.Core
         public static byte[] HashSecret(string value, byte[] salt)
         {
             Argon2i argon = new Argon2i(
-                Encoding.UTF8.GetBytes(value)
-                )
+                Encoding.UTF8.GetBytes(value))
             {
                 DegreeOfParallelism = 4,
                 MemorySize = 20480,

@@ -30,7 +30,8 @@ namespace AuthorizationAPI.Controllers
         private readonly IUserSaver _userSaver;
         private readonly ITokenClaimGenerator _tokenClaimGenerator;
 
-        public TokenController(IOptions<Settings> settings,
+        public TokenController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<TokenController> logger,
@@ -51,7 +52,6 @@ namespace AuthorizationAPI.Controllers
             _userFactory = userFactory;
             _userSaver = userSaver;
             _tokenClaimGenerator = tokenClaimGenerator;
-
         }
 
         [HttpPost("{domainId}")]
@@ -180,8 +180,7 @@ namespace AuthorizationAPI.Controllers
             IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(coreSettings, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
-                );
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId));
         }
 
         [NonAction]
@@ -190,8 +189,7 @@ namespace AuthorizationAPI.Controllers
             IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(coreSettings, client, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
-                );
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId));
         }
 
         private static DateTime CreateExpiration() => DateTime.UtcNow.AddHours(6);

@@ -1,17 +1,18 @@
-﻿using BrassLoon.Authorization.Data.Framework;
+﻿using System;
+using System.Collections;
+using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
+using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.DataClient;
-using System;
-using System.Data.Common;
-using System.Data;
-using System.Threading.Tasks;
-using System.Collections;
 
 namespace BrassLoon.Authorization.Data
 {
     public class UserDataSaver : DataSaverBase, IUserDataSaver
     {
-        public UserDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public UserDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, UserData data)
         {

@@ -5,12 +5,7 @@ namespace AuthorizationAPI
 {
     public class MapperFactory
     {
-        private static readonly MapperConfiguration _configuration;
-
-        static MapperFactory()
-        {
-            _configuration = new MapperConfiguration(LoadConfiguration);
-        }
+        private static readonly MapperConfiguration _configuration = new MapperConfiguration(LoadConfiguration);
 
         private static void LoadConfiguration(IMapperConfigurationExpression config)
         {

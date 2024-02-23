@@ -10,7 +10,8 @@ namespace BrassLoon.Authorization.Data
 {
     public class EmailAddressDataFactory : DataFactoryBase<EmailAddressData>, IEmailAddressDataFactory
     {
-        public EmailAddressDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public EmailAddressDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task<EmailAddressData> Get(ISqlSettings settings, Guid id)
         {
@@ -18,7 +19,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id)
             };
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetEmailAddress]",
                 Create,
@@ -33,7 +35,8 @@ namespace BrassLoon.Authorization.Data
             {
                 DataUtil.CreateParameter(_providerFactory, "addressHash", DbType.Binary, hash)
             };
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetEmailAddress_by_AddressHash]",
                 Create,

@@ -11,7 +11,8 @@ namespace BrassLoon.Authorization.Data
 {
     public class ClientDataSaver : DataSaverBase, IClientDataSaver
     {
-        public ClientDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public ClientDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, ClientData data)
         {

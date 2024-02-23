@@ -14,7 +14,7 @@ namespace BrassLoon.Authorization.Core
 {
     public class RoleFactory : IRoleFactory
     {
-        private static CachePolicy m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static CachePolicy _domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly IRoleDataFactory _dataFactory;
         private readonly IRoleDataSaver _dataSaver;
 
@@ -52,12 +52,13 @@ namespace BrassLoon.Authorization.Core
 
         public Task<IEnumerable<IRole>> GetByDomainId(ISettings settings, Guid domainId)
         {
-            return m_domainCache.Execute(async context =>
-            {
-                return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
-                .Select<RoleData, IRole>(Create);
-            },
-            new Context(domainId.ToString("D")));
+            return _domainCache.Execute(
+                async context =>
+                {
+                    return (await _dataFactory.GetByDomainId(new CommonCore.DataSettings(settings), domainId))
+                    .Select<RoleData, IRole>(Create);
+                },
+                new Context(domainId.ToString("D")));
         }
 
         public async Task<IEnumerable<IRole>> GetByClientId(ISettings settings, Guid clientId)
@@ -72,6 +73,6 @@ namespace BrassLoon.Authorization.Core
                 .Select<RoleData, IRole>(Create);
         }
 
-        public static void ClearCache() => m_domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        public static void ClearCache() => _domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
     }
 }

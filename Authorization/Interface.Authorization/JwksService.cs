@@ -18,19 +18,20 @@ namespace BrassLoon.Interface.Authorization
         {
             if (domainId.Equals(Guid.Empty))
                 throw new ArgumentNullException(nameof(domainId));
-            return await _cache.ExecuteAsync(async context =>
-            {
-                return await RetryPolicy().ExecuteAsync(async () =>
+            return await _cache.ExecuteAsync(
+                async context =>
                 {
-                    using (GrpcChannel channel = GrpcChannel.ForAddress(address))
+                    return await RetryPolicy().ExecuteAsync(async () =>
                     {
-                        Protos.JwksService.JwksServiceClient client = new Protos.JwksService.JwksServiceClient(channel);
-                        Protos.GetJwksResponse response = await client.GetAsync(new Protos.GetByDomainRequest { DomainId = domainId.ToString("D") });
-                        return response.Token;
-                    }
-                });
-            },
-            new Context());
+                        using (GrpcChannel channel = GrpcChannel.ForAddress(address))
+                        {
+                            Protos.JwksService.JwksServiceClient client = new Protos.JwksService.JwksServiceClient(channel);
+                            Protos.GetJwksResponse response = await client.GetAsync(new Protos.GetByDomainRequest { DomainId = domainId.ToString("D") });
+                            return response.Token;
+                        }
+                    });
+                },
+                new Context());
         }
 
         private static AsyncRetryPolicy RetryPolicy()

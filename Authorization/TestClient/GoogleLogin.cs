@@ -1,14 +1,14 @@
-﻿using System.IO;
-using System.Net;
-using System.Threading.Tasks;
-using System;
-using System.Security.Cryptography;
-using System.Text;
-using System.Net.Sockets;
-using System.Globalization;
-using Newtonsoft.Json;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace BrassLoon.Authorization.TestClient
 {
@@ -30,7 +30,9 @@ namespace BrassLoon.Authorization.TestClient
             httpListener.Start();
 
             // Creates the OAuth 2.0 authorization request.
-            string authorizationRequest = string.Format(CultureInfo.InvariantCulture, "{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
+            string authorizationRequest = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
                 settings.GoogleAuthorizationEndpoint,
                 Uri.EscapeDataString(redirectURI),
                 settings.GoogleClientId,
@@ -98,13 +100,14 @@ namespace BrassLoon.Authorization.TestClient
             Console.WriteLine("Exchanging code for tokens...");
 
             // builds the  request
-            string tokenRequestBody = string.Format(CultureInfo.InvariantCulture, "code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
+            string tokenRequestBody = string.Format(
+                CultureInfo.InvariantCulture,
+                "code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
                 code,
                 Uri.EscapeDataString(redirectURI),
                 settings.GoogleClientId,
                 code_verifier,
-                settings.GoogleClientSecret
-                );
+                settings.GoogleClientSecret);
 
             // sends the request
             HttpWebRequest tokenRequest = (HttpWebRequest)WebRequest.Create(settings.GoogleTokenEndpoint);
@@ -132,25 +135,21 @@ namespace BrassLoon.Authorization.TestClient
 
                     AccessToken.Get.GoogleToken = tokenEndpointDecoded;
 
-                    //string access_token = tokenEndpointDecoded["access_token"];
-                    //UserinfoCall(access_token);
+                    // string access_token = tokenEndpointDecoded["access_token"];
+                    // UserinfoCall(access_token);
                 }
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse response)
                 {
-                    if (ex.Response is HttpWebResponse response)
+                    Console.WriteLine("HTTP: " + response.StatusCode);
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
-                        Console.WriteLine("HTTP: " + response.StatusCode);
-                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                        {
-                            // reads response body
-                            string responseText = await reader.ReadToEndAsync();
-                            Console.WriteLine(responseText);
-                        }
+                        // reads response body
+                        string responseText = await reader.ReadToEndAsync();
+                        Console.WriteLine(responseText);
                     }
-
                 }
             }
         }
@@ -185,7 +184,7 @@ namespace BrassLoon.Authorization.TestClient
             base64 = base64.Replace("+", "-");
             base64 = base64.Replace("/", "_");
             // Strips padding.
-            base64 = base64.Replace("=", "");
+            base64 = base64.Replace("=", string.Empty);
 
             return base64;
         }

@@ -11,12 +11,14 @@ namespace BrassLoon.Authorization.Data
 {
     public class ClientDataFactory : DataFactoryBase<ClientData>, IClientDataFactory
     {
-        public ClientDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public ClientDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task<ClientData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetClient]",
                 Create,
@@ -28,7 +30,8 @@ namespace BrassLoon.Authorization.Data
         public async Task<IEnumerable<ClientData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            return await _genericDataFactory.GetData(settings,
+            return await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetClient_by_DomainId]",
                 Create,

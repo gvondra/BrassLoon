@@ -26,23 +26,25 @@ namespace BrassLoon.Interface.Authorization
             {
                 { "Authorization", string.Format(CultureInfo.InvariantCulture, "Bearer {0}", token) }
             };
-            return await _cache.ExecuteAsync(async context =>
-            {
-                Protos.TokenResponse tokenResponse = await GetRetryPolicy().ExecuteAsync(async () =>
+            return await _cache.ExecuteAsync(
+                async context =>
                 {
-                    using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                    Protos.TokenResponse tokenResponse = await GetRetryPolicy().ExecuteAsync(async () =>
                     {
-                        Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
-                        return await client.CreateAsync(new Protos.GetByDomainRequest
+                        using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
                         {
-                            DomainId = domainId.ToString("D")
-                        },
-                        headers: headers);
-                    }
-                });
-                return tokenResponse.Value;
-            },
-            new Context(GetCacheKey(token)));
+                            Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
+                            return await client.CreateAsync(
+                                new Protos.GetByDomainRequest
+                                {
+                                    DomainId = domainId.ToString("D")
+                                },
+                                headers: headers);
+                        }
+                    });
+                    return tokenResponse.Value;
+                },
+                new Context(GetCacheKey(token)));
         }
 
         public async Task<string> CreateClientCredential(ISettings settings, Guid domainId, ClientCredential clientCredential)
@@ -53,24 +55,25 @@ namespace BrassLoon.Interface.Authorization
                 throw new ArgumentException("Missing client id value");
             if (string.IsNullOrEmpty(clientCredential?.Secret))
                 throw new ArgumentException("Missing client secret value");
-            return await _cache.ExecuteAsync(async context =>
-            {
-                Protos.TokenResponse response = await GetRetryPolicy().ExecuteAsync(async () =>
+            return await _cache.ExecuteAsync(
+                async context =>
                 {
-                    using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
+                    Protos.TokenResponse response = await GetRetryPolicy().ExecuteAsync(async () =>
                     {
-                        Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
-                        return await client.CreateClientCredentialAsync(new Protos.ClientCredential
+                        using (GrpcChannel channel = GrpcChannel.ForAddress(settings.BaseAddress))
                         {
-                            ClientId = clientCredential.ClientId.Value.ToString("D"),
-                            Secret = clientCredential.Secret,
-                            DomainId = domainId.ToString("D")
-                        });
-                    }
-                });
-                return response.Value;
-            },
-            new Context(GetCacheKey(clientCredential)));
+                            Protos.TokenService.TokenServiceClient client = new Protos.TokenService.TokenServiceClient(channel);
+                            return await client.CreateClientCredentialAsync(new Protos.ClientCredential
+                            {
+                                ClientId = clientCredential.ClientId.Value.ToString("D"),
+                                Secret = clientCredential.Secret,
+                                DomainId = domainId.ToString("D")
+                            });
+                        }
+                    });
+                    return response.Value;
+                },
+                new Context(GetCacheKey(clientCredential)));
         }
 
         public Task<string> CreateClientCredential(ISettings settings, Guid domainId, Guid clientId, string secret)

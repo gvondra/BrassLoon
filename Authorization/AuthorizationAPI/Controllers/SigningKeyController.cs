@@ -1,18 +1,18 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonAPI;
 using BrassLoon.Interface.Account;
+using BrassLoon.Interface.Authorization.Models;
 using BrassLoon.Interface.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using BrassLoon.Interface.Authorization.Models;
-using BrassLoon.CommonAPI;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AuthorizationAPI.Controllers
 {
@@ -23,7 +23,8 @@ namespace AuthorizationAPI.Controllers
         private readonly ILogger<SigningKeyController> _logger;
         private readonly ISigningKeyFactory _signingKeyFactory;
         private readonly ISigningKeySaver _signingKeySaver;
-        public SigningKeyController(IOptions<Settings> settings,
+        public SigningKeyController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<SigningKeyController> logger,
@@ -54,7 +55,7 @@ namespace AuthorizationAPI.Controllers
                     CoreSettings coreSettings = CreateCoreSettings();
                     IMapper mapper = CreateMapper();
                     IEnumerable<ISigningKey> innerSigningKeys = await _signingKeyFactory.GetByDomainId(coreSettings, domainId.Value);
-                    result = Ok(innerSigningKeys.Select<ISigningKey, SigningKey>(mapper.Map<SigningKey>));
+                    result = Ok(innerSigningKeys.Select(mapper.Map<SigningKey>));
                 }
             }
             catch (Exception ex)
@@ -84,8 +85,7 @@ namespace AuthorizationAPI.Controllers
                     _ = mapper.Map(signingKey, innerSigningKey);
                     await _signingKeySaver.Create(coreSettings, innerSigningKey);
                     result = Ok(
-                        mapper.Map<SigningKey>(innerSigningKey)
-                        );
+                        mapper.Map<SigningKey>(innerSigningKey));
                 }
             }
             catch (Exception ex)
@@ -121,8 +121,7 @@ namespace AuthorizationAPI.Controllers
                     _ = mapper.Map(signingKey, innerSigningKey);
                     await _signingKeySaver.Update(coreSettings, innerSigningKey);
                     result = Ok(
-                        mapper.Map<SigningKey>(innerSigningKey)
-                        );
+                        mapper.Map<SigningKey>(innerSigningKey));
                 }
             }
             catch (Exception ex)

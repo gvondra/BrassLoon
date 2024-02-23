@@ -26,7 +26,8 @@ namespace AuthorizationAPI.Controllers
         private readonly IEmailAddressFactory _emailAddressFactory;
         private readonly ISecretGenerator _secretGenerator;
 
-        public ClientController(IOptions<Settings> settings,
+        public ClientController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<ClientController> logger,
@@ -108,8 +109,7 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     IEnumerable<IClient> innerClients = await _clientFactory.GetByDomainId(coreSettings, domainId.Value);
                     result = Ok(await Task.WhenAll(
-                        innerClients.Select(c => MapClient(coreSettings, mapper, c))
-                        ));
+                        innerClients.Select(c => MapClient(coreSettings, mapper, c))));
                 }
             }
             catch (Exception ex)
@@ -175,8 +175,7 @@ namespace AuthorizationAPI.Controllers
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Create(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
-                        await MapClient(coreSettings, mapper, innerClient)
-                        );
+                        await MapClient(coreSettings, mapper, innerClient));
                 }
             }
             catch (Exception ex)
@@ -219,8 +218,7 @@ namespace AuthorizationAPI.Controllers
                         await ApplyRoleChanges(coreSettings, innerClient, client.Roles);
                     await _clientSaver.Update(coreSettings, innerClient, userEmailAddress);
                     result = Ok(
-                        await MapClient(coreSettings, mapper, innerClient)
-                        );
+                        await MapClient(coreSettings, mapper, innerClient));
                 }
             }
             catch (Exception ex)

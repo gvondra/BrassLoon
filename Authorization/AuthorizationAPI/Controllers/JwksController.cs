@@ -22,7 +22,8 @@ namespace AuthorizationAPI.Controllers
         private readonly ILogger<JwksController> _logger;
         private readonly ISigningKeyFactory _signingKeyFactory;
 
-        public JwksController(IOptions<Settings> settings,
+        public JwksController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<JwksController> logger,
@@ -66,8 +67,7 @@ namespace AuthorizationAPI.Controllers
                     {
                         result = Content(
                             JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }),
-                            "appliation/json"
-                            );
+                            "appliation/json");
                     }
                 }
                 if (result == null)

@@ -1,14 +1,14 @@
-﻿using BrassLoon.Authorization.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BrassLoon.Authorization.Framework;
 using BrassLoon.Interface.Authorization.Protos;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
 using Protos = BrassLoon.Interface.Authorization.Protos;
 
 namespace AuthorizationRPC.Services
@@ -45,7 +45,7 @@ namespace AuthorizationRPC.Services
                     jsonWebKey.Use = "sig";
                     jsonWebKeySet.Keys.Add(jsonWebKey);
                 }
-                return new Protos.GetJwksResponse
+                return new GetJwksResponse
                 {
                     Token = JsonConvert.SerializeObject(jsonWebKeySet, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() })
                 };

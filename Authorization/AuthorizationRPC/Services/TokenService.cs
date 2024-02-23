@@ -174,8 +174,7 @@ namespace AuthorizationRPC.Services
             IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(coreSettings, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(coreSettings, true);
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
-                );
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId));
         }
 
         private async Task<string> CreateToken(CoreSettings settings, IClient client, ISigningKey signingKey, IUser user = null)
@@ -183,8 +182,7 @@ namespace AuthorizationRPC.Services
             IEnumerable<Claim> claims = await _tokenClaimGenerator.Generate(settings, client, user);
             RsaSecurityKey rsaSecurityKey = await signingKey.GetKey(settings, true);
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId)
-                );
+                JwtSecurityTokenUtility.Create(rsaSecurityKey, _settings.Value.TokenIssuer, _settings.Value.TokenIssuer, claims, CreateExpiration, JwtSecurityTokenUtility.CreateJwtId));
         }
 
         private static DateTime CreateExpiration() => DateTime.UtcNow.AddHours(6);

@@ -11,12 +11,14 @@ namespace BrassLoon.Authorization.Data
 {
     public class UserDataFactory : DataFactoryBase<UserData>, IUserDataFactory
     {
-        public UserDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public UserDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task<UserData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetUser]",
                 Create,
@@ -28,7 +30,8 @@ namespace BrassLoon.Authorization.Data
         public Task<IEnumerable<UserData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
-            return _genericDataFactory.GetData(settings,
+            return _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetUser_by_DomainId]",
                 Create,
@@ -43,7 +46,8 @@ namespace BrassLoon.Authorization.Data
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(_providerFactory, "addressHash", DbType.Binary, hash)
             };
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetUser_by_EmailAddressHash]",
                 Create,
@@ -59,7 +63,8 @@ namespace BrassLoon.Authorization.Data
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(_providerFactory, "referenceId", DbType.AnsiString, referenceId)
             };
-            return (await _genericDataFactory.GetData(settings,
+            return (await _genericDataFactory.GetData(
+                settings,
                 _providerFactory,
                 "[blt].[GetUser_by_ReferenceId]",
                 Create,

@@ -10,7 +10,8 @@ namespace BrassLoon.Authorization.Data
 {
     public class EmailAddressDataSaver : DataSaverBase, IEmailAddressDataSaver
     {
-        public EmailAddressDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public EmailAddressDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData data)
         {

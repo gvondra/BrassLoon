@@ -4,7 +4,8 @@ namespace AuthorizationRPC
 {
     public class CoreSettings : BrassLoon.CommonAPI.CoreSettings, ISettings
     {
-        public CoreSettings(Settings settings) : base(settings) { }
+        public CoreSettings(Settings settings)
+            : base(settings) { }
 
         public string SigningKeyVaultAddress { get; set; }
 

@@ -22,7 +22,8 @@ namespace BrassLoon.Authorization.Core
         private List<IRole> _addRoles;
         private List<IRole> _removeRoles;
 
-        public User(UserData data,
+        public User(
+            UserData data,
             IUserDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory,
             IRoleFactory role,
@@ -139,8 +140,7 @@ namespace BrassLoon.Authorization.Core
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException(nameof(address));
             return SetEmailAddress(
-                await _emailAddressFactory.GetByAddress(settings, address)
-                );
+                await _emailAddressFactory.GetByAddress(settings, address));
         }
 
         public async Task Update(ITransactionHandler transactionHandler)

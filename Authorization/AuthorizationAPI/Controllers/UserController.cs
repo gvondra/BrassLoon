@@ -24,7 +24,8 @@ namespace AuthorizationAPI.Controllers
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
-        public UserController(IOptions<Settings> settings,
+        public UserController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<UserController> logger,
@@ -81,8 +82,7 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     IEnumerable<Task<User>> users = innerUsers.Select(u => MapUser(coreSettings, mapper, u));
                     result = Ok(
-                        await Task.WhenAll(users)
-                        );
+                        await Task.WhenAll(users));
                 }
                 if (result == null)
                 {
@@ -129,8 +129,7 @@ namespace AuthorizationAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            await MapUser(coreSettings, mapper, innerUser)
-                            );
+                            await MapUser(coreSettings, mapper, innerUser));
                     }
                 }
             }
@@ -224,8 +223,7 @@ namespace AuthorizationAPI.Controllers
                         await ApplyRoleChanges(coreSettings, innerUser, user.Roles);
                     await _userSaver.Update(coreSettings, innerUser);
                     result = Ok(
-                        await MapUser(coreSettings, mapper, innerUser)
-                        );
+                        await MapUser(coreSettings, mapper, innerUser));
                 }
             }
             catch (Exception ex)

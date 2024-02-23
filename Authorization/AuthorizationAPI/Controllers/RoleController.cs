@@ -24,7 +24,8 @@ namespace AuthorizationAPI.Controllers
         private readonly IRoleFactory _roleFactory;
         private readonly IRoleSaver _roleSaver;
 
-        public RoleController(IOptions<Settings> settings,
+        public RoleController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<RoleController> logger,
@@ -61,8 +62,7 @@ namespace AuthorizationAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _roleFactory.GetByDomainId(coreSettings, domainId.Value))
-                        .Select(mapper.Map<Role>)
-                        );
+                        .Select(mapper.Map<Role>));
                 }
             }
             catch (Exception ex)
