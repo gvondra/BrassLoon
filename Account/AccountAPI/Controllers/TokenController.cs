@@ -32,7 +32,8 @@ namespace AccountAPI.Controllers
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
-        public TokenController(IOptions<Settings> settings,
+        public TokenController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<TokenController> logger,
@@ -174,8 +175,7 @@ namespace AccountAPI.Controllers
             if ((user.Roles & UserRole.AccountAdministrator) == UserRole.AccountAdministrator)
                 claims.Add(new Claim("role", "actadmin"));
             return JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
-                );
+                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration));
         }
 
         [NonAction]
@@ -187,8 +187,7 @@ namespace AccountAPI.Controllers
                 new Claim("accounts", client.AccountId.ToString("N"))
             };
             return Task.FromResult(JwtSecurityTokenUtility.Write(
-                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)
-                ));
+                JwtSecurityTokenUtility.Create(_settings.Value.TknCsp, JWT_ISSUER, JWT_AUDIENCE, claims, GetJwtExpiration)));
         }
 
         [NonAction]
@@ -197,8 +196,7 @@ namespace AccountAPI.Controllers
             return string.Join(
                 ' ',
                 (await accountFactory.GetAccountIdsByUserId(settingsFactory.CreateCore(_settings.Value), userId))
-                .Select(g => g.ToString("N"))
-                );
+                .Select(g => g.ToString("N")));
         }
 
         private static DateTime GetJwtExpiration() => DateTime.Now.AddHours(6);

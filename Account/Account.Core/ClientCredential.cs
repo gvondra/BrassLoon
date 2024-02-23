@@ -13,7 +13,8 @@ namespace BrassLoon.Account.Core
         private readonly IClientCredentialDataSaver _dataSaver;
         private readonly IClient _client;
 
-        public ClientCredential(IClient client,
+        public ClientCredential(
+            IClient client,
             ClientCredentialData data,
             IClientCredentialDataSaver dataSaver)
         {

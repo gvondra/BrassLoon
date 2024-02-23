@@ -14,6 +14,7 @@ namespace AccountAPI
     public abstract class AccountControllerBase : CommonControllerBase
     {
 #pragma warning disable CA1051 // Do not declare visible instance fields
+#pragma warning disable SA1401 // Fields should be private
         protected readonly IOptions<Settings> _settings;
         protected readonly SettingsFactory _settingsFactory;
         protected readonly IExceptionService _exceptionService;
@@ -21,8 +22,10 @@ namespace AccountAPI
         private BrassLoon.Interface.Log.ISettings _loggSettings;
         private CoreSettings _coreSettings;
 #pragma warning restore CA1051 // Do not declare visible instance fields
+#pragma warning restore SA1401 // Fields should be private
 
-        protected AccountControllerBase(IOptions<Settings> settings,
+        protected AccountControllerBase(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory)
@@ -47,8 +50,7 @@ namespace AccountAPI
             if (!result)
             {
                 result = User.Claims.Any(
-                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals("actadmin", c.Value, StringComparison.OrdinalIgnoreCase)
-                    );
+                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals("actadmin", c.Value, StringComparison.OrdinalIgnoreCase));
             }
             return result;
         }

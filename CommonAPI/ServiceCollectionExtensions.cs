@@ -38,8 +38,7 @@ namespace BrassLoon.CommonAPI
         {
             HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
             JsonWebKeySet keySet = JsonWebKeySet.Create(
-                documentRetriever.GetDocumentAsync(configuration["JwkAddress"], new System.Threading.CancellationToken()).Result
-                );
+                documentRetriever.GetDocumentAsync(configuration["JwkAddress"], System.Threading.CancellationToken.None).Result);
             _ = builder.AddJwtBearer(Constants.AUTH_SCHEME_BRASSLOON, o =>
             {
                 o.TokenValidationParameters = new TokenValidationParameters
@@ -68,8 +67,7 @@ namespace BrassLoon.CommonAPI
         {
             HttpDocumentRetriever documentRetriever = new HttpDocumentRetriever() { RequireHttps = false };
             JsonWebKeySet keySet = JsonWebKeySet.Create(
-                documentRetriever.GetDocumentAsync(configuration["GoogleJwksUrl"], new System.Threading.CancellationToken()).Result
-                );
+                documentRetriever.GetDocumentAsync(configuration["GoogleJwksUrl"], System.Threading.CancellationToken.None).Result);
             List<string> audiences = GetGoogleAudiences(configuration);
             _ = builder.AddJwtBearer(Constants.AUTH_SCHEME_GOOGLE, o =>
             {
@@ -156,7 +154,8 @@ namespace BrassLoon.CommonAPI
             {
                 additinalPolicies = additinalPolicies.Concat(new List<string> { policyName });
             }
-            authorizationOptions.AddPolicy(policyName,
+            authorizationOptions.AddPolicy(
+                policyName,
                 configure =>
                 {
                     _ = configure.AddRequirements(new AuthorizationRequirement(policyName, issuer, additinalPolicies.ToArray()))
@@ -168,7 +167,8 @@ namespace BrassLoon.CommonAPI
 
         public static AuthorizationOptions AddPolicyWithoutRoles(this AuthorizationOptions authorizationOptions, string policyName, string schema, string issuer)
         {
-            authorizationOptions.AddPolicy(policyName,
+            authorizationOptions.AddPolicy(
+                policyName,
                 configure =>
                 {
                     _ = configure.AddRequirements(new AuthorizationRequirement(policyName, issuer))

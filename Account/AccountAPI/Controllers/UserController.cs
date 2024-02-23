@@ -23,7 +23,8 @@ namespace AccountAPI.Controllers
         private readonly IUserFactory _userFactory;
         private readonly IUserSaver _userSaver;
 
-        public UserController(IOptions<Settings> settings,
+        public UserController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Log.IExceptionService exceptionService,
             ILogger<UserController> logger,
@@ -37,7 +38,7 @@ namespace AccountAPI.Controllers
             _userSaver = userSaver;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize("ADMIN:SYS")]
         public async Task<IActionResult> Search([FromQuery] string emailAddress)
         {

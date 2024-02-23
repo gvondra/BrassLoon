@@ -28,8 +28,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUser]",
                 () => new UserData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<UserData> GetByReferenceId(ISqlSettings settings, string referenceId)
@@ -41,8 +40,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUserByReferenceId]",
                 () => new UserData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<IEnumerable<UserData>> GetByEmailAddress(ISqlSettings settings, string emailAddress)
@@ -54,8 +52,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUserByEmailAddress]",
                 () => new UserData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                );
+                new List<IDataParameter> { parameter });
         }
 
         public async Task<IEnumerable<UserData>> GetByAccountId(ISqlSettings settings, Guid accountId)
@@ -67,8 +64,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUserByAccountId]",
                 () => new UserData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                );
+                new List<IDataParameter> { parameter });
         }
     }
 }

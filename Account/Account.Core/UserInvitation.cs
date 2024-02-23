@@ -16,7 +16,8 @@ namespace BrassLoon.Account.Core
         private readonly IEmailAddressFactory _emailAddressFactory;
         private IEmailAddress _emailAddress;
 
-        public UserInvitation(UserInvitationData data,
+        public UserInvitation(
+            UserInvitationData data,
             IUserInvitationDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory)
         {
@@ -25,11 +26,13 @@ namespace BrassLoon.Account.Core
             _emailAddressFactory = emailAddressFactory;
         }
 
-        public UserInvitation(UserInvitationData data,
+        public UserInvitation(
+            UserInvitationData data,
             IUserInvitationDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory,
             IAccount account,
-            IEmailAddress emailAddress) : this(data, dataSaver, emailAddressFactory)
+            IEmailAddress emailAddress)
+            : this(data, dataSaver, emailAddressFactory)
         {
             _account = account;
             _emailAddress = emailAddress;

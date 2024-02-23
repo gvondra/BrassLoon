@@ -27,21 +27,22 @@ namespace BrassLoon.Interface.Account
         public async Task<string> Create(ISettings settings)
         {
             string token = await settings.GetToken();
-            return await _cache.ExecuteAsync(async context =>
-            {
-                UriBuilder builder = new UriBuilder(settings.BaseAddress);
-                builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token").Trim('/');
-                IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
+            return await _cache.ExecuteAsync(
+                async context =>
                 {
-                    IRequest request = _service.CreateRequest(builder.Uri, HttpMethod.Post);
-                    _ = request.AddJwtAuthorizationToken(token);
-                    IResponse<string> innerResponse = await _service.Send<string>(request);
-                    _restUtil.CheckSuccess(innerResponse);
-                    return innerResponse;
-                });
-                return response.Value;
-            },
-            new Context(string.Format(CultureInfo.InvariantCulture, "Create_{0}", Hash(token))));
+                    UriBuilder builder = new UriBuilder(settings.BaseAddress);
+                    builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token").Trim('/');
+                    IResponse<string> response = await GetRetryPolicy<string>().ExecuteAsync(async () =>
+                    {
+                        IRequest request = _service.CreateRequest(builder.Uri, HttpMethod.Post);
+                        _ = request.AddJwtAuthorizationToken(token);
+                        IResponse<string> innerResponse = await _service.Send<string>(request);
+                        _restUtil.CheckSuccess(innerResponse);
+                        return innerResponse;
+                    });
+                    return response.Value;
+                },
+                new Context(string.Format(CultureInfo.InvariantCulture, "Create_{0}", Hash(token))));
         }
 
         public async Task<string> CreateClientCredentialToken(ISettings settings, ClientCredential clientCredential)
@@ -52,20 +53,21 @@ namespace BrassLoon.Interface.Account
                 throw new ArgumentException($"Missing client id value");
             if (string.IsNullOrEmpty(clientCredential.Secret))
                 throw new ArgumentException($"Missing client secret value");
-            return await _cache.ExecuteAsync(async c =>
-            {
-                UriBuilder builder = new UriBuilder(settings.BaseAddress);
-                builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
-                IResponse<string> response = await GetRetryPolicy<string>()
-                .ExecuteAsync(async () =>
+            return await _cache.ExecuteAsync(
+                async c =>
                 {
-                    IResponse<string> innerResponse = await _service.Post<string>(builder.Uri, clientCredential);
-                    _restUtil.CheckSuccess(innerResponse);
-                    return innerResponse;
-                });
-                return response.Value;
-            },
-            new Context(GetCacheKey(clientCredential)));
+                    UriBuilder builder = new UriBuilder(settings.BaseAddress);
+                    builder.Path = string.Concat(builder.Path.Trim('/'), "/", "Token/ClientCredential").Trim('/');
+                    IResponse<string> response = await GetRetryPolicy<string>()
+                    .ExecuteAsync(async () =>
+                    {
+                        IResponse<string> innerResponse = await _service.Post<string>(builder.Uri, clientCredential);
+                        _restUtil.CheckSuccess(innerResponse);
+                        return innerResponse;
+                    });
+                    return response.Value;
+                },
+                new Context(GetCacheKey(clientCredential)));
         }
 
         public Task<string> CreateClientCredentialToken(ISettings settings, Guid clientId, string secret)

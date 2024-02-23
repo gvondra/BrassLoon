@@ -36,14 +36,12 @@ namespace BrassLoon.Account.Core
                 ClientCredential clientCredential = new ClientCredential(
                     client,
                     new ClientCredentialData() { Secret = secretProcessor.Hash(secret) },
-                    _clientCredentialDataSaver
-                    )
+                    _clientCredentialDataSaver)
                 {
                     IsActive = true
                 };
                 await saver.Save(new TransactionHandler(settings), async th => await UpdateClient(th, settings, client, clientCredential));
             }
-
         }
 
         private static async Task UpdateClient(ITransactionHandler transactionHandler, Framework.ISettings settings, IClient client, ClientCredential clientCredential)

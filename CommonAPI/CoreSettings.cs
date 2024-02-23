@@ -30,27 +30,28 @@ namespace BrassLoon.CommonAPI
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_settings.ConnectionString);
                 builder.UserID = _settings.ConnectionStringUser;
-                builder.Password = await _cache.Execute(async context =>
-                {
-                    SecretClientOptions options = new SecretClientOptions()
+                builder.Password = await _cache.Execute(
+                    async context =>
                     {
-                        Retry =
+                        SecretClientOptions options = new SecretClientOptions()
                         {
-                            Delay= TimeSpan.FromSeconds(2),
-                            MaxDelay = TimeSpan.FromSeconds(16),
-                            MaxRetries = 4,
-                            Mode = RetryMode.Exponential
-                         }
-                    };
-                    SecretClient client = new SecretClient(
-                        new Uri(_settings.KeyVaultAddress),
-                        AzureCredential.DefaultAzureCredential,
-                        options)
-                    ;
-                    KeyVaultSecret secret = await client.GetSecretAsync(_settings.ConnectionStringUser);
-                    return secret.Value;
-                },
-                new Context(_settings.ConnectionString.ToLower(CultureInfo.InvariantCulture).Trim()));
+                            Retry =
+                            {
+                                Delay = TimeSpan.FromSeconds(2),
+                                MaxDelay = TimeSpan.FromSeconds(16),
+                                MaxRetries = 4,
+                                Mode = RetryMode.Exponential
+                            }
+                        };
+                        SecretClient client = new SecretClient(
+                            new Uri(_settings.KeyVaultAddress),
+                            AzureCredential.DefaultAzureCredential,
+                            options)
+                        ;
+                        KeyVaultSecret secret = await client.GetSecretAsync(_settings.ConnectionStringUser);
+                        return secret.Value;
+                    },
+                    new Context(_settings.ConnectionString.ToLower(CultureInfo.InvariantCulture).Trim()));
                 result = builder.ConnectionString;
             }
             return result;

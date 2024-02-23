@@ -59,8 +59,7 @@ namespace BrassLoon.JwtUtility
                 audience,
                 claims,
                 expires: expiration(),
-                signingCredentials: credentials
-            );
+                signingCredentials: credentials);
         }
 
         public static string Write(JwtSecurityToken jwtSecurityToken) => new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);

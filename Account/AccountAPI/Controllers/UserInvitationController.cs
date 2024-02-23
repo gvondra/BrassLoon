@@ -30,7 +30,8 @@ namespace AccountAPI.Controllers
         private readonly IUserInvitationFactory _userInvitationFactory;
         private readonly IUserInvitationSaver _userInvitationSaver;
 
-        public UserInvitationController(IOptions<Settings> settings,
+        public UserInvitationController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<UserInvitationController> logger,
@@ -85,8 +86,7 @@ namespace AccountAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         await Task.WhenAll(
-                            innerInvitations.Select(innerInvitation => Map(mapper, settings, innerInvitation))
-                            ));
+                            innerInvitations.Select(innerInvitation => Map(mapper, settings, innerInvitation))));
                 }
             }
             catch (Exception ex)
@@ -136,8 +136,7 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            await Map(mapper, settings, innerInvitation)
-                            );
+                            await Map(mapper, settings, innerInvitation));
                     }
                 }
             }
@@ -150,7 +149,8 @@ namespace AccountAPI.Controllers
         }
 
         [NonAction]
-        private static async Task<IEmailAddress> GetEmailAddress(CoreSettings settings,
+        private static async Task<IEmailAddress> GetEmailAddress(
+            CoreSettings settings,
             IEmailAddressFactory emailAddressFactory,
             IEmailAddressSaver emailAddressSaver,
             string address)
@@ -210,8 +210,7 @@ namespace AccountAPI.Controllers
                             settings,
                             _emailAddressFactory,
                             _emailAddressSaver,
-                            userInvitation.EmailAddress
-                            );
+                            userInvitation.EmailAddress);
                         IUserInvitation innerInvitation = _userInvitationFactory.Create(account, emailAddress);
                         IMapper mapper = CreateMapper();
                         _ = mapper.Map(userInvitation, innerInvitation);

@@ -23,8 +23,7 @@ namespace BrassLoon.CommonAPI
             if (roles != null && roles.Length > 0)
             {
                 return Array.Exists(roles, role => user.Claims.Any(
-                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals(role, c.Value, StringComparison.OrdinalIgnoreCase)
-                    ));
+                    c => string.Equals(ClaimTypes.Role, c.Type, StringComparison.OrdinalIgnoreCase) && string.Equals(role, c.Value, StringComparison.OrdinalIgnoreCase)));
             }
             return true;
         }

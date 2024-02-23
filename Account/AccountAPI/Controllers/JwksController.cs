@@ -18,7 +18,8 @@ namespace AccountAPI.Controllers
     {
         private readonly ILogger<JwksController> _logger;
 
-        public JwksController(IOptions<Settings> settings,
+        public JwksController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,

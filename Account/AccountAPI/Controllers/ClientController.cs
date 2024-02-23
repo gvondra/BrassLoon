@@ -25,7 +25,8 @@ namespace AccountAPI.Controllers
         private readonly IClientFactory _clientFactory;
         private readonly IClientSaver _clientSaver;
 
-        public ClientController(IOptions<Settings> settings,
+        public ClientController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<ClientController> logger,
@@ -89,8 +90,7 @@ namespace AccountAPI.Controllers
                     IEnumerable<IClient> clients = await _clientFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        clients.Select(mapper.Map<Client>)
-                        );
+                        clients.Select(mapper.Map<Client>));
                 }
             }
             catch (Exception ex)
@@ -125,8 +125,7 @@ namespace AccountAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            mapper.Map<Client>(client)
-                            );
+                            mapper.Map<Client>(client));
                     }
                 }
             }
@@ -138,7 +137,7 @@ namespace AccountAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(Client), 200)]
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] ClientCredentialRequest client)

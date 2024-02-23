@@ -13,7 +13,8 @@ namespace BrassLoon.Account.Core
         private readonly AccountData _data;
         private readonly IAccountDataSaver _dataSaver;
 
-        public Account(AccountData accountData,
+        public Account(
+            AccountData accountData,
             IAccountDataSaver dataSaver)
         {
             _data = accountData;

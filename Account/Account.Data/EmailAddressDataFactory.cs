@@ -28,8 +28,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetEmailAddress]",
                 () => new EmailAddressData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<EmailAddressData> GetByAddress(ISqlSettings settings, string address)
@@ -41,8 +40,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetEmailAddressByAddress]",
                 () => new EmailAddressData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
     }
 }

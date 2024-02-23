@@ -12,7 +12,8 @@ namespace BrassLoon.Account.Core
         private readonly DomainData _data;
         private readonly IDomainDataSaver _dataSaver;
 
-        public Domain(DomainData data,
+        public Domain(
+            DomainData data,
             IDomainDataSaver dataSaver)
         {
             _data = data;

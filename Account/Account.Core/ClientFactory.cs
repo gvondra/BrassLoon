@@ -20,7 +20,8 @@ namespace BrassLoon.Account.Core
         private readonly ISecretProcessor _secretProcessor;
         private readonly IKeyVault _keyVault;
 
-        public ClientFactory(IClientDataFactory dataFactory,
+        public ClientFactory(
+            IClientDataFactory dataFactory,
             IClientDataSaver dataSaver,
             SettingsFactory settingsFactory,
             IClientCredentialDataSaver clientCredentialDataSaver,
@@ -61,8 +62,7 @@ namespace BrassLoon.Account.Core
                     {
                         Secret = secretProcessor.Hash(secret)
                     },
-                    _clientCredentialDataSaver
-                    )
+                    _clientCredentialDataSaver)
                 {
                     IsActive = true
                 };

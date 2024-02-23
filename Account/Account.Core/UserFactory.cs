@@ -15,7 +15,8 @@ namespace BrassLoon.Account.Core
         private readonly IUserDataSaver _dataSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
 
-        public UserFactory(SettingsFactory settingsFactory,
+        public UserFactory(
+            SettingsFactory settingsFactory,
             IUserDataFactory dataFactory,
             IUserDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory)

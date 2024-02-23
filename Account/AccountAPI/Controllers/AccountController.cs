@@ -24,7 +24,8 @@ namespace AccountAPI.Controllers
         private readonly IAccountSaver _accountSaver;
         private readonly IUserFactory _userFactory;
 
-        public AccountController(IOptions<Settings> settings,
+        public AccountController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<AccountController> logger,
@@ -40,7 +41,7 @@ namespace AccountAPI.Controllers
             _userFactory = userFactory;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(typeof(Account[]), 200)]
         [Authorize("READ:ACCOUNT")]
         public async Task<IActionResult> Search([FromQuery] string emailAddress)
@@ -70,8 +71,7 @@ namespace AccountAPI.Controllers
             IEnumerable<IAccount> accounts = await _accountFactory.GetByUserId(settings, user.UserId);
             IMapper mapper = CreateMapper();
             result = Ok(
-                accounts.Select(mapper.Map<Account>)
-                );
+                accounts.Select(mapper.Map<Account>));
             return result;
         }
 
@@ -89,11 +89,9 @@ namespace AccountAPI.Controllers
                 .SelectMany(results => results)
                 .Where(a => UserCanAccessAccount(a.AccountId))
                 .Select(mapper.Map<Account>)
-                .ToList()
-                );
+                .ToList());
             return result;
         }
-
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Account), 200)]
@@ -134,7 +132,7 @@ namespace AccountAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(Account), 200)]
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] Account account)
@@ -159,8 +157,7 @@ namespace AccountAPI.Controllers
                     _ = mapper.Map(account, innerAccount);
                     await _accountSaver.Create(settings, user.UserId, innerAccount);
                     result = Ok(
-                        mapper.Map<Account>(innerAccount)
-                        );
+                        mapper.Map<Account>(innerAccount));
                 }
             }
             catch (Exception ex)
@@ -209,8 +206,7 @@ namespace AccountAPI.Controllers
                         _ = mapper.Map(account, innerAccount);
                         await _accountSaver.Update(settings, innerAccount);
                         result = Ok(
-                            mapper.Map<Account>(innerAccount)
-                            );
+                            mapper.Map<Account>(innerAccount));
                     }
                 }
             }
@@ -328,8 +324,7 @@ namespace AccountAPI.Controllers
                     IEnumerable<IUser> innerUsers = await _userFactory.GetByAccountId(settings, accountId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerUsers.Select(mapper.Map<User>)
-                        );
+                        innerUsers.Select(mapper.Map<User>));
                 }
             }
             catch (Exception ex)

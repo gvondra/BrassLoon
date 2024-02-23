@@ -21,7 +21,8 @@ namespace BrassLoon.Account.Core
         private string _newSecret;
         private SecretType _newSecretType = SecretType.NotSet;
 
-        public Client(ClientData data,
+        public Client(
+            ClientData data,
             IClientDataSaver dataSaver,
             IClientCredentialDataFactory clientCredentialDataFactory,
             SettingsFactory settingsFactory,
@@ -56,7 +57,7 @@ namespace BrassLoon.Account.Core
         // set the client credential property when changing the client secret
         internal ClientCredential ClientCredentialChange { get; set; }
 
-        public async Task<bool> AuthenticateSecret(BrassLoon.Account.Framework.ISettings settings, string secret)
+        public async Task<bool> AuthenticateSecret(Framework.ISettings settings, string secret)
         {
             bool isAuthentic = false;
             if (IsActive && SecretType == SecretType.SHA512)
@@ -91,7 +92,7 @@ namespace BrassLoon.Account.Core
             ClientCredentialChange = null;
         }
 
-        public async Task<byte[]> GetSecretHash(BrassLoon.CommonCore.ISettings settings)
+        public async Task<byte[]> GetSecretHash(CommonCore.ISettings settings)
         {
             byte[] result = null;
             ClientCredentialData data = (await _clientCredentialDataFactory.GetByClientId(_settingsFactory.CreateData(settings), ClientId))
@@ -130,7 +131,7 @@ namespace BrassLoon.Account.Core
         }
 
         private async Task SaveSecret(
-            BrassLoon.Account.Framework.ISettings settings,
+            Framework.ISettings settings,
             string value,
             SecretType secretType)
         {

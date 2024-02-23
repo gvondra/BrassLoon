@@ -14,7 +14,8 @@ namespace BrassLoon.Account.Core
         private readonly IAccountDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
 
-        public AccountFactory(IAccountDataFactory dataFactory,
+        public AccountFactory(
+            IAccountDataFactory dataFactory,
             IAccountDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {

@@ -12,10 +12,11 @@ namespace BrassLoon.Account.Core
     {
         private readonly UserData _data;
         private readonly IEmailAddressFactory _emailAddressFactory;
-        private IEmailAddress _emailAddress;
         private readonly IUserDataSaver _dataSaver;
+        private IEmailAddress _emailAddress;
 
-        public User(UserData userData,
+        public User(
+            UserData userData,
             IEmailAddressFactory emailAddressFactory,
             IUserDataSaver dataSaver)
         {
@@ -24,7 +25,8 @@ namespace BrassLoon.Account.Core
             _dataSaver = dataSaver;
         }
 
-        public User(UserData userData,
+        public User(
+            UserData userData,
             IEmailAddressFactory emailAddressFactory,
             IUserDataSaver dataSaver,
             IEmailAddress emailAddress)

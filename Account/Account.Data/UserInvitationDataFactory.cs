@@ -31,8 +31,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUserInvitation]",
                 () => new UserInvitationData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                )).FirstOrDefault();
+                parameters)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<UserInvitationData>> GetByAccountId(ISqlSettings settings, Guid accountId)
@@ -47,8 +46,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetUserInvitationByAccountGuid]",
                 () => new UserInvitationData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                );
+                parameters);
         }
     }
 }

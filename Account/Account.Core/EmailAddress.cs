@@ -12,7 +12,8 @@ namespace BrassLoon.Account.Core
         private readonly EmailAddressData _emailAddressData;
         private readonly IEmailAddressDataSaver _dataSaver;
 
-        public EmailAddress(EmailAddressData emailAddressData,
+        public EmailAddress(
+            EmailAddressData emailAddressData,
             IEmailAddressDataSaver dataSaver)
         {
             _emailAddressData = emailAddressData;

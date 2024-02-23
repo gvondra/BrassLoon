@@ -75,35 +75,40 @@ namespace AccountAPI
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE, "BrassLoon")
                 .Build();
-                o.AddPolicy(POLICY_EDIT_USER,
+                o.AddPolicy(
+                    POLICY_EDIT_USER,
                     configure =>
                     {
                         _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_USER, configuration["GoogleIdIssuer"]))
                         .AddAuthenticationSchemes(Constants.AUTH_SCHEME_GOOGLE)
                         .Build();
                     });
-                o.AddPolicy(POLICY_READ_ACCOUNT,
+                o.AddPolicy(
+                    POLICY_READ_ACCOUNT,
                     configure =>
                     {
                         _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_READ_ACCOUNT, configuration["Issuer"]))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
-                o.AddPolicy(POLICY_EDIT_ACCOUNT,
+                o.AddPolicy(
+                    POLICY_EDIT_ACCOUNT,
                     configure =>
                     {
                         _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_EDIT_ACCOUNT, configuration["Issuer"]))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
-                o.AddPolicy(POLICY_ADMIN_ACCOUNT,
+                o.AddPolicy(
+                    POLICY_ADMIN_ACCOUNT,
                     configure =>
                     {
                         _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_ACCOUNT, configuration["Issuer"], "actadmin"))
                         .AddAuthenticationSchemes("BrassLoon")
                         .Build();
                     });
-                o.AddPolicy(POLICY_ADMIN_SYS,
+                o.AddPolicy(
+                    POLICY_ADMIN_SYS,
                     configure =>
                     {
                         _ = configure.AddRequirements(new AuthorizationRequirement(POLICY_ADMIN_SYS, configuration["Issuer"], "sysadmin"))

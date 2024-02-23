@@ -28,8 +28,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetClient]",
                 () => new ClientData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<IEnumerable<ClientData>> GetByAccountId(ISqlSettings settings, Guid accountId)
@@ -41,8 +40,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetClient_by_AccountId]",
                 () => new ClientData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                );
+                new List<IDataParameter> { parameter });
         }
     }
 }

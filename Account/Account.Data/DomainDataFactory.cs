@@ -28,8 +28,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetDomain]",
                 () => new DomainData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<DomainData> GetDeleted(ISqlSettings settings, Guid id)
@@ -41,8 +40,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetDeletedDomain]",
                 () => new DomainData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
         public async Task<IEnumerable<DomainData>> GetByAccountId(ISqlSettings settings, Guid accountId)
@@ -54,8 +52,7 @@ namespace BrassLoon.Account.Data
                 "[bla].[GetDomainByAccountId]",
                 () => new DomainData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                );
+                new List<IDataParameter> { parameter });
         }
     }
 }

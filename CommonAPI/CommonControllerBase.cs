@@ -19,7 +19,7 @@ namespace BrassLoon.CommonAPI
 {
     public abstract class CommonControllerBase : ControllerBase
     {
-        private static readonly Policy m_cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
+        private static readonly Policy _cache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), new SlidingTtl(TimeSpan.FromSeconds(90)));
 
         [NonAction]
         protected string GetAccessToken()
@@ -50,15 +50,14 @@ namespace BrassLoon.CommonAPI
             try
             {
                 string hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(accessToken)));
-                return await m_cache.Execute(async context =>
-                {
-                    return await domainService.GetAccountDomain(
-                    CreateAccountSettings(settings, accessToken),
-                    domainId
-                    );
-                },
-                new Context(string.Format(CultureInfo.InvariantCulture, "{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress))
-                );
+                return await _cache.Execute(
+                    async context =>
+                    {
+                        return await domainService.GetAccountDomain(
+                        CreateAccountSettings(settings, accessToken),
+                        domainId);
+                    },
+                    new Context(string.Format(CultureInfo.InvariantCulture, "{0:N}::{1}::{2}", domainId, hash, settings.AccountApiBaseAddress)));
             }
             catch (RestClient.Exceptions.RequestError ex)
             {
@@ -76,8 +75,7 @@ namespace BrassLoon.CommonAPI
             domainId,
             settings,
             GetAccessToken(),
-            domainService
-            );
+            domainService);
             return domain != null && !domain.Account.Locked && VerifyDomainAccount(domain);
         }
 
@@ -88,8 +86,7 @@ namespace BrassLoon.CommonAPI
                 domainId,
                 settings,
                 GetAccessToken(),
-                domainService
-                );
+                domainService);
             return VerifyDomainAccount(domain);
         }
 
@@ -107,7 +104,6 @@ namespace BrassLoon.CommonAPI
         [NonAction]
         protected string GetCurrentUserReferenceId()
             => User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
 
         [NonAction]
         protected abstract Interface.Account.ISettings CreateAccountSettings(CommonApiSettings settings, string accessToken);

@@ -23,7 +23,8 @@ namespace AccountAPI.Controllers
         private readonly IDomainFactory _domainFactory;
         private readonly IDomainSaver _domainSaver;
 
-        public DomainController(IOptions<Settings> settings,
+        public DomainController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<DomainController> logger,
@@ -65,8 +66,7 @@ namespace AccountAPI.Controllers
                         domains = await _domainFactory.GetByAccountId(settings, id.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        domains.Select(mapper.Map<Domain>)
-                        );
+                        domains.Select(mapper.Map<Domain>));
                 }
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace AccountAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(Domain), 200)]
         [Authorize("EDIT:ACCOUNT")]
         public async Task<IActionResult> Create([FromBody] Domain domain)

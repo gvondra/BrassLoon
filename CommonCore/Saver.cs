@@ -34,7 +34,6 @@ namespace BrassLoon.CommonCore
                     transactionHandler.Connection.Dispose();
                     transactionHandler.Connection = null;
                 }
-
             }
         }
     }
