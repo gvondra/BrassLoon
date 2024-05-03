@@ -25,7 +25,8 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskTypeSaver _workTaskTypeSaver;
 
-        public WorkTaskStatusController(IOptions<Settings> settings,
+        public WorkTaskStatusController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<WorkTaskStatusController> logger,
@@ -42,7 +43,7 @@ namespace WorkTaskAPI.Controllers
             _workTaskTypeSaver = workTaskTypeSaver;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<WorkTaskStatus>), 200)]
         public async Task<IActionResult> GetAll([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId)
@@ -68,8 +69,7 @@ namespace WorkTaskAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, workTaskTypeId.Value))
-                        .Select(mapper.Map<WorkTaskStatus>)
-                        );
+                        .Select(mapper.Map<WorkTaskStatus>));
                 }
             }
             catch (Exception ex)
@@ -116,8 +116,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            mapper.Map<WorkTaskStatus>(innerWorkTaskStatus)
-                            );
+                            mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
                     }
                 }
             }
@@ -142,7 +141,7 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(WorkTaskStatus), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId, [FromBody] WorkTaskStatus workTaskStatus)
@@ -175,8 +174,7 @@ namespace WorkTaskAPI.Controllers
                     _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskStatus);
                     result = Ok(
-                        mapper.Map<WorkTaskStatus>(innerWorkTaskStatus)
-                        );
+                        mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
                 }
             }
             catch (Exception ex)
@@ -226,8 +224,7 @@ namespace WorkTaskAPI.Controllers
                         _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
                         await _workTaskTypeSaver.Update(settings, innerWorkTaskStatus);
                         result = Ok(
-                            mapper.Map<WorkTaskStatus>(innerWorkTaskStatus)
-                            );
+                            mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
                     }
                 }
             }

@@ -22,7 +22,8 @@ namespace WorkTaskAPI
         private BrassLoon.Interface.Account.ISettings _accountSettings;
         private CoreSettings _coreSettings;
 
-        protected WorkTaskControllerBase(IOptions<Settings> settings,
+        protected WorkTaskControllerBase(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,

@@ -34,7 +34,11 @@ namespace BrassLoon.WorkTask.Data.Internal
                 DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(settings, ProviderFactory, "[blwt].[GetWorkTask]", CommandType.StoredProcedure,
+            await dataReaderProcess.Read(
+                settings,
+                ProviderFactory,
+                "[blwt].[GetWorkTask]",
+                CommandType.StoredProcedure,
                 parameters: parameters,
                 readAction: async (DbDataReader reader) =>
                 {
@@ -64,7 +68,11 @@ namespace BrassLoon.WorkTask.Data.Internal
                 DataUtil.CreateParameter(ProviderFactory, "includeClosed", DbType.Boolean, includeClosed)
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(settings, ProviderFactory, "[blwt].[GetWorkTask_by_WorkGroupId]", CommandType.StoredProcedure,
+            await dataReaderProcess.Read(
+                settings,
+                ProviderFactory,
+                "[blwt].[GetWorkTask_by_WorkGroupId]",
+                CommandType.StoredProcedure,
                 parameters: parameters,
                 readAction: async (DbDataReader reader) =>
                 {
@@ -170,7 +178,8 @@ namespace BrassLoon.WorkTask.Data.Internal
         {
             GenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
             IDataParameter parameter = DataUtil.CreateParameter(providerFactory, "workTaskId", DbType.Guid, workTaskId);
-            return await genericDataFactory.GetData(settings,
+            return await genericDataFactory.GetData(
+                settings,
                 providerFactory,
                 "[blwt].[GetWorkTaskContext_by_WorkTaskId]",
                 () => new WorkTaskContextData(),

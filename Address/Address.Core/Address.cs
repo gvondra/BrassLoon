@@ -51,7 +51,7 @@ namespace BrassLoon.Address.Core
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
+            HashCode hash = default(HashCode);
             hash.Add(AddressId);
             hash.Add(DomainId);
             hash.Add(Attention);

@@ -74,19 +74,21 @@ namespace WorkTaskAPI
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
-                o.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                {
-                    new OpenApiSecurityScheme
+                o.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
                     {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                    },
-                    Array.Empty<string>()
-                }
-                });
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                            },
+                            Array.Empty<string>()
+                        }
+                    });
             });
             builder.Services.AddAuthentication(o =>
             {

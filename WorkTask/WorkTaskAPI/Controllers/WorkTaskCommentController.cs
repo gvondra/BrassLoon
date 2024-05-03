@@ -24,7 +24,8 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskCommentFactory _workTaskCommentFactory;
         private readonly ICommentSaver _commentSaver;
 
-        public WorkTaskCommentController(IOptions<Settings> settings,
+        public WorkTaskCommentController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             ILogger<WorkTaskCommentController> logger,
             IExceptionService exceptionService,
@@ -39,7 +40,7 @@ namespace WorkTaskAPI.Controllers
             _commentSaver = commentSaver;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(List<Comment>), 200)]
         public async Task<IActionResult> GetAll([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskId)
@@ -65,8 +66,7 @@ namespace WorkTaskAPI.Controllers
                     IEnumerable<IComment> comments = await _workTaskCommentFactory.GetByWorkTaskId(settings, domainId.Value, workTaskId.Value);
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        comments.Select(mapper.Map<Comment>)
-                        );
+                        comments.Select(mapper.Map<Comment>));
                 }
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(Comment), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskId, [FromBody] List<Comment> comments)
@@ -112,8 +112,7 @@ namespace WorkTaskAPI.Controllers
                     await _commentSaver.Create(settings, innerComments.ToArray());
                     IMapper mapper = CreateMapper();
                     result = Ok(
-                        innerComments.Select(mapper.Map<Comment>)
-                        );
+                        innerComments.Select(mapper.Map<Comment>));
                 }
             }
             catch (Exception ex)

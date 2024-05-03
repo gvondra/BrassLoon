@@ -7,7 +7,8 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskTypeGroupDataSaver : DataSaverBase, IWorkTaskTypeGroupDataSaver
     {
-        public WorkTaskTypeGroupDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public WorkTaskTypeGroupDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
         {

@@ -13,14 +13,14 @@ namespace BrassLoon.WorkTask.Core
         private readonly IWorkTaskTypeDataSaver _dataSaver;
         private readonly IWorkTaskTypeFactory _factory;
 
-        public WorkTaskType(WorkTaskTypeData data,
+        public WorkTaskType(
+            WorkTaskTypeData data,
             IWorkTaskTypeDataSaver dataSaver,
             IWorkTaskTypeFactory factory)
         {
             _data = data;
             _dataSaver = dataSaver;
             _factory = factory;
-
         }
 
         public Guid WorkTaskTypeId => _data.WorkTaskTypeId;

@@ -82,7 +82,6 @@ namespace BrassLoon.Interface.WorkTask
                         return service.GetAll(request, await RpcUtil.CreateMetaDataWithAuthHeader(settings));
                     },
                     Models.WorkTask.Create));
-
         }
 
         public async Task<List<Models.WorkTask>> GetByContext(

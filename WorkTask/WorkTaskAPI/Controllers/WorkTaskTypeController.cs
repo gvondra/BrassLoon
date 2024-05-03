@@ -24,7 +24,8 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskTypeSaver _workTaskTypeSaver;
 
-        public WorkTaskTypeController(IOptions<Settings> settings,
+        public WorkTaskTypeController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<WorkTaskTypeController> logger,
@@ -77,8 +78,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         result = Ok(
                             (await _workTaskTypeFactory.GetByDomainId(settings, domainId.Value))
-                            .Select(mapper.Map<WorkTaskType>)
-                            );
+                            .Select(mapper.Map<WorkTaskType>));
 
                     }
                 }
@@ -123,8 +123,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            mapper.Map<WorkTaskType>(innerWorkTaskType)
-                            );
+                            mapper.Map<WorkTaskType>(innerWorkTaskType));
                     }
                 }
             }
@@ -162,8 +161,7 @@ namespace WorkTaskAPI.Controllers
                     IMapper mapper = CreateMapper();
                     result = Ok(
                         (await _workTaskTypeFactory.GetByWorkGroupId(settings, domainId.Value, workGroupId.Value))
-                        .Select(mapper.Map<WorkTaskType>)
-                        );
+                        .Select(mapper.Map<WorkTaskType>));
                 }
             }
             catch (Exception ex)
@@ -209,8 +207,7 @@ namespace WorkTaskAPI.Controllers
                     _ = mapper.Map(workTaskType, innerWorkTaskType);
                     await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
                     result = Ok(
-                        mapper.Map<WorkTaskType>(innerWorkTaskType)
-                        );
+                        mapper.Map<WorkTaskType>(innerWorkTaskType));
                 }
             }
             catch (Exception ex)
@@ -249,8 +246,7 @@ namespace WorkTaskAPI.Controllers
                         _ = mapper.Map(workTaskType, innerWorkTaskType);
                         await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                         result = Ok(
-                            mapper.Map<WorkTaskType>(innerWorkTaskType)
-                            );
+                            mapper.Map<WorkTaskType>(innerWorkTaskType));
                     }
                 }
             }

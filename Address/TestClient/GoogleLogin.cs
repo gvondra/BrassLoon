@@ -28,7 +28,9 @@ namespace BrassLoon.Address.TestClient
             httpListener.Start();
 
             // Creates the OAuth 2.0 authorization request.
-            string authorizationRequest = string.Format(CultureInfo.InvariantCulture, "{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
+            string authorizationRequest = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
                 settings.GoogleAuthorizationEndpoint,
                 Uri.EscapeDataString(redirectURI),
                 settings.GoogleClientId,
@@ -96,13 +98,14 @@ namespace BrassLoon.Address.TestClient
             Console.WriteLine("Exchanging code for tokens...");
 
             // builds the  request
-            string tokenRequestBody = string.Format(CultureInfo.InvariantCulture, "code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
+            string tokenRequestBody = string.Format(
+                CultureInfo.InvariantCulture,
+                "code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
                 code,
                 Uri.EscapeDataString(redirectURI),
                 settings.GoogleClientId,
                 code_verifier,
-                settings.GoogleClientSecret
-                );
+                settings.GoogleClientSecret);
 
             // sends the request
             HttpWebRequest tokenRequest = (HttpWebRequest)WebRequest.Create(settings.GoogleTokenEndpoint);
@@ -180,7 +183,7 @@ namespace BrassLoon.Address.TestClient
             base64 = base64.Replace("+", "-");
             base64 = base64.Replace("/", "_");
             // Strips padding.
-            base64 = base64.Replace("=", "");
+            base64 = base64.Replace("=", string.Empty);
 
             return base64;
         }

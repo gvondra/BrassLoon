@@ -1,7 +1,7 @@
 ﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Framework;
 using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
+using BrassLoon.WorkTask.Framework;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +13,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly IWorkTaskStatusDataSaver _dataSaver;
         private readonly IWorkTaskType _workTaskType;
 
-        public WorkTaskStatus(WorkTaskStatusData data,
+        public WorkTaskStatus(
+            WorkTaskStatusData data,
             IWorkTaskStatusDataSaver dataSaver,
             IWorkTaskType workTaskType)
         {
@@ -22,7 +23,8 @@ namespace BrassLoon.WorkTask.Core
             _workTaskType = workTaskType;
         }
 
-        public WorkTaskStatus(WorkTaskStatusData data,
+        public WorkTaskStatus(
+            WorkTaskStatusData data,
             IWorkTaskStatusDataSaver dataSaver)
             : this(data, dataSaver, null)
         { }

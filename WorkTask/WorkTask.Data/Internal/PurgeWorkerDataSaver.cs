@@ -1,14 +1,15 @@
-﻿using BrassLoon.DataClient;
-using BrassLoon.WorkTask.Data.Models;
+﻿using System.Data;
 using System.Data.Common;
-using System.Data;
 using System.Threading.Tasks;
+using BrassLoon.DataClient;
+using BrassLoon.WorkTask.Data.Models;
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
     public class PurgeWorkerDataSaver : DataSaverBase, IPurgeWorkerDataSaver
     {
-        public PurgeWorkerDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public PurgeWorkerDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task InitializePurgeWorker(ISqlSettings settings)
         {

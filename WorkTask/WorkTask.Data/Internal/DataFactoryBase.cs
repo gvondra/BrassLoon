@@ -2,7 +2,8 @@
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
-    public abstract class DataFactoryBase<T> where T : new()
+    public abstract class DataFactoryBase<T>
+        where T : new()
     {
         private readonly IDbProviderFactory _providerFactory;
         private readonly GenericDataFactory<T> _genericDataFactory = new GenericDataFactory<T>();

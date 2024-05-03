@@ -8,7 +8,8 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskCommentDataSaver : DataSaverBase, IWorkTaskCommentDataSaver
     {
-        public WorkTaskCommentDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public WorkTaskCommentDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, CommentData data, Guid workTaskId)
         {

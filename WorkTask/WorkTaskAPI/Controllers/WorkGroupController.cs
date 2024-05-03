@@ -24,7 +24,8 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkGroupFactory _workGroupFactory;
         private readonly IWorkGroupSaver _workGroupSaver;
 
-        public WorkGroupController(IOptions<Settings> settings,
+        public WorkGroupController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             ILogger<WorkGroupController> logger,
             IExceptionService exceptionService,
@@ -69,8 +70,7 @@ namespace WorkTaskAPI.Controllers
                         innerWorkGroups = await _workGroupFactory.GetByDomainId(settings, domainId.Value);
                     }
                     result = Ok(
-                        innerWorkGroups.Select(mapper.Map<WorkGroup>)
-                        );
+                        innerWorkGroups.Select(mapper.Map<WorkGroup>));
                 }
             }
             catch (Exception ex)
@@ -113,8 +113,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            mapper.Map<WorkGroup>(innerWorkGroup)
-                            );
+                            mapper.Map<WorkGroup>(innerWorkGroup));
                     }
                 }
             }
@@ -201,8 +200,7 @@ namespace WorkTaskAPI.Controllers
                         ApplyMemberChanges(innerWorkGroup, workGroup.MemberUserIds);
                         await _workGroupSaver.Update(settings, innerWorkGroup);
                         result = Ok(
-                            mapper.Map<WorkGroup>(innerWorkGroup)
-                            );
+                            mapper.Map<WorkGroup>(innerWorkGroup));
                     }
                 }
             }

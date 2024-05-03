@@ -11,7 +11,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly Saver _saver;
         private readonly IWorkTaskTypeGroupDataSaver _dataSaver;
 
-        public WorkGroupSaver(Saver saver,
+        public WorkGroupSaver(
+            Saver saver,
             IWorkTaskTypeGroupDataSaver dataSaver)
         {
             _saver = saver;

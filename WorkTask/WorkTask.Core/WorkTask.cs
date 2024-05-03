@@ -19,7 +19,8 @@ namespace BrassLoon.WorkTask.Core
         private List<IWorkTaskContext> _contexts;
         private List<IWorkTaskContext> _newContexts;
 
-        public WorkTask(WorkTaskData data,
+        public WorkTask(
+            WorkTaskData data,
             IWorkTaskDataSaver dataSaver,
             WorkTaskFactory factory,
             IWorkTaskType workTaskType,

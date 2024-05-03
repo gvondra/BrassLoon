@@ -9,12 +9,15 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskTypeDataFactory : DataFactoryBase<WorkTaskTypeData>, IWorkTaskTypeDataFactory
     {
-        public WorkTaskTypeDataFactory(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public WorkTaskTypeDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory)
+        { }
 
         public async Task<WorkTaskTypeData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id);
-            return (await GenericDataFactory.GetData(settings,
+            return (await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blwt].[GetWorkTaskType]",
                 Create,
@@ -26,7 +29,8 @@ namespace BrassLoon.WorkTask.Data.Internal
         public async Task<IEnumerable<WorkTaskTypeData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
-            return await GenericDataFactory.GetData(settings,
+            return await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_DomainId]",
                 Create,
@@ -42,7 +46,8 @@ namespace BrassLoon.WorkTask.Data.Internal
                 DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(ProviderFactory, "code", DbType.String, code)
             };
-            return (await GenericDataFactory.GetData(settings,
+            return (await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_DomainId_Code]",
                 Create,
@@ -54,7 +59,8 @@ namespace BrassLoon.WorkTask.Data.Internal
         public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workGroupId", DbType.Guid, workGroupId);
-            return await GenericDataFactory.GetData(settings,
+            return await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blwt].[GetWorkTaskType_by_WorkGroupId]",
                 Create,

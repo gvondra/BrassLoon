@@ -20,7 +20,6 @@ namespace BrassLoon.WorkTask.Core
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _workTaskStatusFactory = workTaskStatusFactory;
-
         }
 
         internal WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
@@ -32,8 +31,7 @@ namespace BrassLoon.WorkTask.Core
             if (string.IsNullOrEmpty(code))
                 throw new ArgumentNullException(nameof(code));
             return Create(
-                new WorkTaskTypeData { DomainId = domainId, Code = code }
-                );
+                new WorkTaskTypeData { DomainId = domainId, Code = code });
         }
 
         public async Task<IWorkTaskType> Get(ISettings settings, Guid domainId, Guid id)

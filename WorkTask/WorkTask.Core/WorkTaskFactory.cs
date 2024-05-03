@@ -17,7 +17,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly WorkTaskTypeFactory _typeFactory;
         private readonly WorkTaskStatusFactory _statusFactory;
 
-        public WorkTaskFactory(IWorkTaskDataFactory dataFactory,
+        public WorkTaskFactory(
+            IWorkTaskDataFactory dataFactory,
             IWorkTaskDataSaver dataSaver,
             IWorkTaskContextDataSaver contextDataSaver,
             WorkTaskTypeFactory typeFactory,
@@ -30,7 +31,8 @@ namespace BrassLoon.WorkTask.Core
             _statusFactory = statusFactory;
         }
 
-        private WorkTask Create(WorkTaskData data,
+        private WorkTask Create(
+            WorkTaskData data,
             IWorkTaskType workTaskType,
             List<IWorkTaskContext> contexts = null)
             => new WorkTask(data, _dataSaver, this, workTaskType, contexts);
@@ -106,8 +108,9 @@ namespace BrassLoon.WorkTask.Core
 
         public Task<IAsyncEnumerable<IWorkTask>> GetAll(ISettings settings, Guid domainId)
         {
-            return Task.FromResult<IAsyncEnumerable<IWorkTask>>(new WorkTaskEnumerator(
-                 async () => (await _dataFactory.GetAll(new DataSettings(settings), domainId)).GetAsyncEnumerator(),
+            return Task.FromResult<IAsyncEnumerable<IWorkTask>>(
+                new WorkTaskEnumerator(
+                async () => (await _dataFactory.GetAll(new DataSettings(settings), domainId)).GetAsyncEnumerator(),
                 LoadWorkTask));
         }
     }

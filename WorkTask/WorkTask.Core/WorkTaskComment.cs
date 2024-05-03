@@ -12,7 +12,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly Guid _workTaskId;
         private readonly IWorkTaskCommentDataSaver _dataSaver;
 
-        public WorkTaskComment(CommentData data,
+        public WorkTaskComment(
+            CommentData data,
             IWorkTaskCommentDataSaver dataSaver,
             Guid workTaskId)
             : base(data)

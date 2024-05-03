@@ -9,7 +9,8 @@ namespace BrassLoon.WorkTask.TestClient.Settings
         private readonly ISettingsFactory _settingsFactory;
         private readonly Account.ITokenService _tokenService;
 
-        public WorkTaskSettings(AppSettings appSettings,
+        public WorkTaskSettings(
+            AppSettings appSettings,
             ISettingsFactory settingsFactory,
             Account.ITokenService tokenService)
         {

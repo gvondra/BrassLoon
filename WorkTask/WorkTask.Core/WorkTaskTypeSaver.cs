@@ -11,7 +11,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly Saver _saver;
         private readonly IWorkTaskStatusDataSaver _statusDataSaver;
 
-        public WorkTaskTypeSaver(Saver saver,
+        public WorkTaskTypeSaver(
+            Saver saver,
             IWorkTaskStatusDataSaver statusDataSaver)
         {
             _saver = saver;
@@ -22,7 +23,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (statuses != null && statuses.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings),
+                return _saver.Save(
+                    new TransactionHandler(settings),
                     async th =>
                     {
                         for (int i = 0; i < statuses.Length; i += 1)
@@ -41,7 +43,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (types != null && types.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings),
+                return _saver.Save(
+                    new TransactionHandler(settings),
                     async th =>
                     {
                         for (int i = 0; i < types.Length; i += 1)
@@ -60,7 +63,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (ids != null && ids.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings),
+                return _saver.Save(
+                    new TransactionHandler(settings),
                     async th =>
                     {
                         for (int i = 0; i < ids.Length; i += 1)
@@ -79,7 +83,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (statuses != null && statuses.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings),
+                return _saver.Save(
+                    new TransactionHandler(settings),
                     async th =>
                     {
                         for (int i = 0; i < statuses.Length; i += 1)
@@ -98,7 +103,8 @@ namespace BrassLoon.WorkTask.Core
         {
             if (types != null && types.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings),
+                return _saver.Save(
+                    new TransactionHandler(settings),
                     async th =>
                     {
                         for (int i = 0; i < types.Length; i += 1)

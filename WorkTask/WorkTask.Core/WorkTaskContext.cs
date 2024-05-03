@@ -13,7 +13,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly IWorkTaskContextDataSaver _dataSaver;
         private readonly IWorkTask _workTask;
 
-        public WorkTaskContext(WorkTaskContextData data,
+        public WorkTaskContext(
+            WorkTaskContextData data,
             IWorkTaskContextDataSaver dataSaver,
             IWorkTask workTask)
         {

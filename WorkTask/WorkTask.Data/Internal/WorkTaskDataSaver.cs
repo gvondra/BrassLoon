@@ -9,7 +9,8 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskDataSaver : DataSaverBase, IWorkTaskDataSaver
     {
-        public WorkTaskDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public WorkTaskDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task<bool> Claim(ISqlTransactionHandler transactionHandler, Guid domainId, Guid id, string userId, DateTime? assignedDate = null)
         {

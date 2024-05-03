@@ -19,14 +19,14 @@ namespace BrassLoon.WorkTask.Core
         private List<WorkGroupMemberData> _newMemberData;
         private List<WorkGroupMemberData> _deletedMemberData;
 
-        public WorkGroup(WorkGroupData data,
+        public WorkGroup(
+            WorkGroupData data,
             IWorkGroupDataSaver dataSaver,
             IWorkGroupMemberDataSaver workGroupMemberDataSaver)
         {
             _data = data;
             _dataSaver = dataSaver;
             _workGroupMemberDataSaver = workGroupMemberDataSaver;
-
         }
 
         public Guid WorkGroupId => _data.WorkGroupId;
@@ -51,8 +51,7 @@ namespace BrassLoon.WorkTask.Core
                 return ImmutableList<string>.Empty.AddRange(
                     members
                     .Select(m => m.UserId)
-                    .Distinct()
-                    );
+                    .Distinct());
             }
         }
 
@@ -62,8 +61,7 @@ namespace BrassLoon.WorkTask.Core
             {
                 IEnumerable<WorkTaskTypeGroupData> taskTypes = _data.TaskTypes ?? new List<WorkTaskTypeGroupData>();
                 return ImmutableList<Guid>.Empty.AddRange(
-                    taskTypes.Select(t => t.WorkTaskTypeId)
-                    );
+                    taskTypes.Select(t => t.WorkTaskTypeId));
             }
         }
 

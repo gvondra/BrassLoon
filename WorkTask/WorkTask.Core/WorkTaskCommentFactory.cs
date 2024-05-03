@@ -30,12 +30,13 @@ namespace BrassLoon.WorkTask.Core
                 throw new ArgumentNullException(nameof(workTaskId));
             if (string.IsNullOrEmpty(text))
                 throw new ArgumentNullException(nameof(text));
-            return Create(new CommentData
-            {
-                DomainId = domainId,
-                Text = text
-            },
-            workTaskId);
+            return Create(
+                new CommentData
+                {
+                    DomainId = domainId,
+                    Text = text
+                },
+                workTaskId);
         }
 
         public async Task<IEnumerable<IComment>> GetByWorkTaskId(ISettings settings, Guid domainId, Guid workTaskId)

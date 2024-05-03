@@ -27,7 +27,8 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
         private readonly IWorkTaskPatcher _workTaskPatcher;
 
-        public WorkTaskController(IOptions<Settings> settings,
+        public WorkTaskController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             ILogger<WorkTaskController> logger,
@@ -126,8 +127,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            mapper.Map<WorkTask>(innerWorkTask)
-                            );
+                            mapper.Map<WorkTask>(innerWorkTask));
                     }
                 }
             }
@@ -179,7 +179,7 @@ namespace WorkTaskAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Constants.POLICY_BL_AUTH)]
         [ProducesResponseType(typeof(WorkTask), 200)]
         public async Task<IActionResult> Create([FromRoute] Guid? domainId, [FromBody] WorkTask workTask)
@@ -222,8 +222,7 @@ namespace WorkTaskAPI.Controllers
                     ApplyContexts(workTask, innerWorkTask);
                     await _workTaskSaver.Create(settings, innerWorkTask);
                     result = Ok(
-                        Map(mapper, innerWorkTask)
-                        );
+                        Map(mapper, innerWorkTask));
                 }
             }
             catch (Exception ex)
@@ -309,8 +308,7 @@ namespace WorkTaskAPI.Controllers
                     ApplyContexts(workTask, innerWorkTask);
                     await _workTaskSaver.Update(settings, innerWorkTask);
                     result = Ok(
-                        Map(mapper, innerWorkTask)
-                        );
+                        Map(mapper, innerWorkTask));
                 }
             }
             catch (Exception ex)

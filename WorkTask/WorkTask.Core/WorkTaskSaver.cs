@@ -11,7 +11,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly Saver _saver;
         private readonly IWorkTaskDataSaver _dataSaver;
 
-        public WorkTaskSaver(Saver saver,
+        public WorkTaskSaver(
+            Saver saver,
             IWorkTaskDataSaver dataSaver)
         {
             _saver = saver;

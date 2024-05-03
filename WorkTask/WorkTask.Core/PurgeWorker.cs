@@ -1,10 +1,10 @@
-﻿using BrassLoon.WorkTask.Data.Models;
-using BrassLoon.WorkTask.Data;
-using BrassLoon.WorkTask.Framework.Enumerations;
-using BrassLoon.WorkTask.Framework;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using BrassLoon.CommonCore;
+using BrassLoon.WorkTask.Data;
+using BrassLoon.WorkTask.Data.Models;
+using BrassLoon.WorkTask.Framework;
+using BrassLoon.WorkTask.Framework.Enumerations;
 
 namespace BrassLoon.WorkTask.Core
 {
@@ -13,7 +13,8 @@ namespace BrassLoon.WorkTask.Core
         private readonly PurgeWorkerData _data;
         private readonly IPurgeWorkerDataSaver _dataSaver;
 
-        public PurgeWorker(PurgeWorkerData data,
+        public PurgeWorker(
+            PurgeWorkerData data,
             IPurgeWorkerDataSaver dataSaver)
         {
             _data = data;

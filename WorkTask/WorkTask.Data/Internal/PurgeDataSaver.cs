@@ -1,13 +1,14 @@
-﻿using BrassLoon.DataClient;
+﻿using System.Data;
 using System.Data.Common;
-using System.Data;
 using System.Threading.Tasks;
+using BrassLoon.DataClient;
 
 namespace BrassLoon.WorkTask.Data.Internal
 {
     public class PurgeDataSaver : DataSaverBase, IPurgeDataSaver
     {
-        public PurgeDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public PurgeDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public Task DeleteWorkTaskByMinTimestamp(ISqlSettings settings, DateTime timestamp)
             => DeleteByMinTimestamp(settings, timestamp, "[blwt].[DeleteWorkTaskPurge_by_MinTimestamp]");

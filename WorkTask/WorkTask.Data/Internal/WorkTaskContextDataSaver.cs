@@ -8,7 +8,8 @@ namespace BrassLoon.WorkTask.Data.Internal
 {
     public class WorkTaskContextDataSaver : DataSaverBase, IWorkTaskContextDataSaver
     {
-        public WorkTaskContextDataSaver(IDbProviderFactory providerFactory) : base(providerFactory) { }
+        public WorkTaskContextDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory) { }
 
         public async Task Create(ISqlTransactionHandler transactionHandler, WorkTaskContextData data)
         {
