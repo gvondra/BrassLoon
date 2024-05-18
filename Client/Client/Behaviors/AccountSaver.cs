@@ -3,7 +3,6 @@ using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Account.Models;
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace BrassLoon.Client.Behaviors
@@ -12,13 +11,28 @@ namespace BrassLoon.Client.Behaviors
     {
         private readonly ISettingsFactory _settingsFactory;
         private readonly IAccountService _accountService;
+        private readonly Action _afterSave;
+        private readonly bool _isNewAccount;
         private bool _canExcecute = true;
 
-        public AccountSaver(ISettingsFactory settingsFactory, IAccountService accountService)
+        public AccountSaver(
+            ISettingsFactory settingsFactory,
+            IAccountService accountService,
+            Action afterSave,
+            bool isNewAccount)
         {
             _settingsFactory = settingsFactory;
             _accountService = accountService;
+            _afterSave = afterSave;
+            _isNewAccount = isNewAccount;
         }
+
+        public AccountSaver(
+            ISettingsFactory settingsFactory,
+            IAccountService accountService,
+            Action afterSave)
+            : this(settingsFactory, accountService, afterSave, false)
+        { }
 
         public event EventHandler CanExecuteChanged;
 
@@ -34,11 +48,11 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _canExcecute = false;
                     CanExecuteChanged.Invoke(this, new EventArgs());
-                    Task.Run(() => Save(accountVM.InnerAccount))
+                    Task.Run(() => Save(accountVM.InnerAccount, _isNewAccount))
                         .ContinueWith(SaveCallback, accountVM, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
                 _canExcecute = true;
@@ -46,19 +60,21 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private Account Save(Account account)
-        {
-            return _accountService.Update(_settingsFactory.CreateAccountSettings(), account).Result;
-        }
+        private Account Save(Account account, bool isNewAccount)
+            => isNewAccount switch
+            {
+                true => _accountService.Create(_settingsFactory.CreateAccountSettings(), account).Result,
+                _ => _accountService.Update(_settingsFactory.CreateAccountSettings(), account).Result
+            };
 
         private async Task SaveCallback(Task<Account> save, object state)
         {
             try
             {
                 await save;
-                MessageBox.Show("Account Saved", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                _afterSave?.Invoke();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
