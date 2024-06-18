@@ -125,7 +125,7 @@ namespace BrassLoon.Authorization.Core
 
         public static byte[] HashSecret(string value, byte[] salt)
         {
-            Argon2i argon = new Argon2i(
+            using Argon2i argon = new Argon2i(
                 Encoding.UTF8.GetBytes(value))
             {
                 DegreeOfParallelism = 4,
