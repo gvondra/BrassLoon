@@ -67,7 +67,7 @@ namespace BrassLoon.Authorization.Core
 
         public static byte[] CreateSalt()
         {
-            RandomNumberGenerator random = RandomNumberGenerator.Create();
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
             byte[] salt = new byte[16];
             random.GetBytes(salt);
             return salt;
