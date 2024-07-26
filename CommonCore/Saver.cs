@@ -14,7 +14,7 @@ namespace BrassLoon.CommonCore
                 if (transactionHandler.Transaction != null)
                     transactionHandler.Transaction.Commit();
                 if (transactionHandler.Connection != null)
-                    transactionHandler.Connection.Close();
+                    await transactionHandler.Connection.CloseAsync();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace BrassLoon.CommonCore
                 }
                 if (transactionHandler.Connection != null)
                 {
-                    transactionHandler.Connection.Dispose();
+                    await transactionHandler.Connection.DisposeAsync();
                     transactionHandler.Connection = null;
                 }
             }

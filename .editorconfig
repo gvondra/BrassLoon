@@ -280,3 +280,9 @@ dotnet_diagnostic.SA1602.severity = none
 
 # SA1502: Element should not be on a single line
 dotnet_diagnostic.SA1502.severity = none
+
+# SA1629: Documentation text should end with a period
+dotnet_diagnostic.SA1629.severity = none
+
+# SA1514: Element documentation header should be preceded by blank line
+dotnet_diagnostic.SA1514.severity = none

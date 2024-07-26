@@ -49,10 +49,10 @@ namespace BrassLoon.Account.Data
                         {
                             result.Add(await reader.GetFieldValueAsync<Guid>(0));
                         }
-                        reader.Close();
+                        await reader.CloseAsync();
                     }
                 }
-                connection.Close();
+                await connection.CloseAsync();
             }
             return result;
         }
