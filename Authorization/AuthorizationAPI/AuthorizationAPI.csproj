@@ -22,17 +22,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.0.*" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.*" />
+		<PackageReference Include="Autofac" Version="8.1.*" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.*" />
 		<PackageReference Include="AutoMapper" Version="13.0.*" />
 		<PackageReference Include="BrassLoon.Extensions.Logging" Version="1.0.*" />
-		<PackageReference Include="BrassLoon.Interface.Account" Version="4.3.0-prerelease.*" />
+		<PackageReference Include="BrassLoon.Interface.Account" Version="4.3.*" />
 		<PackageReference Include="BrassLoon.Interface.Authorization" Version="4.2.*" />
 		<PackageReference Include="BrassLoon.Interface.Log" Version="4.1.*" />
 		<PackageReference Include="BrassLoon.JwtUtility" Version="1.4.*" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.*" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.*" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.*" />
 	</ItemGroup>
 
 	<ItemGroup>

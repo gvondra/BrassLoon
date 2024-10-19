@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="8.0.*" />
+	  <PackageReference Include="Autofac" Version="8.1.*" />
 	  <PackageReference Include="BrassLoon.DataClient" Version="3.7.*" />
 	</ItemGroup>
 
