@@ -44,11 +44,11 @@ namespace BrassLoon.Interface.Log
                 settings,
                 domainId,
                 exception,
-                createTimestamp: createTimestamp
-                );
+                createTimestamp: createTimestamp);
         }
 
-        public Task<LogModels.Exception> Create(ISettings settings,
+        public Task<LogModels.Exception> Create(
+            ISettings settings,
             Guid domainId,
             Exception exception,
             DateTime? createTimestamp = null,
@@ -58,8 +58,7 @@ namespace BrassLoon.Interface.Log
         {
             return Create(
                 settings,
-                CreateException(domainId, exception, createTimestamp, category, level, eventId)
-                );
+                CreateException(domainId, exception, createTimestamp, category, level, eventId));
         }
 
         public Task<LogModels.Exception> Get(ISettings settings, Guid domainId, long id)
@@ -84,7 +83,8 @@ namespace BrassLoon.Interface.Log
             return _restUtil.Send<List<LogModels.Exception>>(_service, request);
         }
 
-        private static LogModels.Exception CreateException(Guid domainId,
+        private static LogModels.Exception CreateException(
+            Guid domainId,
             Exception exception,
             DateTime? createTimestamp,
             string category,

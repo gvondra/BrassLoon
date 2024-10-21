@@ -13,7 +13,8 @@ namespace BrassLoon.Log.Core
         private readonly PurgeWorkerData _data;
         private readonly IPurgeWorkerDataSaver _dataSaver;
 
-        public PurgeWorker(PurgeWorkerData data,
+        public PurgeWorker(
+            PurgeWorkerData data,
             IPurgeWorkerDataSaver dataSaver)
         {
             _data = data;

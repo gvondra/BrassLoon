@@ -22,7 +22,8 @@ namespace LogAPI.Controllers
         private readonly IMetricSaver _metricSaver;
         private readonly IEventIdFactory _eventIdFactory;
 
-        public MetricController(IOptions<Settings> settings,
+        public MetricController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Log.IExceptionService exceptionService,
             MapperFactory mapperFactory,
@@ -39,7 +40,7 @@ namespace LogAPI.Controllers
 
         [HttpGet("{domainId}")]
         [ProducesResponseType(typeof(LogModels.Metric[]), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null, [FromQuery] string eventCode = null)
         {
             IActionResult result = null;
@@ -69,8 +70,7 @@ namespace LogAPI.Controllers
                         IMapper mapper = CreateMapper();
                         result = Ok(
                             (await _metricFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
-                            .Select(mapper.Map<LogModels.Metric>)
-                            );
+                            .Select(mapper.Map<LogModels.Metric>));
                     }
                 }
             }
@@ -85,7 +85,7 @@ namespace LogAPI.Controllers
         [HttpGet("/api/MetricEventCode/{domainId}")]
         [ProducesResponseType(typeof(string[]), 200)]
         [ResponseCache(Duration = 150, Location = ResponseCacheLocation.Client)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
         {
             IActionResult result;
@@ -105,8 +105,7 @@ namespace LogAPI.Controllers
                     {
                         CoreSettings settings = CreateCoreSettings();
                         result = Ok(
-                            await _metricFactory.GetEventCodes(settings, domainId.Value)
-                            );
+                            await _metricFactory.GetEventCodes(settings, domainId.Value));
                     }
                 }
             }
@@ -118,9 +117,9 @@ namespace LogAPI.Controllers
             return result;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(LogModels.Metric), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] LogModels.Metric metric)
         {
             IActionResult result = null;
@@ -170,7 +169,7 @@ namespace LogAPI.Controllers
         }
 
         [HttpPost("/api/MetricBatch/{domainId}")]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> CreateBatch([FromRoute] Guid? domainId, [FromBody] List<LogModels.Metric> metrics)
         {
             IActionResult result = null;

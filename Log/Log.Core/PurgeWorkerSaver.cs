@@ -10,7 +10,8 @@ namespace BrassLoon.Log.Core
         private readonly IPurgeWorkerDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
 
-        public PurgeWorkerSaver(IPurgeWorkerDataSaver dataSaver,
+        public PurgeWorkerSaver(
+            IPurgeWorkerDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {
             _dataSaver = dataSaver;

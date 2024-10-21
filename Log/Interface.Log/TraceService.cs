@@ -47,8 +47,7 @@ namespace BrassLoon.Interface.Log
                     Message = message,
                     Data = data,
                     CreateTimestamp = createTimestamp
-                }
-                );
+                });
         }
 
         public async Task Create(ISettings settings, Guid domainId, List<Trace> traces)

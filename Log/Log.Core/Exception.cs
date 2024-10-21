@@ -17,7 +17,8 @@ namespace BrassLoon.Log.Core
         private readonly IExceptionFactory _exceptionFactory;
         private readonly IEventId _eventId;
 
-        public Exception(ExceptionData data,
+        public Exception(
+            ExceptionData data,
             IExceptionDataSaver dataSaver,
             IExceptionFactory exceptionFactory,
             IEventId eventId)
@@ -28,7 +29,8 @@ namespace BrassLoon.Log.Core
             _eventId = eventId;
         }
 
-        public Exception(ExceptionData data,
+        public Exception(
+            ExceptionData data,
             IExceptionDataSaver dataSaver,
             IExceptionFactory exceptionFactory)
             : this(data, dataSaver, exceptionFactory, eventId: null)

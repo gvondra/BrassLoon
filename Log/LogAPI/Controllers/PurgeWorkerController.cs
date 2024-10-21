@@ -25,7 +25,8 @@ namespace LogAPI.Controllers
         private readonly IPurgeWorkerFactory _purgeWorkerFactory;
         private readonly IPurgeWorkerSaver _purgeWorkerSaver;
 
-        public PurgeWorkerController(IOptions<Settings> settings,
+        public PurgeWorkerController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Log.IExceptionService exceptionService,
             MapperFactory mapperFactory,
@@ -38,7 +39,7 @@ namespace LogAPI.Controllers
             _purgeWorkerSaver = purgeWorkerSaver;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(typeof(PurgeWorker[]), 200)]
         public async Task<IActionResult> Search()
         {
@@ -49,8 +50,7 @@ namespace LogAPI.Controllers
                 IMapper mapper = CreateMapper();
                 result = Ok(
                     (await _purgeWorkerFactory.GetAll(settings))
-                    .Select(mapper.Map<PurgeWorker>)
-                    );
+                    .Select(mapper.Map<PurgeWorker>));
             }
             catch (System.Exception ex)
             {

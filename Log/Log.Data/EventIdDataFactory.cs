@@ -32,8 +32,8 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetEventId]",
                 () => new EventIdData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                )).FirstOrDefault();
+                parameters))
+                .FirstOrDefault();
         }
 
         public Task<IEnumerable<EventIdData>> GetByDomainId(ISqlSettings settings, Guid domainId)
@@ -49,8 +49,7 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetEventId_by_DomainId]",
                 () => new EventIdData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                );
+                parameters);
         }
     }
 }

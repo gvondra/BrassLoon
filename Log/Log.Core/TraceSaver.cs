@@ -38,7 +38,7 @@ namespace BrassLoon.Log.Core
                 {
                     if (transactionHandler.Connection != null)
                     {
-                        transactionHandler.Connection.Dispose();
+                        await transactionHandler.Connection.DisposeAsync();
                         transactionHandler.Connection = null;
                     }
                 }

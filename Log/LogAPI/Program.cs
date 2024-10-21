@@ -50,17 +50,18 @@ namespace LogAPI
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
-                o.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                o.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    new OpenApiSecurityScheme
                     {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                    },
-                    Array.Empty<string>()
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
                     }
                 });
             });

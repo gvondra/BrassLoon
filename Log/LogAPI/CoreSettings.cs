@@ -5,6 +5,5 @@
         public CoreSettings(Settings settings)
             : base(settings)
         { }
-
     }
 }

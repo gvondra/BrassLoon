@@ -15,7 +15,8 @@ namespace BrassLoon.Log.Core
         private readonly ITraceDataSaver _dataSaver;
         private readonly SettingsFactory _settingFactory;
 
-        public TraceFactory(ITraceDataFactory dataFactory,
+        public TraceFactory(
+            ITraceDataFactory dataFactory,
             ITraceDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {
@@ -39,8 +40,7 @@ namespace BrassLoon.Log.Core
                     EventCode = (eventCode ?? string.Empty).Trim(),
                     CreateTimestamp = createTimestamp.Value
                 },
-                eventId
-                );
+                eventId);
         }
 
         public Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId) => _dataFactory.GetEventCodes(_settingFactory.CreateData(settings), domainId);

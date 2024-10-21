@@ -42,8 +42,7 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetTopMetricBeforeTimestamp]",
                 () => new MetricData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                );
+                parameters);
         }
     }
 }

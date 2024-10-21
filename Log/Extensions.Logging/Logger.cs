@@ -12,7 +12,8 @@ namespace BrassLoon.Extensions.Logging
         private readonly MessageFormatter _messageFormatter;
         private readonly LoggerProcessor _loggerProcessor;
 
-        public Logger(string name,
+        public Logger(
+            string name,
             MessageFormatter messageFormatter,
             LoggerProcessor loggerProcessor)
         {
@@ -21,7 +22,8 @@ namespace BrassLoon.Extensions.Logging
             _loggerProcessor = loggerProcessor;
         }
 
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
+        public IDisposable BeginScope<TState>(TState state)
+            where TState : notnull => NullScope.Instance;
 
         public bool IsEnabled(LogLevel logLevel) => logLevel != LogLevel.None;
 

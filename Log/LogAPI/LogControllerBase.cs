@@ -22,7 +22,8 @@ namespace LogAPI
         private CoreSettings _coreSettings;
 #pragma warning restore CA1051 // Do not declare visible instance fields
 
-        protected LogControllerBase(IOptions<Settings> settings,
+        protected LogControllerBase(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             IExceptionService exceptionService,
             MapperFactory mapperFactory,

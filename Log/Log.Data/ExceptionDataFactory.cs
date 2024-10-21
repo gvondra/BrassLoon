@@ -28,8 +28,8 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetException]",
                 () => new ExceptionData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter }))
+                .FirstOrDefault();
         }
 
         public async Task<ExceptionData> GetInnerException(ISqlSettings settings, long id)
@@ -41,8 +41,8 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetInnerException]",
                 () => new ExceptionData(),
                 DataUtil.AssignDataStateManager,
-                new List<IDataParameter> { parameter }
-                )).FirstOrDefault();
+                new List<IDataParameter> { parameter }))
+                .FirstOrDefault();
         }
 
         public async Task<IEnumerable<ExceptionData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, DateTime maxTimestamp)
@@ -58,8 +58,7 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetTopExceptionBeforeTimestamp]",
                 () => new ExceptionData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                );
+                parameters);
         }
     }
 }

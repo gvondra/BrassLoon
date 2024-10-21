@@ -1,8 +1,8 @@
 ﻿using BrassLoon.DataClient;
 using BrassLoon.Log.Data.Models;
 using System;
-using System.Data.Common;
 using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Data

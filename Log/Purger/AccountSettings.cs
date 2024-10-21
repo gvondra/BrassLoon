@@ -9,7 +9,8 @@ namespace BrassLoon.Log.Purger
         private readonly ITokenService _tokenService;
         private string _token;
 
-        public AccountSettings(AppSettings settings,
+        public AccountSettings(
+            AppSettings settings,
             ITokenService tokenService)
         {
             _settings = settings;

@@ -13,7 +13,7 @@ namespace BrassLoon.Extensions.Logging
     internal sealed class AccessTokenFactory : IAccessTokenFactory
     {
         private static readonly object _cacheLock = new { };
-        private static readonly Dictionary<string, (DateTime expiration, string token)> _tokenCache = new Dictionary<string, (DateTime expiratin, string token)>();
+        private static readonly Dictionary<string, (DateTime Expiration, string Token)> _tokenCache = new Dictionary<string, (DateTime Expiration, string Token)>();
 
         public async Task<string> GetAccessToken(LoggerConfiguration loggerConfiguration, GrpcChannel channel)
         {
@@ -27,24 +27,24 @@ namespace BrassLoon.Extensions.Logging
                     ClientId = loggerConfiguration.LogClientId.ToString("D"),
                     Secret = loggerConfiguration.LogClientSecret
                 };
-                LogRPC.Protos.Token token = await client.CreateAsync(request, new CallOptions());
+                LogRPC.Protos.Token token = await client.CreateAsync(request, default(CallOptions));
                 lock (_cacheLock)
                 {
                     _tokenCache[cacheKey] = (DateTime.UtcNow.AddMinutes(6), token.Value);
                 }
             }
-            return _tokenCache[cacheKey].token;
+            return _tokenCache[cacheKey].Token;
         }
 
         private static void CleanCache()
         {
-            if (_tokenCache.Any(kvp => kvp.Value.expiration <= DateTime.UtcNow))
+            if (_tokenCache.Any(kvp => kvp.Value.Expiration <= DateTime.UtcNow))
             {
                 lock (_cacheLock)
                 {
                     foreach (string key in _tokenCache.Keys)
                     {
-                        if (_tokenCache[key].expiration <= DateTime.UtcNow)
+                        if (_tokenCache[key].Expiration <= DateTime.UtcNow)
                             _ = _tokenCache.Remove(key);
                     }
                 }

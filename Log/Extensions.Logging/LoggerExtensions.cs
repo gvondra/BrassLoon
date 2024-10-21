@@ -30,7 +30,8 @@ namespace BrassLoon.Extensions.Logging
             return builder;
         }
 
-        public static ILoggingBuilder AddBrassLoonLogger(this ILoggingBuilder builder,
+        public static ILoggingBuilder AddBrassLoonLogger(
+            this ILoggingBuilder builder,
             Action<LoggerConfiguration> configure)
         {
             _ = builder.AddBrassLoonLogger();

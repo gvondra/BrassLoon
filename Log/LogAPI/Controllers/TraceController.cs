@@ -22,7 +22,8 @@ namespace LogAPI.Controllers
         private readonly ITraceSaver _traceSaver;
         private readonly IEventIdFactory _eventIdFactory;
 
-        public TraceController(IOptions<Settings> settings,
+        public TraceController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Log.IExceptionService exceptionService,
             MapperFactory mapperFactory,
@@ -39,7 +40,7 @@ namespace LogAPI.Controllers
 
         [HttpGet("{domainId}")]
         [ProducesResponseType(typeof(LogModels.Trace[]), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null, [FromQuery] string eventCode = null)
         {
             IActionResult result = null;
@@ -69,8 +70,7 @@ namespace LogAPI.Controllers
                         IMapper mapper = CreateMapper();
                         result = Ok(
                             (await _traceFactory.GetTopBeforeTimestamp(settings, domainId.Value, eventCode, maxTimestamp.Value))
-                            .Select(mapper.Map<LogModels.Trace>)
-                            );
+                            .Select(mapper.Map<LogModels.Trace>));
                     }
                 }
             }
@@ -85,7 +85,7 @@ namespace LogAPI.Controllers
         [HttpGet("/api/TraceEventCode/{domainId}")]
         [ProducesResponseType(typeof(string[]), 200)]
         [ResponseCache(Duration = 150, Location = ResponseCacheLocation.Client)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> GetEventCode([FromRoute] Guid? domainId)
         {
             IActionResult result;
@@ -105,8 +105,7 @@ namespace LogAPI.Controllers
                     {
                         CoreSettings settings = CreateCoreSettings();
                         result = Ok(
-                            await _traceFactory.GetEventCodes(settings, domainId.Value)
-                            );
+                            await _traceFactory.GetEventCodes(settings, domainId.Value));
                     }
                 }
             }
@@ -131,9 +130,9 @@ namespace LogAPI.Controllers
             return innerEventId;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(LogModels.Trace), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] LogModels.Trace trace)
         {
             IActionResult result = null;
@@ -170,7 +169,7 @@ namespace LogAPI.Controllers
         }
 
         [HttpPost("/api/TraceBatch/{domainId}")]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> CreateBatch([FromRoute] Guid? domainId, [FromBody] List<LogModels.Trace> traces)
         {
             IActionResult result = null;

@@ -12,7 +12,7 @@ namespace BrassLoon.Interface.Log
 {
     public class MetricService : IMetricService
     {
-        private static readonly Policy _eventCodeCache = Polly.Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
+        private static readonly Policy _eventCodeCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
         private readonly RestUtil _restUtil;
         private readonly IService _service;
 
@@ -81,8 +81,7 @@ namespace BrassLoon.Interface.Log
                 ;
             IResponse<List<string>> response = await _eventCodeCache.Execute(
                 (context) => _service.Send<List<string>>(request),
-                new Context(domainId.ToString("N"))
-            );
+                new Context(domainId.ToString("N")));
             _restUtil.CheckSuccess(response);
             return response.Value;
         }

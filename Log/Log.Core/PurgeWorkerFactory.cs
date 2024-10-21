@@ -1,11 +1,11 @@
-﻿using BrassLoon.Log.Framework;
+﻿using BrassLoon.CommonCore;
 using BrassLoon.Log.Data;
+using BrassLoon.Log.Data.Models;
+using BrassLoon.Log.Framework;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using BrassLoon.CommonCore;
-using BrassLoon.Log.Data.Models;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Core
 {
@@ -15,7 +15,8 @@ namespace BrassLoon.Log.Core
         private readonly IPurgeWorkerDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
 
-        public PurgeWorkerFactory(IPurgeWorkerDataFactory dataFactory,
+        public PurgeWorkerFactory(
+            IPurgeWorkerDataFactory dataFactory,
             IPurgeWorkerDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {

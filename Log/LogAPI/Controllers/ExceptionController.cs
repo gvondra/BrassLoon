@@ -23,7 +23,8 @@ namespace LogAPI.Controllers
         private readonly IExceptionSaver _exceptionSaver;
         private readonly IEventIdFactory _eventIdFactory;
 
-        public ExceptionController(IOptions<Settings> settings,
+        public ExceptionController(
+            IOptions<Settings> settings,
             SettingsFactory settingsFactory,
             Log.IExceptionService exceptionService,
             MapperFactory mapperFactory,
@@ -38,10 +39,9 @@ namespace LogAPI.Controllers
             _eventIdFactory = eventIdFactory;
         }
 
-
         [HttpGet("{domainId}")]
         [ProducesResponseType(typeof(LogModels.Exception[]), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Search([FromRoute] Guid? domainId, [FromQuery] DateTime? maxTimestamp = null)
         {
             IActionResult result = null;
@@ -68,8 +68,7 @@ namespace LogAPI.Controllers
                         return Ok(
                             await Task.WhenAll(
                             (await _exceptionFactory.GetTopBeforeTimestamp(settings, domainId.Value, maxTimestamp.Value))
-                            .Select(async innerException => await Map(innerException, settings, mapper))
-                            ));
+                            .Select(async innerException => await Map(innerException, settings, mapper))));
                     }
                 }
             }
@@ -83,7 +82,7 @@ namespace LogAPI.Controllers
 
         [HttpGet("{domainId}/{id}")]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] long? id)
         {
             IActionResult result = null;
@@ -111,8 +110,7 @@ namespace LogAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         result = Ok(
-                            await Map(exception, settings, mapper)
-                            );
+                            await Map(exception, settings, mapper));
                     }
                 }
             }
@@ -137,9 +135,9 @@ namespace LogAPI.Controllers
             return innerEventId;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] LogModels.Exception exception)
         {
             IActionResult result = null;
@@ -163,8 +161,7 @@ namespace LogAPI.Controllers
                         IException innerException = await Map(settings, exception, exception.DomainId.Value, exception.CreateTimestamp, _exceptionFactory, mapper, allExceptions);
                         await _exceptionSaver.Create(settings, allExceptions.ToArray());
                         result = Ok(
-                            await Map(innerException, settings, mapper)
-                            );
+                            await Map(innerException, settings, mapper));
                     }
                 }
             }

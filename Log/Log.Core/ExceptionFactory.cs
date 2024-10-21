@@ -15,7 +15,8 @@ namespace BrassLoon.Log.Core
         private readonly IExceptionDataSaver _dataSaver;
         private readonly SettingsFactory _settingsFactory;
 
-        public ExceptionFactory(IExceptionDataFactory dataFactory,
+        public ExceptionFactory(
+            IExceptionDataFactory dataFactory,
             IExceptionDataSaver dataSaver,
             SettingsFactory settingsFactory)
         {
@@ -36,8 +37,7 @@ namespace BrassLoon.Log.Core
             createTimestamp = createTimestamp.Value.ToUniversalTime();
             Exception result = Create(
                 new ExceptionData() { DomainId = domainId, CreateTimestamp = createTimestamp.Value },
-                eventId
-                );
+                eventId);
             result.ParentException = parentException;
             return result;
         }

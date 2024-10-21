@@ -22,7 +22,7 @@ namespace BrassLoon.Log.Purger
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.ToString());
+                await Console.Error.WriteLineAsync(ex.ToString());
             }
         }
 
@@ -204,7 +204,7 @@ namespace BrassLoon.Log.Purger
         }
 
         /// <summary>
-        /// Calling stored procedure to 
+        /// Calling stored procedure to
         /// 1) delete old completed workers
         /// 2) reset hung workers
         /// 3) add domain workers
@@ -234,7 +234,7 @@ namespace BrassLoon.Log.Purger
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.ToString());
+                await Console.Error.WriteLineAsync(ex.ToString());
                 try
                 {
                     _ = await scope.Resolve<IExceptionService>().Create(settingsFactory.CreateLog(), appSettings.ExceptionLoggingDomainId, ex);
@@ -259,8 +259,7 @@ namespace BrassLoon.Log.Purger
             await Task.WhenAll(
                 saver.DeleteExceptionByMinTimestamp(settings, minTimestamp),
                 saver.DeleteMetricByMinTimestamp(settings, minTimestamp),
-                saver.DeleteTraceByMinTimestamp(settings, minTimestamp)
-                );
+                saver.DeleteTraceByMinTimestamp(settings, minTimestamp));
         }
 
         private static DateTime SubtractSettingsTimespan(DateTime timestamp, string value) => AddSettingsTimespan(timestamp, value, -1);

@@ -14,7 +14,8 @@ namespace BrassLoon.Log.Core
         private readonly ITraceDataSaver _dataSaver;
         private readonly IEventId _eventId;
 
-        public Trace(TraceData data,
+        public Trace(
+            TraceData data,
             ITraceDataSaver dataSaver,
             IEventId eventId)
         {
@@ -23,7 +24,8 @@ namespace BrassLoon.Log.Core
             _eventId = eventId;
         }
 
-        public Trace(TraceData data,
+        public Trace(
+            TraceData data,
             ITraceDataSaver dataSaver)
             : this(data, dataSaver, eventId: null)
         { }

@@ -54,8 +54,8 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetPurgeWorker]",
                 () => new PurgeWorkerData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                )).FirstOrDefault();
+                parameters))
+                .FirstOrDefault();
         }
 
         public async Task<IEnumerable<PurgeWorkerData>> GetAll(ISqlSettings settings)
@@ -65,8 +65,7 @@ namespace BrassLoon.Log.Data
                 _providerFactory,
                 "[bll].[GetAllPurgeWorker]",
                 () => new PurgeWorkerData(),
-                DataUtil.AssignDataStateManager
-                );
+                DataUtil.AssignDataStateManager);
         }
     }
 }

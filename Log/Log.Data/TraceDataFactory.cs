@@ -42,8 +42,7 @@ namespace BrassLoon.Log.Data
                 "[bll].[GetTopTraceBeforeTimestamp]",
                 () => new TraceData(),
                 DataUtil.AssignDataStateManager,
-                parameters
-                );
+                parameters);
         }
     }
 }

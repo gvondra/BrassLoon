@@ -9,7 +9,8 @@ namespace BrassLoon.Interface.Log
     {
         Task<LogModels.Exception> Create(ISettings settings, LogModels.Exception exception);
 #pragma warning disable S3427 // Method overloads with default parameter values should not overlap
-        Task<LogModels.Exception> Create(ISettings settings,
+        Task<LogModels.Exception> Create(
+            ISettings settings,
             Guid domainId,
             Exception exception,
             DateTime? createTimestamp = null,

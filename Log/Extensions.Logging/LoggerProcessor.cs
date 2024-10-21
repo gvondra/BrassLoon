@@ -19,8 +19,8 @@ namespace BrassLoon.Extensions.Logging
         private readonly Thread _outputThread;
         private readonly IOptionsMonitor<LoggerConfiguration> _options;
         private readonly IAccessTokenFactory _accessTokenFactory;
-        private bool _disposedValue;
         private readonly Queue<LogMessageEntry> _logEntries;
+        private bool _disposedValue;
         private bool _exit;
 
         public LoggerProcessor(
