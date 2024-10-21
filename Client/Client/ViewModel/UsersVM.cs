@@ -4,9 +4,9 @@ using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
 {
-    internal class UsersVM : ViewModelBase
+    internal sealed class UsersVM : ViewModelBase
     {
-        private string _searchText;        
+        private string _searchText;
         private ICommand _searchCommand;
         private UserVM _selectedUser;
         private string _message;

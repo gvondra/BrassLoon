@@ -32,7 +32,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(() => Cancel(invitationVM.InnerInvitation))
+                _ = Task.Run(() => Cancel(invitationVM.InnerInvitation))
                     .ContinueWith(CancelCallback, invitationVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
@@ -43,14 +43,14 @@ namespace BrassLoon.Client.Behaviors
             _userInvitationService.Update(_settingsFactory.CreateAccountSettings(), invitation).Wait();
         }
 
-        private async Task CancelCallback(Task cancel, object state)
+        private static async Task CancelCallback(Task cancel, object state)
         {
             try
             {
                 await cancel;
-                MessageBox.Show("Invitation Cancelled", "Confirmation", MessageBoxButton.OK, MessageBoxImage.Information);
+                _ = MessageBox.Show("Invitation Cancelled", "Confirmation", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

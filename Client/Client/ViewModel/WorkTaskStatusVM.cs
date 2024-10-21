@@ -30,9 +30,9 @@ namespace BrassLoon.Client.ViewModel
 
         public bool IsNotNew => WorkTaskStatusId.HasValue;
 
-        public string Code 
-        { 
-            get => _taskStatus.Code; 
+        public string Code
+        {
+            get => _taskStatus.Code;
             set
             {
                 if (_taskStatus.Code != value)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Client.Behaviors
 {
-    internal class HomeLoader
+    internal sealed class HomeLoader
     {
         private readonly HomeVM _homeVM;
         private readonly IAccountService _accountService;
@@ -25,7 +25,7 @@ namespace BrassLoon.Client.Behaviors
         public void LoadAccounts()
         {
             _homeVM.Accounts.Clear();
-            Task.Run(() => _accountService.Search(_settingsFactory.CreateAccountSettings()).Result)
+            _ = Task.Run(() => _accountService.Search(_settingsFactory.CreateAccountSettings()).Result)
                 .ContinueWith(LoadAccountsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -35,7 +35,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 List<Account> accounts = await loadAccounts;
                 _homeVM.Accounts.Clear();
-                foreach (Account account in  accounts)
+                foreach (Account account in accounts)
                 {
                     _homeVM.Accounts.Add(new AccountVM(account));
                 }

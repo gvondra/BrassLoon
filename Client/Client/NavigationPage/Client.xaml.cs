@@ -2,19 +2,9 @@
 using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.NavigationPage
 {
@@ -34,7 +24,7 @@ namespace BrassLoon.Client.NavigationPage
             InitializeComponent();
             ClientVM = clientVM;
             DataContext = clientVM;
-            this.Loaded += Client_Loaded;
+            Loaded += Client_Loaded;
         }
 
         internal ClientVM ClientVM { get; private set; }
@@ -51,7 +41,7 @@ namespace BrassLoon.Client.NavigationPage
             if (ClientVM.GetBehavior<ClientValidator>() == null)
             {
                 ClientVM.AddBehavior(
-                    scope.Resolve<Func<ClientVM, ClientValidator>>()(ClientVM));                
+                    scope.Resolve<Func<ClientVM, ClientValidator>>()(ClientVM));
             }
         }
     }

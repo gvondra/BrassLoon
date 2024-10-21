@@ -51,7 +51,7 @@ namespace BrassLoon.Client.ViewModel
             get => _isActAdmin;
             set
             {
-                if ( _isActAdmin != value)
+                if (_isActAdmin != value)
                 {
                     _isActAdmin = value;
                     NotifyPropertyChanged();

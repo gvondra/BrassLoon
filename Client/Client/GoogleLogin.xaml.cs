@@ -1,24 +1,17 @@
 ﻿using Autofac;
 using BrassLoon.Interface.Account;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace BrassLoon.Client
 {
@@ -51,7 +44,7 @@ namespace BrassLoon.Client
             string code_verifier = RandomDataBase64url(32);
             string code_challenge = Base64urlencodeNoPadding(Sha256(code_verifier));
 
-            string redirectURI = string.Format("http://{0}:{1}/", IPAddress.Loopback, GetRandomUnusedPort());
+            string redirectURI = string.Format(CultureInfo.InvariantCulture, "http://{0}:{1}/", IPAddress.Loopback, GetRandomUnusedPort());
             Output("redirect URI: " + redirectURI);
 
             HttpListener httpListener = new HttpListener();
@@ -60,9 +53,11 @@ namespace BrassLoon.Client
             httpListener.Start();
 
             // Creates the OAuth 2.0 authorization request.
-            string authorizationRequest = string.Format("{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
+            string authorizationRequest = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}?response_type=code&scope=openid%20email%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
                 appSettings.GoogleAuthorizationEndpoint,
-                System.Uri.EscapeDataString(redirectURI),
+                Uri.EscapeDataString(redirectURI),
                 appSettings.GoogleClientId,
                 state,
                 code_challenge,
@@ -74,21 +69,21 @@ namespace BrassLoon.Client
                 UseShellExecute = true
             };
             // Opens request in the browser.
-            System.Diagnostics.Process.Start(startInfo);
+            _ = Process.Start(startInfo);
 
             // Waits for the OAuth authorization response.
             HttpListenerContext context = await httpListener.GetContextAsync();
 
             // Brings this app back to the foreground.
-            this.Activate();
+            _ = Activate();
 
             // Sends an HTTP response to the browser.
             HttpListenerResponse response = context.Response;
-            string responseString = string.Format("<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>");
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+            string responseString = "<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>";
+            byte[] buffer = Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
             Stream responseOutput = response.OutputStream;
-            Task responseTask = responseOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
+            _ = responseOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
             {
                 responseOutput.Close();
                 httpListener.Stop();
@@ -98,7 +93,7 @@ namespace BrassLoon.Client
             // Checks for errors.
             if (context.Request.QueryString.Get("error") != null)
             {
-                Output(String.Format("OAuth authorization error: {0}.", context.Request.QueryString.Get("error")));
+                Output(string.Format(CultureInfo.InvariantCulture, "OAuth authorization error: {0}.", context.Request.QueryString.Get("error")));
                 return;
             }
             if (context.Request.QueryString.Get("code") == null
@@ -116,7 +111,7 @@ namespace BrassLoon.Client
             // this app made the request which resulted in authorization.
             if (incoming_state != state)
             {
-                Output(String.Format("Received request with invalid state ({0})", incoming_state));
+                Output(string.Format(CultureInfo.InvariantCulture, "Received request with invalid state ({0})", incoming_state));
                 return;
             }
             Output("Authorization code: " + code);
@@ -124,7 +119,7 @@ namespace BrassLoon.Client
             // Starts the code exchange at the Token Endpoint.
             await PerformCodeExchange(appSettings, code, code_verifier, redirectURI);
             await GetApiToken();
-            this.Close();
+            Close();
         }
 
         private async Task PerformCodeExchange(AppSettings appSettings, string code, string code_verifier, string redirectURI)
@@ -132,13 +127,14 @@ namespace BrassLoon.Client
             Output("Exchanging code for tokens...");
 
             // builds the  request
-            string tokenRequestBody = string.Format("code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
+            string tokenRequestBody = string.Format(
+                CultureInfo.InvariantCulture,
+                "code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
                 code,
-                System.Uri.EscapeDataString(redirectURI),
+                Uri.EscapeDataString(redirectURI),
                 appSettings.GoogleClientId,
                 code_verifier,
-                appSettings.GoogleClientSecret
-                );
+                appSettings.GoogleClientSecret);
 
             // sends the request
             HttpWebRequest tokenRequest = (HttpWebRequest)WebRequest.Create(appSettings.GoogleTokenEndpoint);
@@ -174,7 +170,7 @@ namespace BrassLoon.Client
             {
                 if (ex.Status == WebExceptionStatus.ProtocolError)
                 {
-                    var response = ex.Response as HttpWebResponse;
+                    HttpWebResponse response = ex.Response as HttpWebResponse;
                     if (response != null)
                     {
                         Output("HTTP: " + response.StatusCode);
@@ -185,7 +181,6 @@ namespace BrassLoon.Client
                             Output(responseText);
                         }
                     }
-
                 }
             }
         }
@@ -268,7 +263,7 @@ namespace BrassLoon.Client
             base64 = base64.Replace("+", "-");
             base64 = base64.Replace("/", "_");
             // Strips padding.
-            base64 = base64.Replace("=", "");
+            base64 = base64.Replace("=", string.Empty);
 
             return base64;
         }
@@ -278,7 +273,7 @@ namespace BrassLoon.Client
             if (!checkAccessToken || string.IsNullOrEmpty(AccessToken.Get?.Token))
             {
                 GoogleLogin googleLogin = new GoogleLogin() { Owner = owner };
-                googleLogin.ShowDialog();
+                _ = googleLogin.ShowDialog();
             }
         }
     }

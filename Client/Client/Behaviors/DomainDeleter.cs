@@ -17,7 +17,7 @@ namespace BrassLoon.Client.Behaviors
         private readonly IDomainService _domainService;
         private readonly IAccountService _accountService;
         private readonly NavigationService _navigationService;
-        private readonly bool _delete = true;
+        private readonly bool _delete;
         private bool _canExecute = true;
 
         public DomainDeleter(ISettingsFactory settingsFactory, IDomainService domainService, IAccountService accountService)
@@ -52,7 +52,7 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _canExecute = false;
                     CanExecuteChanged.Invoke(this, new EventArgs());
-                    Task.Run(() => Delete(domainVM.InnerDomain))
+                    _ = Task.Run(() => Delete(domainVM.InnerDomain))
                         .ContinueWith(DeleteCallback, domainVM, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
@@ -60,7 +60,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(() => Delete(accountVM.SelectedDeletedDomain.InnerDomain))
+                _ = Task.Run(() => Delete(accountVM.SelectedDeletedDomain.InnerDomain))
                         .ContinueWith(DeleteCallback, accountVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
@@ -85,7 +85,7 @@ namespace BrassLoon.Client.Behaviors
                         .ContinueWith(GetAccountCallback, state, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
                 _canExecute = true;
@@ -94,9 +94,7 @@ namespace BrassLoon.Client.Behaviors
         }
 
         private Models.Account GetAccount(Guid accountId)
-        {
-            return _accountService.Get(_settingsFactory.CreateAccountSettings(), accountId).Result;
-        }
+        => _accountService.Get(_settingsFactory.CreateAccountSettings(), accountId).Result;
 
         private async Task GetAccountCallback(Task<Models.Account> getAccount, object state)
         {
@@ -105,10 +103,10 @@ namespace BrassLoon.Client.Behaviors
                 Models.Account account = await getAccount;
                 if (_navigationService != null)
                 {
-                    _navigationService.Navigate(new Account(new AccountVM(account)));
+                    _ = _navigationService.Navigate(new Account(new AccountVM(account)));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
                 _canExecute = true;

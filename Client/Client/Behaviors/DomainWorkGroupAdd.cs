@@ -27,7 +27,7 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private void AddWorkGroup(WorkGroupsVM workGroupsVM)
+        private static void AddWorkGroup(WorkGroupsVM workGroupsVM)
         {
             WorkGroupVM workGroupVM = new WorkGroupVM(
                 new WorkGroup { DomainId = workGroupsVM.DomainVM.DomainId },
@@ -38,7 +38,7 @@ namespace BrassLoon.Client.Behaviors
             if (workGroupsVM.NavigationService != null)
             {
                 NavigationPage.WorkGroup page = new NavigationPage.WorkGroup(workGroupVM);
-                workGroupsVM.NavigationService.Navigate(page);
+                _ = workGroupsVM.NavigationService.Navigate(page);
             }
         }
     }

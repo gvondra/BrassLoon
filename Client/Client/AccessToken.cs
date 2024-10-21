@@ -7,18 +7,13 @@ using System.Runtime.CompilerServices;
 
 namespace BrassLoon.Client
 {
-    internal class AccessToken
+    internal sealed class AccessToken
     {
         private const string Issuer = "urn:brassloon";
-        private static AccessToken _instance;
+        private static readonly AccessToken _instance = new AccessToken();
         private static string _token;
         private JwtSecurityToken _jwtSecurityToken;
         private Dictionary<string, string> _googleToken;
-
-        static AccessToken()
-        {
-            _instance = new AccessToken();
-        }
 
         private AccessToken() { }
 
@@ -42,7 +37,7 @@ namespace BrassLoon.Client
             set
             {
                 _token = value;
-                _jwtSecurityToken = !string.IsNullOrEmpty(value) ?  new JwtSecurityToken(value) : default;
+                _jwtSecurityToken = !string.IsNullOrEmpty(value) ? new JwtSecurityToken(value) : default;
                 NotifyPropertyChanged();
             }
         }
@@ -59,13 +54,10 @@ namespace BrassLoon.Client
                 && _jwtSecurityToken.Claims.Any(
                     clm => string.Equals(clm.Issuer, Issuer, StringComparison.OrdinalIgnoreCase)
                     && string.Equals(clm.Type, "role", StringComparison.OrdinalIgnoreCase)
-                    && string.Equals(clm.Value, role, StringComparison.OrdinalIgnoreCase)
-                    );
+                    && string.Equals(clm.Value, role, StringComparison.OrdinalIgnoreCase));
         }
 
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -3,19 +3,11 @@ using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
 using BrassLoon.Interface.Account;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Models = BrassLoon.Interface.Account.Models;
 
 namespace BrassLoon.Client.NavigationPage
@@ -36,7 +28,7 @@ namespace BrassLoon.Client.NavigationPage
             InitializeComponent();
             AccountVM = accountVM;
             DataContext = accountVM;
-            this.Loaded += Account_Loaded;
+            Loaded += Account_Loaded;
         }
 
         internal AccountVM AccountVM { get; private set; }
@@ -76,10 +68,9 @@ namespace BrassLoon.Client.NavigationPage
             {
                 NavigationService navigationService = NavigationService.GetNavigationService(this);
                 CreateInvitation page = new CreateInvitation(AccountVM);
-                navigationService.Navigate(page);
-
+                _ = navigationService.Navigate(page);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex, Window.GetWindow(this));
             }
@@ -93,10 +84,10 @@ namespace BrassLoon.Client.NavigationPage
                 {
                     NavigationService navigationService = NavigationService.GetNavigationService(this);
                     Invitation page = new Invitation((UserInvitationVM)listView.SelectedItem);
-                    navigationService.Navigate(page);
+                    _ = navigationService.Navigate(page);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -109,10 +100,10 @@ namespace BrassLoon.Client.NavigationPage
                 if (sender is ListView listView && listView.SelectedItem != null)
                 {
                     NavigationService navigationService = NavigationService.GetNavigationService(this);
-                    navigationService.Navigate(new Client((ClientVM)listView.SelectedItem));
+                    _ = navigationService.Navigate(new Client((ClientVM)listView.SelectedItem));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -128,9 +119,9 @@ namespace BrassLoon.Client.NavigationPage
                     Name = "New Client"
                 };
                 NavigationService navigationService = NavigationService.GetNavigationService(this);
-                navigationService.Navigate(new Client(new ClientVM(client)));
+                _ = navigationService.Navigate(new Client(new ClientVM(client)));
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -149,17 +140,17 @@ namespace BrassLoon.Client.NavigationPage
                         Name = name
                     };
                     NewDomainName.Text = string.Empty;
-                    Task.Run(() => CreateDomain(domain))
+                    _ = Task.Run(() => CreateDomain(domain))
                         .ContinueWith(CreateDomainCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
         }
 
-        private (Models.Domain, AppSettings) CreateDomain(Models.Domain domain)
+        private static (Models.Domain Domain, AppSettings AppSettings) CreateDomain(Models.Domain domain)
         {
             using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
             ISettingsFactory settingsFactory = scope.Resolve<ISettingsFactory>();
@@ -168,7 +159,7 @@ namespace BrassLoon.Client.NavigationPage
                 scope.Resolve<AppSettings>());
         }
 
-        private async Task CreateDomainCallback(Task<(Models.Domain, AppSettings)> createDomain, object state)
+        private async Task CreateDomainCallback(Task<(Models.Domain Domain, AppSettings AppSettings)> createDomain, object state)
         {
             try
             {
@@ -176,9 +167,9 @@ namespace BrassLoon.Client.NavigationPage
                 DomainVM domainVM = new DomainVM(domainAppSettings.Item1, domainAppSettings.Item2);
                 AccountVM.Domains.Add(domainVM);
                 NavigationService navigation = NavigationService.GetNavigationService(this);
-                navigation.Navigate(new Domain(domainVM));
+                _ = navigation.Navigate(new Domain(domainVM));
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex, Window.GetWindow(this));
             }
@@ -191,10 +182,10 @@ namespace BrassLoon.Client.NavigationPage
                 if (sender is ListView listView && listView.SelectedItem != null)
                 {
                     NavigationService navigation = NavigationService.GetNavigationService(this);
-                    navigation.Navigate(new Domain((DomainVM)listView.SelectedItem));
+                    _ = navigation.Navigate(new Domain((DomainVM)listView.SelectedItem));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex, Window.GetWindow(this));
             }

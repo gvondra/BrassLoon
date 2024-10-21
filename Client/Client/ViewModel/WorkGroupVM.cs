@@ -16,7 +16,7 @@ namespace BrassLoon.Client.ViewModel
             _workGroup = workGroup;
             _workGroupsVM = workGroupsVM;
         }
-        
+
         public ObservableCollection<string> TaskTypeTitles { get; } = new ObservableCollection<string>();
 
         internal WorkGroup InnerWorkGroup => _workGroup;
@@ -28,7 +28,7 @@ namespace BrassLoon.Client.ViewModel
         public Guid? DomainId => _workGroup.DomainId;
 
         public string Title
-        { 
+        {
             get => _workGroup.Title;
             set
             {

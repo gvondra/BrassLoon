@@ -36,7 +36,7 @@ namespace BrassLoon.Client.Behaviors
                 CanExecuteChanged.Invoke(this, new EventArgs());
                 searchVM.Users.Clear();
                 searchVM.SelectedUser = null;
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     List<User> users = _userService.Search(_settingsFactory.CreateAuthorizationSettings(), searchVM.DomainVM.DomainId, searchVM.SearchText).Result;
                     List<Role> roles = _roleService.GetByDomainId(_settingsFactory.CreateAuthorizationSettings(), searchVM.DomainVM.DomainId).Result;
@@ -66,7 +66,7 @@ namespace BrassLoon.Client.Behaviors
                         DomainUserVM userVM = new DomainUserVM(user);
                         foreach (Role role in roles)
                         {
-                            AppliedRoleVM appliedRoleVM = new AppliedRoleVM(new AppliedRole { Name = role.Name, PolicyName = role.PolicyName});
+                            AppliedRoleVM appliedRoleVM = new AppliedRoleVM(new AppliedRole { Name = role.Name, PolicyName = role.PolicyName });
                             appliedRoleVM.IsApplied = user.Roles.Exists(r => string.Equals(r.PolicyName, role.PolicyName, StringComparison.OrdinalIgnoreCase));
                             userVM.AppliedRoles.Add(appliedRoleVM);
                         }
@@ -80,7 +80,7 @@ namespace BrassLoon.Client.Behaviors
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

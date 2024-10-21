@@ -75,7 +75,7 @@ namespace BrassLoon.Client.ViewModel
 
         public Visibility DeletedDomainVisibility
         {
-            get 
+            get
             {
                 if (AdminVisibility == Visibility.Collapsed)
                     return AdminVisibility;

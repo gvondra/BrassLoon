@@ -2,8 +2,7 @@
 using BrassLoon.Interface.Account;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -36,10 +35,10 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _canExcecute = false;
                     CanExecuteChanged.Invoke(this, new EventArgs());
-                    string messageText = string.Format("Are you sure you want to {0} this account?", accountVM.IsLocked ? "unlock" : "lock");
+                    string messageText = string.Format(CultureInfo.InvariantCulture, "Are you sure you want to {0} this account?", accountVM.IsLocked ? "unlock" : "lock");
                     if (MessageBox.Show(messageText, "Verfify Toggle Action", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        Task.Run(() => UpdateLock(accountVM.AccountId, !accountVM.IsLocked))
+                        _ = Task.Run(() => UpdateLock(accountVM.AccountId, !accountVM.IsLocked))
                             .ContinueWith(UpdateLockCallback, accountVM, TaskScheduler.FromCurrentSynchronizationContext());
                     }
                     else
@@ -49,7 +48,7 @@ namespace BrassLoon.Client.Behaviors
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
                 _canExcecute = true;
@@ -63,7 +62,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 { "Locked", isLocked.ToString() }
             };
-            _accountService.Patch(_settingsFactory.CreateAccountSettings(), accountId, patch);
+            _ = _accountService.Patch(_settingsFactory.CreateAccountSettings(), accountId, patch);
             return isLocked;
         }
 
@@ -77,7 +76,7 @@ namespace BrassLoon.Client.Behaviors
                     accountVM.IsLocked = isLocked;
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

@@ -29,7 +29,7 @@ namespace BrassLoon.Client.Behaviors
         {
             _domainVM.WorkGroups.IsLoadingGroups = true;
             _domainVM.WorkGroups.Items.Clear();
-            Task.Run(() => _workGroupService.GetAll(_settingsFactory.CreateWorkTaskSettings(), _domainVM.DomainId).Result)
+            _ = Task.Run(() => _workGroupService.GetAll(_settingsFactory.CreateWorkTaskSettings(), _domainVM.DomainId).Result)
                 .ContinueWith(LoadWorkGroupsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -39,7 +39,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 List<WorkGroup> workGroups = await loadWorkGroups;
                 _domainVM.WorkGroups.Items.Clear();
-                foreach (WorkGroup workGroup in  workGroups)
+                foreach (WorkGroup workGroup in workGroups)
                 {
                     _domainVM.WorkGroups.Items.Add(new WorkGroupVM(workGroup, _domainVM.WorkGroups));
                 }
@@ -81,7 +81,7 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add
                 || e.Action == NotifyCollectionChangedAction.Replace)

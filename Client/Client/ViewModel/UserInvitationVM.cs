@@ -1,5 +1,4 @@
-﻿using BrassLoon.Client.NavigationPage;
-using BrassLoon.Interface.Account.Models;
+﻿using BrassLoon.Interface.Account.Models;
 using System;
 using System.Windows.Input;
 

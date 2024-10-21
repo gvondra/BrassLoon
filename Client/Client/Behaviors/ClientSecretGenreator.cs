@@ -1,9 +1,6 @@
 ﻿using BrassLoon.Client.ViewModel;
 using BrassLoon.Interface.Account;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -11,7 +8,7 @@ namespace BrassLoon.Client.Behaviors
 {
     public class ClientSecretGenreator : ICommand
     {
-        private ISettingsFactory _settingsFactory;
+        private readonly ISettingsFactory _settingsFactory;
         private readonly IClientService _clientService;
         private bool _canExecute = true;
 
@@ -33,21 +30,19 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(GenerateSecret)
+                _ = Task.Run(GenerateSecret)
                     .ContinueWith(GenerateSecretCallback, clientVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
         private string GenerateSecret()
-        {
-            return _clientService.CreateSecret(_settingsFactory.CreateAccountSettings()).Result;
-        }
+        => _clientService.CreateSecret(_settingsFactory.CreateAccountSettings()).Result;
 
         private async Task GenerateSecretCallback(Task<string> generateSecret, object state)
         {
             try
             {
-                if (state != null && state is ClientVM clientVM)
+                if (state is ClientVM clientVM)
                 {
                     clientVM.Secret = await generateSecret;
                 }

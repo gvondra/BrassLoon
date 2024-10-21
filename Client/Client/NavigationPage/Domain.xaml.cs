@@ -2,19 +2,10 @@
 using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.NavigationPage
 {
@@ -35,12 +26,12 @@ namespace BrassLoon.Client.NavigationPage
             DomainVM = domainVM;
             DataContext = domainVM;
             DomainUserSearchVM = domainVM != null ? new DomainUserSearchVM(domainVM) : null;
-            this.Loaded += Domain_Loaded;
+            Loaded += Domain_Loaded;
         }
 
         internal DomainVM DomainVM { get; private set; }
-        internal DomainUserSearchVM DomainUserSearchVM 
-        { 
+        internal DomainUserSearchVM DomainUserSearchVM
+        {
             get => (DomainUserSearchVM)DomainUserSearch?.DataContext;
             private set => DomainUserSearch.DataContext = value;
         }
@@ -76,7 +67,7 @@ namespace BrassLoon.Client.NavigationPage
             {
                 DomainVM.AddBehavior(
                     scope.Resolve<Func<DomainVM, DomainValidator>>()(DomainVM));
-            }    
+            }
             if (!DomainVM.ContainsBehavior<DomainLoader>())
             {
                 DomainLoader loader = scope.Resolve<Func<DomainVM, DomainLoader>>()(DomainVM);

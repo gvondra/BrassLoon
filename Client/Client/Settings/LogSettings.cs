@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Interface.Log;
-using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Client.Settings

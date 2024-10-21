@@ -17,7 +17,6 @@ namespace BrassLoon.Client.Behaviors
         private readonly IDomainService _domainService;
         private readonly IUserInvitationService _userInvitationService;
         private readonly IClientService _clientService;
-        private readonly AccountUserRemover _accountUserRemover;
         private readonly AccountVM _accountVM;
 
         public AccountLoader(
@@ -27,7 +26,6 @@ namespace BrassLoon.Client.Behaviors
             IDomainService domainService,
             IUserInvitationService userInvitationService,
             IClientService clientService,
-            AccountUserRemover accountUserRemover,
             AccountVM accountVM)
         {
             _appSettings = appSettings;
@@ -35,7 +33,6 @@ namespace BrassLoon.Client.Behaviors
             _accountService = accountService;
             _domainService = domainService;
             _userInvitationService = userInvitationService;
-            _accountUserRemover = accountUserRemover;
             _clientService = clientService;
             _accountVM = accountVM;
         }
@@ -43,14 +40,12 @@ namespace BrassLoon.Client.Behaviors
         public void LoadDomains()
         {
             _accountVM.Domains.Clear();
-            Task.Run(() => LoadDomains(_accountVM.AccountId))
+            _ = Task.Run(() => LoadDomains(_accountVM.AccountId))
                 .ContinueWith(LoadDomainsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private List<Domain> LoadDomains(Guid accountId)
-        {
-            return _domainService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
-        }
+        => _domainService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
 
         private async Task LoadDomainsCallback(Task<List<Domain>> loadDomains, object state)
         {
@@ -62,7 +57,7 @@ namespace BrassLoon.Client.Behaviors
                     _accountVM.Domains.Add(new DomainVM(domain, _appSettings));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -71,14 +66,12 @@ namespace BrassLoon.Client.Behaviors
         public void LoadDeletedDomains()
         {
             _accountVM.DeletedDomains.Clear();
-            Task.Run(() => LoadDeletedDomains(_accountVM.AccountId))
+            _ = Task.Run(() => LoadDeletedDomains(_accountVM.AccountId))
                 .ContinueWith(LoadDeletedDomainsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private List<Domain> LoadDeletedDomains(Guid accountId)
-        {
-            return _domainService.GetDeletedByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
-        }
+        => _domainService.GetDeletedByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
 
         private async Task LoadDeletedDomainsCallback(Task<List<Domain>> loadDomains, object state)
         {
@@ -90,7 +83,7 @@ namespace BrassLoon.Client.Behaviors
                     _accountVM.DeletedDomains.Add(new DomainVM(domain, _appSettings));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -99,14 +92,12 @@ namespace BrassLoon.Client.Behaviors
         public void LoadUsers()
         {
             _accountVM.Users.Clear();
-            Task.Run(() => LoadUsers(_accountVM.AccountId))
+            _ = Task.Run(() => LoadUsers(_accountVM.AccountId))
                 .ContinueWith(LoadUsersCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private List<User> LoadUsers(Guid accountId)
-        {
-            return _accountService.GetUsers(_settingsFactory.CreateAccountSettings(), accountId).Result;
-        }
+        => _accountService.GetUsers(_settingsFactory.CreateAccountSettings(), accountId).Result;
 
         private async Task LoadUsersCallback(Task<List<User>> loadUsers, object state)
         {
@@ -118,7 +109,7 @@ namespace BrassLoon.Client.Behaviors
                     _accountVM.Users.Add(new UserVM(user));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -126,13 +117,13 @@ namespace BrassLoon.Client.Behaviors
 
         public void LoadInvitations()
         {
-            try 
+            try
             {
                 _accountVM.Invitations.Clear();
-                Task.Run(() => LoadInvitations(_accountVM.AccountId))
+                _ = Task.Run(() => LoadInvitations(_accountVM.AccountId))
                     .ContinueWith(LoadInvitationsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -156,7 +147,7 @@ namespace BrassLoon.Client.Behaviors
                     _accountVM.Invitations.Add(new UserInvitationVM(invitation));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -167,19 +158,17 @@ namespace BrassLoon.Client.Behaviors
             try
             {
                 _accountVM.Clients.Clear();
-                Task.Run(() => GetClients(_accountVM.AccountId))
+                _ = Task.Run(() => GetClients(_accountVM.AccountId))
                     .ContinueWith(LoadClientsCallback, null, TaskScheduler.FromCurrentSynchronizationContext());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
         }
 
         private List<Models.Client> GetClients(Guid accountId)
-        {
-            return _clientService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
-        }
+        => _clientService.GetByAccountId(_settingsFactory.CreateAccountSettings(), accountId).Result;
 
         private async Task LoadClientsCallback(Task<List<Models.Client>> loadClients, object state)
         {
@@ -192,7 +181,7 @@ namespace BrassLoon.Client.Behaviors
                     _accountVM.Clients.Add(new ClientVM(client));
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

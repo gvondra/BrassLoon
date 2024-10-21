@@ -1,20 +1,9 @@
 ﻿using Autofac;
 using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.NavigationPage
 {
@@ -34,7 +23,7 @@ namespace BrassLoon.Client.NavigationPage
             InitializeComponent();
             UserInvitationVM = invitationVM;
             DataContext = UserInvitationVM;
-            this.Loaded += Invitation_Loaded;
+            Loaded += Invitation_Loaded;
         }
 
         internal UserInvitationVM UserInvitationVM { get; private set; }
@@ -45,6 +34,5 @@ namespace BrassLoon.Client.NavigationPage
             if (UserInvitationVM.Cancel == null)
                 UserInvitationVM.Cancel = scope.Resolve<InvitationCancel>();
         }
-
     }
 }

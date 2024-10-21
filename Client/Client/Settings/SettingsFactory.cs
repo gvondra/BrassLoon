@@ -1,6 +1,6 @@
 ﻿namespace BrassLoon.Client.Settings
 {
-    internal class SettingsFactory : ISettingsFactory
+    internal sealed class SettingsFactory : ISettingsFactory
     {
         private readonly AppSettings _appSettings;
 

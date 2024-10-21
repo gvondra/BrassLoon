@@ -8,7 +8,7 @@ namespace BrassLoon.Client.Behaviors
 {
     public class DomainClientSecretGenerator : ICommand
     {
-        private ISettingsFactory _settingsFactory;
+        private readonly ISettingsFactory _settingsFactory;
         private readonly IClientService _clientService;
         private bool _canExecute = true;
 
@@ -30,7 +30,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(() => _clientService.GetClientCredentialSecret(_settingsFactory.CreateAuthorizationSettings()).Result)
+                _ = Task.Run(() => _clientService.GetClientCredentialSecret(_settingsFactory.CreateAuthorizationSettings()).Result)
                     .ContinueWith(GenerateSecretCallback, domainClientVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }

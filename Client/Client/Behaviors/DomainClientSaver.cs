@@ -32,7 +32,7 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     Func<ISettings, Models.Client, Task<Models.Client>> save = _clientService.Update;
                     if (clientVM.IsNew)
@@ -40,7 +40,7 @@ namespace BrassLoon.Client.Behaviors
                     Models.Client client = clientVM.InnerClient;
                     client.Roles = clientVM.AppliedRoles
                         .Where(r => r.IsApplied)
-                        .Select<AppliedRoleVM, Models.AppliedRole>(r => new Models.AppliedRole { Name = r.Name, PolicyName = r.PolicyName})
+                        .Select(r => new Models.AppliedRole { Name = r.Name, PolicyName = r.PolicyName })
                         .ToList();
                     return save(_settingsFactory.CreateAuthorizationSettings(), client).Result;
                 })

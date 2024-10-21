@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client
 {
@@ -19,16 +10,14 @@ namespace BrassLoon.Client
     /// </summary>
     public partial class ErrorWindow : Window
     {
-        public Exception Exception { get; set; }
-        public List<Exception> InnerExceptions { get; set; }
-
         public ErrorWindow()
         {
             InitializeComponent();
             DataContext = this;
         }
 
-        public ErrorWindow(Exception exception) : this()
+        public ErrorWindow(Exception exception)
+            : this()
         {
             Exception = exception;
             if (exception.InnerException != null)
@@ -37,6 +26,9 @@ namespace BrassLoon.Client
                 AppendInnerExceptions(exception, InnerExceptions);
             }
         }
+
+        public Exception Exception { get; set; }
+        public List<Exception> InnerExceptions { get; set; }
 
         private static void AppendInnerExceptions(Exception exception, List<Exception> innerExceptions)
         {
@@ -53,7 +45,7 @@ namespace BrassLoon.Client
         {
             ErrorWindow errorWindow = new ErrorWindow(exception);
             errorWindow.Owner = owner;
-            errorWindow.ShowDialog();
+            _ = errorWindow.ShowDialog();
         }
 
         private void CopyCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)

@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace BrassLoon.Client.ViewModel
 {
-    internal class HomeVM : ViewModelBase
+    internal sealed class HomeVM : ViewModelBase
     {
         private Visibility _systemAdminVisibility = Visibility.Collapsed;
         private Visibility _accountAdminVisibility = Visibility.Collapsed;

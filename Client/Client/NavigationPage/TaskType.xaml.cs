@@ -1,18 +1,9 @@
 ﻿using BrassLoon.Client.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.NavigationPage
 {
@@ -38,11 +29,11 @@ namespace BrassLoon.Client.NavigationPage
         {
             try
             {
-                if (sender is ListView listView && TaskTypeVM.SelectedTaskStatus != null)
+                if (sender is ListView && TaskTypeVM.SelectedTaskStatus != null)
                 {
                     NavigationService navigationService = NavigationService.GetNavigationService(this);
-                    NavigationPage.TaskStatus taskStatus = new NavigationPage.TaskStatus(TaskTypeVM.SelectedTaskStatus);
-                    navigationService.Navigate(taskStatus);
+                    TaskStatus taskStatus = new TaskStatus(TaskTypeVM.SelectedTaskStatus);
+                    _ = navigationService.Navigate(taskStatus);
                 }
             }
             catch (Exception ex)

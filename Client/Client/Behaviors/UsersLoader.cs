@@ -37,11 +37,11 @@ namespace BrassLoon.Client.Behaviors
                     usersVM.Users.Clear();
                     usersVM.Message = string.Empty;
                     usersVM.SelectedUser = null;
-                    Task.Run(() => Search(usersVM.SearchText))
+                    _ = Task.Run(() => Search(usersVM.SearchText))
                         .ContinueWith(SearchCallback, usersVM, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
                 _canExecute = true;
@@ -81,7 +81,7 @@ namespace BrassLoon.Client.Behaviors
                         usersVM.SelectedUser = usersVM.Users[0];
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }
@@ -103,7 +103,7 @@ namespace BrassLoon.Client.Behaviors
             return result;
         }
 
-        private async Task GetRolesCallback(Task<Dictionary<Guid, List<string>>> getRoles, object state)
+        private static async Task GetRolesCallback(Task<Dictionary<Guid, List<string>>> getRoles, object state)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace BrassLoon.Client.Behaviors
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

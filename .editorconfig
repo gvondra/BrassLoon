@@ -153,7 +153,7 @@ csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 csharp_style_conditional_delegate_call = true:suggestion
 csharp_style_prefer_switch_expression = true:none
-csharp_style_prefer_pattern_matching = true:silent
+csharp_style_prefer_pattern_matching = false:none
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_prefer_not_pattern = true:suggestion
@@ -286,3 +286,12 @@ dotnet_diagnostic.SA1629.severity = none
 
 # SA1514: Element documentation header should be preceded by blank line
 dotnet_diagnostic.SA1514.severity = none
+
+# IDE0010: Add missing cases
+dotnet_diagnostic.IDE0010.severity = none
+
+# SA1005: Single line comments should begin with single space
+dotnet_diagnostic.SA1005.severity = none
+
+# SA1512: Single-line comments should not be followed by blank line
+dotnet_diagnostic.SA1512.severity = none

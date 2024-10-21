@@ -3,8 +3,6 @@ using BrassLoon.Interface.Account;
 using BrassLoon.Interface.Account.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 

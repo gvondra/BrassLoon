@@ -2,19 +2,10 @@
 using BrassLoon.Client.Behaviors;
 using BrassLoon.Client.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.Control
 {
@@ -26,15 +17,15 @@ namespace BrassLoon.Client.Control
         public DomainTaskTypes()
         {
             InitializeComponent();
-            this.Loaded += DomainTaskTypes_Loaded;
+            Loaded += DomainTaskTypes_Loaded;
         }
 
-        DomainVM DomainVM => this.DataContext is DomainVM domainVM ? domainVM : null;
+        private DomainVM DomainVM => DataContext is DomainVM domainVM ? domainVM : null;
 
         private void DomainTaskTypes_Loaded(object sender, RoutedEventArgs e)
         {
-            DomainVM domainVM = this.DomainVM;
-            if (domainVM != null && domainVM.TaskTypes == null && this.IsVisible)
+            DomainVM domainVM = DomainVM;
+            if (domainVM != null && domainVM.TaskTypes == null && IsVisible)
             {
                 using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifetimeScope();
                 domainVM.TaskTypes = new WorkTaskTypesVM(
@@ -56,7 +47,7 @@ namespace BrassLoon.Client.Control
             if (sender is ListView && DomainVM?.TaskTypes?.NavigationService != null && DomainVM?.TaskTypes?.SelectedTaskType != null)
             {
                 NavigationPage.TaskType taskType = new NavigationPage.TaskType(DomainVM.TaskTypes.SelectedTaskType);
-                DomainVM.TaskTypes.NavigationService.Navigate(taskType);
+                _ = DomainVM.TaskTypes.NavigationService.Navigate(taskType);
             }
         }
     }

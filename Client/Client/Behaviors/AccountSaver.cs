@@ -48,7 +48,7 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _canExcecute = false;
                     CanExecuteChanged.Invoke(this, new EventArgs());
-                    Task.Run(() => Save(accountVM.InnerAccount, _isNewAccount))
+                    _ = Task.Run(() => Save(accountVM.InnerAccount, _isNewAccount))
                         .ContinueWith(SaveCallback, accountVM, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
@@ -71,7 +71,7 @@ namespace BrassLoon.Client.Behaviors
         {
             try
             {
-                await save;
+                _ = await save;
                 _afterSave?.Invoke();
             }
             catch (Exception ex)

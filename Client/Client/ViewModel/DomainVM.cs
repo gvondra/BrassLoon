@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Interface.Account.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace BrassLoon.Client.ViewModel
@@ -40,7 +41,7 @@ namespace BrassLoon.Client.ViewModel
         public DomainVM(Domain domain, AppSettings appSettings)
         {
             _domain = domain;
-            _exceptionsMaxTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+            _exceptionsMaxTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Unspecified);
             _exceptionsMaxTimestamp = _exceptionsMaxTimestamp.AddMinutes(1);
             _tracesMaxTimestamp = _exceptionsMaxTimestamp;
             _metricsMaxTimestamp = _exceptionsMaxTimestamp;
@@ -62,14 +63,14 @@ namespace BrassLoon.Client.ViewModel
 
         public Guid DomainId => _domain.DomainId.Value;
 
-        public string JWKS => string.Format("{0}/{1:D}", _appSettings.JwksBaseAddress.TrimEnd('/'), DomainId);
+        public string JWKS => string.Format(CultureInfo.InvariantCulture, "{0}/{1:D}", _appSettings.JwksBaseAddress.TrimEnd('/'), DomainId);
 
         public WorkGroupsVM WorkGroups
         {
             get => _workGroups;
             set
             {
-                if (_workGroups !=  value)
+                if (_workGroups != value)
                 {
                     _workGroups = value;
                     NotifyPropertyChanged();

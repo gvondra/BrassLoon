@@ -10,7 +10,7 @@ namespace BrassLoon.Client.Behaviors
 {
     public class ClientSaver : ICommand
     {
-        private ISettingsFactory _settingsFactory;
+        private readonly ISettingsFactory _settingsFactory;
         private readonly IClientService _clientService;
         private bool _canExecute = true;
 
@@ -34,7 +34,7 @@ namespace BrassLoon.Client.Behaviors
                 {
                     _canExecute = false;
                     CanExecuteChanged.Invoke(this, new EventArgs());
-                    Task.Run(() => Save(clientVM.InnerClient, clientVM.Secret))
+                    _ = Task.Run(() => Save(clientVM.InnerClient, clientVM.Secret))
                         .ContinueWith(SaveCallback, clientVM, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
@@ -65,10 +65,9 @@ namespace BrassLoon.Client.Behaviors
             try
             {
                 Models.Client client = await save;
-                if (state != null && state is ClientVM clientVM)
+                if (state is ClientVM clientVM && !clientVM.ClientId.HasValue)
                 {
-                    if (!clientVM.ClientId.HasValue)
-                        clientVM.ClientId = client.ClientId;
+                    clientVM.ClientId = client.ClientId;
                 }
             }
             catch (Exception ex)

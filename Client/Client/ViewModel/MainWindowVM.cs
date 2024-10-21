@@ -1,9 +1,6 @@
-﻿using System.Windows;
-
-namespace BrassLoon.Client.ViewModel
+﻿namespace BrassLoon.Client.ViewModel
 {
-    internal class MainWindowVM : ViewModelBase
+    internal sealed class MainWindowVM : ViewModelBase
     {
-        
     }
 }

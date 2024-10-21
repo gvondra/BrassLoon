@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrassLoon.Client.Control
 {
@@ -20,6 +9,12 @@ namespace BrassLoon.Client.Control
     /// </summary>
     public partial class ExceptionItem : UserControl
     {
+        public static readonly DependencyProperty BoundDataContextProperty = DependencyProperty.Register(
+            "BoundDataContextProperty",
+            typeof(object),
+            typeof(ExceptionItem),
+            new PropertyMetadata(null, OnBoundDataContextPropertyChanged));
+
         public ExceptionItem()
         {
             InitializeComponent();
@@ -37,24 +32,15 @@ namespace BrassLoon.Client.Control
             }
         }
 
-        public static readonly DependencyProperty BoundDataContextProperty = DependencyProperty.Register(
-            "BoundDataContextProperty",
-            typeof(object),
-            typeof(ExceptionItem),
-            new PropertyMetadata(null, OnBoundDataContextPropertyChanged)
-            );
-
         public static void OnBoundDataContextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ExceptionItem)d).ExceptionTypeText.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
-        }
+        => ((ExceptionItem)d).ExceptionTypeText.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
 
         private void InitializeBindings()
         {
-            this.SetBinding(BoundDataContextProperty, new Binding());
+            _ = SetBinding(BoundDataContextProperty, new Binding());
             Binding binding = new Binding("ExceptionType");
             binding.Source = this;
-            ExceptionTypeText.SetBinding(TextBlock.TextProperty, binding);
+            _ = ExceptionTypeText.SetBinding(TextBlock.TextProperty, binding);
         }
     }
 }

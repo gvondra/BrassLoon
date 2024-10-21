@@ -1,10 +1,6 @@
 ﻿using BrassLoon.Client.ViewModel;
 using BrassLoon.Interface.WorkTask.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
@@ -28,7 +24,7 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private void AddTaskStatus(WorkTaskTypeVM taskTypeVM)
+        private static void AddTaskStatus(WorkTaskTypeVM taskTypeVM)
         {
             WorkTaskStatusVM taskstatusVM = new WorkTaskStatusVM(
                 new WorkTaskStatus { DomainId = taskTypeVM.DomainId, WorkTaskTypeId = taskTypeVM.WorkTaskTypeId },
@@ -42,7 +38,7 @@ namespace BrassLoon.Client.Behaviors
             if (navigationService != null)
             {
                 NavigationPage.TaskStatus taskStatus = new NavigationPage.TaskStatus(taskstatusVM);
-                navigationService.Navigate(taskStatus);
+                _ = navigationService.Navigate(taskStatus);
             }
         }
     }

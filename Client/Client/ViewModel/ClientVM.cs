@@ -11,7 +11,7 @@ namespace BrassLoon.Client.ViewModel
         private ICommand _generateSecret;
         private ICommand _save;
 
-        public ClientVM (Models.Client client)
+        public ClientVM(Models.Client client)
         {
             _client = client;
         }
@@ -31,7 +31,6 @@ namespace BrassLoon.Client.ViewModel
                 }
             }
         }
-        
 
         public string Name
         {

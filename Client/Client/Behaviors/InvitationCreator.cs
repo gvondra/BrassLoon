@@ -32,27 +32,25 @@ namespace BrassLoon.Client.Behaviors
             {
                 _canExecute = false;
                 CanExecuteChanged.Invoke(this, new EventArgs());
-                Task.Run(() => Create(invitationVM.AccountId, invitationVM.InnerInvitation))
+                _ = Task.Run(() => Create(invitationVM.AccountId, invitationVM.InnerInvitation))
                     .ContinueWith(CreateCallback, invitationVM, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
         private void Create(Guid accountId, UserInvitation userInvitation)
-        {
-            _userInvitationService.Create(_settingsFactory.CreateAccountSettings(), accountId, userInvitation).Wait();
-        }
+        => _userInvitationService.Create(_settingsFactory.CreateAccountSettings(), accountId, userInvitation).Wait();
 
-        private async Task CreateCallback(Task create, object state)
+        private static async Task CreateCallback(Task create, object state)
         {
             try
             {
                 await create;
-                if (state != null && state is CreateInvitationVM invitationVM)
+                if (state is CreateInvitationVM invitationVM)
                 {
                     invitationVM.NextInstructionVisibility = Visibility.Visible;
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow.Open(ex);
             }

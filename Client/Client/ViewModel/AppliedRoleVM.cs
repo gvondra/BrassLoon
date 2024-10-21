@@ -4,7 +4,7 @@ namespace BrassLoon.Client.ViewModel
 {
     public class AppliedRoleVM : ViewModelBase
     {
-        public readonly AppliedRole _appliedRole;
+        private readonly AppliedRole _appliedRole;
         private bool _isApplied;
 
         public AppliedRoleVM(AppliedRole appliedRole)

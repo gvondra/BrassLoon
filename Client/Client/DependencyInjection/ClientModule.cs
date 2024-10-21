@@ -4,55 +4,55 @@ using BrassLoon.Client.Settings;
 
 namespace BrassLoon.Client.DependencyInjection
 {
-    internal class ClientModule : Module
+    internal sealed class ClientModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Authorization.AuthorizationInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
-            builder.RegisterModule(new BrassLoon.Interface.WorkTask.WorkTaskInterfaceModule());
-            builder.RegisterType<AccountLoader>();
-            builder.RegisterType<AccountLockToggler>();
-            builder.RegisterType<AccountSaver>();
-            builder.RegisterType<AccountsLoader>();
-            builder.RegisterType<AccountUserRemover>();
-            builder.RegisterInstance(AppSettingsLoader.Load());
-            builder.RegisterType<ClientSaver>();
-            builder.RegisterType<ClientSecretGenreator>();
-            builder.RegisterType<ClientValidator>();
-            builder.RegisterType<CreateInvitationValidator>();
-            builder.RegisterType<DomainClientAdd>();
-            builder.RegisterType<DomainDeleter>();
-            builder.RegisterType<DomainLoader>();
-            builder.RegisterType<DomainRoleAdd>();
-            builder.RegisterType<DomainRoleSaver>();
-            builder.RegisterType<DomainSigningKeyAdd>();
-            builder.RegisterType<DomainSigningKeySaver>();
-            builder.RegisterType<DomainUpdater>();
-            builder.RegisterType<DomainUserSearcher>();
-            builder.RegisterType<DomainValidator>();
-            builder.RegisterType<DomainTaskTypeAdd>();
-            builder.RegisterType<DomainTaskTypeLoader>();
-            builder.RegisterType<DomainWorkGroupAdd>();
-            builder.RegisterType<DomainWorkGroupLoader>();
-            builder.RegisterType<ExceptionsLoader>();
-            builder.RegisterType<HomeLoader>();
-            builder.RegisterType<InvitationCancel>();
-            builder.RegisterType<InvitationCreator>();
-            builder.RegisterType<MetricsLoader>();
-            builder.RegisterType<MoreExceptionsLoader>();
-            builder.RegisterType<MoreMetricsLoader>();
-            builder.RegisterType<MoreTracesLoader>();
-            builder.RegisterType<RoleValidator>();
-            builder.RegisterType<SettingsFactory>()
+            _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Authorization.AuthorizationInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.Log.LogInterfaceModule());
+            _ = builder.RegisterModule(new BrassLoon.Interface.WorkTask.WorkTaskInterfaceModule());
+            _ = builder.RegisterType<AccountLoader>();
+            _ = builder.RegisterType<AccountLockToggler>();
+            _ = builder.RegisterType<AccountSaver>();
+            _ = builder.RegisterType<AccountsLoader>();
+            _ = builder.RegisterType<AccountUserRemover>();
+            _ = builder.RegisterInstance(AppSettingsLoader.Load());
+            _ = builder.RegisterType<ClientSaver>();
+            _ = builder.RegisterType<ClientSecretGenreator>();
+            _ = builder.RegisterType<ClientValidator>();
+            _ = builder.RegisterType<CreateInvitationValidator>();
+            _ = builder.RegisterType<DomainClientAdd>();
+            _ = builder.RegisterType<DomainDeleter>();
+            _ = builder.RegisterType<DomainLoader>();
+            _ = builder.RegisterType<DomainRoleAdd>();
+            _ = builder.RegisterType<DomainRoleSaver>();
+            _ = builder.RegisterType<DomainSigningKeyAdd>();
+            _ = builder.RegisterType<DomainSigningKeySaver>();
+            _ = builder.RegisterType<DomainUpdater>();
+            _ = builder.RegisterType<DomainUserSearcher>();
+            _ = builder.RegisterType<DomainValidator>();
+            _ = builder.RegisterType<DomainTaskTypeAdd>();
+            _ = builder.RegisterType<DomainTaskTypeLoader>();
+            _ = builder.RegisterType<DomainWorkGroupAdd>();
+            _ = builder.RegisterType<DomainWorkGroupLoader>();
+            _ = builder.RegisterType<ExceptionsLoader>();
+            _ = builder.RegisterType<HomeLoader>();
+            _ = builder.RegisterType<InvitationCancel>();
+            _ = builder.RegisterType<InvitationCreator>();
+            _ = builder.RegisterType<MetricsLoader>();
+            _ = builder.RegisterType<MoreExceptionsLoader>();
+            _ = builder.RegisterType<MoreMetricsLoader>();
+            _ = builder.RegisterType<MoreTracesLoader>();
+            _ = builder.RegisterType<RoleValidator>();
+            _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
-            builder.RegisterType<TracesLoader>();
-            builder.RegisterType<UserRoleSaver>();
-            builder.RegisterType<UsersLoader>();
+            _ = builder.RegisterType<TracesLoader>();
+            _ = builder.RegisterType<UserRoleSaver>();
+            _ = builder.RegisterType<UsersLoader>();
         }
     }
 }

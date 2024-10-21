@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 
 namespace BrassLoon.Client.ViewModel
@@ -37,7 +38,7 @@ namespace BrassLoon.Client.ViewModel
                     {
                         if (enumerator.Current is JProperty jProperty)
                         {
-                            text.AppendLine($"{jProperty.Name} : \t{jProperty.Value}");
+                            _ = text.AppendLine(CultureInfo.InvariantCulture, $"{jProperty.Name} : \t{jProperty.Value}");
                         }
                     }
                 }
