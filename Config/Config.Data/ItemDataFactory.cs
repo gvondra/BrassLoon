@@ -55,7 +55,7 @@ namespace BrassLoon.Config.Data
                         }
                     }
                 }
-                connection.Close();
+                await connection.CloseAsync();
             }
             return result;
         }
