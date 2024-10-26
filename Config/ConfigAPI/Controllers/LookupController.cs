@@ -26,7 +26,7 @@ namespace ConfigAPI.Controllers
 
         public LookupController(
             IOptions<Settings> settings,
-            SettingsFactory settingsFactory,
+            ISettingsFactory settingsFactory,
             ILogger<LookupController> logger,
             IDomainService domainService,
             ILookupFactory lookupFactory,

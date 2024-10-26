@@ -3,7 +3,7 @@ using BrassLoon.Interface.Account;
 
 namespace ConfigAPI
 {
-    public class SettingsFactory
+    public class SettingsFactory : ISettingsFactory
     {
         private readonly ITokenService _tokenService;
 

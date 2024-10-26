@@ -26,7 +26,7 @@ namespace ConfigAPI.Controllers
 
         public ItemController(
             IOptions<Settings> settings,
-            SettingsFactory settingsFactory,
+            ISettingsFactory settingsFactory,
             ILogger<ItemController> logger,
             IDomainService domainService,
             IItemFactory itemFactory,
