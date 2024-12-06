@@ -32,7 +32,7 @@
         <PackageReference Include="BrassLoon.Extensions.Logging" Version="1.0.*" />
         <PackageReference Include="BrassLoon.Interface.Account" Version="4.3.*" />
         <PackageReference Include="BrassLoon.Interface.Address" Version="1.1.*" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.66.*" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.*" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.*" />
     </ItemGroup>
 
