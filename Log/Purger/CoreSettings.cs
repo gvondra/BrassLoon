@@ -25,7 +25,7 @@ namespace BrassLoon.Log.Purger
 
         public bool UseDefaultAzureSqlToken => _settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser);
 
-        public async Task<string> GetConnetionString()
+        public async Task<string> GetConnectionString()
         {
             string result = _settings.ConnectionString;
             if (!string.IsNullOrEmpty(_settings.KeyVaultAddress) && !string.IsNullOrEmpty(_settings.ConnectionStringUser))
