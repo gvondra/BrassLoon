@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using BrassLoon.Config.Data;
+﻿using BrassLoon.Config.Data;
 using BrassLoon.Config.Data.Models;
 using BrassLoon.Config.Framework;
 using Newtonsoft.Json;
@@ -56,17 +55,17 @@ namespace BrassLoon.Config.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public Task Create(ITransactionHandler transactionHandler)
-        => _dataSaver.Create(transactionHandler, _data);
+        public Task Create(Framework.ISaveSettings saveSettings)
+        => _dataSaver.Create(new DataSaveSettings(saveSettings), _data);
 
-        public async Task<IEnumerable<IItemHistory>> GetHistory(ISettings settings)
+        public async Task<IEnumerable<IItemHistory>> GetHistory(Framework.ISettings settings)
         {
             if (_itemHistories == null)
                 _itemHistories = (await _itemHistoryFactory.GetByItemId(settings, ItemId)).ToList();
             return _itemHistories;
         }
 
-        public Task Update(ITransactionHandler transactionHandler)
-        => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(Framework.ISaveSettings saveSettings)
+        => _dataSaver.Update(new DataSaveSettings(saveSettings), _data);
     }
 }

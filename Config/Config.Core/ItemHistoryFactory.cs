@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using BrassLoon.Config.Data;
+﻿using BrassLoon.Config.Data;
 using BrassLoon.Config.Data.Models;
 using BrassLoon.Config.Framework;
 using System;
@@ -22,7 +21,7 @@ namespace BrassLoon.Config.Core
             _settingsFactory = settingsFactory;
         }
 
-        public async Task<IEnumerable<IItemHistory>> GetByItemId(ISettings settings, Guid itemId)
+        public async Task<IEnumerable<IItemHistory>> GetByItemId(Framework.ISettings settings, Guid itemId)
         {
             return (await _dataFactory.GetByItemId(_settingsFactory.CreateDataSettings(settings), itemId))
                 .Select<ItemHistoryData, IItemHistory>(data => new ItemHistory(data));

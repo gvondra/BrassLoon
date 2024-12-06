@@ -20,6 +20,6 @@ namespace BrassLoon.CommonCore
 
         public bool UseDefaultAzureToken => _settings.UseDefaultAzureSqlToken;
 
-        public Task<string> GetConnectionString() => _settings.GetConnetionString();
+        public Task<string> GetConnectionString() => _settings.GetConnectionString();
     }
 }

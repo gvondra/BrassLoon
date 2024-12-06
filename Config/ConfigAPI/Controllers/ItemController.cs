@@ -216,9 +216,9 @@ namespace ConfigAPI.Controllers
                 }
                 else
                 {
-                    CoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
+                    ConfigCoreSettings settings = _settingsFactory.CreateCore(_settings.Value);
                     IItem innerItem = null;
-                    Func<CoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
+                    Func<ConfigCoreSettings, IItemSaver, IItem, Task> save = (sttngs, svr, lkup) => svr.Update(sttngs, lkup);
                     if (!await VerifyDomainAccount(domainId.Value, _settings.Value, _domainService))
                         result = StatusCode(StatusCodes.Status401Unauthorized);
                     if (result == null)

@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace BrassLoon.Config.Framework
         DateTime UpdateTimestamp { get; }
 
         Task<IEnumerable<IItemHistory>> GetHistory(ISettings settings);
-        Task Create(ITransactionHandler transactionHandler);
-        Task Update(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings saveSettings);
+        Task Update(ISaveSettings saveSettings);
     }
 }

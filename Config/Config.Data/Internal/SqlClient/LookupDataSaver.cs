@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Config.Data
+namespace BrassLoon.Config.Data.Internal.SqlClient
 {
     public class LookupDataSaver : ILookupDataSaver
     {
@@ -16,16 +16,16 @@ namespace BrassLoon.Config.Data
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, LookupData lookupData)
+        public async Task Create(ISaveSettings saveSettings, LookupData lookupData)
         {
             if (lookupData.Manager.GetState(lookupData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, lookupData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(saveSettings, lookupData);
+                using (DbCommand command = saveSettings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blc].[CreateLookup]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = saveSettings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
@@ -47,14 +47,14 @@ namespace BrassLoon.Config.Data
             }
         }
 
-        public async Task DeleteByCode(ISqlTransactionHandler transactionHandler, Guid domainId, string code)
+        public async Task DeleteByCode(ISaveSettings saveSettings, Guid domainId, string code)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(saveSettings);
+            using (DbCommand command = saveSettings.Connection.CreateCommand())
             {
                 command.CommandText = "[blc].[DeleteLookupByCode]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = saveSettings.Transaction.InnerTransaction;
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "code", DbType.AnsiString, DataUtil.GetParameterValue(code));
@@ -63,16 +63,16 @@ namespace BrassLoon.Config.Data
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, LookupData lookupData)
+        public async Task Update(ISaveSettings saveSettings, LookupData lookupData)
         {
             if (lookupData.Manager.GetState(lookupData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, lookupData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(saveSettings, lookupData);
+                using (DbCommand command = saveSettings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blc].[UpdateLookup]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = saveSettings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

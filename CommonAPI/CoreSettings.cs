@@ -23,7 +23,7 @@ namespace BrassLoon.CommonAPI
 
         public virtual bool UseDefaultAzureSqlToken => _settings.EnableDatabaseAccessToken && string.IsNullOrEmpty(_settings.ConnectionStringUser);
 
-        public virtual async Task<string> GetConnetionString()
+        public virtual async Task<string> GetConnectionString()
         {
             string result = _settings.ConnectionString;
             if (!string.IsNullOrEmpty(_settings.KeyVaultAddress) && !string.IsNullOrEmpty(_settings.ConnectionStringUser))

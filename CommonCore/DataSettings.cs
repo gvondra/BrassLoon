@@ -13,10 +13,10 @@ namespace BrassLoon.CommonCore
             _settings = settings;
         }
 
-        public Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
+        public virtual Func<Task<string>> GetAccessToken => _settings.GetDatabaseAccessToken();
 
-        public bool UseDefaultAzureToken => _settings.UseDefaultAzureSqlToken;
+        public virtual bool UseDefaultAzureToken => _settings.UseDefaultAzureSqlToken;
 
-        public Task<string> GetConnectionString() => _settings.GetConnetionString();
+        public virtual Task<string> GetConnectionString() => _settings.GetConnectionString();
     }
 }

@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using BrassLoon.Config.Data;
+﻿using BrassLoon.Config.Data;
 using BrassLoon.Config.Framework;
 using System;
 using System.Threading.Tasks;
@@ -15,22 +14,22 @@ namespace BrassLoon.Config.Core
             _dataSaver = dataSaver;
         }
 
-        public async Task Create(ISettings settings, ILookup lookup)
+        public async Task Create(Framework.ISettings settings, ILookup lookup)
         {
-            Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), lookup.Create);
+            CommonCore.Saver saver = new CommonCore.Saver();
+            await saver.Save(new CommonCore.TransactionHandler(settings), th => lookup.Create(new SaveSettings(settings, th)));
         }
 
-        public async Task DeleteByCode(ISettings settings, Guid domainId, string code)
+        public async Task DeleteByCode(Framework.ISettings settings, Guid domainId, string code)
         {
-            Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), (th) => _dataSaver.DeleteByCode(th, domainId, code));
+            CommonCore.Saver saver = new CommonCore.Saver();
+            await saver.Save(new CommonCore.TransactionHandler(settings), (th) => _dataSaver.DeleteByCode(new DataSaveSettings(new SaveSettings(settings, th)), domainId, code));
         }
 
-        public async Task Update(ISettings settings, ILookup lookup)
+        public async Task Update(Framework.ISettings settings, ILookup lookup)
         {
-            Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), lookup.Update);
+            CommonCore.Saver saver = new CommonCore.Saver();
+            await saver.Save(new CommonCore.TransactionHandler(settings), th => lookup.Update(new SaveSettings(settings, th)));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using BrassLoon.Config.Data;
+﻿using BrassLoon.Config.Data;
 using BrassLoon.Config.Data.Models;
 using BrassLoon.Config.Framework;
 using System;
@@ -29,7 +28,7 @@ namespace BrassLoon.Config.Core
 
         public IItem Create(Guid domainId, string code) => new Item(new ItemData() { DomainId = domainId, Code = code }, _dataSaver, _itemHistoryFactory);
 
-        public async Task<IItem> GetByCode(ISettings settings, Guid domainId, string code)
+        public async Task<IItem> GetByCode(Framework.ISettings settings, Guid domainId, string code)
         {
             Item result = null;
             ItemData data = await _dataFactory.GetByCode(_settingsFactory.CreateDataSettings(settings), domainId, code);
@@ -38,6 +37,6 @@ namespace BrassLoon.Config.Core
             return result;
         }
 
-        public Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId) => _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
+        public Task<IEnumerable<string>> GetCodes(Framework.ISettings settings, Guid domainId) => _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
     }
 }

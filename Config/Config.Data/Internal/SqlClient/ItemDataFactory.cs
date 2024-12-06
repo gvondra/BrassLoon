@@ -7,43 +7,43 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Config.Data
+namespace BrassLoon.Config.Data.Internal.SqlClient
 {
-    public class LookupDataFactory : ILookupDataFactory
+    public class ItemDataFactory : IItemDataFactory
     {
         private readonly ISqlDbProviderFactory _providerFactory;
-        private readonly GenericDataFactory<LookupData> _genericDataFactory;
+        private readonly IGenericDataFactory<ItemData> _dataFactory;
 
-        public LookupDataFactory(ISqlDbProviderFactory providerFactory)
+        public ItemDataFactory(ISqlDbProviderFactory providerFactory, IGenericDataFactory<ItemData> dataFactory)
         {
             _providerFactory = providerFactory;
-            _genericDataFactory = new GenericDataFactory<LookupData>();
+            _dataFactory = dataFactory;
         }
 
-        public async Task<LookupData> GetByCode(ISqlSettings settings, Guid domainId, string code)
+        public async Task<ItemData> GetByCode(ISettings settings, Guid domainId, string code)
         {
             List<IDataParameter> parameters = new List<IDataParameter>
             {
                 DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(_providerFactory, "code", DbType.AnsiString, code)
             };
-            return (await _genericDataFactory.GetData(
+            return (await _dataFactory.GetData(
                 settings,
                 _providerFactory,
-                "[blc].[GetLookupByCode]",
-                () => new LookupData(),
+                "[blc].[GetItemByCode]",
+                () => new ItemData(),
                 DataUtil.AssignDataStateManager,
                 parameters)).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<string>> GetCodes(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId)
         {
             List<string> result = new List<string>();
             using (DbConnection connection = await _providerFactory.OpenConnection(settings))
             {
                 using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = "[blc].[GetLookupCodes]";
+                    command.CommandText = "[blc].[GetItemCodes]";
                     command.CommandType = CommandType.StoredProcedure;
                     _ = command.Parameters.Add(
                         DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId));

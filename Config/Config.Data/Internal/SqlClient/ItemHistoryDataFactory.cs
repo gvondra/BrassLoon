@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Config.Data
+namespace BrassLoon.Config.Data.Internal.SqlClient
 {
     public class ItemHistoryDataFactory : IItemHistoryDataFactory
     {
@@ -18,7 +18,7 @@ namespace BrassLoon.Config.Data
             _genericDataFactory = new GenericDataFactory<ItemHistoryData>();
         }
 
-        public async Task<IEnumerable<ItemHistoryData>> GetByItemId(ISqlSettings settings, Guid itemId)
+        public async Task<IEnumerable<ItemHistoryData>> GetByItemId(ISettings settings, Guid itemId)
         {
             List<IDataParameter> parameters = new List<IDataParameter>
             {
