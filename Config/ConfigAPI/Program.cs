@@ -22,8 +22,9 @@ namespace ConfigAPI
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            string useMongoDb = builder.Configuration["UseMongoDb"] ?? "false";
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new ConfigAPIModule()));
+            builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new ConfigAPIModule(bool.Parse(useMongoDb))));
             // Add services to the container.
             builder.Services.Configure<Settings>(builder.Configuration);
 

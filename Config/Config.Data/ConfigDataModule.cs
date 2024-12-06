@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using BrassLoon.Config.Data.Models;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
+using MongoDB.Bson.Serialization;
 using InternalMongoDb = BrassLoon.Config.Data.Internal.MongoDb;
 using InternalSqlClient = BrassLoon.Config.Data.Internal.SqlClient;
 
@@ -43,7 +45,16 @@ namespace BrassLoon.Config.Data
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
-            _ = builder.RegisterType<InternalMongoDb.ItemDataFactory>().As<IItemDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.LookupDataFactory>().As<ILookupDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.LookupDataSaver>().As<ILookupDataSaver>();
+            _ = builder.RegisterType<InternalMongoDb.LookupHistoryDataFactory>().As<ILookupHistoryDataFactory>();
+
+            _ = BsonClassMap.RegisterClassMap<DataStateManager>();
+            _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
+            {
+                cm.AutoMap();
+                _ = cm.MapProperty("Manager").SetShouldSerializeMethod(o => false);
+            });
         }
     }
 }

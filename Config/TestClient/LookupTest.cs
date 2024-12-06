@@ -45,6 +45,7 @@ namespace BrassLoon.Config.TestClient
                 Lookup lookup = await _lookupService.Save(settings, _appSettings.Domain.Value, code, values);
                 lookup.Data["current"] = DateTime.Now.ToString("O");
                 lookup = await _lookupService.Save(settings, _appSettings.Domain.Value, code, lookup.Data);
+                _ = await _lookupService.GetHistoryByCode(settings, _appSettings.Domain.Value, code);
             }
             catch (Exception ex)
             {
