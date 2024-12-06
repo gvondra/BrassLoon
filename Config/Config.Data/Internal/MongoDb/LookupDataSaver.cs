@@ -1,11 +1,7 @@
 ﻿using BrassLoon.Config.Data.Models;
 using BrassLoon.DataClient.MongoDB;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -28,16 +24,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             lookupData.LookupId = Guid.NewGuid();
             lookupData.CreateTimestamp = DateTime.UtcNow;
             lookupData.UpdateTimestamp = DateTime.UtcNow;
-            LookupHistoryData history = new LookupHistoryData
-            {
-                Code = lookupData.Code,
-                CreateTimestamp = lookupData.CreateTimestamp,
-                Data = lookupData.Data,
-                DomainId = lookupData.DomainId,
-                LookupHistoryId = Guid.NewGuid(),
-                LookupId = lookupData.LookupId
-            };
-            await lookupHistoryCollection.InsertOneAsync(history);
+            await lookupHistoryCollection.InsertOneAsync(CreateHistory(lookupData));
             await lookupCollection.InsertOneAsync(lookupData);
         }
 
@@ -64,7 +51,14 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             IMongoCollection<LookupData> lookupCollection = await _dbProvider.GetCollection<LookupData>(saveSettings, Constants.CollectionName.Lookup);
 
             lookupData.UpdateTimestamp = DateTime.UtcNow;
-            LookupHistoryData history = new LookupHistoryData
+            FilterDefinition<LookupData> filter = Builders<LookupData>.Filter.Eq(l => l.LookupId, lookupData.LookupId);
+            await lookupHistoryCollection.InsertOneAsync(CreateHistory(lookupData));
+            _ = await lookupCollection.ReplaceOneAsync(filter, lookupData, new ReplaceOptions());
+        }
+
+        private static LookupHistoryData CreateHistory(LookupData lookupData)
+        {
+            return new LookupHistoryData
             {
                 Code = lookupData.Code,
                 CreateTimestamp = lookupData.CreateTimestamp,
@@ -73,9 +67,6 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
                 LookupHistoryId = Guid.NewGuid(),
                 LookupId = lookupData.LookupId
             };
-            FilterDefinition<LookupData> filter = Builders<LookupData>.Filter.Eq(l => l.LookupId, lookupData.LookupId);
-            await lookupHistoryCollection.InsertOneAsync(history);
-            _ = await lookupCollection.ReplaceOneAsync(filter, lookupData, new ReplaceOptions());
         }
     }
 }

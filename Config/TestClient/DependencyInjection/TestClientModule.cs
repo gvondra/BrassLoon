@@ -10,6 +10,7 @@ namespace BrassLoon.Config.TestClient.DependencyInjection
             base.Load(builder);
             _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
             _ = builder.RegisterModule(new BrassLoon.Interface.Config.ConfigInterfaceModule());
+            _ = builder.RegisterType<ItemTest>();
             _ = builder.RegisterType<LookupTest>();
             _ = builder.RegisterType<SettingsFactory>()
                 .SingleInstance()

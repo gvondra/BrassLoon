@@ -22,14 +22,25 @@ namespace BrassLoon.Config.TestClient
             {
                 Option<bool> lookupTest = new Option<bool>(
                    name: "--lookup",
-                   getDefaultValue: () => true);
+                   getDefaultValue: () => false);
+                Option<bool> itemTest = new Option<bool>(
+                   name: "--item",
+                   getDefaultValue: () => false);
                 RootCommand rootCommand = new RootCommand
                 {
-                    lookupTest
+                    lookupTest,
+                    itemTest
                 };
                 rootCommand.SetHandler(
-                    createTasks => LookupTest(),
-                    lookupTest);
+                    async (runLookup, runItem) =>
+                    {
+                        if (runLookup)
+                            await LookupTest();
+                        if (runItem)
+                            await ItemTest();
+                    },
+                    lookupTest,
+                    itemTest);
                 _ = await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
@@ -39,6 +50,16 @@ namespace BrassLoon.Config.TestClient
                     ILogger logger = scope.Resolve<ILogger>();
                     logger.Error(ex, ex.Message);
                 }
+            }
+        }
+
+        private static async Task ItemTest()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            using (ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope())
+            {
+                ItemTest itemTest = scope.Resolve<ItemTest>();
+                await itemTest.Execute();
             }
         }
 

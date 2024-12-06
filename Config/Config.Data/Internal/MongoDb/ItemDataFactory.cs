@@ -1,7 +1,9 @@
 ﻿using BrassLoon.Config.Data.Models;
 using BrassLoon.DataClient.MongoDB;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Data.Internal.MongoDb
@@ -15,7 +17,23 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public Task<ItemData> GetByCode(ISettings settings, Guid domainId, string code) => throw new NotImplementedException();
-        public Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId) => throw new NotImplementedException();
+        public async Task<ItemData> GetByCode(ISettings settings, Guid domainId, string code)
+        {
+            Regex codeRegex = new Regex($"^{Regex.Escape(code)}$", RegexOptions.IgnoreCase);
+            IMongoCollection<ItemData> collection = await _dbProvider.GetCollection<ItemData>(settings, Constants.CollectionName.Item);
+            FilterDefinition<ItemData> filter = Builders<ItemData>.Filter.And(
+                Builders<ItemData>.Filter.Eq(l => l.DomainId, domainId),
+                Builders<ItemData>.Filter.Regex(l => l.Code, new MongoDB.Bson.BsonRegularExpression(codeRegex)));
+            return await collection.Find(filter)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId)
+        {
+            IMongoCollection<ItemData> collection = await _dbProvider.GetCollection<ItemData>(settings, Constants.CollectionName.Item);
+            FilterDefinition<ItemData> filter = Builders<ItemData>.Filter.Empty;
+            ProjectionDefinition<ItemData, string> projection = Builders<ItemData>.Projection.Expression(l => l.Code);
+            return await collection.Find(filter).Project(projection).ToListAsync();
+        }
     }
 }

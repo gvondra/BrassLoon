@@ -45,10 +45,14 @@ namespace BrassLoon.Config.Data
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<InternalMongoDb.ItemDataFactory>().As<IItemDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.ItemDataSaver>().As<IItemDataSaver>();
+            _ = builder.RegisterType<InternalMongoDb.ItemHistoryDataFactory>().As<IItemHistoryDataFactory>();
             _ = builder.RegisterType<InternalMongoDb.LookupDataFactory>().As<ILookupDataFactory>();
             _ = builder.RegisterType<InternalMongoDb.LookupDataSaver>().As<ILookupDataSaver>();
             _ = builder.RegisterType<InternalMongoDb.LookupHistoryDataFactory>().As<ILookupHistoryDataFactory>();
 
+            // the following BsonClassMap are out of place. Just threw it here for simplicity
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
             {
