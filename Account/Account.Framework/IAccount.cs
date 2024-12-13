@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace BrassLoon.Account.Framework
         DateTime UpdateTimestamp { get; }
 
         Task<IEnumerable<IDomain>> GetDomains(ISettings settings);
-        Task Create(ITransactionHandler transactionHandler, Guid userId);
-        Task Update(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings saveSettings, Guid userId);
+        Task Update(ISaveSettings saveSettings);
     }
 }

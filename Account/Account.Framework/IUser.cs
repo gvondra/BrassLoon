@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace BrassLoon.Account.Framework
         DateTime UpdateTimestamp { get; }
 
         Task<IEmailAddress> GetEmailAddress(ISettings settings);
-        Task Create(ITransactionHandler transactionHandler);
-        Task Update(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings saveSettings);
+        Task Update(ISaveSettings saveSettings);
     }
 }

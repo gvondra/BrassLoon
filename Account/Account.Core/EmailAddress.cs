@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -26,6 +25,6 @@ namespace BrassLoon.Account.Core
 
         public DateTime CreateTimestamp => _emailAddressData.CreateTimestamp;
 
-        public async Task Create(ITransactionHandler transactionHandler) => await _dataSaver.Create(transactionHandler, _emailAddressData);
+        public async Task Create(Framework.ISaveSettings settings) => await _dataSaver.Create(new DataSaveSettings(settings), _emailAddressData);
     }
 }

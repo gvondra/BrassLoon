@@ -78,7 +78,7 @@ namespace BrassLoon.Account.Core
             return Convert.FromBase64String(keyVaultSecret.Value);
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
+        public async Task Create(Framework.ISaveSettings settings)
         {
             if (_newSecretType == SecretType.NotSet)
                 throw new ApplicationException("Unable to create client. Secret type is not set");
@@ -86,13 +86,13 @@ namespace BrassLoon.Account.Core
                 throw new ApplicationException("Unable to create client. No secret value specified");
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, _newSecret, _newSecretType);
-            await _dataSaver.Create(transactionHandler, _data);
+            await _dataSaver.Create(new DataSaveSettings(settings), _data);
             if (ClientCredentialChange != null)
-                await ClientCredentialChange.Create(transactionHandler);
+                await ClientCredentialChange.Create(settings);
             ClientCredentialChange = null;
         }
 
-        public async Task<byte[]> GetSecretHash(CommonCore.ISettings settings)
+        public async Task<byte[]> GetSecretHash(Framework.ISettings settings)
         {
             byte[] result = null;
             ClientCredentialData data = (await _clientCredentialDataFactory.GetByClientId(_settingsFactory.CreateData(settings), ClientId))
@@ -118,15 +118,15 @@ namespace BrassLoon.Account.Core
             _newSecretType = secretType;
         }
 
-        public async Task Update(ITransactionHandler transactionHandler, Framework.ISettings settings)
+        public async Task Update(Framework.ISaveSettings settings)
         {
             if (SecretType == SecretType.NotSet)
                 throw new ApplicationException("Unable to create client. Secret type is not set");
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, _newSecret, _newSecretType);
-            await _dataSaver.Update(transactionHandler, _data);
+            await _dataSaver.Update(new DataSaveSettings(settings), _data);
             if (ClientCredentialChange != null)
-                await ClientCredentialChange.Create(transactionHandler);
+                await ClientCredentialChange.Create(settings);
             ClientCredentialChange = null;
         }
 

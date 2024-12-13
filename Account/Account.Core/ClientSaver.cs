@@ -18,7 +18,7 @@ namespace BrassLoon.Account.Core
         public async Task Create(Framework.ISettings settings, IClient client)
         {
             Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), (th) => client.Create(th, settings));
+            await saver.Save(new TransactionHandler(settings), (th) => client.Create(new SaveSettings(settings, th)));
         }
 
         public async Task Update(Framework.ISettings settings, IClient client) => await Update(settings, client, null);
@@ -28,7 +28,7 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             if (string.IsNullOrEmpty(secret))
             {
-                await saver.Save(new TransactionHandler(settings), (th) => client.Update(th, settings));
+                await saver.Save(new TransactionHandler(settings), (th) => client.Update(new SaveSettings(settings, th)));
             }
             else
             {
@@ -46,8 +46,9 @@ namespace BrassLoon.Account.Core
 
         private static async Task UpdateClient(ITransactionHandler transactionHandler, Framework.ISettings settings, IClient client, ClientCredential clientCredential)
         {
-            await client.Update(transactionHandler, settings);
-            await clientCredential.Create(transactionHandler);
+            SaveSettings saveSettings = new SaveSettings(settings, transactionHandler);
+            await client.Update(saveSettings);
+            await clientCredential.Create(saveSettings);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Account.Framework
@@ -10,6 +9,6 @@ namespace BrassLoon.Account.Framework
         string Address { get; }
         DateTime CreateTimestamp { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings saveSettings);
     }
 }

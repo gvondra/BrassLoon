@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -18,8 +17,8 @@ namespace BrassLoon.Account.Framework
         void SetSecret(string secret, SecretType secretType);
         /// <returns>Returns true if the client is active and the given secret matches the stored secret.</returns>
         Task<bool> AuthenticateSecret(ISettings settings, string secret);
-        Task Create(ITransactionHandler transactionHandler, ISettings settings);
-        Task Update(ITransactionHandler transactionHandler, ISettings settings);
-        Task<byte[]> GetSecretHash(BrassLoon.CommonCore.ISettings settings);
+        Task Create(ISaveSettings settings);
+        Task Update(ISaveSettings settings);
+        Task<byte[]> GetSecretHash(ISettings settings);
     }
 }

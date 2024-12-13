@@ -1,12 +1,10 @@
-﻿using BrassLoon.CommonCore;
-
-namespace BrassLoon.Account.Core
+﻿namespace BrassLoon.Account.Core
 {
     public class SettingsFactory
     {
 #pragma warning disable IDE0022 // Use expression body for method
 #pragma warning disable CA1822 // Mark members as static
-        public DataSettings CreateData(ISettings settings)
+        public DataSettings CreateData(Framework.ISettings settings)
         {
             return new DataSettings(settings);
         }

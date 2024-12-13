@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -26,10 +25,10 @@ namespace BrassLoon.Account.Core
         private Guid ClientId { set => _data.ClientId = value; }
         public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(Framework.ISaveSettings settings)
         {
             ClientId = _client.ClientId;
-            await _dataSaver.Create(transactionHandler, _data);
+            await _dataSaver.Create(new DataSaveSettings(settings), _data);
         }
     }
 }

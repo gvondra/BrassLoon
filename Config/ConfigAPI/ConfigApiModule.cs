@@ -6,7 +6,7 @@ namespace ConfigAPI
     {
         private readonly bool _useMongoDb;
 
-        public ConfigAPIModule(bool useMongoDb = false)
+        public ConfigAPIModule(bool useMongoDb)
         {
             _useMongoDb = useMongoDb;
         }

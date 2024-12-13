@@ -70,7 +70,7 @@ namespace BrassLoon.Account.Core
             return Task.FromResult<IClient>(client);
         }
 
-        public async Task<IClient> Get(CommonCore.ISettings settings, Guid id)
+        public async Task<IClient> Get(Framework.ISettings settings, Guid id)
         {
             Client result = null;
             ClientData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
@@ -79,7 +79,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEnumerable<IClient>> GetByAccountId(CommonCore.ISettings settings, Guid accountId)
+        public async Task<IEnumerable<IClient>> GetByAccountId(Framework.ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
                 .Select<ClientData, IClient>(Create);

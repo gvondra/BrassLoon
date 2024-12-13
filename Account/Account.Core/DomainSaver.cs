@@ -13,9 +13,10 @@ namespace BrassLoon.Account.Core
                 Saver saver = new Saver();
                 await saver.Save(new TransactionHandler(settings), async th =>
                 {
+                    SaveSettings saveSettings = new SaveSettings(settings, th);
                     for (int i = 0; i < domains.Length; i += 1)
                     {
-                        await domains[i].Create(th);
+                        await domains[i].Create(saveSettings);
                     }
                 });
             }
@@ -28,9 +29,10 @@ namespace BrassLoon.Account.Core
                 Saver saver = new Saver();
                 await saver.Save(new TransactionHandler(settings), async th =>
                 {
+                    SaveSettings saveSettings = new SaveSettings(settings, th);
                     for (int i = 0; i < domains.Length; i += 1)
                     {
-                        await domains[i].Update(th);
+                        await domains[i].Update(saveSettings);
                     }
                 });
             }

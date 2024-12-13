@@ -1,4 +1,5 @@
 ﻿using BrassLoon.Account.Framework;
+using System.Threading.Tasks;
 
 namespace AccountAPI
 {
@@ -13,5 +14,7 @@ namespace AccountAPI
         }
 
         public string ClientSecretVaultAddress => _settings.ClientSecretVaultAddress;
+
+        public Task<string> GetDatabaseName() => Task.FromResult(_settings.DatabaseName);
     }
 }

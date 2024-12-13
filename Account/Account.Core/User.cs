@@ -2,7 +2,6 @@
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -46,13 +45,13 @@ namespace BrassLoon.Account.Core
         private Guid EmailAddressId { get => _data.EmailAddressGuid; set => _data.EmailAddressGuid = value; }
         public UserRole Roles { get => (UserRole)_data.Roles; set => _data.Roles = (short)value; }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(Framework.ISaveSettings settings)
         {
             EmailAddressId = _emailAddress.EmailAddressId;
-            await _dataSaver.Create(transactionHandler, _data);
+            await _dataSaver.Create(new DataSaveSettings(settings), _data);
         }
 
-        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
+        public async Task Update(Framework.ISaveSettings settings) => await _dataSaver.Update(new DataSaveSettings(settings), _data);
 
         public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
         {

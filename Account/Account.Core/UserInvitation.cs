@@ -2,7 +2,6 @@
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
 using BrassLoon.Account.Framework.Enumerations;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -50,13 +49,13 @@ namespace BrassLoon.Account.Core
         public Guid AccountId { get => _data.AccountId; private set => _data.AccountId = value; }
         private Guid EmailAddressId { get => _data.EmailAddressId; set => _data.EmailAddressId = value; }
 
-        public Task Create(ITransactionHandler transactionHandler)
+        public Task Create(Framework.ISaveSettings settings)
         {
             if (_account == null || _emailAddress == null)
                 throw new ApplicationException("Use constructor with IAccount and IEmailAddress when creating new invitations");
             AccountId = _account.AccountId;
             EmailAddressId = _emailAddress.EmailAddressId;
-            return _dataSaver.Create(transactionHandler, _data);
+            return _dataSaver.Create(new DataSaveSettings(settings), _data);
         }
 
         public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
@@ -70,6 +69,6 @@ namespace BrassLoon.Account.Core
             return _emailAddress;
         }
 
-        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(Framework.ISaveSettings settings) => _dataSaver.Update(new DataSaveSettings(settings), _data);
     }
 }

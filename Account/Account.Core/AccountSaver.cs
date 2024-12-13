@@ -20,13 +20,13 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(
                 new TransactionHandler(settings),
-                async th => await _dataSaver.AddUser(th, userId, accountId));
+                async th => await _dataSaver.AddUser(new DataSaveSettings(new SaveSettings(settings, th)), userId, accountId));
         }
 
         public async Task Create(Framework.ISettings settings, Guid userId, IAccount account)
         {
             Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), async (th) => await account.Create(th, userId));
+            await saver.Save(new TransactionHandler(settings), async (th) => await account.Create(new SaveSettings(settings, th), userId));
         }
 
         public async Task RemoveUser(Framework.ISettings settings, Guid userId, Guid accountId)
@@ -34,13 +34,13 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(
                 new TransactionHandler(settings),
-                async th => await _dataSaver.RemoveUser(th, userId, accountId));
+                async th => await _dataSaver.RemoveUser(new DataSaveSettings(new SaveSettings(settings, th)), userId, accountId));
         }
 
         public async Task Update(Framework.ISettings settings, IAccount account)
         {
             Saver saver = new Saver();
-            await saver.Save(new TransactionHandler(settings), account.Update);
+            await saver.Save(new TransactionHandler(settings), th => account.Update(new SaveSettings(settings, th)));
         }
 
         public async Task UpdateLocked(Framework.ISettings settings, Guid accountId, bool locked)
@@ -48,7 +48,7 @@ namespace BrassLoon.Account.Core
             Saver saver = new Saver();
             await saver.Save(
                 new TransactionHandler(settings),
-                async th => await _dataSaver.UpdateLocked(th, accountId, locked));
+                async th => await _dataSaver.UpdateLocked(new DataSaveSettings(new SaveSettings(settings, th)), accountId, locked));
         }
     }
 }

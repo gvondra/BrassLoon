@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Account.Data;
 using BrassLoon.Account.Data.Models;
 using BrassLoon.Account.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -31,10 +30,10 @@ namespace BrassLoon.Account.Core
 
         public bool Locked => _data.Locked;
 
-        public async Task Create(ITransactionHandler transactionHandler, Guid userId) => await _dataSaver.Create(transactionHandler, userId, _data);
+        public async Task Create(Framework.ISaveSettings settings, Guid userId) => await _dataSaver.Create(new DataSaveSettings(settings), userId, _data);
 
         public Task<IEnumerable<IDomain>> GetDomains(Framework.ISettings settings) => throw new NotImplementedException();
 
-        public async Task Update(ITransactionHandler transactionHandler) => await _dataSaver.Update(transactionHandler, _data);
+        public async Task Update(Framework.ISaveSettings settings) => await _dataSaver.Update(new DataSaveSettings(settings), _data);
     }
 }

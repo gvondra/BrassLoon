@@ -7,10 +7,17 @@ namespace BrassLoon.Account.Core
 {
     public class AccountModule : Module
     {
+        private readonly bool _useMongoDb;
+
+        public AccountModule(bool useMongoDb = false)
+        {
+            _useMongoDb = useMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new AccountDataModule());
+            _ = builder.RegisterModule(new AccountDataModule(_useMongoDb));
             _ = builder.RegisterInstance(new SettingsFactory());
             _ = builder.RegisterType<AccountFactory>().As<IAccountFactory>();
             _ = builder.RegisterType<AccountSaver>().As<IAccountSaver>();
