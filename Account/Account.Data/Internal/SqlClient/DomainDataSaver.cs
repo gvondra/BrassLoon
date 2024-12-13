@@ -16,16 +16,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, DomainData domainData)
+        public async Task Create(ISaveSettings settings, DomainData domainData)
         {
             if (domainData.Manager.GetState(domainData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, domainData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, domainData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[CreateDomain]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
@@ -46,16 +46,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, DomainData domainData)
+        public async Task Update(ISaveSettings settings, DomainData domainData)
         {
             if (domainData.Manager.GetState(domainData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, domainData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, domainData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[UpdateDomain]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

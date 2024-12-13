@@ -16,16 +16,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData emailAddressData)
+        public async Task Create(ISaveSettings settings, EmailAddressData emailAddressData)
         {
             if (emailAddressData.Manager.GetState(emailAddressData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, emailAddressData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, emailAddressData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[CreateEmailAddress]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;

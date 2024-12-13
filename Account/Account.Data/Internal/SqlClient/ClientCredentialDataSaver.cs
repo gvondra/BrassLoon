@@ -16,16 +16,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, ClientCredentialData clientCredentialData)
+        public async Task Create(ISaveSettings settings, ClientCredentialData clientCredentialData)
         {
             if (clientCredentialData.Manager.GetState(clientCredentialData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, clientCredentialData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, clientCredentialData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[CreateClientCredential]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
@@ -47,16 +47,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, ClientCredentialData clientCredentialData)
+        public async Task Update(ISaveSettings settings, ClientCredentialData clientCredentialData)
         {
             if (clientCredentialData.Manager.GetState(clientCredentialData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, clientCredentialData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, clientCredentialData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[UpdateClientCredential]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

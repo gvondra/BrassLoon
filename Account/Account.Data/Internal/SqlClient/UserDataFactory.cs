@@ -19,7 +19,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<UserData>();
         }
 
-        public async Task<UserData> Get(ISqlSettings settings, Guid id)
+        public async Task<UserData> Get(ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -31,7 +31,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
-        public async Task<UserData> GetByReferenceId(ISqlSettings settings, string referenceId)
+        public async Task<UserData> GetByReferenceId(ISettings settings, string referenceId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "referenceId", DbType.AnsiString, referenceId);
             return (await _genericDataFactory.GetData(
@@ -43,7 +43,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<UserData>> GetByEmailAddress(ISqlSettings settings, string emailAddress)
+        public async Task<IEnumerable<UserData>> GetByEmailAddress(ISettings settings, string emailAddress)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "address", DbType.String, emailAddress);
             return await _genericDataFactory.GetData(
@@ -55,7 +55,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter });
         }
 
-        public async Task<IEnumerable<UserData>> GetByAccountId(ISqlSettings settings, Guid accountId)
+        public async Task<IEnumerable<UserData>> GetByAccountId(ISettings settings, Guid accountId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "accountId", DbType.Guid, accountId);
             return await _genericDataFactory.GetData(

@@ -19,7 +19,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<EmailAddressData>();
         }
 
-        public async Task<EmailAddressData> Get(ISqlSettings settings, Guid id)
+        public async Task<EmailAddressData> Get(ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -31,7 +31,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
-        public async Task<EmailAddressData> GetByAddress(ISqlSettings settings, string address)
+        public async Task<EmailAddressData> GetByAddress(ISettings settings, string address)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "address", DbType.String, address);
             return (await _genericDataFactory.GetData(

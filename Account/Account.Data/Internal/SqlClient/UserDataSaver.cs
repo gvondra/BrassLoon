@@ -16,16 +16,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, UserData userData)
+        public async Task Create(ISaveSettings settings, UserData userData)
         {
             if (userData.Manager.GetState(userData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, userData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, userData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[CreateUser]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
@@ -47,16 +47,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, UserData userData)
+        public async Task Update(ISaveSettings settings, UserData userData)
         {
             if (userData.Manager.GetState(userData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, userData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, userData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[UpdateUser]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

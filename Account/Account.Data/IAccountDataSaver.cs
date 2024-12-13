@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Account.Data.Models;
-using BrassLoon.DataClient;
 using System;
 using System.Threading.Tasks;
 
@@ -7,10 +6,10 @@ namespace BrassLoon.Account.Data
 {
     public interface IAccountDataSaver
     {
-        Task Create(ISqlTransactionHandler transactionHandler, Guid userGuid, AccountData accountData);
-        Task Update(ISqlTransactionHandler transactionHandler, AccountData accountData);
-        Task UpdateLocked(ISqlTransactionHandler transactionHandler, Guid accountId, bool locked);
-        Task AddUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid);
-        Task RemoveUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid);
+        Task Create(ISaveSettings settings, Guid userGuid, AccountData accountData);
+        Task Update(ISaveSettings settings, AccountData accountData);
+        Task UpdateLocked(ISaveSettings settings, Guid accountId, bool locked);
+        Task AddUser(ISaveSettings settings, Guid userGuid, Guid accountGuid);
+        Task RemoveUser(ISaveSettings settings, Guid userGuid, Guid accountGuid);
     }
 }

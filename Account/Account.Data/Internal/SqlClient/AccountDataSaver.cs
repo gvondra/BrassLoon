@@ -16,14 +16,14 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task AddUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid)
+        public async Task AddUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[bla].[UpdateAccountAddUser]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
@@ -36,16 +36,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, Guid userGuid, AccountData accountData)
+        public async Task Create(ISaveSettings settings, Guid userGuid, AccountData accountData)
         {
             if (accountData.Manager.GetState(accountData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, accountData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, accountData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[CreateAccount]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
                     guid.Direction = ParameterDirection.Output;
@@ -66,14 +66,14 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task RemoveUser(ISqlTransactionHandler transactionHandler, Guid userGuid, Guid accountGuid)
+        public async Task RemoveUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[bla].[UpdateAccountRemoveUser]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
@@ -86,16 +86,16 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, AccountData accountData)
+        public async Task Update(ISaveSettings settings, AccountData accountData)
         {
             if (accountData.Manager.GetState(accountData) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, accountData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, accountData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bla].[UpdateAccount]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;
@@ -110,14 +110,14 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task UpdateLocked(ISqlTransactionHandler transactionHandler, Guid accountId, bool locked)
+        public async Task UpdateLocked(ISaveSettings settings, Guid accountId, bool locked)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[bla].[UpdateAccountLocked]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;
