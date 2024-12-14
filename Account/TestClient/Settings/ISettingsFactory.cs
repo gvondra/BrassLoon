@@ -3,5 +3,6 @@
     public interface ISettingsFactory
     {
         AccountSettings CreateAccountSettings();
+        AccountSettings CreateAccountSettings(string token);
     }
 }

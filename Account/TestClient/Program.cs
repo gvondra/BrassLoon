@@ -30,6 +30,11 @@ namespace BrassLoon.Account.TestClient
                 rootCommand.SetHandler(
                     createTasks => CreateClientTokenTest(),
                     performanceTestCreateTask);
+
+                Command accountCommand = new Command("account");
+                rootCommand.AddCommand(accountCommand);
+                accountCommand.SetHandler(AccountTests);
+
                 await rootCommand.InvokeAsync(args);
             }
             catch (Exception ex)
@@ -40,6 +45,14 @@ namespace BrassLoon.Account.TestClient
                     logger.Error(ex, ex.Message);
                 }
             }
+        }
+
+        private static async Task AccountTests()
+        {
+            using ILifetimeScope scope = DependencyInjection.ContainerFactory.BeginLifeTimescope();
+            await GoogleLogin.Login();
+            AccountTest accountTest = scope.Resolve<AccountTest>();
+            await accountTest.Execute();
         }
 
         private static async Task CreateClientTokenTest()

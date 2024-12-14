@@ -12,6 +12,7 @@ namespace BrassLoon.Account.TestClient.DependencyInjection
             builder.RegisterType<SettingsFactory>()
                 .SingleInstance()
                 .As<ISettingsFactory>();
+            builder.RegisterType<AccountTest>();
             builder.RegisterType<CreateClientTokenTest>();
         }
     }

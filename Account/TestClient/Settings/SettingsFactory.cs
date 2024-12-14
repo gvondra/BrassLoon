@@ -9,6 +9,16 @@
             _appSettings = appSettings;
         }
 
-        public AccountSettings CreateAccountSettings() => new AccountSettings { BaseAddress = _appSettings.AccountApiBaseAddress };
+        public AccountSettings CreateAccountSettings()
+            => CreateAccountSettings(null);
+
+        public AccountSettings CreateAccountSettings(string token)
+        {
+            return new AccountSettings
+            {
+                BaseAddress = _appSettings.AccountApiBaseAddress,
+                Token = token
+            };
+        }
     }
 }

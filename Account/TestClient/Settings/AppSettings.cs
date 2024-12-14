@@ -9,5 +9,9 @@ namespace BrassLoon.Account.TestClient.Settings
         public Guid? ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string AccountApiBaseAddress { get; set; }
+        public string GoogleAuthorizationEndpoint { get; set; }
+        public string GoogleTokenEndpoint { get; set; }
+        public string GoogleClientId { get; set; }
+        public string GoogleClientSecret { get; set; }
     }
 }
