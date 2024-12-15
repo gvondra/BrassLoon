@@ -32,7 +32,7 @@ namespace BrassLoon.Account.Data.Models
         public short SecretType { get; set; }
 
         [ColumnMapping]
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        //[BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid? SecretKey { get; set; }
 
         [ColumnMapping]

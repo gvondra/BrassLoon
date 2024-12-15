@@ -19,7 +19,8 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
         public async Task<IEnumerable<ItemHistoryData>> GetByItemId(ISettings settings, Guid itemId)
         {
             IMongoCollection<ItemHistoryData> collection = await _dbProvider.GetCollection<ItemHistoryData>(settings, Constants.CollectionName.ItemHistory);
-            return await collection.Find(ihist => ihist.ItemId == itemId).ToListAsync();
+            SortDefinition<ItemHistoryData> sort = Builders<ItemHistoryData>.Sort.Descending(iHist => iHist.CreateTimestamp);
+            return await collection.Find(ihist => ihist.ItemId == itemId).Sort(sort).ToListAsync();
         }
     }
 }

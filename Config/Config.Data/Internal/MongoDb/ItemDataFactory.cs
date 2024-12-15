@@ -33,7 +33,8 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             IMongoCollection<ItemData> collection = await _dbProvider.GetCollection<ItemData>(settings, Constants.CollectionName.Item);
             FilterDefinition<ItemData> filter = Builders<ItemData>.Filter.Empty;
             ProjectionDefinition<ItemData, string> projection = Builders<ItemData>.Projection.Expression(l => l.Code);
-            return await collection.Find(filter).Project(projection).ToListAsync();
+            SortDefinition<ItemData> sort = Builders<ItemData>.Sort.Ascending(i => i.Code);
+            return await collection.Find(filter).Project(projection).Sort(sort).ToListAsync();
         }
     }
 }
