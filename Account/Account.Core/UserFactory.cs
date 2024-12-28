@@ -36,7 +36,7 @@ namespace BrassLoon.Account.Core
             return new User(new UserData() { ReferenceId = referenceId }, _emailAddressFactory, _dataSaver, emailAddress);
         }
 
-        public async Task<IUser> Get(Framework.ISettings settings, Guid id)
+        public async Task<IUser> Get(ISettings settings, Guid id)
         {
             User result = null;
             UserData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
@@ -45,7 +45,7 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IUser> GetByReferenceId(Framework.ISettings settings, string referenceId)
+        public async Task<IUser> GetByReferenceId(ISettings settings, string referenceId)
         {
             User result = null;
             UserData data = await _dataFactory.GetByReferenceId(_settingsFactory.CreateData(settings), referenceId);
@@ -54,13 +54,13 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEnumerable<IUser>> GetByEmailAddress(Framework.ISettings settings, string emailAddress)
+        public async Task<IEnumerable<IUser>> GetByEmailAddress(ISettings settings, string emailAddress)
         {
             return (await _dataFactory.GetByEmailAddress(_settingsFactory.CreateData(settings), emailAddress))
                 .Select<UserData, IUser>(data => new User(data, _emailAddressFactory, _dataSaver));
         }
 
-        public async Task<IEnumerable<IUser>> GetByAccountId(Framework.ISettings settings, Guid accountId)
+        public async Task<IEnumerable<IUser>> GetByAccountId(ISettings settings, Guid accountId)
         {
             return (await _dataFactory.GetByAccountId(_settingsFactory.CreateData(settings), accountId))
                 .Select<UserData, IUser>(data => new User(data, _emailAddressFactory, _dataSaver));

@@ -9,6 +9,6 @@ namespace BrassLoon.Account.Framework
         string Address { get; }
         DateTime CreateTimestamp { get; }
 
-        Task Create(ISaveSettings saveSettings);
+        Task Create(CommonCore.ISaveSettings saveSettings);
     }
 }

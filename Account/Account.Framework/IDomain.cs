@@ -12,7 +12,7 @@ namespace BrassLoon.Account.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
-        Task Create(ISaveSettings saveSettings);
-        Task Update(ISaveSettings saveSettings);
+        Task Create(CommonCore.ISaveSettings saveSettings);
+        Task Update(CommonCore.ISaveSettings saveSettings);
     }
 }

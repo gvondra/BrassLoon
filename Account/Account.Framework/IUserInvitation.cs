@@ -13,8 +13,8 @@ namespace BrassLoon.Account.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
-        Task Create(ISaveSettings settings);
-        Task Update(ISaveSettings settings);
+        Task Create(CommonCore.ISaveSettings settings);
+        Task Update(CommonCore.ISaveSettings settings);
         Task<IEmailAddress> GetEmailAddress(ISettings settings);
     }
 }

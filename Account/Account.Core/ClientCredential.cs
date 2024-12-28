@@ -25,10 +25,10 @@ namespace BrassLoon.Account.Core
         private Guid ClientId { set => _data.ClientId = value; }
         public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
 
-        public async Task Create(Framework.ISaveSettings settings)
+        public async Task Create(CommonCore.ISaveSettings settings)
         {
             ClientId = _client.ClientId;
-            await _dataSaver.Create(new DataSaveSettings(settings), _data);
+            await _dataSaver.Create(settings, _data);
         }
     }
 }

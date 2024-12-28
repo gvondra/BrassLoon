@@ -1,7 +1,6 @@
-﻿using BrassLoon.CommonCore;
-
-namespace BrassLoon.Account.Framework
+﻿namespace BrassLoon.Account.Framework
 {
-    public interface ISaveSettings : ITransactionHandler, ISettings
-    { }
+    public interface ISaveSettings : ISettings, CommonCore.ISaveSettings
+    {
+    }
 }

@@ -16,7 +16,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task AddUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
+        public async Task AddUser(CommonData.ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
             IMongoCollection<AccountUserData> collection = await _dbProvider.GetCollection<AccountUserData>(settings, Constants.CollectionName.AccountUser);
             FilterDefinition<AccountUserData> filter = Builders<AccountUserData>.Filter.And(
@@ -30,7 +30,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
                 await InsertAccountUser(settings, userGuid, accountGuid);
         }
 
-        private async Task InsertAccountUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
+        private async Task InsertAccountUser(CommonData.ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
             AccountUserData value = new AccountUserData
             {
@@ -44,7 +44,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             await collection.InsertOneAsync(value);
         }
 
-        public async Task Create(ISaveSettings settings, Guid userGuid, AccountData accountData)
+        public async Task Create(CommonData.ISaveSettings settings, Guid userGuid, AccountData accountData)
         {
             accountData.AccountGuid = Guid.NewGuid();
             accountData.CreateTimestamp = DateTime.UtcNow;
@@ -54,7 +54,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             await InsertAccountUser(settings, userGuid, accountData.AccountGuid);
         }
 
-        public async Task RemoveUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
+        public async Task RemoveUser(CommonData.ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
             IMongoCollection<BsonDocument> collection = await _dbProvider.GetCollection<BsonDocument>(settings, Constants.CollectionName.AccountUser);
             if (await GetAccountUserCount(collection, accountGuid) > 1)
@@ -85,7 +85,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
                 .Count;
         }
 
-        public async Task Update(ISaveSettings settings, AccountData accountData)
+        public async Task Update(CommonData.ISaveSettings settings, AccountData accountData)
         {
             accountData.UpdateTimestamp = DateTime.UtcNow;
             IMongoCollection<AccountData> collection = await _dbProvider.GetCollection<AccountData>(settings, Constants.CollectionName.Account);
@@ -96,7 +96,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _ = await collection.UpdateOneAsync(filter, update);
         }
 
-        public async Task UpdateLocked(ISaveSettings settings, Guid accountId, bool locked)
+        public async Task UpdateLocked(CommonData.ISaveSettings settings, Guid accountId, bool locked)
         {
             IMongoCollection<AccountData> collection = await _dbProvider.GetCollection<AccountData>(settings, Constants.CollectionName.Account);
             FilterDefinition<AccountData> filter = Builders<AccountData>.Filter.Eq(a => a.AccountGuid, accountId);

@@ -10,13 +10,11 @@ namespace BrassLoon.Account.Core
         {
             if (domains != null && domains.Length > 0)
             {
-                Saver saver = new Saver();
-                await saver.Save(new TransactionHandler(settings), async th =>
+                await Saver.Save(new SaveSettings(settings), async ss =>
                 {
-                    SaveSettings saveSettings = new SaveSettings(settings, th);
                     for (int i = 0; i < domains.Length; i += 1)
                     {
-                        await domains[i].Create(saveSettings);
+                        await domains[i].Create(ss);
                     }
                 });
             }
@@ -26,13 +24,11 @@ namespace BrassLoon.Account.Core
         {
             if (domains != null && domains.Length > 0)
             {
-                Saver saver = new Saver();
-                await saver.Save(new TransactionHandler(settings), async th =>
+                await Saver.Save(new SaveSettings(settings), async ss =>
                 {
-                    SaveSettings saveSettings = new SaveSettings(settings, th);
                     for (int i = 0; i < domains.Length; i += 1)
                     {
-                        await domains[i].Update(saveSettings);
+                        await domains[i].Update(ss);
                     }
                 });
             }

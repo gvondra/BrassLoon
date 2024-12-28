@@ -16,14 +16,14 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<ClientData> Get(ISettings settings, Guid id)
+        public async Task<ClientData> Get(CommonData.ISettings settings, Guid id)
         {
             IMongoCollection<ClientData> collection = await _dbProvider.GetCollection<ClientData>(settings, Constants.CollectionName.Client);
             FilterDefinition<ClientData> filter = Builders<ClientData>.Filter.Eq(c => c.ClientId, id);
             return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<ClientData>> GetByAccountId(ISettings settings, Guid accountId)
+        public async Task<IEnumerable<ClientData>> GetByAccountId(CommonData.ISettings settings, Guid accountId)
         {
             IMongoCollection<ClientData> collection = await _dbProvider.GetCollection<ClientData>(settings, Constants.CollectionName.Client);
             FilterDefinition<ClientData> filter = Builders<ClientData>.Filter.Eq(c => c.AccountId, accountId);

@@ -16,7 +16,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISaveSettings settings, EmailAddressData emailAddressData)
+        public async Task Create(CommonData.ISaveSettings settings, EmailAddressData emailAddressData)
         {
             if (emailAddressData.Manager.GetState(emailAddressData) == DataState.New)
             {

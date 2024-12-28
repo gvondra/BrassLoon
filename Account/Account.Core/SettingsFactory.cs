@@ -1,4 +1,6 @@
-﻿namespace BrassLoon.Account.Core
+﻿using BrassLoon.CommonCore;
+
+namespace BrassLoon.Account.Core
 {
     public class SettingsFactory
     {

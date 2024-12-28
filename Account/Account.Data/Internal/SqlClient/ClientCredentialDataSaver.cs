@@ -16,7 +16,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISaveSettings settings, ClientCredentialData clientCredentialData)
+        public async Task Create(CommonData.ISaveSettings settings, ClientCredentialData clientCredentialData)
         {
             if (clientCredentialData.Manager.GetState(clientCredentialData) == DataState.New)
             {
@@ -47,7 +47,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISaveSettings settings, ClientCredentialData clientCredentialData)
+        public async Task Update(CommonData.ISaveSettings settings, ClientCredentialData clientCredentialData)
         {
             if (clientCredentialData.Manager.GetState(clientCredentialData) == DataState.Updated)
             {

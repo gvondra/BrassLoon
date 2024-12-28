@@ -30,10 +30,10 @@ namespace BrassLoon.Account.Core
 
         public bool Locked => _data.Locked;
 
-        public async Task Create(Framework.ISaveSettings settings, Guid userId) => await _dataSaver.Create(new DataSaveSettings(settings), userId, _data);
+        public async Task Create(CommonCore.ISaveSettings saveSettings, Guid userId) => await _dataSaver.Create(saveSettings, userId, _data);
 
-        public Task<IEnumerable<IDomain>> GetDomains(Framework.ISettings settings) => throw new NotImplementedException();
+        public Task<IEnumerable<IDomain>> GetDomains(ISettings settings) => throw new NotImplementedException();
 
-        public async Task Update(Framework.ISaveSettings settings) => await _dataSaver.Update(new DataSaveSettings(settings), _data);
+        public async Task Update(CommonCore.ISaveSettings saveSettings) => await _dataSaver.Update(saveSettings, _data);
     }
 }

@@ -16,7 +16,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task AddUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
+        public async Task AddUser(CommonData.ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
             await _providerFactory.EstablishTransaction(settings);
             using (DbCommand command = settings.Connection.CreateCommand())
@@ -36,7 +36,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Create(ISaveSettings settings, Guid userGuid, AccountData accountData)
+        public async Task Create(CommonData.ISaveSettings settings, Guid userGuid, AccountData accountData)
         {
             if (accountData.Manager.GetState(accountData) == DataState.New)
             {
@@ -66,7 +66,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task RemoveUser(ISaveSettings settings, Guid userGuid, Guid accountGuid)
+        public async Task RemoveUser(CommonData.ISaveSettings settings, Guid userGuid, Guid accountGuid)
         {
             await _providerFactory.EstablishTransaction(settings);
             using (DbCommand command = settings.Connection.CreateCommand())
@@ -86,7 +86,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISaveSettings settings, AccountData accountData)
+        public async Task Update(CommonData.ISaveSettings settings, AccountData accountData)
         {
             if (accountData.Manager.GetState(accountData) == DataState.Updated)
             {
@@ -110,7 +110,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task UpdateLocked(ISaveSettings settings, Guid accountId, bool locked)
+        public async Task UpdateLocked(CommonData.ISaveSettings settings, Guid accountId, bool locked)
         {
             await _providerFactory.EstablishTransaction(settings);
             using (DbCommand command = settings.Connection.CreateCommand())

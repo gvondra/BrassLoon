@@ -15,7 +15,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task Create(ISaveSettings settings, UserInvitationData userInvitationData)
+        public async Task Create(CommonData.ISaveSettings settings, UserInvitationData userInvitationData)
         {
             userInvitationData.UserInvitationId = Guid.NewGuid();
             userInvitationData.CreateTimestamp = DateTime.UtcNow;
@@ -24,7 +24,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             await collection.InsertOneAsync(userInvitationData);
         }
 
-        public async Task Update(ISaveSettings settings, UserInvitationData userInvitationData)
+        public async Task Update(CommonData.ISaveSettings settings, UserInvitationData userInvitationData)
         {
             userInvitationData.UpdateTimestamp = DateTime.UtcNow;
             IMongoCollection<UserInvitationData> collection = await _dbProvider.GetCollection<UserInvitationData>(settings, Constants.CollectionName.UserInvitation);

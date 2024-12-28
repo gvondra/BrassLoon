@@ -17,14 +17,14 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<EmailAddressData> Get(ISettings settings, Guid id)
+        public async Task<EmailAddressData> Get(CommonData.ISettings settings, Guid id)
         {
             IMongoCollection<EmailAddressData> collection = await _dbProvider.GetCollection<EmailAddressData>(settings, Constants.CollectionName.EmailAddress);
             FilterDefinition<EmailAddressData> filter = Builders<EmailAddressData>.Filter.Eq(e => e.EmailAddressGuid, id);
             return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<EmailAddressData> GetByAddress(ISettings settings, string address)
+        public async Task<EmailAddressData> GetByAddress(CommonData.ISettings settings, string address)
         {
             IMongoCollection<EmailAddressData> collection = await _dbProvider.GetCollection<EmailAddressData>(settings, Constants.CollectionName.EmailAddress);
             FilterDefinition<EmailAddressData> filter = Builders<EmailAddressData>.Filter.Regex(

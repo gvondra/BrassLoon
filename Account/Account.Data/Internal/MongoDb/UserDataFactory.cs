@@ -19,14 +19,14 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<UserData> Get(ISettings settings, Guid id)
+        public async Task<UserData> Get(CommonData.ISettings settings, Guid id)
         {
             IMongoCollection<UserData> collection = await _dbProvider.GetCollection<UserData>(settings, Constants.CollectionName.User);
             FilterDefinition<UserData> filter = Builders<UserData>.Filter.Eq(u => u.UserGuid, id);
             return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<UserData>> GetByAccountId(ISettings settings, Guid accountId)
+        public async Task<IEnumerable<UserData>> GetByAccountId(CommonData.ISettings settings, Guid accountId)
         {
             IEnumerable<Guid> guids = await GetIdByAccountGuid(settings, accountId);
             IEnumerable<UserData> result = Enumerable.Empty<UserData>();
@@ -39,7 +39,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<UserData>> GetByEmailAddress(ISettings settings, string emailAddress)
+        public async Task<IEnumerable<UserData>> GetByEmailAddress(CommonData.ISettings settings, string emailAddress)
         {
             Guid? emailAddressGuid = await GetEmailAddressGuid(settings, emailAddress);
             IEnumerable<UserData> result = Enumerable.Empty<UserData>();
@@ -52,14 +52,14 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             return result;
         }
 
-        public async Task<UserData> GetByReferenceId(ISettings settings, string referenceId)
+        public async Task<UserData> GetByReferenceId(CommonData.ISettings settings, string referenceId)
         {
             IMongoCollection<UserData> collection = await _dbProvider.GetCollection<UserData>(settings, Constants.CollectionName.User);
             FilterDefinition<UserData> filter = Builders<UserData>.Filter.Eq(u => u.ReferenceId, referenceId);
             return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        private async Task<Guid?> GetEmailAddressGuid(ISettings settings, string emailAddress)
+        private async Task<Guid?> GetEmailAddressGuid(CommonData.ISettings settings, string emailAddress)
         {
             IMongoCollection<EmailAddressData> collection = await _dbProvider.GetCollection<EmailAddressData>(settings, Constants.CollectionName.EmailAddress);
             FilterDefinition<EmailAddressData> filter = Builders<EmailAddressData>.Filter.Regex(
@@ -70,7 +70,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             return guids.Count == 0 ? default(Guid?) : guids[0];
         }
 
-        private async Task<IEnumerable<Guid>> GetIdByAccountGuid(ISettings settings, Guid accountId)
+        private async Task<IEnumerable<Guid>> GetIdByAccountGuid(CommonData.ISettings settings, Guid accountId)
         {
             IMongoCollection<AccountUserData> collection = await _dbProvider.GetCollection<AccountUserData>(settings, Constants.CollectionName.AccountUser);
             FilterDefinition<AccountUserData> filter = Builders<AccountUserData>.Filter.Eq(au => au.AccountGuid, accountId);

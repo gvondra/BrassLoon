@@ -49,16 +49,16 @@ namespace BrassLoon.Account.Core
         public Guid AccountId { get => _data.AccountId; private set => _data.AccountId = value; }
         private Guid EmailAddressId { get => _data.EmailAddressId; set => _data.EmailAddressId = value; }
 
-        public Task Create(Framework.ISaveSettings settings)
+        public Task Create(CommonCore.ISaveSettings settings)
         {
             if (_account == null || _emailAddress == null)
                 throw new ApplicationException("Use constructor with IAccount and IEmailAddress when creating new invitations");
             AccountId = _account.AccountId;
             EmailAddressId = _emailAddress.EmailAddressId;
-            return _dataSaver.Create(new DataSaveSettings(settings), _data);
+            return _dataSaver.Create(settings, _data);
         }
 
-        public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
+        public async Task<IEmailAddress> GetEmailAddress(ISettings settings)
         {
             if (_emailAddress == null)
             {
@@ -69,6 +69,6 @@ namespace BrassLoon.Account.Core
             return _emailAddress;
         }
 
-        public Task Update(Framework.ISaveSettings settings) => _dataSaver.Update(new DataSaveSettings(settings), _data);
+        public Task Update(CommonCore.ISaveSettings settings) => _dataSaver.Update(settings, _data);
     }
 }

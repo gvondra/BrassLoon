@@ -20,7 +20,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<AccountData>();
         }
 
-        public async Task<AccountData> Get(ISettings settings, Guid id)
+        public async Task<AccountData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -32,7 +32,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter })).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(ISettings settings, Guid userId)
+        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(CommonData.ISettings settings, Guid userId)
         {
             List<Guid> result = new List<Guid>();
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "userGuid", DbType.Guid, userId);
@@ -57,7 +57,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             return result;
         }
 
-        public async Task<IEnumerable<AccountData>> GetByUserId(ISettings settings, Guid userId)
+        public async Task<IEnumerable<AccountData>> GetByUserId(CommonData.ISettings settings, Guid userId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "userGuid", DbType.Guid, userId);
             return await _genericDataFactory.GetData(

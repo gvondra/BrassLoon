@@ -26,7 +26,7 @@ namespace BrassLoon.Account.Core
 
         public IAccount Create() => new Account(new AccountData(), _dataSaver);
 
-        public async Task<IAccount> Get(Framework.ISettings settings, Guid id)
+        public async Task<IAccount> Get(ISettings settings, Guid id)
         {
             Account result = null;
             AccountData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
@@ -35,9 +35,9 @@ namespace BrassLoon.Account.Core
             return result;
         }
 
-        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(Framework.ISettings settings, Guid userId) => await _dataFactory.GetAccountIdsByUserId(_settingsFactory.CreateData(settings), userId);
+        public async Task<IEnumerable<Guid>> GetAccountIdsByUserId(ISettings settings, Guid userId) => await _dataFactory.GetAccountIdsByUserId(_settingsFactory.CreateData(settings), userId);
 
-        public async Task<IEnumerable<IAccount>> GetByUserId(Framework.ISettings settings, Guid userId)
+        public async Task<IEnumerable<IAccount>> GetByUserId(ISettings settings, Guid userId)
         {
             return (await _dataFactory.GetByUserId(_settingsFactory.CreateData(settings), userId))
                 .Select<AccountData, IAccount>(data => new Account(data, _dataSaver));

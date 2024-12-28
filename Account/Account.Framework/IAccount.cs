@@ -13,7 +13,7 @@ namespace BrassLoon.Account.Framework
         DateTime UpdateTimestamp { get; }
 
         Task<IEnumerable<IDomain>> GetDomains(ISettings settings);
-        Task Create(ISaveSettings saveSettings, Guid userId);
-        Task Update(ISaveSettings saveSettings);
+        Task Create(CommonCore.ISaveSettings saveSettings, Guid userId);
+        Task Update(CommonCore.ISaveSettings saveSettings);
     }
 }

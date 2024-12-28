@@ -6,6 +6,6 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
 {
     public class ClientCredentialDataSaver : IClientCredentialDataSaver
     {
-        public Task Create(ISaveSettings settings, ClientCredentialData clientCredentialData) => throw new NotImplementedException();
+        public Task Create(CommonData.ISaveSettings settings, ClientCredentialData clientCredentialData) => throw new NotImplementedException();
     }
 }

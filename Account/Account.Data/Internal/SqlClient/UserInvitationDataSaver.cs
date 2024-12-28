@@ -16,7 +16,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISaveSettings settings, UserInvitationData userInvitationData)
+        public async Task Create(CommonData.ISaveSettings settings, UserInvitationData userInvitationData)
         {
             if (userInvitationData.Manager.GetState(userInvitationData) == DataState.New)
             {
@@ -48,7 +48,7 @@ namespace BrassLoon.Account.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISaveSettings settings, UserInvitationData userInvitationData)
+        public async Task Update(CommonData.ISaveSettings settings, UserInvitationData userInvitationData)
         {
             if (userInvitationData.Manager.GetState(userInvitationData) == DataState.Updated)
             {

@@ -25,6 +25,6 @@ namespace BrassLoon.Account.Core
 
         public DateTime CreateTimestamp => _emailAddressData.CreateTimestamp;
 
-        public async Task Create(Framework.ISaveSettings settings) => await _dataSaver.Create(new DataSaveSettings(settings), _emailAddressData);
+        public async Task Create(CommonCore.ISaveSettings saveSettings) => await _dataSaver.Create(saveSettings, _emailAddressData);
     }
 }

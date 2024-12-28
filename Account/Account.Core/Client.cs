@@ -86,7 +86,7 @@ namespace BrassLoon.Account.Core
                 throw new ApplicationException("Unable to create client. No secret value specified");
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, _newSecret, _newSecretType);
-            await _dataSaver.Create(new DataSaveSettings(settings), _data);
+            await _dataSaver.Create(settings, _data);
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(settings);
             ClientCredentialChange = null;
@@ -124,7 +124,7 @@ namespace BrassLoon.Account.Core
                 throw new ApplicationException("Unable to create client. Secret type is not set");
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, _newSecret, _newSecretType);
-            await _dataSaver.Update(new DataSaveSettings(settings), _data);
+            await _dataSaver.Update(settings, _data);
             if (ClientCredentialChange != null)
                 await ClientCredentialChange.Create(settings);
             ClientCredentialChange = null;

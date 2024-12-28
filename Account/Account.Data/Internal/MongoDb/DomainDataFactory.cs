@@ -16,21 +16,21 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<DomainData> Get(ISettings settings, Guid id)
+        public async Task<DomainData> Get(CommonData.ISettings settings, Guid id)
         {
             IMongoCollection<DomainData> collection = await _dbProvider.GetCollection<DomainData>(settings, Constants.CollectionName.Domain);
             FilterDefinition<DomainData> filter = Builders<DomainData>.Filter.Eq(d => d.DomainGuid, id);
             return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<DomainData>> GetByAccountId(ISettings settings, Guid accountId)
+        public async Task<IEnumerable<DomainData>> GetByAccountId(CommonData.ISettings settings, Guid accountId)
         {
             IMongoCollection<DomainData> collection = await _dbProvider.GetCollection<DomainData>(settings, Constants.CollectionName.Domain);
             FilterDefinition<DomainData> filter = Builders<DomainData>.Filter.Eq(d => d.AccountGuid, accountId);
             return await collection.Find(filter).ToListAsync();
         }
 
-        public async Task<DomainData> GetDeleted(ISettings settings, Guid id)
+        public async Task<DomainData> GetDeleted(CommonData.ISettings settings, Guid id)
         {
             IMongoCollection<DomainData> collection = await _dbProvider.GetCollection<DomainData>(settings, Constants.CollectionName.Domain);
             FilterDefinition<DomainData> filter = Builders<DomainData>.Filter.And(

@@ -15,7 +15,7 @@ namespace BrassLoon.Account.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task Create(ISaveSettings settings, EmailAddressData emailAddressData)
+        public async Task Create(CommonData.ISaveSettings settings, EmailAddressData emailAddressData)
         {
             emailAddressData.EmailAddressGuid = Guid.NewGuid();
             emailAddressData.CreateTimestamp = DateTime.UtcNow;

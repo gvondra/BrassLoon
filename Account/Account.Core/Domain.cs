@@ -31,8 +31,8 @@ namespace BrassLoon.Account.Core
 
         public bool Deleted { get => _data.Deleted; set => _data.Deleted = value; }
 
-        public async Task Create(Framework.ISaveSettings settings) => await _dataSaver.Create(new DataSaveSettings(settings), _data);
+        public async Task Create(CommonCore.ISaveSettings saveSettings) => await _dataSaver.Create(saveSettings, _data);
 
-        public async Task Update(Framework.ISaveSettings settings) => await _dataSaver.Update(new DataSaveSettings(settings), _data);
+        public async Task Update(CommonCore.ISaveSettings saveSettings) => await _dataSaver.Update(saveSettings, _data);
     }
 }

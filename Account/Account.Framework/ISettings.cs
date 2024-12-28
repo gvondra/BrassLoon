@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace BrassLoon.Account.Framework
+﻿namespace BrassLoon.Account.Framework
 {
-    public interface ISettings : BrassLoon.CommonCore.ISettings
+    public interface ISettings : CommonCore.ISettings
     {
         string ClientSecretVaultAddress { get; }
-        Task<string> GetDatabaseName();
     }
 }
