@@ -9,9 +9,10 @@
     <Product>Brass Loon</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.1.0</Version>
-	<AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <Version>4.2.0</Version>
+	<AssemblyVersion>4.2.0.0</AssemblyVersion>
 	<PackageReleaseNotes>
+		- v4.2 Package Upgrades
         - v4.1 Extend Autofac support through version 8
 		- v4.0 Upgrade RestClient.
 		- v3.0 Upgrade RestClient. Mark obsolete save lookup method with data parameter of type object
@@ -31,8 +32,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="[7.0,9.0)" />
-    <PackageReference Include="BrassLoon.RestClient" Version="[4.1.0,5.0)" />
+    <PackageReference Include="Autofac" Version="[7.1,9.0)" />
+    <PackageReference Include="BrassLoon.RestClient" Version="[4.1.1,5.0)" />
 	<PackageReference Include="Polly" Version="[7.2.4,9.0)" />
 	<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
   </ItemGroup>
