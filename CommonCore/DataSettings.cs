@@ -1,10 +1,9 @@
-﻿using BrassLoon.DataClient;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
 {
-    public class DataSettings : ISqlSettings
+    public class DataSettings : CommonData.ISettings
     {
         private readonly ISettings _settings;
 
@@ -18,5 +17,6 @@ namespace BrassLoon.CommonCore
         public virtual bool UseDefaultAzureToken => _settings.UseDefaultAzureSqlToken;
 
         public virtual Task<string> GetConnectionString() => _settings.GetConnectionString();
+        public Task<string> GetDatabaseName() => _settings.GetDatabaseName();
     }
 }

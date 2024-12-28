@@ -16,7 +16,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<IEnumerable<LookupHistoryData>> GetByLookupId(ISettings settings, Guid lookupId)
+        public async Task<IEnumerable<LookupHistoryData>> GetByLookupId(CommonData.ISettings settings, Guid lookupId)
         {
             IMongoCollection<LookupHistoryData> collection = await _dbProvider.GetCollection<LookupHistoryData>(settings, Constants.CollectionName.LookupHistory);
             SortDefinition<LookupHistoryData> sort = Builders<LookupHistoryData>.Sort.Descending(lHist => lHist.CreateTimestamp);

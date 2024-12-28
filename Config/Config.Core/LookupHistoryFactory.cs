@@ -21,7 +21,7 @@ namespace BrassLoon.Config.Core
             _settingsFactory = settingsFactory;
         }
 
-        public async Task<IEnumerable<ILookupHistory>> GetByLookupId(Framework.ISettings settings, Guid lookupId)
+        public async Task<IEnumerable<ILookupHistory>> GetByLookupId(CommonCore.ISettings settings, Guid lookupId)
         {
             return (await _dataFactory.GetByLookupId(_settingsFactory.CreateDataSettings(settings), lookupId))
                 .Select<LookupHistoryData, ILookupHistory>(data => new LookupHistory(data))

@@ -12,7 +12,7 @@ namespace ConfigAPI
             _tokenService = tokenService;
         }
 
-        public ConfigCoreSettings CreateCore(Settings settings) => new ConfigCoreSettings(settings);
+        public CoreSettings CreateCore(Settings settings) => new CoreSettings(settings);
 
         public AccountSettings CreateAccount(CommonApiSettings settings, string accessToken)
         {

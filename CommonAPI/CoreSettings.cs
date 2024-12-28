@@ -58,5 +58,6 @@ namespace BrassLoon.CommonAPI
         }
 
         public virtual Func<Task<string>> GetDatabaseAccessToken() => null;
+        public Task<string> GetDatabaseName() => Task.FromResult(_settings.DatabaseName);
     }
 }

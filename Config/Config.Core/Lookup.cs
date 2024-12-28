@@ -57,15 +57,15 @@ namespace BrassLoon.Config.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public Task Create(Framework.ISaveSettings saveSettings) => _dataSaver.Create(new DataSaveSettings(saveSettings), _data);
+        public Task Create(CommonCore.ISaveSettings saveSettings) => _dataSaver.Create(saveSettings, _data);
 
-        public async Task<IEnumerable<ILookupHistory>> GetHistory(Framework.ISettings settings)
+        public async Task<IEnumerable<ILookupHistory>> GetHistory(CommonCore.ISettings settings)
         {
             if (_lookupHistories == null)
                 _lookupHistories = (await _lookupHistoryFactory.GetByLookupId(settings, LookupId)).ToList();
             return _lookupHistories;
         }
 
-        public Task Update(Framework.ISaveSettings saveSettings) => _dataSaver.Update(new DataSaveSettings(saveSettings), _data);
+        public Task Update(CommonCore.ISaveSettings saveSettings) => _dataSaver.Update(saveSettings, _data);
     }
 }

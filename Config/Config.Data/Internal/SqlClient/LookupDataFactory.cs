@@ -20,7 +20,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<LookupData>();
         }
 
-        public async Task<LookupData> GetByCode(ISettings settings, Guid domainId, string code)
+        public async Task<LookupData> GetByCode(CommonData.ISettings settings, Guid domainId, string code)
         {
             List<IDataParameter> parameters = new List<IDataParameter>
             {
@@ -36,7 +36,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
                 parameters)).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetCodes(CommonData.ISettings settings, Guid domainId)
         {
             List<string> result = new List<string>();
             using (DbConnection connection = await _providerFactory.OpenConnection(settings))

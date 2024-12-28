@@ -18,7 +18,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<LookupHistoryData>();
         }
 
-        public async Task<IEnumerable<LookupHistoryData>> GetByLookupId(ISettings settings, Guid lookupId)
+        public async Task<IEnumerable<LookupHistoryData>> GetByLookupId(CommonData.ISettings settings, Guid lookupId)
         {
             List<IDataParameter> parameters = new List<IDataParameter>
             {

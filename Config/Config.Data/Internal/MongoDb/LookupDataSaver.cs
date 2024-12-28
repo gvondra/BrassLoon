@@ -16,7 +16,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task Create(ISaveSettings saveSettings, LookupData lookupData)
+        public async Task Create(CommonData.ISaveSettings saveSettings, LookupData lookupData)
         {
             IMongoCollection<LookupHistoryData> lookupHistoryCollection = await _dbProvider.GetCollection<LookupHistoryData>(saveSettings, Constants.CollectionName.LookupHistory);
             IMongoCollection<LookupData> lookupCollection = await _dbProvider.GetCollection<LookupData>(saveSettings, Constants.CollectionName.Lookup);
@@ -28,7 +28,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             await lookupCollection.InsertOneAsync(lookupData);
         }
 
-        public async Task DeleteByCode(ISaveSettings saveSettings, Guid domainId, string code)
+        public async Task DeleteByCode(CommonData.ISaveSettings saveSettings, Guid domainId, string code)
         {
             Regex codeRegex = new Regex($"^{Regex.Escape(code)}$", RegexOptions.IgnoreCase);
             IMongoCollection<LookupHistoryData> lookupHistoryCollection = await _dbProvider.GetCollection<LookupHistoryData>(saveSettings, Constants.CollectionName.LookupHistory);
@@ -45,7 +45,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             _ = await lookupHistoryCollection.DeleteManyAsync(lookupHistoryFilter);
         }
 
-        public async Task Update(ISaveSettings saveSettings, LookupData lookupData)
+        public async Task Update(CommonData.ISaveSettings saveSettings, LookupData lookupData)
         {
             IMongoCollection<LookupHistoryData> lookupHistoryCollection = await _dbProvider.GetCollection<LookupHistoryData>(saveSettings, Constants.CollectionName.LookupHistory);
             IMongoCollection<LookupData> lookupCollection = await _dbProvider.GetCollection<LookupData>(saveSettings, Constants.CollectionName.Lookup);

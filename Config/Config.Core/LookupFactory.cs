@@ -29,7 +29,7 @@ namespace BrassLoon.Config.Core
 
         public ILookup Create(Guid domainId, string code) => new Lookup(new LookupData() { DomainId = domainId, Code = code.Trim().ToLower(CultureInfo.InvariantCulture) }, _dataSaver, _lookupHistoryFactory);
 
-        public async Task<ILookup> GetByCode(Framework.ISettings settings, Guid domainId, string code)
+        public async Task<ILookup> GetByCode(CommonCore.ISettings settings, Guid domainId, string code)
         {
             Lookup result = null;
             LookupData data = await _dataFactory.GetByCode(_settingsFactory.CreateDataSettings(settings), domainId, code);
@@ -38,6 +38,6 @@ namespace BrassLoon.Config.Core
             return result;
         }
 
-        public Task<IEnumerable<string>> GetCodes(Framework.ISettings settings, Guid domainId) => _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
+        public Task<IEnumerable<string>> GetCodes(CommonCore.ISettings settings, Guid domainId) => _dataFactory.GetCodes(_settingsFactory.CreateDataSettings(settings), domainId);
     }
 }

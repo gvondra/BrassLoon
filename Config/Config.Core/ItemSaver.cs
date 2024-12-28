@@ -1,4 +1,5 @@
-﻿using BrassLoon.Config.Data;
+﻿using BrassLoon.CommonCore;
+using BrassLoon.Config.Data;
 using BrassLoon.Config.Framework;
 using System;
 using System.Threading.Tasks;
@@ -14,22 +15,13 @@ namespace BrassLoon.Config.Core
             _dataSaver = dataSaver;
         }
 
-        public Task Create(Framework.ISettings settings, IItem item)
-        {
-            CommonCore.Saver saver = new CommonCore.Saver();
-            return saver.Save(new CommonCore.TransactionHandler(settings), th => item.Create(new SaveSettings(settings, th)));
-        }
+        public async Task Create(ISettings settings, IItem item)
+            => await Saver.Save(new SaveSettings(settings), item.Create);
 
-        public async Task DeleteByCode(Framework.ISettings settings, Guid domainId, string code)
-        {
-            CommonCore.Saver saver = new CommonCore.Saver();
-            await saver.Save(new CommonCore.TransactionHandler(settings), (th) => _dataSaver.DeleteByCode(new DataSaveSettings(new SaveSettings(settings, th)), domainId, code));
-        }
+        public async Task DeleteByCode(ISettings settings, Guid domainId, string code)
+            => await Saver.Save(new SaveSettings(settings), ss => _dataSaver.DeleteByCode(ss, domainId, code));
 
-        public Task Update(Framework.ISettings settings, IItem item)
-        {
-            CommonCore.Saver saver = new CommonCore.Saver();
-            return saver.Save(new CommonCore.TransactionHandler(settings), th => item.Update(new SaveSettings(settings, th)));
-        }
+        public Task Update(ISettings settings, IItem item)
+            => Saver.Save(new SaveSettings(settings), item.Update);
     }
 }

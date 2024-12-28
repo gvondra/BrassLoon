@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrassLoon.CommonCore;
+using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.Framework

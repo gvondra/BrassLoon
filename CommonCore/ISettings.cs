@@ -8,5 +8,6 @@ namespace BrassLoon.CommonCore
         bool UseDefaultAzureSqlToken { get; }
         Task<string> GetConnectionString();
         Func<Task<string>> GetDatabaseAccessToken();
+        Task<string> GetDatabaseName();
     }
 }

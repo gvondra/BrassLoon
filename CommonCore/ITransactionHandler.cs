@@ -1,6 +1,6 @@
 ﻿namespace BrassLoon.CommonCore
 {
-    public interface ITransactionHandler : BrassLoon.DataClient.ISqlTransactionHandler
+    public interface ITransactionHandler : DataClient.ISqlTransactionHandler
     {
     }
 }

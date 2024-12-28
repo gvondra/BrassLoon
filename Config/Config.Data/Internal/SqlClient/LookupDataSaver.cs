@@ -16,7 +16,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISaveSettings saveSettings, LookupData lookupData)
+        public async Task Create(CommonData.ISaveSettings saveSettings, LookupData lookupData)
         {
             if (lookupData.Manager.GetState(lookupData) == DataState.New)
             {
@@ -47,7 +47,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             }
         }
 
-        public async Task DeleteByCode(ISaveSettings saveSettings, Guid domainId, string code)
+        public async Task DeleteByCode(CommonData.ISaveSettings saveSettings, Guid domainId, string code)
         {
             await _providerFactory.EstablishTransaction(saveSettings);
             using (DbCommand command = saveSettings.Connection.CreateCommand())
@@ -63,7 +63,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISaveSettings saveSettings, LookupData lookupData)
+        public async Task Update(CommonData.ISaveSettings saveSettings, LookupData lookupData)
         {
             if (lookupData.Manager.GetState(lookupData) == DataState.Updated)
             {

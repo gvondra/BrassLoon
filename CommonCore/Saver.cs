@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.CommonCore
 {
-    public class Saver
+    public static class Saver
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
-        public async Task Save(ITransactionHandler transactionHandler, Func<ITransactionHandler, Task> save)
+        public static async Task Save<T>(T transactionHandler, Func<T, Task> save)
+            where T : DataClient.ISqlTransactionHandler
         {
             try
             {

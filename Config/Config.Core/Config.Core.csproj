@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonCore\CommonCore.csproj" />
+    <ProjectReference Include="..\..\CommonData\CommonData.csproj" />
     <ProjectReference Include="..\Config.Data\Config.Data.csproj" />
     <ProjectReference Include="..\Config.Framework\Config.Framework.csproj" />
   </ItemGroup>

@@ -4,7 +4,7 @@ namespace ConfigAPI
 {
     public interface ISettingsFactory
     {
-        ConfigCoreSettings CreateCore(Settings settings);
+        CoreSettings CreateCore(Settings settings);
         AccountSettings CreateAccount(CommonApiSettings settings, string accessToken);
         LogSettings CreateLog(CommonApiSettings settings, string accessToken);
         LogSettings CreateLog(CommonApiSettings settings);

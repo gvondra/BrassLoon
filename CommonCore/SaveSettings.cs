@@ -1,13 +1,12 @@
-﻿using BrassLoon.Config.Framework;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace BrassLoon.Config.Core
+namespace BrassLoon.CommonCore
 {
-    public class DataSettings : CommonCore.DataSettings, Data.ISettings
+    public class SaveSettings : TransactionHandler, ISaveSettings
     {
         private readonly ISettings _settings;
 
-        public DataSettings(ISettings settings)
+        public SaveSettings(ISettings settings)
             : base(settings)
         {
             _settings = settings;

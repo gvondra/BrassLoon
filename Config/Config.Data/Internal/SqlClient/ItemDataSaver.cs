@@ -16,7 +16,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISaveSettings saveSettings, ItemData itemData)
+        public async Task Create(CommonData.ISaveSettings saveSettings, ItemData itemData)
         {
             if (itemData.Manager.GetState(itemData) == DataState.New)
             {
@@ -47,7 +47,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             }
         }
 
-        public async Task DeleteByCode(ISaveSettings saveSettings, Guid domainId, string code)
+        public async Task DeleteByCode(CommonData.ISaveSettings saveSettings, Guid domainId, string code)
         {
             await _providerFactory.EstablishTransaction(saveSettings);
             using (DbCommand command = saveSettings.Connection.CreateCommand())
@@ -63,7 +63,7 @@ namespace BrassLoon.Config.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISaveSettings saveSettings, ItemData itemData)
+        public async Task Update(CommonData.ISaveSettings saveSettings, ItemData itemData)
         {
             if (itemData.Manager.GetState(itemData) == DataState.Updated)
             {

@@ -17,7 +17,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<ItemData> GetByCode(ISettings settings, Guid domainId, string code)
+        public async Task<ItemData> GetByCode(CommonData.ISettings settings, Guid domainId, string code)
         {
             Regex codeRegex = new Regex($"^{Regex.Escape(code)}$", RegexOptions.IgnoreCase);
             IMongoCollection<ItemData> collection = await _dbProvider.GetCollection<ItemData>(settings, Constants.CollectionName.Item);
@@ -28,7 +28,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<string>> GetCodes(ISettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetCodes(CommonData.ISettings settings, Guid domainId)
         {
             IMongoCollection<ItemData> collection = await _dbProvider.GetCollection<ItemData>(settings, Constants.CollectionName.Item);
             FilterDefinition<ItemData> filter = Builders<ItemData>.Filter.Empty;

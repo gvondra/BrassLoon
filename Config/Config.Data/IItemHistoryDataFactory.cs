@@ -1,4 +1,5 @@
-﻿using BrassLoon.Config.Data.Models;
+﻿using BrassLoon.CommonData;
+using BrassLoon.Config.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

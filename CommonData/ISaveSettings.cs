@@ -1,7 +1,8 @@
 ﻿using BrassLoon.DataClient;
 
-namespace BrassLoon.Config.Data
+namespace BrassLoon.CommonData
 {
     public interface ISaveSettings : ISqlTransactionHandler, DataClient.MongoDB.ISettings
-    { }
+    {
+    }
 }
