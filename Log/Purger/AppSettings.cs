@@ -6,6 +6,8 @@ namespace BrassLoon.Log.Purger
     {
         public string ConnectionString { get; set; }
         public string ConnectionStringUser { get; set; }
+        public string DatabaseName { get; set; }
+        public bool UseMongoDb { get; set; }
         public bool EnableDatabaseAccessToken { get; set; }
         public string KeyVaultAddress { get; set; }
         public string AccountApiBaseAddress { get; set; }

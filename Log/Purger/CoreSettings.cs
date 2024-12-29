@@ -66,5 +66,6 @@ namespace BrassLoon.Log.Purger
         }
 
         public Func<Task<string>> GetDatabaseAccessToken() => null;
+        public Task<string> GetDatabaseName() => Task.FromResult(_settings.DatabaseName);
     }
 }
