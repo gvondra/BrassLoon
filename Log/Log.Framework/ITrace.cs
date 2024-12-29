@@ -15,6 +15,6 @@ namespace BrassLoon.Log.Framework
         string Category { get; set; }
         string Level { get; set; }
 
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
     }
 }

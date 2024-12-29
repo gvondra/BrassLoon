@@ -28,6 +28,6 @@ namespace BrassLoon.Log.Core
 
         Guid IEventId.EventId => _data.EventId;
 
-        public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
+        public Task Create(ISaveSettings settings) => _dataSaver.Create(settings, _data);
     }
 }

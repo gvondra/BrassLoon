@@ -12,6 +12,6 @@ namespace BrassLoon.Log.Framework
         string Name { get; }
         DateTime CreateTimestamp { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
     }
 }

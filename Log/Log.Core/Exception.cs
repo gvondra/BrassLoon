@@ -76,16 +76,16 @@ namespace BrassLoon.Log.Core
         public string Category { get => _data.Category; set => _data.Category = value; }
         public string Level { get => _data.Level; set => _data.Level = value; }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(ISaveSettings settings)
         {
             if (_eventId != null)
             {
-                await _eventId.Create(transactionHandler);
+                await _eventId.Create(settings);
                 EventId = _eventId.EventId;
             }
             if (ParentException != null)
                 ParentExceptionId = ParentException.ExceptionId;
-            await _dataSaver.Create(transactionHandler, _data);
+            await _dataSaver.Create(settings, _data);
         }
 
         public async Task<IException> GetInnerException(ISettings settings) => await _exceptionFactory.GetInnerException(settings, ExceptionId);

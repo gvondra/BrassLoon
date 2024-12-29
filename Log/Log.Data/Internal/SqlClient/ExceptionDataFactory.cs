@@ -19,7 +19,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<ExceptionData>();
         }
 
-        public async Task<ExceptionData> Get(ISqlSettings settings, long id)
+        public async Task<ExceptionData> Get(CommonData.ISettings settings, long id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "exceptionId", DbType.Int64, id);
             return (await _genericDataFactory.GetData(
@@ -32,7 +32,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<ExceptionData> GetInnerException(ISqlSettings settings, long id)
+        public async Task<ExceptionData> GetInnerException(CommonData.ISettings settings, long id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64, id);
             return (await _genericDataFactory.GetData(
@@ -45,7 +45,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<ExceptionData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, DateTime maxTimestamp)
+        public async Task<IEnumerable<ExceptionData>> GetTopBeforeTimestamp(CommonData.ISettings settings, Guid domainId, DateTime maxTimestamp)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

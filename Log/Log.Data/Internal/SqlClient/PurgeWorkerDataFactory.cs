@@ -20,7 +20,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<PurgeWorkerData>();
         }
 
-        public async Task<Guid?> ClaimPurgeWorker(ISqlSettings settings)
+        public async Task<Guid?> ClaimPurgeWorker(CommonData.ISettings settings)
         {
             Guid? result = null;
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
@@ -41,7 +41,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             return result;
         }
 
-        public async Task<PurgeWorkerData> Get(ISqlSettings settings, Guid id)
+        public async Task<PurgeWorkerData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -58,7 +58,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<PurgeWorkerData>> GetAll(ISqlSettings settings)
+        public async Task<IEnumerable<PurgeWorkerData>> GetAll(CommonData.ISettings settings)
         {
             return await _genericDataFactory.GetData(
                 settings,

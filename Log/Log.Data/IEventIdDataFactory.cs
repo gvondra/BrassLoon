@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.Log.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace BrassLoon.Log.Data
 {
     public interface IEventIdDataFactory
     {
-        Task<EventIdData> Get(ISqlSettings settings, Guid id);
-        Task<IEnumerable<EventIdData>> GetByDomainId(ISqlSettings settings, Guid domainId);
+        Task<EventIdData> Get(ISettings settings, Guid id);
+        Task<IEnumerable<EventIdData>> GetByDomainId(ISettings settings, Guid domainId);
     }
 }

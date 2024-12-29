@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.Log.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace BrassLoon.Log.Data
 {
     public interface ITraceDataFactory
     {
-        Task<IEnumerable<string>> GetEventCodes(ISqlSettings settings, Guid domainId);
-        Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, string eventCode, DateTime maxTimestamp);
+        Task<IEnumerable<string>> GetEventCodes(ISettings settings, Guid domainId);
+        Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp);
     }
 }

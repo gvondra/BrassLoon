@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.Log.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,8 @@ namespace BrassLoon.Log.Data
 {
     public interface IPurgeWorkerDataFactory
     {
-        Task<Guid?> ClaimPurgeWorker(ISqlSettings settings);
-        Task<IEnumerable<PurgeWorkerData>> GetAll(ISqlSettings settings);
-        Task<PurgeWorkerData> Get(ISqlSettings settings, Guid id);
+        Task<Guid?> ClaimPurgeWorker(ISettings settings);
+        Task<IEnumerable<PurgeWorkerData>> GetAll(ISettings settings);
+        Task<PurgeWorkerData> Get(ISettings settings, Guid id);
     }
 }

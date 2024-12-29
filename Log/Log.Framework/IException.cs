@@ -21,7 +21,7 @@ namespace BrassLoon.Log.Framework
         string Level { get; set; }
 
         Task<IException> GetInnerException(ISettings settings);
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
     }
 #pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 }

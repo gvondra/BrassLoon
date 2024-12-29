@@ -15,16 +15,16 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, ExceptionData exceptionData)
+        public async Task Create(CommonData.ISaveSettings settings, ExceptionData exceptionData)
         {
             if (exceptionData.Manager.GetState(exceptionData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, exceptionData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, exceptionData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bll].[CreateException]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;

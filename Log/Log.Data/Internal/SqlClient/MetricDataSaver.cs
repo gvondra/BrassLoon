@@ -15,16 +15,16 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, MetricData metricData)
+        public async Task Create(CommonData.ISaveSettings settings, MetricData metricData)
         {
             if (metricData.Manager.GetState(metricData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, metricData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, metricData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bll].[CreateMetric]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;

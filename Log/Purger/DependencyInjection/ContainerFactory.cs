@@ -12,7 +12,7 @@ namespace BrassLoon.Log.Purger.DependencyInjection
             AppSettings appSettings = null)
         {
             ContainerBuilder builder = new ContainerBuilder();
-            _ = builder.RegisterModule(new PurgerModule());
+            _ = builder.RegisterModule(new PurgerModule(appSettings?.UseMongoDb ?? false));
             if (appSettings != null)
                 _ = builder.RegisterInstance(appSettings);
             _container = builder.Build();

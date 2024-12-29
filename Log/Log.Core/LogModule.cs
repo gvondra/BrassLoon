@@ -5,10 +5,17 @@ namespace BrassLoon.Log.Core
 {
     public class LogModule : Module
     {
+        private readonly bool _useMongoDb;
+
+        public LogModule(bool useMongoDb)
+        {
+            _useMongoDb = useMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new Data.LogDataModule());
+            _ = builder.RegisterModule(new Data.LogDataModule(_useMongoDb));
             _ = builder.RegisterInstance(new SettingsFactory());
             _ = builder.RegisterType<EventIdFactory>().As<IEventIdFactory>();
             _ = builder.RegisterType<ExceptionFactory>().As<IExceptionFactory>();

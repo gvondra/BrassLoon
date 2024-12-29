@@ -10,11 +10,11 @@ namespace BrassLoon.Log.Core
         {
             if (exceptions != null && exceptions.Length > 0)
             {
-                await Saver.Save(new TransactionHandler(settings), async th =>
+                await Saver.Save(new SaveSettings(settings), async ss =>
                 {
                     for (int i = 0; i < exceptions.Length; i += 1)
                     {
-                        await exceptions[i].Create(th);
+                        await exceptions[i].Create(ss);
                     }
                 });
             }

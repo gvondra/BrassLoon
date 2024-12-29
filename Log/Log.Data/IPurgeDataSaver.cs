@@ -1,19 +1,18 @@
-﻿using BrassLoon.DataClient;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Log.Data
 {
     public interface IPurgeDataSaver
     {
-        Task DeleteExceptionByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task InitializeException(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
-        Task PurgeException(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
-        Task DeleteMetricByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task InitializeMetric(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
-        Task PurgeMetric(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
-        Task DeleteTraceByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task InitializeTrace(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
-        Task PurgeTrace(ISqlSettings settings, Guid domainId, DateTime maxExpirationTimestamp);
+        Task DeleteExceptionByMinTimestamp(CommonData.ISettings settings, DateTime timestamp);
+        Task InitializeException(CommonData.ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeException(CommonData.ISettings settings, Guid domainId, DateTime maxExpirationTimestamp);
+        Task DeleteMetricByMinTimestamp(CommonData.ISettings settings, DateTime timestamp);
+        Task InitializeMetric(CommonData.ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeMetric(CommonData.ISettings settings, Guid domainId, DateTime maxExpirationTimestamp);
+        Task DeleteTraceByMinTimestamp(CommonData.ISettings settings, DateTime timestamp);
+        Task InitializeTrace(CommonData.ISettings settings, Guid domainId, DateTime expirationTimestamp, DateTime maxCreateTimestamp);
+        Task PurgeTrace(CommonData.ISettings settings, Guid domainId, DateTime maxExpirationTimestamp);
     }
 }

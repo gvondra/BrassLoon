@@ -10,36 +10,36 @@ namespace BrassLoon.Log.Core
         {
             if (metrics != null && metrics.Length > 0)
             {
-                TransactionHandler transactionHandler = new TransactionHandler(settings);
+                SaveSettings saveSettings = new SaveSettings(settings);
                 try
                 {
                     for (int i = 0; i < metrics.Length; i += 1)
                     {
-                        await metrics[i].Create(transactionHandler);
-                        if (transactionHandler.Transaction != null)
+                        await metrics[i].Create(saveSettings);
+                        if (saveSettings.Transaction != null)
                         {
-                            transactionHandler.Transaction.Commit();
-                            transactionHandler.Transaction.Dispose();
-                            transactionHandler.Transaction = null;
+                            saveSettings.Transaction.Commit();
+                            saveSettings.Transaction.Dispose();
+                            saveSettings.Transaction = null;
                         }
                     }
                 }
                 catch
                 {
-                    if (transactionHandler.Transaction != null)
+                    if (saveSettings.Transaction != null)
                     {
-                        transactionHandler.Transaction.Rollback();
-                        transactionHandler.Transaction.Dispose();
-                        transactionHandler.Transaction = null;
+                        saveSettings.Transaction.Rollback();
+                        saveSettings.Transaction.Dispose();
+                        saveSettings.Transaction = null;
                     }
                     throw;
                 }
                 finally
                 {
-                    if (transactionHandler.Connection != null)
+                    if (saveSettings.Connection != null)
                     {
-                        await transactionHandler.Connection.DisposeAsync();
-                        transactionHandler.Connection = null;
+                        await saveSettings.Connection.DisposeAsync();
+                        saveSettings.Connection = null;
                     }
                 }
             }

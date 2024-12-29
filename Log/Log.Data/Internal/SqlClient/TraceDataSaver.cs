@@ -15,16 +15,16 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, TraceData traceData)
+        public async Task Create(CommonData.ISaveSettings settings, TraceData traceData)
         {
             if (traceData.Manager.GetState(traceData) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, traceData);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, traceData);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bll].[CreateTrace]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;

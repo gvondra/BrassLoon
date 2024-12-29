@@ -17,8 +17,9 @@ namespace LogAPI
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            string useMongoDb = builder.Configuration["UseMongoDb"] ?? "false";
             _ = builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new LogAPIModule()));
+            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new LogAPIModule(bool.Parse(useMongoDb))));
             // Add services to the container.
             _ = builder.Services.Configure<Settings>(builder.Configuration);
             _ = builder.Services.AddControllers()

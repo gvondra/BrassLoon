@@ -16,16 +16,16 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, EventIdData data)
+        public async Task Create(CommonData.ISaveSettings settings, EventIdData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[bll].[CreateEventId]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "eventId", DbType.Guid);
                     id.Direction = ParameterDirection.Output;

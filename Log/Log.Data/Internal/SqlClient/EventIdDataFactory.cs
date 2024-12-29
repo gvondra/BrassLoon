@@ -19,7 +19,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<EventIdData>();
         }
 
-        public async Task<EventIdData> Get(ISqlSettings settings, Guid id)
+        public async Task<EventIdData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -36,7 +36,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public Task<IEnumerable<EventIdData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public Task<IEnumerable<EventIdData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

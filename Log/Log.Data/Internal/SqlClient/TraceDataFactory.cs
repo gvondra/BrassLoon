@@ -18,7 +18,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<TraceData>();
         }
 
-        public async Task<IEnumerable<string>> GetEventCodes(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<string>> GetEventCodes(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -27,7 +27,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             return await DataUtil.ReadList<string>(_providerFactory, settings, "[bll].[GetAllTraceEventCode]", parameters);
         }
 
-        public async Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(ISqlSettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
+        public async Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(CommonData.ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
