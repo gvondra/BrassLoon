@@ -30,10 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Internal\MongoDb\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\CommonData\CommonData.csproj" />
   </ItemGroup>
 

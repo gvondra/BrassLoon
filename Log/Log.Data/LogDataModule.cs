@@ -1,8 +1,9 @@
 ﻿using Autofac;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
-using BrassLoon.Log.Data.Internal.SqlClient;
 using MongoDB.Bson.Serialization;
+using MongoDb = BrassLoon.Log.Data.Internal.MongoDb;
+using SqlClient = BrassLoon.Log.Data.Internal.SqlClient;
 
 namespace BrassLoon.Log.Data
 {
@@ -32,22 +33,23 @@ namespace BrassLoon.Log.Data
             _ = builder.RegisterType<SqlClientProviderFactory>()
                 .As<IDbProviderFactory>()
                 .As<ISqlDbProviderFactory>();
-            _ = builder.RegisterType<EventIdDataFactory>().As<IEventIdDataFactory>();
-            _ = builder.RegisterType<EventIdDataSaver>().As<IEventIdDataSaver>();
-            _ = builder.RegisterType<ExceptionDataFactory>().As<IExceptionDataFactory>();
-            _ = builder.RegisterType<ExceptionDataSaver>().As<IExceptionDataSaver>();
-            _ = builder.RegisterType<MetricDataFactory>().As<IMetricDataFactory>();
-            _ = builder.RegisterType<MetricDataSaver>().As<IMetricDataSaver>();
-            _ = builder.RegisterType<PurgeDataSaver>().As<IPurgeDataSaver>();
-            _ = builder.RegisterType<PurgeWorkerDataFactory>().As<IPurgeWorkerDataFactory>();
-            _ = builder.RegisterType<PurgeWorkerDataSaver>().As<IPurgeWorkerDataSaver>();
-            _ = builder.RegisterType<TraceDataFactory>().As<ITraceDataFactory>();
-            _ = builder.RegisterType<TraceDataSaver>().As<ITraceDataSaver>();
+            _ = builder.RegisterType<SqlClient.EventIdDataFactory>().As<IEventIdDataFactory>();
+            _ = builder.RegisterType<SqlClient.EventIdDataSaver>().As<IEventIdDataSaver>();
+            _ = builder.RegisterType<SqlClient.ExceptionDataFactory>().As<IExceptionDataFactory>();
+            _ = builder.RegisterType<SqlClient.ExceptionDataSaver>().As<IExceptionDataSaver>();
+            _ = builder.RegisterType<SqlClient.MetricDataFactory>().As<IMetricDataFactory>();
+            _ = builder.RegisterType<SqlClient.MetricDataSaver>().As<IMetricDataSaver>();
+            _ = builder.RegisterType<SqlClient.PurgeDataSaver>().As<IPurgeDataSaver>();
+            _ = builder.RegisterType<SqlClient.PurgeWorkerDataFactory>().As<IPurgeWorkerDataFactory>();
+            _ = builder.RegisterType<SqlClient.PurgeWorkerDataSaver>().As<IPurgeWorkerDataSaver>();
+            _ = builder.RegisterType<SqlClient.TraceDataFactory>().As<ITraceDataFactory>();
+            _ = builder.RegisterType<SqlClient.TraceDataSaver>().As<ITraceDataSaver>();
         }
 
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<MongoDb.TraceDataSaver>().As<ITraceDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
