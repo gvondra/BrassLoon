@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Log.Data
+namespace BrassLoon.Log.Data.Internal.SqlClient
 {
     public class PurgeWorkerDataSaver : IPurgeWorkerDataSaver
     {

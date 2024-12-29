@@ -25,6 +25,12 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.*" />
     <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
+	  <PackageReference Include="BrassLoon.DataClient.MongoDB" Version="1.0.0-prerelease.*" />
+	  <PackageReference Include="MongoDB.Driver" Version="3.1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Internal\MongoDb\" />
   </ItemGroup>
 
 </Project>

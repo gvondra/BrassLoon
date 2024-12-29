@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Log.Data
+namespace BrassLoon.Log.Data.Internal.SqlClient
 {
     public class EventIdDataFactory : IEventIdDataFactory
     {
