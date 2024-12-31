@@ -16,8 +16,9 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
 PRINT 'Deleting account ' + CONVERT(VARCHAR(128), @accountGuid);
 
-DELETE FROM [bla].[AccountUser] WHERE [AccountGuid] = @accountGuid;
+DELETE FROM [bla].[Client] WHERE [AccountGuid] = @accountGuid;
 DELETE FROM [bla].[Domain] WHERE [AccountGuid] = @accountGuid;
+DELETE FROM [bla].[AccountUser] WHERE [AccountGuid] = @accountGuid;
 DELETE FROM [bla].[Account] WHERE [AccountGuid] = @accountGuid;
 
 FETCH NEXT FROM accountCursor
