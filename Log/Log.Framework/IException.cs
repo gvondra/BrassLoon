@@ -7,7 +7,8 @@ namespace BrassLoon.Log.Framework
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
     public interface IException
     {
-        long ExceptionId { get; }
+        long? LegacyExceptionId { get; }
+        Guid ExceptionId { get; }
         Guid DomainId { get; }
         string Message { get; set; }
         string TypeName { get; set; }

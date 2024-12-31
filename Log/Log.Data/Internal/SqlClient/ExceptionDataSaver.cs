@@ -1,5 +1,6 @@
 ﻿using BrassLoon.DataClient;
 using BrassLoon.Log.Data.Models;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -22,13 +23,17 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 await _providerFactory.EstablishTransaction(settings, exceptionData);
                 using (DbCommand command = settings.Connection.CreateCommand())
                 {
-                    command.CommandText = "[bll].[CreateException]";
+                    command.CommandText = "[bll].[CreateException_v2]";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;
                     _ = command.Parameters.Add(id);
+
+                    IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
+                    guid.Direction = ParameterDirection.Output;
+                    _ = command.Parameters.Add(guid);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(exceptionData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "parentExceptionId", DbType.Int64, DataUtil.GetParameterValue(exceptionData.ParentExceptionId));
@@ -43,9 +48,11 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "eventId", DbType.Guid, DataUtil.GetParameterValue(exceptionData.EventId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "category", DbType.String, DataUtil.GetParameterValue(exceptionData.Category));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "level", DbType.String, DataUtil.GetParameterValue(exceptionData.Level));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "parentExceptionGuid", DbType.Guid, DataUtil.GetParameterValue(exceptionData.ParentExceptionGuid));
 
                     _ = await command.ExecuteNonQueryAsync();
                     exceptionData.ExceptionId = (long)id.Value;
+                    exceptionData.ExceptionGuid = (Guid)guid.Value;
                 }
             }
         }

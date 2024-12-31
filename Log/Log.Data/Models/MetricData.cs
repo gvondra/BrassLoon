@@ -8,8 +8,13 @@ namespace BrassLoon.Log.Data.Models
     public class MetricData : DataManagedStateBase
     {
         [ColumnMapping(IsPrimaryKey = true)]
-        [BsonId]
+        [BsonIgnore]
         public long MetricId { get; set; }
+
+        [ColumnMapping]
+        [BsonId]
+        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        public Guid MetricGuid { get; set; }
 
         [ColumnMapping]
         [BsonGuidRepresentation(GuidRepresentation.Standard)]

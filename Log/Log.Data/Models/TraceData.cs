@@ -8,8 +8,13 @@ namespace BrassLoon.Log.Data.Models
     public class TraceData : DataManagedStateBase
     {
         [ColumnMapping(IsPrimaryKey = true)]
-        [BsonId]
+        [BsonIgnore]
         public long TraceId { get; set; }
+
+        [ColumnMapping]
+        [BsonId]
+        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        public Guid TraceGuid { get; set; }
 
         [ColumnMapping]
         [BsonGuidRepresentation(GuidRepresentation.Standard)]

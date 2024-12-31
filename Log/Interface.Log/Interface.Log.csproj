@@ -11,9 +11,10 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.1.0</Version>
-		<AssemblyVersion>4.1.0.0</AssemblyVersion>
+		<Version>5.0.0-prerelease.2</Version>
+		<AssemblyVersion>5.0.0.2</AssemblyVersion>
 		<PackageReleaseNotes>
+			- v5.0 Switch to GUID type key fields
 			- v4.1 Extend support to Autofac version 9
 			- v4.0 Upgrade RestClient.
 			- v3.0 Upgrade RestClient. Added create batch traces method; Added create batch metrics method
@@ -35,8 +36,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="[7.0,9.0)" />
-		<PackageReference Include="BrassLoon.RestClient" Version="[4.1.0,5.0)" />
+		<PackageReference Include="Autofac" Version="[7.1,9.0)" />
+		<PackageReference Include="BrassLoon.RestClient" Version="[4.1.1,5.0)" />
 		<PackageReference Include="Polly" Version="[7.2.4,9.0)" />
 		<PackageReference Include="Polly.Caching.Memory" Version="[3.0.2,4.0)" />
 	</ItemGroup>

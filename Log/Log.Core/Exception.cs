@@ -36,8 +36,8 @@ namespace BrassLoon.Log.Core
             : this(data, dataSaver, exceptionFactory, eventId: null)
         { }
 
-        public long ExceptionId => _data.ExceptionId;
-
+        public long? LegacyExceptionId => _data.ExceptionId;
+        public Guid ExceptionId => _data.ExceptionGuid;
         public Guid DomainId => _data.DomainId;
 
         public string Message { get => _data.Message; set => _data.Message = value; }
@@ -46,6 +46,8 @@ namespace BrassLoon.Log.Core
         public string AppDomain { get => _data.AppDomain; set => _data.AppDomain = value; }
         public string TargetSite { get => _data.TargetSite; set => _data.TargetSite = value; }
         public string StackTrace { get => _data.StackTrace; set => _data.StackTrace = value; }
+        public string Category { get => _data.Category; set => _data.Category = value; }
+        public string Level { get => _data.Level; set => _data.Level = value; }
 
         public dynamic Data
         {
@@ -67,14 +69,11 @@ namespace BrassLoon.Log.Core
 
         internal IException ParentException { get; set; }
 #pragma warning disable S1144 // Unused private types or members should be removed
-        private long? ParentExceptionId { get => _data.ParentExceptionId; set => _data.ParentExceptionId = value; }
-#pragma warning restore S1144 // Unused private types or members should be removed
+        private Guid? ParentExceptionId { get => _data.ParentExceptionGuid; set => _data.ParentExceptionGuid = value; }
+        private long? LegacyParentExceptionId { get => _data.ParentExceptionId; set => _data.ParentExceptionId = value; }
         public DateTime CreateTimestamp => _data.CreateTimestamp;
-#pragma warning disable S1144 // Unused private types or members should be removed
         private Guid? EventId { get => _data.EventId; set => _data.EventId = value; }
 #pragma warning restore S1144 // Unused private types or members should be removed
-        public string Category { get => _data.Category; set => _data.Category = value; }
-        public string Level { get => _data.Level; set => _data.Level = value; }
 
         public async Task Create(ISaveSettings settings)
         {
@@ -84,11 +83,14 @@ namespace BrassLoon.Log.Core
                 EventId = _eventId.EventId;
             }
             if (ParentException != null)
+            {
+                LegacyParentExceptionId = ParentException.LegacyExceptionId;
                 ParentExceptionId = ParentException.ExceptionId;
+            }
             await _dataSaver.Create(settings, _data);
         }
 
-        public async Task<IException> GetInnerException(ISettings settings) => await _exceptionFactory.GetInnerException(settings, ExceptionId);
+        public async Task<IException> GetInnerException(ISettings settings) => await _exceptionFactory.GetInnerException(settings, LegacyExceptionId.Value);
     }
 #pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 #pragma warning restore S2166 // Classes named like "Exception" should extend "Exception" or a subclass

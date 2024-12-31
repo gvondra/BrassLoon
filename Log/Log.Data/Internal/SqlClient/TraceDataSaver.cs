@@ -1,5 +1,6 @@
 ﻿using BrassLoon.DataClient;
 using BrassLoon.Log.Data.Models;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -22,13 +23,17 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
                 await _providerFactory.EstablishTransaction(settings, traceData);
                 using (DbCommand command = settings.Connection.CreateCommand())
                 {
-                    command.CommandText = "[bll].[CreateTrace]";
+                    command.CommandText = "[bll].[CreateTrace_v2]";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64);
                     id.Direction = ParameterDirection.Output;
                     _ = command.Parameters.Add(id);
+
+                    IDataParameter guid = DataUtil.CreateParameter(_providerFactory, "guid", DbType.Guid);
+                    guid.Direction = ParameterDirection.Output;
+                    _ = command.Parameters.Add(guid);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(traceData.DomainId));
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "eventCode", DbType.AnsiString, DataUtil.GetParameterValue(traceData.EventCode));
@@ -41,6 +46,7 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
 
                     _ = await command.ExecuteNonQueryAsync();
                     traceData.TraceId = (long)id.Value;
+                    traceData.TraceGuid = (Guid)guid.Value;
                 }
             }
         }

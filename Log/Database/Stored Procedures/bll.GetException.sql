@@ -3,7 +3,9 @@
 AS
 SELECT
 	[ExceptionId],
-	[ParentExceptionId],
+	[ExceptionGuid],
+	[ParentExceptionId]
+	[ParentExceptionGuid],
 	[DomainId],
 	[Message],
 	[TypeName],

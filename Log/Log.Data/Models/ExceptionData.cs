@@ -8,11 +8,21 @@ namespace BrassLoon.Log.Data.Models
     public class ExceptionData : DataManagedStateBase
     {
         [ColumnMapping(IsPrimaryKey = true)]
-        [BsonId]
+        [BsonIgnore]
         public long ExceptionId { get; set; }
 
         [ColumnMapping]
+        [BsonId]
+        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        public Guid ExceptionGuid { get; set; }
+
+        [ColumnMapping]
         public long? ParentExceptionId { get; set; }
+
+        [ColumnMapping]
+        [BsonElement("ParentExceptionId")]
+        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        public Guid? ParentExceptionGuid { get; set; }
 
         [ColumnMapping]
         [BsonGuidRepresentation(GuidRepresentation.Standard)]

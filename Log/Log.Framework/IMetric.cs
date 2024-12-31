@@ -6,7 +6,8 @@ namespace BrassLoon.Log.Framework
 {
     public interface IMetric
     {
-        long MetricId { get; }
+        long? LegacyMetricId { get; }
+        Guid MetricId { get; }
         Guid DomainId { get; }
         string EventCode { get; }
         double? Magnitude { get; set; }

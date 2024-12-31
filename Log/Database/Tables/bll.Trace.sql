@@ -9,6 +9,7 @@
 	[EventId] UNIQUEIDENTIFIER NULL,
 	[Category] NVARCHAR(512) CONSTRAINT [DF_Trace_Category] DEFAULT ('') NOT NULL,
 	[Level] NVARCHAR(512) CONSTRAINT [DF_Trace_Level] DEFAULT ('') NOT NULL,
+	[TraceGuid] UNIQUEIDENTIFIER CONSTRAINT [DF_Trace_TraceGuid] DEFAULT (NEWID()) NOT NULL,
 	CONSTRAINT [PK_Trace] PRIMARY KEY NONCLUSTERED ([TraceId]), 
     CONSTRAINT [FK_Trace_To_EventId] FOREIGN KEY ([EventId]) REFERENCES [bll].[EventID]([EventId])
 )
@@ -22,3 +23,7 @@ WITH (DATA_COMPRESSION = PAGE)
 GO
 
 CREATE INDEX [IX_Trace_EventId] ON [bll].[Trace] ([EventId])
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Trace_TraceGuid] ON [bll].[Trace] ([TraceGuid])

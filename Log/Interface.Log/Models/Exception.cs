@@ -6,7 +6,7 @@ namespace BrassLoon.Interface.Log.Models
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
     public class Exception
     {
-        public long? ExceptionId { get; set; }
+        public Guid? ExceptionId { get; set; }
         public Guid? DomainId { get; set; }
         public string Message { get; set; }
         public string TypeName { get; set; }

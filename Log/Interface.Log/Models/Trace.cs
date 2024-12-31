@@ -4,7 +4,7 @@ namespace BrassLoon.Interface.Log.Models
 {
     public class Trace
     {
-        public long? TraceId { get; set; }
+        public Guid? TraceId { get; set; }
         public Guid? DomainId { get; set; }
         public string EventCode { get; set; }
         public string Message { get; set; }

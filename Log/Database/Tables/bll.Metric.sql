@@ -11,6 +11,7 @@
 	[EventId] UNIQUEIDENTIFIER NULL,
 	[Category] NVARCHAR(512) CONSTRAINT [DF_Metric_Category] DEFAULT ('') NOT NULL,
 	[Level] NVARCHAR(512) CONSTRAINT [DF_Metric_Level] DEFAULT ('') NOT NULL,
+	[MetricGuid] UNIQUEIDENTIFIER CONSTRAINT [DF_Metric_MetricGuid] DEFAULT (NEWID()) NOT NULL,
     CONSTRAINT [PK_Metric] PRIMARY KEY NONCLUSTERED ([MetricId]), 
     CONSTRAINT [FK_Metric_To_EventId] FOREIGN KEY ([EventId]) REFERENCES [bll].[EventId]([EventId])
 )
@@ -24,3 +25,7 @@ WITH (DATA_COMPRESSION = PAGE)
 GO
 
 CREATE INDEX [IX_Metric_EventId] ON [bll].[Metric] ([EventId])
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Metric_MetricGuid] ON [bll].[Metric] ([MetricGuid])

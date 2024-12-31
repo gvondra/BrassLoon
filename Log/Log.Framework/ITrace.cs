@@ -6,7 +6,8 @@ namespace BrassLoon.Log.Framework
 {
     public interface ITrace
     {
-        long TraceId { get; }
+        long? LegacyTraceId { get; }
+        Guid TraceId { get; }
         Guid DomainId { get; }
         string EventCode { get; }
         string Message { get; set; }

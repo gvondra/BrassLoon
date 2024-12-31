@@ -1,4 +1,7 @@
-﻿CREATE PROCEDURE [bll].[CreateMetric]
+﻿/*
+2025 January, Greg: Replaced with v2
+*/
+CREATE PROCEDURE [bll].[CreateMetric]
 	@id BIGINT OUT,
 	@domainId UNIQUEIDENTIFIER,
 	@eventCode VARCHAR(200),

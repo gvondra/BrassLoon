@@ -30,8 +30,8 @@ namespace BrassLoon.Log.Core
             : this(data, dataSaver, eventId: null)
         { }
 
-        public long TraceId => _data.TraceId;
-
+        public long? LegacyTraceId => _data.TraceId;
+        public Guid TraceId => _data.TraceGuid;
         public Guid DomainId => _data.DomainId;
 
         public string EventCode => _data.EventCode;

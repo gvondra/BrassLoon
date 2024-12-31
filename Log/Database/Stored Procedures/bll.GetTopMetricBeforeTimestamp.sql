@@ -5,6 +5,7 @@
 AS
 SELECT TOP 10000
 	[MetricId],
+	[MetricGuid],
 	[DomainId],
 	[EventCode],
 	[Magnitude],

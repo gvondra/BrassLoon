@@ -1,4 +1,7 @@
-﻿CREATE PROCEDURE [bll].[CreateTrace]
+﻿/*
+2025 January, Greg: Replaced with v2
+*/
+CREATE PROCEDURE [bll].[CreateTrace]
 	@id BIGINT OUT,
 	@domainId UNIQUEIDENTIFIER,
 	@eventCode VARCHAR(200),

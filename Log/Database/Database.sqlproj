@@ -101,9 +101,16 @@
     <Build Include="Stored Procedures\bll.CreateEventId.sql" />
     <Build Include="Stored Procedures\bll.GetEventId.sql" />
     <Build Include="Stored Procedures\bll.GetEventId_by_DomainId.sql" />
+    <None Include="SetExceptionParentId.sql" />
+    <Build Include="Stored Procedures\bll.CreateTrace_v2.sql" />
+    <Build Include="Stored Procedures\bll.CreateMetric_v2.sql" />
+    <Build Include="Stored Procedures\bll.CreateException_v2.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
     <None Include="LocalDatabase.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="PostDeployment.sql" />
   </ItemGroup>
 </Project>

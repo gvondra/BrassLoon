@@ -4,7 +4,9 @@
 AS
 SELECT TOP 10000
 	[ExceptionId],
-	[ParentExceptionId],
+	[ExceptionGuid],
+	[ParentExceptionId]
+	[ParentExceptionGuid],
 	[DomainId],
 	[Message],
 	[TypeName],

@@ -5,6 +5,7 @@
 AS
 SELECT TOP 10000
 	[TraceId],
+	[TraceGuid],
 	[DomainId],
 	[EventCode],
 	[Message],

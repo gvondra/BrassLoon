@@ -40,7 +40,7 @@
 		<PackageReference Include="Autofac" Version="8.2.*" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.*" />
 		<PackageReference Include="BrassLoon.Interface.Account" Version="4.4.*" />
-		<PackageReference Include="BrassLoon.Interface.Log" Version="4.1.*" />
+		<PackageReference Include="BrassLoon.Interface.Log" Version="5.0.0-prerelease.*" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.67.*" />
 	</ItemGroup>
 

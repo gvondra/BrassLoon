@@ -1,4 +1,7 @@
-﻿CREATE PROCEDURE [bll].[CreateException]
+﻿/*
+2025 January, Greg: Replaced with v2
+*/
+CREATE PROCEDURE [bll].[CreateException]
 	@id BIGINT OUT,
 	@parentExceptionId BIGINT,
 	@domainId UNIQUEIDENTIFIER,

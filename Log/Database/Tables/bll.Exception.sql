@@ -14,7 +14,9 @@
 	[EventId] UNIQUEIDENTIFIER NULL,
 	[Category] NVARCHAR(512) CONSTRAINT [DF_Exception_Category] DEFAULT ('') NOT NULL,
 	[Level] NVARCHAR(512) CONSTRAINT [DF_Exception_Level] DEFAULT ('') NOT NULL,
-	CONSTRAINT [PK_Exception] PRIMARY KEY NONCLUSTERED ([ExceptionId]), 
+	[ExceptionGuid] UNIQUEIDENTIFIER CONSTRAINT [DF_Exception_ExceptionGuid] DEFAULT (NEWID()) NOT NULL, 
+    [ParentExceptionGuid] UNIQUEIDENTIFIER NULL, 
+    CONSTRAINT [PK_Exception] PRIMARY KEY NONCLUSTERED ([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_Exception] FOREIGN KEY ([ParentExceptionId]) REFERENCES [bll].[Exception]([ExceptionId]), 
     CONSTRAINT [FK_Exception_To_EventId] FOREIGN KEY ([EventId]) REFERENCES [bll].[EventId]([EventId])
 )
@@ -31,3 +33,11 @@ CREATE CLUSTERED INDEX [IX_Exception_DomainId] ON [bll].[Exception] ([DomainId],
 GO
 
 CREATE INDEX [IX_Exception_EventId] ON [bll].[Exception] ([EventId])
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Exception_ExceptionGuid] ON [bll].[Exception] ([ExceptionGuid])
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Exception_ParentExceptionGuid] ON [bll].[Exception] ([ParentExceptionGuid])
