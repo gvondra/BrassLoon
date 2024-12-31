@@ -19,13 +19,13 @@ namespace BrassLoon.Log.TestClient
                     DependencyInjection.ContainerFactory.Initialize(appSettings);
                     Option<bool> logInterfaceTest = new Option<bool>(
                        name: "--log-interface-test",
-                       getDefaultValue: () => true);
+                       getDefaultValue: () => false);
                     Option<bool> loggerExtensionTest = new Option<bool>(
                        name: "--log-extension-test",
-                       getDefaultValue: () => true);
+                       getDefaultValue: () => false);
                     Option<bool> loggerRpcTest = new Option<bool>(
                        name: "--log-rpc-test",
-                       getDefaultValue: () => true);
+                       getDefaultValue: () => false);
                     RootCommand rootCommand = new RootCommand
                     {
                         logInterfaceTest,
@@ -33,13 +33,17 @@ namespace BrassLoon.Log.TestClient
                         loggerRpcTest
                     };
                     rootCommand.SetHandler(
-                        logInterface => GenerateInterfaceEntries(),
-                        logInterfaceTest);
-                    rootCommand.SetHandler(
-                        logExtension => GenerateExtensionEntries(),
-                        loggerExtensionTest);
-                    rootCommand.SetHandler(
-                        logExtension => GenerateRPCEntries(),
+                        async (logInterface, logExtension, logRpc) =>
+                        {
+                            if (logInterface)
+                                await GenerateInterfaceEntries();
+                            if (logExtension)
+                                await GenerateExtensionEntries();
+                            if (logExtension)
+                                await GenerateRPCEntries();
+                        },
+                        logInterfaceTest,
+                        loggerExtensionTest,
                         loggerRpcTest);
                     _ = await rootCommand.InvokeAsync(args);
                 }
