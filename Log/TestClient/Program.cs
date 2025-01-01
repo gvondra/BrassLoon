@@ -39,7 +39,7 @@ namespace BrassLoon.Log.TestClient
                                 await GenerateInterfaceEntries();
                             if (logExtension)
                                 await GenerateExtensionEntries();
-                            if (logExtension)
+                            if (logRpc)
                                 await GenerateRPCEntries();
                         },
                         logInterfaceTest,
