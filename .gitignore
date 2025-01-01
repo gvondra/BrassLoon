@@ -377,6 +377,7 @@ FodyWeavers.xsd
 /Authorization/TestClient/**/launchSettings.json
 /Config/ConfigAPI/**/launchSettings.json
 /Config/TestClient/**/launchSettings.json
+/Log/LogAPI/**/launchSettings.json
 /Log/Purger/**/launchSettings.json
 # 2023 August, Log/LoggingTest removed
 /Log/LoggingTest/**/launchSettings.json
