@@ -12,7 +12,7 @@ service TraceService {
 }
 
 message Trace {
-	google.protobuf.Int64Value TraceId = 1;
+	string TraceId = 1;
     string DomainId = 2;
     string EventCode = 3;
     string Message = 4;

@@ -12,7 +12,7 @@ service ExceptionService {
 }
 
 message LogException {
-	google.protobuf.Int64Value ExceptionId = 1;
+	string ExceptionId = 1;
     string DomainId = 2;
     string Message = 3;
     string TypeName = 4;

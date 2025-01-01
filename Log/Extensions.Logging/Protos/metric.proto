@@ -12,7 +12,7 @@ service MetricService {
 }
 
 message Metric {
-	google.protobuf.Int64Value MetricId = 1;
+	string MetricId = 1;
 	string DomainId = 2;
     string EventCode = 3;
     google.protobuf.DoubleValue Magnitude = 4;
