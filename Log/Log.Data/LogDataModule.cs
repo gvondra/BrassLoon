@@ -49,6 +49,13 @@ namespace BrassLoon.Log.Data
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<MongoDb.EventIdDataFactory>().As<IEventIdDataFactory>();
+            _ = builder.RegisterType<MongoDb.EventIdDataSaver>().As<IEventIdDataSaver>();
+            _ = builder.RegisterType<MongoDb.ExceptionDataFactory>().As<IExceptionDataFactory>();
+            _ = builder.RegisterType<MongoDb.ExceptionDataSaver>().As<IExceptionDataSaver>();
+            _ = builder.RegisterType<MongoDb.MetricDataFactory>().As<IMetricDataFactory>();
+            _ = builder.RegisterType<MongoDb.MetricDataSaver>().As<IMetricDataSaver>();
+            _ = builder.RegisterType<MongoDb.TraceDataFactory>().As<ITraceDataFactory>();
             _ = builder.RegisterType<MongoDb.TraceDataSaver>().As<ITraceDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
