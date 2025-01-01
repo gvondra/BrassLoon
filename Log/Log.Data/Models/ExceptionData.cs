@@ -17,6 +17,7 @@ namespace BrassLoon.Log.Data.Models
         public Guid ExceptionGuid { get; set; }
 
         [ColumnMapping]
+        [BsonIgnore]
         public long? ParentExceptionId { get; set; }
 
         [ColumnMapping]
