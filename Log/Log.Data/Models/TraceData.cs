@@ -19,6 +19,7 @@ namespace BrassLoon.Log.Data.Models
         [ColumnMapping]
         [BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid DomainId { get; set; }
+
         [ColumnMapping]
         public string EventCode { get; set; }
 
@@ -33,7 +34,6 @@ namespace BrassLoon.Log.Data.Models
         public DateTime CreateTimestamp { get; set; }
 
         [ColumnMapping]
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid? EventId { get; set; }
 
         [ColumnMapping]

@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDb = BrassLoon.Log.Data.Internal.MongoDb;
 using SqlClient = BrassLoon.Log.Data.Internal.SqlClient;
 
@@ -58,6 +60,7 @@ namespace BrassLoon.Log.Data
             _ = builder.RegisterType<MongoDb.TraceDataFactory>().As<ITraceDataFactory>();
             _ = builder.RegisterType<MongoDb.TraceDataSaver>().As<ITraceDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
             {

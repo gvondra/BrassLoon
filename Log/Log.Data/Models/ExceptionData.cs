@@ -22,7 +22,6 @@ namespace BrassLoon.Log.Data.Models
 
         [ColumnMapping]
         [BsonElement("ParentExceptionId")]
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid? ParentExceptionGuid { get; set; }
 
         [ColumnMapping]
@@ -55,7 +54,6 @@ namespace BrassLoon.Log.Data.Models
         public DateTime CreateTimestamp { get; set; }
 
         [ColumnMapping]
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid? EventId { get; set; }
 
         [ColumnMapping]

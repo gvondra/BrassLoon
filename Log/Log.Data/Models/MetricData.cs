@@ -40,7 +40,6 @@ namespace BrassLoon.Log.Data.Models
         public string Requestor { get; set; }
 
         [ColumnMapping]
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
         public Guid? EventId { get; set; }
 
         [ColumnMapping]
