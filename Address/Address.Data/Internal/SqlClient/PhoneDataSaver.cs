@@ -12,15 +12,15 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
             : base(providerFactory)
         { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, PhoneData data)
+        public async Task Create(CommonData.ISaveSettings settings, PhoneData data)
         {
             if (data.Manager.GetState(data) != DataState.Unchanged)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blad].[CreatePhone]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
                 id.Direction = ParameterDirection.Output;

@@ -13,13 +13,14 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
             : base(providerFactory)
         { }
 
-        public async Task<PhoneData> Get(ISqlSettings settings, Guid id)
+        public async Task<PhoneData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
-            return (await GenericDataFactory.GetData(settings,
+            return (await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blad].[GetPhone]",
                 Create,
@@ -28,14 +29,15 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<PhoneData>> GetByHash(ISqlSettings settings, Guid domainId, byte[] hash)
+        public async Task<IEnumerable<PhoneData>> GetByHash(CommonData.ISettings settings, Guid domainId, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(ProviderFactory, "hash", DbType.Binary, hash)
             };
-            return await GenericDataFactory.GetData(settings,
+            return await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blad].[GetPhone_by_Hash]",
                 Create,

@@ -8,18 +8,19 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
 {
     public class AddressDataSaver : DataSaverBase, IAddressDataSaver
     {
-        public AddressDataSaver(IDbProviderFactory providerFactory) : base(providerFactory)
+        public AddressDataSaver(IDbProviderFactory providerFactory)
+            : base(providerFactory)
         { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, AddressData data)
+        public async Task Create(CommonData.ISaveSettings settings, AddressData data)
         {
             if (data.Manager.GetState(data) != DataState.Unchanged)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blad].[CreateAddress]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
                 id.Direction = ParameterDirection.Output;

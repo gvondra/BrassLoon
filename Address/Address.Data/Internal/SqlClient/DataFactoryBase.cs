@@ -2,7 +2,8 @@
 
 namespace BrassLoon.Address.Data.Internal.SqlClient
 {
-    public abstract class DataFactoryBase<T> where T : new()
+    public abstract class DataFactoryBase<T>
+        where T : new()
     {
         private readonly IDbProviderFactory _providerFactory;
         private readonly GenericDataFactory<T> _genericDataFactory = new GenericDataFactory<T>();
@@ -16,6 +17,6 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
 
         protected GenericDataFactory<T> GenericDataFactory => _genericDataFactory;
 
-        protected T Create() => new T();
+        protected static T Create() => new T();
     }
 }

@@ -1,11 +1,11 @@
 ﻿using BrassLoon.Address.Data.Models;
-using BrassLoon.DataClient;
+using BrassLoon.CommonData;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Address.Data
 {
     public interface IAddressDataSaver
     {
-        Task Create(ISqlTransactionHandler transactionHandler, AddressData data);
+        Task Create(ISaveSettings settings, AddressData data);
     }
 }

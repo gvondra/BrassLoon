@@ -9,16 +9,18 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
 {
     public class AddressDataFactory : DataFactoryBase<AddressData>, IAddressDataFactory
     {
-        public AddressDataFactory(IDbProviderFactory providerFactory) : base(providerFactory)
+        public AddressDataFactory(IDbProviderFactory providerFactory)
+            : base(providerFactory)
         { }
 
-        public async Task<AddressData> Get(ISqlSettings settings, Guid id)
+        public async Task<AddressData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
-            return (await GenericDataFactory.GetData(settings,
+            return (await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blad].[GetAddress]",
                 Create,
@@ -27,14 +29,15 @@ namespace BrassLoon.Address.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<AddressData>> GetByHash(ISqlSettings settings, Guid domainId, byte[] hash)
+        public async Task<IEnumerable<AddressData>> GetByHash(CommonData.ISettings settings, Guid domainId, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
                 DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId),
                 DataUtil.CreateParameter(ProviderFactory, "hash", DbType.Binary, hash)
             };
-            return await GenericDataFactory.GetData(settings,
+            return await GenericDataFactory.GetData(
+                settings,
                 ProviderFactory,
                 "[blad].[GetAddress_by_Hash]",
                 Create,
