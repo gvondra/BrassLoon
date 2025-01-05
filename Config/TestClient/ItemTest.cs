@@ -3,7 +3,6 @@ using BrassLoon.Interface.Config;
 using BrassLoon.Interface.Config.Models;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Config.TestClient
