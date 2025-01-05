@@ -61,7 +61,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             return new ItemHistoryData
             {
                 Code = itemData.Code,
-                CreateTimestamp = itemData.CreateTimestamp,
+                CreateTimestamp = DateTime.UtcNow,
                 Data = itemData.Data,
                 DomainId = itemData.DomainId,
                 ItemHistoryId = Guid.NewGuid(),

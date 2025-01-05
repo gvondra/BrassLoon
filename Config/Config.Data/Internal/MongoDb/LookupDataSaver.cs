@@ -61,7 +61,7 @@ namespace BrassLoon.Config.Data.Internal.MongoDb
             return new LookupHistoryData
             {
                 Code = lookupData.Code,
-                CreateTimestamp = lookupData.CreateTimestamp,
+                CreateTimestamp = DateTime.UtcNow,
                 Data = lookupData.Data,
                 DomainId = lookupData.DomainId,
                 LookupHistoryId = Guid.NewGuid(),
