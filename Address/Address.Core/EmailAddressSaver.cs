@@ -36,7 +36,7 @@ namespace BrassLoon.Address.Core
                     Hash = hash,
                     Address = AddressCryptography.Encrypt(key, iv, (emailAddress.Address ?? string.Empty).Trim()),
                 };
-                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new SaveSettings(settings), ss => _dataSaver.Create(ss, data));
                 result = await _emailAddressFactory.Create(settings, data);
             }
             return result;

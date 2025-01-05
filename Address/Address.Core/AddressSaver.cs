@@ -48,7 +48,7 @@ namespace BrassLoon.Address.Core
                     County = AddressCryptography.Encrypt(key, iv, (address.County ?? string.Empty).Trim())
                 };
 
-                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new SaveSettings(settings), ss => _dataSaver.Create(ss, data));
                 result = await _addressFactory.Create(settings, data);
             }
             return result;

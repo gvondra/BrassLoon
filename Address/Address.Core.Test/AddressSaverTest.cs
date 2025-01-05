@@ -50,7 +50,7 @@ namespace BrassLoon.Address.Core.Tet
             Mock<IAddressDataFactory> dataFactory = new Mock<IAddressDataFactory>();
 
             Mock<IAddressDataSaver> dataSaver = new Mock<IAddressDataSaver>();
-            dataSaver.Setup(ds => ds.Create(It.IsAny<ISqlTransactionHandler>(), It.IsNotNull<AddressData>()))
+            dataSaver.Setup(ds => ds.Create(It.IsAny<CommonData.ISaveSettings>(), It.IsNotNull<AddressData>()))
                 .Returns((ISqlTransactionHandler th, AddressData d) =>
                 {
                     d.AddressId = Guid.NewGuid();
@@ -79,7 +79,7 @@ namespace BrassLoon.Address.Core.Tet
             Assert.IsTrue(DateTime.UtcNow.AddMinutes(-2) <= result.CreateTimestamp && result.CreateTimestamp <= DateTime.UtcNow);
 
             keyVault.Verify(kv => kv.SetSecret(KEY_VAULT_ADDRESS, It.IsNotNull<string>(), It.IsNotNull<string>()), Times.Once);
-            dataSaver.Verify(ds => ds.Create(It.IsNotNull<ISqlTransactionHandler>(), It.IsNotNull<AddressData>()), Times.Once);
+            dataSaver.Verify(ds => ds.Create(It.IsNotNull<CommonData.ISaveSettings>(), It.IsNotNull<AddressData>()), Times.Once);
         }
     }
 }

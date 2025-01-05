@@ -7,10 +7,17 @@ namespace BrassLoon.Address.Core
 {
     public class AddressCoreModule : Module
     {
+        private readonly bool _userMongoDb;
+
+        public AddressCoreModule(bool userMongoDb = false)
+        {
+            _userMongoDb = userMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new AddressDataModule());
+            _ = builder.RegisterModule(new AddressDataModule(_userMongoDb));
             _ = builder.RegisterType<AddressFactory>();
             _ = builder.RegisterType<AddressFactory>().As<IAddressFactory>();
             _ = builder.RegisterType<AddressSaver>().As<IAddressSaver>();

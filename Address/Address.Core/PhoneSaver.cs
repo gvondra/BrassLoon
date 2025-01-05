@@ -37,7 +37,7 @@ namespace BrassLoon.Address.Core
                     Number = AddressCryptography.Encrypt(key, iv, Formatter.UnformatPhoneNumber(phone.Number)),
                     CountryCode = Formatter.UnformatPhoneNumber(phone.CountryCode)
                 };
-                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new SaveSettings(settings), ss => _dataSaver.Create(ss, data));
                 result = await _phoneFactory.Create(settings, data);
             }
             return result;
