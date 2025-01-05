@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using BrassLoon.Address.Data.Internal;
+using BrassLoon.Address.Data.Internal.SqlClient;
 using BrassLoon.DataClient;
 
 namespace BrassLoon.Address.Data
@@ -9,7 +9,12 @@ namespace BrassLoon.Address.Data
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterType<SqlClientProviderFactory>().As<IDbProviderFactory>();
+            _ = builder.RegisterGeneric(typeof(GenericDataFactory<>))
+                .InstancePerLifetimeScope()
+                .As(typeof(IGenericDataFactory<>));
+            _ = builder.RegisterType<SqlClientProviderFactory>()
+                .As<IDbProviderFactory>()
+                .As<ISqlDbProviderFactory>();
             _ = builder.RegisterType<LoaderFactory>().As<ILoaderFactory>();
             _ = builder.RegisterType<AddressDataFactory>().As<IAddressDataFactory>();
             _ = builder.RegisterType<AddressDataSaver>().As<IAddressDataSaver>();
