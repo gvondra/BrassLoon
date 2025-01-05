@@ -11,19 +11,16 @@ namespace BrassLoon.Address.Core
     {
         private readonly AddressFactory _addressFactory;
         private readonly IAddressDataSaver _dataSaver;
-        private readonly Saver _saver;
         private readonly IKeyVault _keyVault;
 
         public AddressSaver(
             AddressFactory addressFactory,
             IAddressDataSaver addressDataSaver,
-            IKeyVault keyVault,
-            Saver saver)
+            IKeyVault keyVault)
         {
             _addressFactory = addressFactory;
             _dataSaver = addressDataSaver;
             _keyVault = keyVault;
-            _saver = saver;
         }
 
         public async Task<IAddress> Save(Framework.ISettings settings, IAddress address)
@@ -51,7 +48,7 @@ namespace BrassLoon.Address.Core
                     County = AddressCryptography.Encrypt(key, iv, (address.County ?? string.Empty).Trim())
                 };
 
-                await _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
                 result = await _addressFactory.Create(settings, data);
             }
             return result;

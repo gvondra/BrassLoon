@@ -11,14 +11,12 @@ namespace BrassLoon.Address.Core
     {
         private readonly EmailAddressFactory _emailAddressFactory;
         private readonly IEmailAddressDataSaver _dataSaver;
-        private readonly Saver _saver;
         private readonly IKeyVault _keyVault;
 
-        public EmailAddressSaver(EmailAddressFactory emailAddressFactory, IEmailAddressDataSaver dataSaver, Saver saver, IKeyVault keyVault)
+        public EmailAddressSaver(EmailAddressFactory emailAddressFactory, IEmailAddressDataSaver dataSaver, IKeyVault keyVault)
         {
             _emailAddressFactory = emailAddressFactory;
             _dataSaver = dataSaver;
-            _saver = saver;
             _keyVault = keyVault;
         }
 
@@ -38,7 +36,7 @@ namespace BrassLoon.Address.Core
                     Hash = hash,
                     Address = AddressCryptography.Encrypt(key, iv, (emailAddress.Address ?? string.Empty).Trim()),
                 };
-                await _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
                 result = await _emailAddressFactory.Create(settings, data);
             }
             return result;

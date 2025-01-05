@@ -36,8 +36,6 @@ namespace BrassLoon.Address.Core.Tet
                         new KeyVaultSecret(id, encryptionKeys[id]));
                 });
 
-            Saver saver = new Saver();
-
             Mock<IAddress> address = new Mock<IAddress>();
             address.SetupAllProperties();
             address.SetupGet(a => a.DomainId).Returns(DOMAIN_ID);
@@ -61,7 +59,7 @@ namespace BrassLoon.Address.Core.Tet
                 });
 
             AddressFactory addressFactory = new AddressFactory(dataFactory.Object, keyVault.Object);
-            AddressSaver addressSaver = new AddressSaver(addressFactory, dataSaver.Object, keyVault.Object, saver);
+            AddressSaver addressSaver = new AddressSaver(addressFactory, dataSaver.Object, keyVault.Object);
 
             IAddress result = await addressSaver.Save(settings.Object, address.Object);
             Assert.IsNotNull(result);

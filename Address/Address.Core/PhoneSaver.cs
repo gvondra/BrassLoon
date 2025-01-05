@@ -11,14 +11,12 @@ namespace BrassLoon.Address.Core
     {
         private readonly PhoneFactory _phoneFactory;
         private readonly IPhoneDataSaver _dataSaver;
-        private readonly Saver _saver;
         private readonly IKeyVault _keyVault;
 
-        public PhoneSaver(PhoneFactory emailAddressFactory, IPhoneDataSaver dataSaver, Saver saver, IKeyVault keyVault)
+        public PhoneSaver(PhoneFactory emailAddressFactory, IPhoneDataSaver dataSaver, IKeyVault keyVault)
         {
             _phoneFactory = emailAddressFactory;
             _dataSaver = dataSaver;
-            _saver = saver;
             _keyVault = keyVault;
         }
 
@@ -39,7 +37,7 @@ namespace BrassLoon.Address.Core
                     Number = AddressCryptography.Encrypt(key, iv, Formatter.UnformatPhoneNumber(phone.Number)),
                     CountryCode = Formatter.UnformatPhoneNumber(phone.CountryCode)
                 };
-                await _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
+                await Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, data));
                 result = await _phoneFactory.Create(settings, data);
             }
             return result;
