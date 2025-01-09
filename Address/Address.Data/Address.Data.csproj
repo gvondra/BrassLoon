@@ -37,8 +37,4 @@
       <ProjectReference Include="..\..\CommonData\CommonData.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Internal\MongoDb\" />
-    </ItemGroup>
-
 </Project>

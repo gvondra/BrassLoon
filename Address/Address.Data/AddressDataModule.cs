@@ -1,8 +1,9 @@
 ﻿using Autofac;
-using BrassLoon.Address.Data.Internal.SqlClient;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
 using MongoDB.Bson.Serialization;
+using MongoDb = BrassLoon.Address.Data.Internal.MongoDb;
+using SqlClient = BrassLoon.Address.Data.Internal.SqlClient;
 
 namespace BrassLoon.Address.Data
 {
@@ -32,17 +33,19 @@ namespace BrassLoon.Address.Data
                 .As<IDbProviderFactory>()
                 .As<ISqlDbProviderFactory>();
             _ = builder.RegisterType<LoaderFactory>().As<ILoaderFactory>();
-            _ = builder.RegisterType<AddressDataFactory>().As<IAddressDataFactory>();
-            _ = builder.RegisterType<AddressDataSaver>().As<IAddressDataSaver>();
-            _ = builder.RegisterType<EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
-            _ = builder.RegisterType<EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
-            _ = builder.RegisterType<PhoneDataFactory>().As<IPhoneDataFactory>();
-            _ = builder.RegisterType<PhoneDataSaver>().As<IPhoneDataSaver>();
+            _ = builder.RegisterType<SqlClient.AddressDataFactory>().As<IAddressDataFactory>();
+            _ = builder.RegisterType<SqlClient.AddressDataSaver>().As<IAddressDataSaver>();
+            _ = builder.RegisterType<SqlClient.EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
+            _ = builder.RegisterType<SqlClient.EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
+            _ = builder.RegisterType<SqlClient.PhoneDataFactory>().As<IPhoneDataFactory>();
+            _ = builder.RegisterType<SqlClient.PhoneDataSaver>().As<IPhoneDataSaver>();
         }
 
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<MongoDb.AddressDataFactory>().As<IAddressDataFactory>();
+            _ = builder.RegisterType<MongoDb.AddressDataSaver>().As<IAddressDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
