@@ -46,6 +46,8 @@ namespace BrassLoon.Address.Data
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
             _ = builder.RegisterType<MongoDb.AddressDataFactory>().As<IAddressDataFactory>();
             _ = builder.RegisterType<MongoDb.AddressDataSaver>().As<IAddressDataSaver>();
+            _ = builder.RegisterType<MongoDb.EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
+            _ = builder.RegisterType<MongoDb.EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
