@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="8.1.*" />
+	  <PackageReference Include="Autofac" Version="8.2.*" />
 	</ItemGroup>
 
 	<ItemGroup>
