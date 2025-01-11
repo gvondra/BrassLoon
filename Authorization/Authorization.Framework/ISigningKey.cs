@@ -13,8 +13,8 @@ namespace BrassLoon.Authorization.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
-        Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
-        Task Update(CommonCore.ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
+        Task Update(ISaveSettings settings);
 
         Task<RsaSecurityKey> GetKey(ISettings settings, bool includePrivateKey = false);
     }

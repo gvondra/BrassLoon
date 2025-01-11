@@ -7,13 +7,13 @@ namespace BrassLoon.Authorization.Core
     {
         public async Task Create(ISettings settings, IRole role)
         {
-            await CommonCore.Saver.Save(new CommonCore.TransactionHandler(settings), role.Create);
+            await CommonCore.Saver.Save(new SaveSettings(settings), role.Create);
             RoleFactory.ClearCache();
         }
 
         public async Task Update(ISettings settings, IRole role)
         {
-            await CommonCore.Saver.Save(new CommonCore.TransactionHandler(settings), role.Update);
+            await CommonCore.Saver.Save(new SaveSettings(settings), role.Update);
             RoleFactory.ClearCache();
         }
     }

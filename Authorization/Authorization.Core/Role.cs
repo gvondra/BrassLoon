@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Authorization.Data;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Threading.Tasks;
 
@@ -33,10 +32,10 @@ namespace BrassLoon.Authorization.Core
         public bool IsActive { get => _data.IsActive; set => _data.IsActive = value; }
         public string Comment { get => _data.Comment ?? string.Empty; set => _data.Comment = (value ?? string.Empty).TrimEnd(); }
 
-        public Task Create(ITransactionHandler transactionHandler)
-        => _dataSaver.Create(transactionHandler, _data);
+        public Task Create(CommonCore.ISaveSettings settings)
+        => _dataSaver.Create(settings, _data);
 
-        public Task Update(ITransactionHandler transactionHandler)
-        => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(CommonCore.ISaveSettings settings)
+        => _dataSaver.Update(settings, _data);
     }
 }

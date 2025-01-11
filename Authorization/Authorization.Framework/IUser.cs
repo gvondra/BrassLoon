@@ -14,8 +14,8 @@ namespace BrassLoon.Authorization.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
 
-        Task Create(CommonCore.ITransactionHandler transactionHandler);
-        Task Update(CommonCore.ITransactionHandler transactionHandler);
+        Task Create(CommonCore.ISaveSettings settings);
+        Task Update(CommonCore.ISaveSettings settings);
 
         Task<IEmailAddress> GetEmailAddress(ISettings settings);
         IEmailAddress SetEmailAddress(IEmailAddress emailAddress);

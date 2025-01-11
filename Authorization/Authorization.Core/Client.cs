@@ -73,45 +73,45 @@ namespace BrassLoon.Authorization.Core
             return salt;
         }
 
-        private async Task SaveRoleRoleChanges(ITransactionHandler transactionHandler)
+        private async Task SaveRoleRoleChanges(Framework.ISaveSettings settings)
         {
-            if ((_addRoles != null || _removeRoles != null) && transactionHandler.Transaction != null)
-                transactionHandler.Transaction.AddObserver(this);
+            if ((_addRoles != null || _removeRoles != null) && settings.Transaction != null)
+                settings.Transaction.AddObserver(this);
             if (_addRoles != null)
             {
                 foreach (IRole role in _addRoles)
                 {
-                    await _roleDataSaver.AddClientRole(transactionHandler, ClientId, role.RoleId);
+                    await _roleDataSaver.AddClientRole(settings, ClientId, role.RoleId);
                 }
             }
             if (_removeRoles != null)
             {
                 foreach (IRole role in _removeRoles)
                 {
-                    await _roleDataSaver.RemoveClientRole(transactionHandler, ClientId, role.RoleId);
+                    await _roleDataSaver.RemoveClientRole(settings, ClientId, role.RoleId);
                 }
             }
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
+        public async Task Create(Framework.ISaveSettings settings)
         {
             if (string.IsNullOrEmpty(_newSecret))
                 throw new ApplicationException("Unable to create client. No secret value specified");
             SetSalt();
             await SaveSecret(settings, SecretKey, _newSecret, SecrectSalt);
             UserEmailAddressId = _userEmailAddress?.EmailAddressId;
-            await _dataSaver.Create(transactionHandler, _data);
-            await SaveRoleRoleChanges(transactionHandler);
+            await _dataSaver.Create(settings, _data);
+            await SaveRoleRoleChanges(settings);
         }
 
-        public async Task Update(ITransactionHandler transactionHandler, Framework.ISettings settings)
+        public async Task Update(Framework.ISaveSettings settings)
         {
             if (!string.IsNullOrEmpty(_newSecret))
                 await SaveSecret(settings, SecretKey, _newSecret, SecrectSalt);
             if (_userEmailChanged)
                 UserEmailAddressId = _userEmailAddress?.EmailAddressId;
-            await _dataSaver.Update(transactionHandler, _data);
-            await SaveRoleRoleChanges(transactionHandler);
+            await _dataSaver.Update(settings, _data);
+            await SaveRoleRoleChanges(settings);
         }
 
         private async Task SaveSecret(Framework.ISettings settings, Guid key, string value, byte[] salt)

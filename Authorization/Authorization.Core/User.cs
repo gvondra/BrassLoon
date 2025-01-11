@@ -1,7 +1,6 @@
 ﻿using BrassLoon.Authorization.Data;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
-using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,7 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public async Task AddRole(Framework.ISettings settings, string policyName)
+        public async Task AddRole(ISettings settings, string policyName)
         {
             IRole role = (await _roleFactory.GetByDomainId(settings, DomainId))
                 .FirstOrDefault(r => string.Equals(policyName, r.PolicyName, StringComparison.OrdinalIgnoreCase));
@@ -62,39 +61,39 @@ namespace BrassLoon.Authorization.Core
             }
         }
 
-        private async Task SaveRoleRoleChanges(ITransactionHandler transactionHandler)
+        private async Task SaveRoleRoleChanges(CommonCore.ISaveSettings settings)
         {
-            if ((_addRoles != null || _removeRoles != null) && transactionHandler.Transaction != null)
-                transactionHandler.Transaction.AddObserver(this);
+            if ((_addRoles != null || _removeRoles != null) && settings.Transaction != null)
+                settings.Transaction.AddObserver(this);
             if (_addRoles != null)
             {
                 foreach (IRole role in _addRoles)
                 {
-                    await _roleDataSaver.AddUserRole(transactionHandler, UserId, role.RoleId);
+                    await _roleDataSaver.AddUserRole(settings, UserId, role.RoleId);
                 }
             }
             if (_removeRoles != null)
             {
                 foreach (IRole role in _removeRoles)
                 {
-                    await _roleDataSaver.RemoveUserRole(transactionHandler, UserId, role.RoleId);
+                    await _roleDataSaver.RemoveUserRole(settings, UserId, role.RoleId);
                 }
             }
         }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(CommonCore.ISaveSettings settings)
         {
             if (_emailAddress != null)
             {
                 if (_saveEmailAddress)
-                    await _emailAddress.Create(transactionHandler);
+                    await _emailAddress.Create(settings);
                 EmailAddressId = _emailAddress.EmailAddressId;
             }
-            await _dataSaver.Create(transactionHandler, _data);
-            await SaveRoleRoleChanges(transactionHandler);
+            await _dataSaver.Create(settings, _data);
+            await SaveRoleRoleChanges(settings);
         }
 
-        public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
+        public async Task<IEmailAddress> GetEmailAddress(ISettings settings)
         {
             if (_emailAddress == null)
             {
@@ -104,7 +103,7 @@ namespace BrassLoon.Authorization.Core
             return _emailAddress;
         }
 
-        public async Task<IEnumerable<IRole>> GetRoles(Framework.ISettings settings)
+        public async Task<IEnumerable<IRole>> GetRoles(ISettings settings)
         {
             if (_roles == null && !UserId.Equals(Guid.Empty))
                 _roles = (await _roleFactory.GetByUserId(settings, UserId)).ToList();
@@ -113,7 +112,7 @@ namespace BrassLoon.Authorization.Core
                 .Where(r => _removeRoles == null || !_removeRoles.Exists(rr => r.RoleId.Equals(rr.RoleId)));
         }
 
-        public async Task RemoveRole(Framework.ISettings settings, string policyName)
+        public async Task RemoveRole(ISettings settings, string policyName)
         {
             IRole role = (await _roleFactory.GetByDomainId(settings, DomainId))
                 .FirstOrDefault(r => string.Equals(policyName, r.PolicyName, StringComparison.OrdinalIgnoreCase));
@@ -135,7 +134,7 @@ namespace BrassLoon.Authorization.Core
             return _emailAddress;
         }
 
-        public async Task<IEmailAddress> SetEmailAddress(Framework.ISettings settings, string address)
+        public async Task<IEmailAddress> SetEmailAddress(ISettings settings, string address)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException(nameof(address));
@@ -143,16 +142,16 @@ namespace BrassLoon.Authorization.Core
                 await _emailAddressFactory.GetByAddress(settings, address));
         }
 
-        public async Task Update(ITransactionHandler transactionHandler)
+        public async Task Update(CommonCore.ISaveSettings settings)
         {
             if (_emailAddress != null)
             {
                 if (_saveEmailAddress)
-                    await _emailAddress.Create(transactionHandler);
+                    await _emailAddress.Create(settings);
                 EmailAddressId = _emailAddress.EmailAddressId;
             }
-            await _dataSaver.Update(transactionHandler, _data);
-            await SaveRoleRoleChanges(transactionHandler);
+            await _dataSaver.Update(settings, _data);
+            await SaveRoleRoleChanges(settings);
         }
 
         void DataClient.IDbTransactionObserver.BeforeCommit() { } // do nothing

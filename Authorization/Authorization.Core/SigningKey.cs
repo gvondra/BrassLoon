@@ -48,10 +48,10 @@ namespace BrassLoon.Authorization.Core
             }
         }
 
-        public async Task Create(ITransactionHandler transactionHandler, Framework.ISettings settings)
+        public async Task Create(Framework.ISaveSettings settings)
         {
             await CreateKey(settings);
-            await _dataSaver.Create(transactionHandler, _data);
+            await _dataSaver.Create(settings, _data);
         }
 
         public async Task<RsaSecurityKey> GetKey(Framework.ISettings settings, bool includePrivateKey = false)
@@ -60,6 +60,6 @@ namespace BrassLoon.Authorization.Core
             return RsaSecurityKeySerializer.GetSecurityKey(secret.Value, includePrivateKey);
         }
 
-        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(Framework.ISaveSettings settings) => _dataSaver.Update(settings, _data);
     }
 }

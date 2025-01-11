@@ -1,5 +1,4 @@
-﻿using BrassLoon.CommonCore;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Framework
@@ -12,6 +11,6 @@ namespace BrassLoon.Authorization.Framework
         DateTime CreateTimestamp { get; }
         bool IsNew { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(CommonCore.ISaveSettings settings);
     }
 }

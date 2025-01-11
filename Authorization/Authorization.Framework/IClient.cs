@@ -18,8 +18,8 @@ namespace BrassLoon.Authorization.Framework
         void SetSecret(string secret);
         /// <returns>Returns true if the client is active and the given secret matches the stored secret.</returns>
         Task<bool> AuthenticateSecret(ISettings settings, string secret);
-        Task Create(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
-        Task Update(CommonCore.ITransactionHandler transactionHandler, ISettings settings);
+        Task Create(ISaveSettings settings);
+        Task Update(ISaveSettings settings);
         Task<IEnumerable<IRole>> GetRoles(ISettings settings);
         Task AddRole(ISettings settings, string policyName);
         Task RemoveRole(ISettings settings, string policyName);

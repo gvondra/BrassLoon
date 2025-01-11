@@ -6,10 +6,17 @@ namespace BrassLoon.Authorization.Core
 {
     public class AuthorizationCoreModule : Module
     {
+        private readonly bool _useMongoDb;
+
+        public AuthorizationCoreModule(bool useMongoDb = false)
+        {
+            _useMongoDb = useMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new Data.AuthorizationDataModule());
+            _ = builder.RegisterModule(new Data.AuthorizationDataModule(_useMongoDb));
             _ = builder.RegisterType<KeyVault>().As<IKeyVault>().SingleInstance();
             _ = builder.RegisterType<ClientFactory>().As<IClientFactory>();
             _ = builder.RegisterType<ClientSaver>().As<IClientSaver>();

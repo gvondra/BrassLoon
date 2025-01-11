@@ -32,7 +32,7 @@ namespace BrassLoon.Authorization.Core
 
         public bool IsNew => _data.Manager.GetState(_data) == DataClient.DataState.New;
 
-        public Task Create(CommonCore.ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
+        public Task Create(CommonCore.ISaveSettings settings) => _dataSaver.Create(settings, _data);
 
         public static byte[] HashAddress(string address)
         {

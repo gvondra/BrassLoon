@@ -8,24 +8,24 @@ namespace BrassLoon.Authorization.Core
         public Task Create(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
             return CommonCore.Saver.Save(
-                new CommonCore.TransactionHandler(settings),
-                async th =>
+                new SaveSettings(settings),
+                async ss =>
                 {
                     if (userEmailAddress != null)
-                        await userEmailAddress.Create(th);
-                    await client.Create(th, settings);
+                        await userEmailAddress.Create(ss);
+                    await client.Create(ss);
                 });
         }
 
         public Task Update(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
             return CommonCore.Saver.Save(
-                new CommonCore.TransactionHandler(settings),
-                async th =>
+                new SaveSettings(settings),
+                async ss =>
                 {
                     if (userEmailAddress != null)
-                        await userEmailAddress.Create(th);
-                    await client.Update(th, settings);
+                        await userEmailAddress.Create(ss);
+                    await client.Update(ss);
                 });
         }
     }

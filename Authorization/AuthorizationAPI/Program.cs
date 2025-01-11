@@ -20,8 +20,9 @@ namespace AuthorizationAPI
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            string useMongoDb = builder.Configuration["UseMongoDb"] ?? "false";
             _ = builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthorizationAPIModule()));
+            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AuthorizationAPIModule(bool.Parse(useMongoDb))));
             // Add services to the container.
             _ = builder.Services.Configure<Settings>(builder.Configuration);
 
