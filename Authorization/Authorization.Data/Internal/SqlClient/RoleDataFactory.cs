@@ -13,7 +13,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public RoleDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<RoleData> Get(ISqlSettings settings, Guid id)
+        public async Task<RoleData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -29,7 +29,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<RoleData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<RoleData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -45,7 +45,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 ;
         }
 
-        public async Task<IEnumerable<RoleData>> GetByClientId(ISqlSettings settings, Guid clientId)
+        public async Task<IEnumerable<RoleData>> GetByClientId(CommonData.ISettings settings, Guid clientId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -61,7 +61,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 ;
         }
 
-        public async Task<IEnumerable<RoleData>> GetByUserId(ISqlSettings settings, Guid userId)
+        public async Task<IEnumerable<RoleData>> GetByUserId(CommonData.ISettings settings, Guid userId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

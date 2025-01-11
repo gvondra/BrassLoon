@@ -12,7 +12,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public EmailAddressDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<EmailAddressData> Get(ISqlSettings settings, Guid id)
+        public async Task<EmailAddressData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -28,7 +28,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<EmailAddressData> GetByAddressHash(ISqlSettings settings, byte[] hash)
+        public async Task<EmailAddressData> GetByAddressHash(CommonData.ISettings settings, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

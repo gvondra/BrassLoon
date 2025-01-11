@@ -17,6 +17,6 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             _providerFactory = providerFactory;
         }
 
-        protected T Create() => new T();
+        protected static T Create() => new T();
     }
 }

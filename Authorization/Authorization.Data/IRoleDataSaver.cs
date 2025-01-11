@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Authorization.Data.Models;
-using BrassLoon.DataClient;
 using System;
 using System.Threading.Tasks;
 
@@ -7,11 +6,11 @@ namespace BrassLoon.Authorization.Data
 {
     public interface IRoleDataSaver
     {
-        Task Create(ISqlTransactionHandler transactionHandler, RoleData data);
-        Task Update(ISqlTransactionHandler transactionHandler, RoleData data);
-        Task AddClientRole(ISqlTransactionHandler transactionHandler, Guid clientId, Guid roleId);
-        Task AddUserRole(ISqlTransactionHandler transactionHandler, Guid userId, Guid roleId);
-        Task RemoveClientRole(ISqlTransactionHandler transactionHandler, Guid clientId, Guid roleId);
-        Task RemoveUserRole(ISqlTransactionHandler transactionHandler, Guid userId, Guid roleId);
+        Task Create(CommonData.ISaveSettings settings, RoleData data);
+        Task Update(CommonData.ISaveSettings settings, RoleData data);
+        Task AddClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId);
+        Task AddUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId);
+        Task RemoveClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId);
+        Task RemoveUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId);
     }
 }

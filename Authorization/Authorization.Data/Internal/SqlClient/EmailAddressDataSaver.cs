@@ -12,16 +12,16 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public EmailAddressDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, EmailAddressData data)
+        public async Task Create(CommonData.ISaveSettings settings, EmailAddressData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blt].[CreateEmailAddress]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;

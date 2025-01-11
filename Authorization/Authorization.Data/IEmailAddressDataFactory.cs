@@ -1,5 +1,4 @@
 ﻿using BrassLoon.Authorization.Data.Models;
-using BrassLoon.DataClient;
 using System;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace BrassLoon.Authorization.Data
 {
     public interface IEmailAddressDataFactory
     {
-        Task<EmailAddressData> Get(ISqlSettings settings, Guid id);
-        Task<EmailAddressData> GetByAddressHash(ISqlSettings settings, byte[] hash);
+        Task<EmailAddressData> Get(CommonData.ISettings settings, Guid id);
+        Task<EmailAddressData> GetByAddressHash(CommonData.ISettings settings, byte[] hash);
     }
 }

@@ -13,14 +13,14 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public RoleDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task AddClientRole(ISqlTransactionHandler transactionHandler, Guid clientId, Guid roleId)
+        public async Task AddClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[blt].[AddClientRole]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(clientId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
@@ -29,14 +29,14 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task AddUserRole(ISqlTransactionHandler transactionHandler, Guid userId, Guid roleId)
+        public async Task AddUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[blt].[AddUserRole]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.Guid, DataUtil.GetParameterValue(userId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
@@ -45,16 +45,16 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, RoleData data)
+        public async Task Create(CommonData.ISaveSettings settings, RoleData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blt].[CreateRole]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
@@ -76,14 +76,14 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task RemoveClientRole(ISqlTransactionHandler transactionHandler, Guid clientId, Guid roleId)
+        public async Task RemoveClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[blt].[RemoveClientRole]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(clientId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
@@ -92,14 +92,14 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task RemoveUserRole(ISqlTransactionHandler transactionHandler, Guid userId, Guid roleId)
+        public async Task RemoveUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId)
         {
-            await _providerFactory.EstablishTransaction(transactionHandler);
-            using (DbCommand command = transactionHandler.Connection.CreateCommand())
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
             {
                 command.CommandText = "[blt].[RemoveUserRole]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.Guid, DataUtil.GetParameterValue(userId));
                 DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
@@ -108,16 +108,16 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, RoleData data)
+        public async Task Update(CommonData.ISaveSettings settings, RoleData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blt].[UpdateRole]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

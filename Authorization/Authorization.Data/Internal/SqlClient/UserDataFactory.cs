@@ -13,7 +13,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public UserDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<UserData> Get(ISqlSettings settings, Guid id)
+        public async Task<UserData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -26,7 +26,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public Task<IEnumerable<UserData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public Task<IEnumerable<UserData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
             return _genericDataFactory.GetData(
@@ -38,7 +38,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 new List<IDataParameter> { parameter });
         }
 
-        public async Task<UserData> GetByEmailAddressHash(ISqlSettings settings, Guid domainId, byte[] hash)
+        public async Task<UserData> GetByEmailAddressHash(CommonData.ISettings settings, Guid domainId, byte[] hash)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -55,7 +55,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<UserData> GetByReferenceId(ISqlSettings settings, Guid domainId, string referenceId)
+        public async Task<UserData> GetByReferenceId(CommonData.ISettings settings, Guid domainId, string referenceId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

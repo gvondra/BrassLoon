@@ -13,16 +13,16 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public ClientDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, ClientData data)
+        public async Task Create(CommonData.ISaveSettings settings, ClientData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blt].[CreateClient]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter id = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid);
                     id.Direction = ParameterDirection.Output;
@@ -45,16 +45,16 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, ClientData data)
+        public async Task Update(CommonData.ISaveSettings settings, ClientData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
-                await _providerFactory.EstablishTransaction(transactionHandler, data);
-                using (DbCommand command = transactionHandler.Connection.CreateCommand())
+                await _providerFactory.EstablishTransaction(settings, data);
+                using (DbCommand command = settings.Connection.CreateCommand())
                 {
                     command.CommandText = "[blt].[UpdateClient]";
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                    command.Transaction = settings.Transaction.InnerTransaction;
 
                     IDataParameter timestamp = DataUtil.CreateParameter(_providerFactory, "timestamp", DbType.DateTime2);
                     timestamp.Direction = ParameterDirection.Output;

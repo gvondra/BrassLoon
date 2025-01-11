@@ -13,7 +13,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public SigningKeyDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<SigningKeyData> Get(ISqlSettings settings, Guid id)
+        public async Task<SigningKeyData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
@@ -26,7 +26,7 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<SigningKeyData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<SigningKeyData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
             return await _genericDataFactory.GetData(
