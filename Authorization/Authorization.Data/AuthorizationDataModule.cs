@@ -1,8 +1,10 @@
 ﻿using Autofac;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-//using InternalMongoDb = BrassLoon.Authorization.Data.Internal.MongoDb;
+using MongoDB.Bson.Serialization.Serializers;
+using InternalMongoDb = BrassLoon.Authorization.Data.Internal.MongoDb;
 using InternalSqlClient = BrassLoon.Authorization.Data.Internal.SqlClient;
 
 namespace BrassLoon.Authorization.Data
@@ -48,7 +50,10 @@ namespace BrassLoon.Authorization.Data
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<InternalMongoDb.ClientDataFactory>().As<IClientDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.ClientDataSaver>().As<IClientDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
             _ = BsonClassMap.RegisterClassMap<DataManagedStateBase>(cm =>
             {
