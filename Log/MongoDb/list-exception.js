@@ -3,5 +3,5 @@ var collections = db.getCollectionNames();
 print("collections")
 printjson(collections);
 print("exception")
-var exception = db.Exception.find({ "CreateTimestamp": { $gt: ISODate('2025-01-04T15:50:53.905Z') } });
+var exception = db.Exception.find({ "CreateTimestamp": { $gt: ISODate('2025-01-11T14:00:00.000Z') } });
 printjson(exception);
