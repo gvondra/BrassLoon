@@ -3,7 +3,7 @@ using BrassLoon.DataClient;
 using System;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Authorization.Data.Framework
+namespace BrassLoon.Authorization.Data
 {
     public interface IEmailAddressDataFactory
     {

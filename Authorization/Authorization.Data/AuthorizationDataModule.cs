@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
 using MongoDB.Bson.Serialization;

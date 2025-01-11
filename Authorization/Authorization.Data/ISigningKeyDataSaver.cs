@@ -2,7 +2,7 @@
 using BrassLoon.DataClient;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Authorization.Data.Framework
+namespace BrassLoon.Authorization.Data
 {
     public interface ISigningKeyDataSaver
     {

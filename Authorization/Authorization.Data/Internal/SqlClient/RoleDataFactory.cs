@@ -1,5 +1,4 @@
-﻿using BrassLoon.Authorization.Data.Framework;
-using BrassLoon.Authorization.Data.Models;
+﻿using BrassLoon.Authorization.Data.Models;
 using BrassLoon.DataClient;
 using System;
 using System.Collections.Generic;

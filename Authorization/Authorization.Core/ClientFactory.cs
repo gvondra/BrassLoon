@@ -1,4 +1,4 @@
-﻿using BrassLoon.Authorization.Data.Framework;
+﻿using BrassLoon.Authorization.Data;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
 using BrassLoon.CommonCore;
