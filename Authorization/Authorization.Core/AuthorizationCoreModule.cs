@@ -10,7 +10,6 @@ namespace BrassLoon.Authorization.Core
         {
             base.Load(builder);
             _ = builder.RegisterModule(new Data.AuthorizationDataModule());
-            _ = builder.RegisterType<Saver>().SingleInstance();
             _ = builder.RegisterType<KeyVault>().As<IKeyVault>().SingleInstance();
             _ = builder.RegisterType<ClientFactory>().As<IClientFactory>();
             _ = builder.RegisterType<ClientSaver>().As<IClientSaver>();

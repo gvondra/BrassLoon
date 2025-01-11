@@ -5,16 +5,9 @@ namespace BrassLoon.Authorization.Core
 {
     public class ClientSaver : IClientSaver
     {
-        private readonly CommonCore.Saver _saver;
-
-        public ClientSaver(CommonCore.Saver saver)
-        {
-            _saver = saver;
-        }
-
         public Task Create(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
-            return _saver.Save(
+            return CommonCore.Saver.Save(
                 new CommonCore.TransactionHandler(settings),
                 async th =>
                 {
@@ -26,7 +19,7 @@ namespace BrassLoon.Authorization.Core
 
         public Task Update(ISettings settings, IClient client, IEmailAddress userEmailAddress = null)
         {
-            return _saver.Save(
+            return CommonCore.Saver.Save(
                 new CommonCore.TransactionHandler(settings),
                 async th =>
                 {

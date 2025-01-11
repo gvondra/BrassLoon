@@ -5,15 +5,10 @@ namespace BrassLoon.Authorization.Core
 {
     public class SigningKeySaver : ISigningKeySaver
     {
-        private readonly CommonCore.Saver _saver;
+        public Task Create(ISettings settings, ISigningKey signingKey)
+            => CommonCore.Saver.Save(new CommonCore.TransactionHandler(settings), th => signingKey.Create(th, settings));
 
-        public SigningKeySaver(CommonCore.Saver saver)
-        {
-            _saver = saver;
-        }
-
-        public Task Create(ISettings settings, ISigningKey signingKey) => _saver.Save(new CommonCore.TransactionHandler(settings), th => signingKey.Create(th, settings));
-
-        public Task Update(ISettings settings, ISigningKey signingKey) => _saver.Save(new CommonCore.TransactionHandler(settings), signingKey.Update);
+        public Task Update(ISettings settings, ISigningKey signingKey)
+            => CommonCore.Saver.Save(new CommonCore.TransactionHandler(settings), signingKey.Update);
     }
 }
