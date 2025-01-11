@@ -7,7 +7,7 @@ using BrassLoon.Authorization.Data.Framework;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.DataClient;
 
-namespace BrassLoon.Authorization.Data
+namespace BrassLoon.Authorization.Data.Internal.SqlClient
 {
     public class RoleDataSaver : DataSaverBase, IRoleDataSaver
     {

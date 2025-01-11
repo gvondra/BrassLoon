@@ -7,21 +7,21 @@ using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Authorization.Data
+namespace BrassLoon.Authorization.Data.Internal.SqlClient
 {
-    public class SigningKeyDataSaver : DataSaverBase, ISigningKeyDataSaver
+    public class ClientDataSaver : DataSaverBase, IClientDataSaver
     {
-        public SigningKeyDataSaver(IDbProviderFactory providerFactory)
+        public ClientDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, SigningKeyData data)
+        public async Task Create(ISqlTransactionHandler transactionHandler, ClientData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
                 await _providerFactory.EstablishTransaction(transactionHandler, data);
                 using (DbCommand command = transactionHandler.Connection.CreateCommand())
                 {
-                    command.CommandText = "[blt].[CreateSigningKey]";
+                    command.CommandText = "[blt].[CreateClient]";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
@@ -34,25 +34,26 @@ namespace BrassLoon.Authorization.Data
                     _ = command.Parameters.Add(timestamp);
 
                     DataUtil.AddParameter(_providerFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(data.DomainId));
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "keyVaultKey", DbType.Guid, DataUtil.GetParameterValue(data.KeyVaultKey));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretKey", DbType.Guid, DataUtil.GetParameterValue(data.SecretKey));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "secretSalt", DbType.Binary, DataUtil.GetParameterValue(data.SecretSalt));
                     AddCommonParameters(command.Parameters, data);
 
                     _ = await command.ExecuteNonQueryAsync();
-                    data.SigningKeyId = (Guid)id.Value;
+                    data.ClientId = (Guid)id.Value;
                     data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                     data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, SigningKeyData data)
+        public async Task Update(ISqlTransactionHandler transactionHandler, ClientData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
                 await _providerFactory.EstablishTransaction(transactionHandler, data);
                 using (DbCommand command = transactionHandler.Connection.CreateCommand())
                 {
-                    command.CommandText = "[blt].[UpdateSigningKey]";
+                    command.CommandText = "[blt].[UpdateClient]";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Transaction = transactionHandler.Transaction.InnerTransaction;
 
@@ -60,7 +61,7 @@ namespace BrassLoon.Authorization.Data
                     timestamp.Direction = ParameterDirection.Output;
                     _ = command.Parameters.Add(timestamp);
 
-                    DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.SigningKeyId));
+                    DataUtil.AddParameter(_providerFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.ClientId));
                     AddCommonParameters(command.Parameters, data);
 
                     _ = await command.ExecuteNonQueryAsync();
@@ -69,6 +70,12 @@ namespace BrassLoon.Authorization.Data
             }
         }
 
-        private void AddCommonParameters(IList commandParameters, SigningKeyData data) => DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
+        private void AddCommonParameters(IList commandParameters, ClientData data)
+        {
+            DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "isActive", DbType.Boolean, DataUtil.GetParameterValue(data.IsActive));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "userEmailAddressId", DbType.Guid, DataUtil.GetParameterValue(data.UserEmailAddressId));
+            DataUtil.AddParameter(_providerFactory, commandParameters, "userName", DbType.String, DataUtil.GetParameterValue(data.UserName));
+        }
     }
 }

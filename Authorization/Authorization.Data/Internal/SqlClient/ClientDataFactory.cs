@@ -7,33 +7,33 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Authorization.Data
+namespace BrassLoon.Authorization.Data.Internal.SqlClient
 {
-    public class SigningKeyDataFactory : DataFactoryBase<SigningKeyData>, ISigningKeyDataFactory
+    public class ClientDataFactory : DataFactoryBase<ClientData>, IClientDataFactory
     {
-        public SigningKeyDataFactory(IDbProviderFactory providerFactory)
+        public ClientDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<SigningKeyData> Get(ISqlSettings settings, Guid id)
+        public async Task<ClientData> Get(ISqlSettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
-                "[blt].[GetSigningKey]",
+                "[blt].[GetClient]",
                 Create,
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter }))
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<SigningKeyData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<ClientData>> GetByDomainId(ISqlSettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "domainId", DbType.Guid, domainId);
             return await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
-                "[blt].[GetSigningKey_by_DomainId]",
+                "[blt].[GetClient_by_DomainId]",
                 Create,
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter })

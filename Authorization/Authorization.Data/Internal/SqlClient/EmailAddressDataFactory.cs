@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.Authorization.Data
+namespace BrassLoon.Authorization.Data.Internal.SqlClient
 {
     public class EmailAddressDataFactory : DataFactoryBase<EmailAddressData>, IEmailAddressDataFactory
     {
