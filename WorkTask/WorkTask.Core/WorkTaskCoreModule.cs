@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using BrassLoon.CommonCore;
 using BrassLoon.WorkTask.Framework;
 
 namespace BrassLoon.WorkTask.Core
@@ -10,7 +9,6 @@ namespace BrassLoon.WorkTask.Core
         {
             base.Load(builder);
             _ = builder.RegisterModule(new Data.WorkTaskDataModule());
-            _ = builder.RegisterType<Saver>().SingleInstance();
             _ = builder.RegisterType<CommentSaver>().As<ICommentSaver>();
             _ = builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
             _ = builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();

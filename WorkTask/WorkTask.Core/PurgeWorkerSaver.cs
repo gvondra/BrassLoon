@@ -21,8 +21,7 @@ namespace BrassLoon.WorkTask.Core
         {
             if (purgeWorker != null)
             {
-                Saver saver = new Saver();
-                await saver.Save(new TransactionHandler(settings), async th =>
+                await Saver.Save(new TransactionHandler(settings), async th =>
                 {
                     for (int i = 0; i < purgeWorker.Length; i += 1)
                     {

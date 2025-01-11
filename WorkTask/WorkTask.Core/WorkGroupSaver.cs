@@ -8,21 +8,17 @@ namespace BrassLoon.WorkTask.Core
 {
     public class WorkGroupSaver : IWorkGroupSaver
     {
-        private readonly Saver _saver;
         private readonly IWorkTaskTypeGroupDataSaver _dataSaver;
 
-        public WorkGroupSaver(
-            Saver saver,
-            IWorkTaskTypeGroupDataSaver dataSaver)
+        public WorkGroupSaver(IWorkTaskTypeGroupDataSaver dataSaver)
         {
-            _saver = saver;
             _dataSaver = dataSaver;
         }
 
         public Task Create(ISettings settings, params IWorkGroup[] workGroups)
         {
             ArgumentNullException.ThrowIfNull(workGroups);
-            return _saver.Save(new TransactionHandler(settings), async th =>
+            return Saver.Save(new TransactionHandler(settings), async th =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)
                 {
@@ -32,15 +28,15 @@ namespace BrassLoon.WorkTask.Core
         }
 
         public Task CreateWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
-            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, domainId, workTaskTypeId, workGroupId));
+            => Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, domainId, workTaskTypeId, workGroupId));
 
         public Task DeleteWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
-            => _saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, domainId, workTaskTypeId, workGroupId));
+            => Saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, domainId, workTaskTypeId, workGroupId));
 
         public Task Update(ISettings settings, params IWorkGroup[] workGroups)
         {
             ArgumentNullException.ThrowIfNull(workGroups);
-            return _saver.Save(new TransactionHandler(settings), async th =>
+            return Saver.Save(new TransactionHandler(settings), async th =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)
                 {

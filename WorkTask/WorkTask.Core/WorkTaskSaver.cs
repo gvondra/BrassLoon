@@ -8,21 +8,17 @@ namespace BrassLoon.WorkTask.Core
 {
     public class WorkTaskSaver : IWorkTaskSaver
     {
-        private readonly Saver _saver;
         private readonly IWorkTaskDataSaver _dataSaver;
 
-        public WorkTaskSaver(
-            Saver saver,
-            IWorkTaskDataSaver dataSaver)
+        public WorkTaskSaver(IWorkTaskDataSaver dataSaver)
         {
-            _saver = saver;
             _dataSaver = dataSaver;
         }
 
         public async Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId, DateTime? assingedDate = null)
         {
             bool result = false;
-            await _saver.Save(new TransactionHandler(settings), async (th) =>
+            await Saver.Save(new TransactionHandler(settings), async (th) =>
             {
                 result = await _dataSaver.Claim(th, domainId, id, userId, assingedDate);
             });
@@ -33,7 +29,7 @@ namespace BrassLoon.WorkTask.Core
         {
             if (workTasks != null && workTasks.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings), async th =>
+                return Saver.Save(new TransactionHandler(settings), async th =>
                 {
                     for (int i = 0; i < workTasks.Length; i += 1)
                     {
@@ -51,7 +47,7 @@ namespace BrassLoon.WorkTask.Core
         {
             if (workTasks != null && workTasks.Length > 0)
             {
-                return _saver.Save(new TransactionHandler(settings), async th =>
+                return Saver.Save(new TransactionHandler(settings), async th =>
                 {
                     for (int i = 0; i < workTasks.Length; i += 1)
                     {
