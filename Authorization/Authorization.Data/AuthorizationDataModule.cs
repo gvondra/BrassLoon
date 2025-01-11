@@ -52,6 +52,8 @@ namespace BrassLoon.Authorization.Data
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
             _ = builder.RegisterType<InternalMongoDb.ClientDataFactory>().As<IClientDataFactory>();
             _ = builder.RegisterType<InternalMongoDb.ClientDataSaver>().As<IClientDataSaver>();
+            _ = builder.RegisterType<InternalMongoDb.UserDataFactory>().As<IUserDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.UserDataSaver>().As<IUserDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
             _ = BsonClassMap.RegisterClassMap<DataStateManager>();
