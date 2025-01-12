@@ -24,7 +24,7 @@ namespace BrassLoon.Log.Data.Internal.MongoDb
             FilterDefinition<TraceData> filter = Builders<TraceData>.Filter.Eq(t => t.DomainId, domainId);
             return (await collection.Aggregate()
                 .Match(filter)
-                .Group(Builders<TraceData>.Projection.Include(t => t.EventCode))
+                .Group(Builders<TraceData>.Projection.Include(t => t.EventCode).Exclude(t => t.TraceGuid))
                 .Sort(Builders<BsonDocument>.Sort.Ascending("EventCode"))
                 .ToListAsync())
                 .Select(doc => (string)doc["EventCode"]);

@@ -24,7 +24,7 @@ namespace BrassLoon.Log.Data.Internal.MongoDb
             FilterDefinition<MetricData> filter = Builders<MetricData>.Filter.Eq(t => t.DomainId, domainId);
             return (await collection.Aggregate()
                 .Match(filter)
-                .Group(Builders<MetricData>.Projection.Include(m => m.EventCode))
+                .Group(Builders<MetricData>.Projection.Include(m => m.EventCode).Exclude(m => m.MetricGuid))
                 .Sort(Builders<BsonDocument>.Sort.Ascending("EventCode"))
                 .ToListAsync())
                 .Select(doc => (string)doc["EventCode"]);
