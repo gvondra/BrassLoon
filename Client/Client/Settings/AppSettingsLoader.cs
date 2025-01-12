@@ -17,7 +17,10 @@ namespace BrassLoon.Client.Settings
         private static IConfiguration GetConfiguration()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appsettings.json", false);
+            _ = builder.AddJsonFile("appsettings.json", false);
+#if DEBUG
+            _ = builder.AddEnvironmentVariables();
+#endif
             return builder.Build();
         }
     }
