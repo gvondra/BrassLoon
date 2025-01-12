@@ -34,11 +34,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.1.*" />
-        <PackageReference Include="BrassLoon.Interface.Account" Version="4.3.0-prerelease.*" />
+        <PackageReference Include="Autofac" Version="8.2.*" />
+        <PackageReference Include="BrassLoon.Interface.Account" Version="4.4.*" />
         <PackageReference Include="BrassLoon.Interface.Authorization" Version="4.2.1" />
-        <PackageReference Include="BrassLoon.Interface.Config" Version="4.1.0" />
-        <PackageReference Include="BrassLoon.Interface.Log" Version="4.1.0" />
+        <PackageReference Include="BrassLoon.Interface.Config" Version="4.2.0" />
+        <PackageReference Include="BrassLoon.Interface.Log" Version="5.0.0-prerelease.*" />
         <PackageReference Include="BrassLoon.Interface.WorkTask" Version="3.1.1-prerelease.*" />
         <PackageReference Include="FontAwesome.WPF" Version="4.7.*" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.*" />
