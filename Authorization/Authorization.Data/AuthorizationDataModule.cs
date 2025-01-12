@@ -54,6 +54,10 @@ namespace BrassLoon.Authorization.Data
             _ = builder.RegisterType<InternalMongoDb.ClientDataSaver>().As<IClientDataSaver>();
             _ = builder.RegisterType<InternalMongoDb.EmailAddressDataFactory>().As<IEmailAddressDataFactory>();
             _ = builder.RegisterType<InternalMongoDb.EmailAddressDataSaver>().As<IEmailAddressDataSaver>();
+            _ = builder.RegisterType<InternalMongoDb.RoleDataFactory>().As<IRoleDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.RoleDataSaver>().As<IRoleDataSaver>();
+            _ = builder.RegisterType<InternalMongoDb.SigningKeyDataFactory>().As<ISigningKeyDataFactory>();
+            _ = builder.RegisterType<InternalMongoDb.SigningKeyDataSaver>().As<ISigningKeyDataSaver>();
             _ = builder.RegisterType<InternalMongoDb.UserDataFactory>().As<IUserDataFactory>();
             _ = builder.RegisterType<InternalMongoDb.UserDataSaver>().As<IUserDataSaver>();
             // the following BsonClassMap are out of place. Just threw it here for simplicity
