@@ -3,6 +3,7 @@ using BrassLoon.DataClient.MongoDB;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -49,6 +50,19 @@ namespace BrassLoon.Authorization.Data.Internal.MongoDb
                 Builders<UserData>.Filter.Eq(u => u.DomainId, domainId),
                 Builders<UserData>.Filter.Regex(u => u.ReferenceId, new Regex($"^{Regex.Escape(referenceId)}$", RegexOptions.IgnoreCase)));
             return await collection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<RoleData>> GetRoles(CommonData.ISettings settings, UserData userData)
+        {
+            IEnumerable<RoleData> result = null;
+            if (userData.RoleIds != null && userData.RoleIds.Count > 0)
+            {
+                IMongoCollection<RoleData> collection = await _dbProvider.GetCollection<RoleData>(settings, Constants.CollectionName.Role);
+                FilterDefinition<RoleData> filter = Builders<RoleData>.Filter.In(r => r.RoleId, userData.RoleIds);
+                SortDefinition<RoleData> sort = Builders<RoleData>.Sort.Ascending(r => r.Name);
+                result = await collection.Find(filter).Sort(sort).ToListAsync();
+            }
+            return result ?? Enumerable.Empty<RoleData>();
         }
 
         private async Task<IEnumerable<Guid>> GetEmailAddressIdsByHash(CommonData.ISettings settings, byte[] hash)

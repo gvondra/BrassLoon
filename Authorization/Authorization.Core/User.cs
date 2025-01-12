@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Authorization.Data;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.CommonCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace BrassLoon.Authorization.Core
     public class User : IUser, DataClient.IDbTransactionObserver
     {
         private readonly UserData _data;
+        private readonly IUserDataFactory _dataFactory;
         private readonly IUserDataSaver _dataSaver;
         private readonly IEmailAddressFactory _emailAddressFactory;
         private readonly IRoleFactory _roleFactory;
@@ -23,12 +25,14 @@ namespace BrassLoon.Authorization.Core
 
         public User(
             UserData data,
+            IUserDataFactory dataFactory,
             IUserDataSaver dataSaver,
             IEmailAddressFactory emailAddressFactory,
             IRoleFactory role,
             IRoleDataSaver roleDataSaver)
         {
             _data = data;
+            _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _emailAddressFactory = emailAddressFactory;
             _roleFactory = role;
@@ -49,7 +53,7 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public async Task AddRole(ISettings settings, string policyName)
+        public async Task AddRole(Framework.ISettings settings, string policyName)
         {
             IRole role = (await _roleFactory.GetByDomainId(settings, DomainId))
                 .FirstOrDefault(r => string.Equals(policyName, r.PolicyName, StringComparison.OrdinalIgnoreCase));
@@ -69,14 +73,14 @@ namespace BrassLoon.Authorization.Core
             {
                 foreach (IRole role in _addRoles)
                 {
-                    await _roleDataSaver.AddUserRole(settings, UserId, role.RoleId);
+                    await _dataSaver.AddRole(settings, _data, role.RoleId);
                 }
             }
             if (_removeRoles != null)
             {
                 foreach (IRole role in _removeRoles)
                 {
-                    await _roleDataSaver.RemoveUserRole(settings, UserId, role.RoleId);
+                    await _dataSaver.RemoveRole(settings, _data, role.RoleId);
                 }
             }
         }
@@ -93,7 +97,7 @@ namespace BrassLoon.Authorization.Core
             await SaveRoleRoleChanges(settings);
         }
 
-        public async Task<IEmailAddress> GetEmailAddress(ISettings settings)
+        public async Task<IEmailAddress> GetEmailAddress(Framework.ISettings settings)
         {
             if (_emailAddress == null)
             {
@@ -103,16 +107,20 @@ namespace BrassLoon.Authorization.Core
             return _emailAddress;
         }
 
-        public async Task<IEnumerable<IRole>> GetRoles(ISettings settings)
+        public async Task<IEnumerable<IRole>> GetRoles(Framework.ISettings settings)
         {
             if (_roles == null && !UserId.Equals(Guid.Empty))
-                _roles = (await _roleFactory.GetByUserId(settings, UserId)).ToList();
+            {
+                _roles = (await _dataFactory.GetRoles(new DataSettings(settings), _data))
+                    .Select<RoleData, IRole>(data => new Role(data, _roleDataSaver))
+                    .ToList();
+            }
             return (_roles ?? new List<IRole>())
                 .Concat(_addRoles ?? new List<IRole>())
                 .Where(r => _removeRoles == null || !_removeRoles.Exists(rr => r.RoleId.Equals(rr.RoleId)));
         }
 
-        public async Task RemoveRole(ISettings settings, string policyName)
+        public async Task RemoveRole(Framework.ISettings settings, string policyName)
         {
             IRole role = (await _roleFactory.GetByDomainId(settings, DomainId))
                 .FirstOrDefault(r => string.Equals(policyName, r.PolicyName, StringComparison.OrdinalIgnoreCase));
@@ -134,7 +142,7 @@ namespace BrassLoon.Authorization.Core
             return _emailAddress;
         }
 
-        public async Task<IEmailAddress> SetEmailAddress(ISettings settings, string address)
+        public async Task<IEmailAddress> SetEmailAddress(Framework.ISettings settings, string address)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException(nameof(address));

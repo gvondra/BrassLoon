@@ -34,7 +34,7 @@ namespace BrassLoon.Authorization.Core
             _emailAddressFactory = emailAddressFactory;
         }
 
-        private Client Create(ClientData data) => new Client(data, _dataSaver, _keyVault, _roleFactory, _roleDataSaver, _emailAddressFactory);
+        private Client Create(ClientData data) => new Client(data, _dataFactory, _dataSaver, _keyVault, _roleFactory, _roleDataSaver, _emailAddressFactory);
 
         public IClient Create(Guid domainId, string secret)
         {

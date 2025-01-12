@@ -9,7 +9,5 @@ namespace BrassLoon.Authorization.Data
     {
         Task<RoleData> Get(CommonData.ISettings settings, Guid id);
         Task<IEnumerable<RoleData>> GetByDomainId(CommonData.ISettings settings, Guid domainId);
-        Task<IEnumerable<RoleData>> GetByClientId(CommonData.ISettings settings, Guid clientId);
-        Task<IEnumerable<RoleData>> GetByUserId(CommonData.ISettings settings, Guid userId);
     }
 }

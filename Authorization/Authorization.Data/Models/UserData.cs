@@ -1,6 +1,7 @@
 ﻿using BrassLoon.DataClient;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace BrassLoon.Authorization.Data.Models
 {
@@ -32,5 +33,8 @@ namespace BrassLoon.Authorization.Data.Models
         [ColumnMapping(IsUtc = true)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime UpdateTimestamp { get; set; }
+
+        [BsonIgnoreIfNull]
+        public List<Guid> RoleIds { get; set; }
     }
 }

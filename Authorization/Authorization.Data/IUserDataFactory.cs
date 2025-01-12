@@ -11,5 +11,6 @@ namespace BrassLoon.Authorization.Data
         Task<UserData> GetByEmailAddressHash(CommonData.ISettings settings, Guid domainId, byte[] hash);
         Task<UserData> GetByReferenceId(CommonData.ISettings settings, Guid domainId, string referenceId);
         Task<IEnumerable<UserData>> GetByDomainId(CommonData.ISettings settings, Guid domainId);
+        Task<IEnumerable<RoleData>> GetRoles(CommonData.ISettings settings, UserData userData);
     }
 }

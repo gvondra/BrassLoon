@@ -44,37 +44,5 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 parameters)
                 ;
         }
-
-        public async Task<IEnumerable<RoleData>> GetByClientId(CommonData.ISettings settings, Guid clientId)
-        {
-            IDataParameter[] parameters = new IDataParameter[]
-            {
-                DataUtil.CreateParameter(_providerFactory, "clientId", DbType.Guid, clientId)
-            };
-            return await _genericDataFactory.GetData(
-                settings,
-                _providerFactory,
-                "[blt].[GetRole_by_ClientId]",
-                Create,
-                DataUtil.AssignDataStateManager,
-                parameters)
-                ;
-        }
-
-        public async Task<IEnumerable<RoleData>> GetByUserId(CommonData.ISettings settings, Guid userId)
-        {
-            IDataParameter[] parameters = new IDataParameter[]
-            {
-                DataUtil.CreateParameter(_providerFactory, "userId", DbType.Guid, userId)
-            };
-            return await _genericDataFactory.GetData(
-                settings,
-                _providerFactory,
-                "[blt].[GetRole_by_UserId]",
-                Create,
-                DataUtil.AssignDataStateManager,
-                parameters)
-                ;
-        }
     }
 }

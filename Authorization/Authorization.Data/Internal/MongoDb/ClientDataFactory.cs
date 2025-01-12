@@ -3,6 +3,7 @@ using BrassLoon.DataClient.MongoDB;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data.Internal.MongoDb
@@ -30,6 +31,19 @@ namespace BrassLoon.Authorization.Data.Internal.MongoDb
             SortDefinition<ClientData> sort = Builders<ClientData>.Sort.Descending(c => c.IsActive)
                 .Ascending(c => c.Name);
             return await collection.Find(filter).Sort(sort).ToListAsync();
+        }
+
+        public async Task<IEnumerable<RoleData>> GetRoles(CommonData.ISettings settings, ClientData clientData)
+        {
+            IEnumerable<RoleData> result = null;
+            if (clientData.RoleIds != null && clientData.RoleIds.Count > 0)
+            {
+                IMongoCollection<RoleData> collection = await _dbProvider.GetCollection<RoleData>(settings, Constants.CollectionName.Role);
+                FilterDefinition<RoleData> filter = Builders<RoleData>.Filter.In(r => r.RoleId, clientData.RoleIds);
+                SortDefinition<RoleData> sort = Builders<RoleData>.Sort.Ascending(r => r.Name);
+                result = await collection.Find(filter).Sort(sort).ToListAsync();
+            }
+            return result ?? Enumerable.Empty<RoleData>();
         }
     }
 }

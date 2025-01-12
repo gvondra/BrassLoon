@@ -30,7 +30,7 @@ namespace BrassLoon.Authorization.Core
             _roleDataSaver = roleDataSaver;
         }
 
-        private User Create(UserData data) => new User(data, _dataSaver, _emailAddressFactory, _roleFactory, _roleDataSaver);
+        private User Create(UserData data) => new User(data, _dataFactory, _dataSaver, _emailAddressFactory, _roleFactory, _roleDataSaver);
 
         public IUser Create(Guid domainId, string referenceId, IEmailAddress emailAddress)
         {

@@ -69,6 +69,38 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
             }
         }
 
+        public async Task AddRole(CommonData.ISaveSettings settings, ClientData data, Guid roleId)
+        {
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
+            {
+                command.CommandText = "[blt].[AddClientRole]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = settings.Transaction.InnerTransaction;
+
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(data.ClientId));
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
+
+                _ = await command.ExecuteNonQueryAsync();
+            }
+        }
+
+        public async Task RemoveRole(CommonData.ISaveSettings settings, ClientData data, Guid roleId)
+        {
+            await _providerFactory.EstablishTransaction(settings);
+            using (DbCommand command = settings.Connection.CreateCommand())
+            {
+                command.CommandText = "[blt].[RemoveClientRole]";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = settings.Transaction.InnerTransaction;
+
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(data.ClientId));
+                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
+
+                _ = await command.ExecuteNonQueryAsync();
+            }
+        }
+
         private void AddCommonParameters(IList commandParameters, ClientData data)
         {
             DataUtil.AddParameter(_providerFactory, commandParameters, "name", DbType.String, DataUtil.GetParameterValue(data.Name));

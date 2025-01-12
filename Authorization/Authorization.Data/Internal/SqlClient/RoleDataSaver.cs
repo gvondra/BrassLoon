@@ -13,38 +13,6 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
         public RoleDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task AddClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId)
-        {
-            await _providerFactory.EstablishTransaction(settings);
-            using (DbCommand command = settings.Connection.CreateCommand())
-            {
-                command.CommandText = "[blt].[AddClientRole]";
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = settings.Transaction.InnerTransaction;
-
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(clientId));
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
-
-                _ = await command.ExecuteNonQueryAsync();
-            }
-        }
-
-        public async Task AddUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId)
-        {
-            await _providerFactory.EstablishTransaction(settings);
-            using (DbCommand command = settings.Connection.CreateCommand())
-            {
-                command.CommandText = "[blt].[AddUserRole]";
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = settings.Transaction.InnerTransaction;
-
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.Guid, DataUtil.GetParameterValue(userId));
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
-
-                _ = await command.ExecuteNonQueryAsync();
-            }
-        }
-
         public async Task Create(CommonData.ISaveSettings settings, RoleData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
@@ -73,38 +41,6 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                     data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                     data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 }
-            }
-        }
-
-        public async Task RemoveClientRole(CommonData.ISaveSettings settings, Guid clientId, Guid roleId)
-        {
-            await _providerFactory.EstablishTransaction(settings);
-            using (DbCommand command = settings.Connection.CreateCommand())
-            {
-                command.CommandText = "[blt].[RemoveClientRole]";
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = settings.Transaction.InnerTransaction;
-
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "clientId", DbType.Guid, DataUtil.GetParameterValue(clientId));
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
-
-                _ = await command.ExecuteNonQueryAsync();
-            }
-        }
-
-        public async Task RemoveUserRole(CommonData.ISaveSettings settings, Guid userId, Guid roleId)
-        {
-            await _providerFactory.EstablishTransaction(settings);
-            using (DbCommand command = settings.Connection.CreateCommand())
-            {
-                command.CommandText = "[blt].[RemoveUserRole]";
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = settings.Transaction.InnerTransaction;
-
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "userId", DbType.Guid, DataUtil.GetParameterValue(userId));
-                DataUtil.AddParameter(_providerFactory, command.Parameters, "roleId", DbType.Guid, DataUtil.GetParameterValue(roleId));
-
-                _ = await command.ExecuteNonQueryAsync();
             }
         }
 

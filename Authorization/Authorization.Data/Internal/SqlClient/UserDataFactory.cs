@@ -10,8 +10,15 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
 {
     public class UserDataFactory : DataFactoryBase<UserData>, IUserDataFactory
     {
-        public UserDataFactory(IDbProviderFactory providerFactory)
-            : base(providerFactory) { }
+        private readonly IGenericDataFactory<RoleData> _roleDataFactory;
+
+        public UserDataFactory(
+            IDbProviderFactory providerFactory,
+            IGenericDataFactory<RoleData> roleDataFactory)
+            : base(providerFactory)
+        {
+            _roleDataFactory = roleDataFactory;
+        }
 
         public async Task<UserData> Get(CommonData.ISettings settings, Guid id)
         {
@@ -70,6 +77,22 @@ namespace BrassLoon.Authorization.Data.Internal.SqlClient
                 DataUtil.AssignDataStateManager,
                 parameters))
                 .FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<RoleData>> GetRoles(CommonData.ISettings settings, UserData userData)
+        {
+            IDataParameter[] parameters = new IDataParameter[]
+            {
+                DataUtil.CreateParameter(_providerFactory, "userId", DbType.Guid, userData.UserId)
+            };
+            return await _roleDataFactory.GetData(
+                settings,
+                _providerFactory,
+                "[blt].[GetRole_by_UserId]",
+                () => new RoleData(),
+                DataUtil.AssignDataStateManager,
+                parameters)
+                ;
         }
     }
 }

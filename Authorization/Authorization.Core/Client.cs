@@ -16,6 +16,7 @@ namespace BrassLoon.Authorization.Core
     public class Client : IClient, DataClient.IDbTransactionObserver
     {
         private readonly ClientData _data;
+        private readonly IClientDataFactory _dataFactory;
         private readonly IClientDataSaver _dataSaver;
         private readonly IKeyVault _keyVault;
         private readonly IRoleFactory _roleFactory;
@@ -30,6 +31,7 @@ namespace BrassLoon.Authorization.Core
 
         public Client(
             ClientData data,
+            IClientDataFactory dataFactory,
             IClientDataSaver dataSaver,
             IKeyVault keyVault,
             IRoleFactory roleFactory,
@@ -37,6 +39,7 @@ namespace BrassLoon.Authorization.Core
             IEmailAddressFactory emailAddressFactory)
         {
             _data = data;
+            _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _keyVault = keyVault;
             _roleFactory = roleFactory;
@@ -81,14 +84,14 @@ namespace BrassLoon.Authorization.Core
             {
                 foreach (IRole role in _addRoles)
                 {
-                    await _roleDataSaver.AddClientRole(settings, ClientId, role.RoleId);
+                    await _dataSaver.AddRole(settings, _data, role.RoleId);
                 }
             }
             if (_removeRoles != null)
             {
                 foreach (IRole role in _removeRoles)
                 {
-                    await _roleDataSaver.RemoveClientRole(settings, ClientId, role.RoleId);
+                    await _dataSaver.RemoveRole(settings, _data, role.RoleId);
                 }
             }
         }
@@ -153,7 +156,11 @@ namespace BrassLoon.Authorization.Core
         public async Task<IEnumerable<IRole>> GetRoles(Framework.ISettings settings)
         {
             if (_roles == null && !ClientId.Equals(Guid.Empty))
-                _roles = (await _roleFactory.GetByClientId(settings, ClientId)).ToList();
+            {
+                _roles = (await _dataFactory.GetRoles(new DataSettings(settings), _data))
+                    .Select<RoleData, IRole>(data => new Role(data, _roleDataSaver))
+                    .ToList();
+            }
             return (_roles ?? new List<IRole>())
                 .Concat(_addRoles ?? new List<IRole>())
                 .Where(r => _removeRoles == null || !_removeRoles.Exists(rr => r.RoleId.Equals(rr.RoleId)));

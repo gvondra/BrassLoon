@@ -3,6 +3,7 @@ using BrassLoon.CommonData;
 using BrassLoon.DataClient.MongoDB;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Data.Internal.MongoDb
@@ -16,6 +17,17 @@ namespace BrassLoon.Authorization.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
+        public async Task AddRole(ISaveSettings settings, ClientData data, Guid roleId)
+        {
+            data.RoleIds ??= new List<Guid>();
+            if (!data.RoleIds.Contains(roleId))
+            {
+                data.RoleIds.Add(roleId);
+                data.UpdateTimestamp = DateTime.UtcNow;
+                await UpdateRole(settings, data.ClientId, data.UpdateTimestamp, data.RoleIds);
+            }
+        }
+
         public async Task Create(ISaveSettings settings, ClientData data)
         {
             IMongoCollection<ClientData> collection = await _dbProvider.GetCollection<ClientData>(settings, Constants.CollectionName.Client);
@@ -23,6 +35,16 @@ namespace BrassLoon.Authorization.Data.Internal.MongoDb
             data.CreateTimestamp = DateTime.UtcNow;
             data.UpdateTimestamp = DateTime.UtcNow;
             await collection.InsertOneAsync(data);
+        }
+
+        public async Task RemoveRole(ISaveSettings settings, ClientData data, Guid roleId)
+        {
+            data.RoleIds ??= new List<Guid>();
+            if (data.RoleIds.Remove(roleId))
+            {
+                data.UpdateTimestamp = DateTime.UtcNow;
+                await UpdateRole(settings, data.ClientId, data.UpdateTimestamp, data.RoleIds);
+            }
         }
 
         public async Task Update(ISaveSettings settings, ClientData data)
@@ -41,6 +63,15 @@ namespace BrassLoon.Authorization.Data.Internal.MongoDb
                 .Set(c => c.UserEmailAddressId, data.UserEmailAddressId)
                 .Set(c => c.UserName, data.UserName);
 
+            _ = await collection.UpdateOneAsync(filter, update);
+        }
+
+        private async Task UpdateRole(ISaveSettings settings, Guid id, DateTime updateTimestamp, List<Guid> roleIds)
+        {
+            IMongoCollection<ClientData> collection = await _dbProvider.GetCollection<ClientData>(settings, Constants.CollectionName.Client);
+            FilterDefinition<ClientData> filter = Builders<ClientData>.Filter.Eq(c => c.ClientId, id);
+            UpdateDefinition<ClientData> update = Builders<ClientData>.Update.Set(c => c.UpdateTimestamp, updateTimestamp)
+                .Set(c => c.RoleIds, roleIds);
             _ = await collection.UpdateOneAsync(filter, update);
         }
     }

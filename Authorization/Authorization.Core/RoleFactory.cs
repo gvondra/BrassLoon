@@ -61,18 +61,6 @@ namespace BrassLoon.Authorization.Core
                 new Context(domainId.ToString("D")));
         }
 
-        public async Task<IEnumerable<IRole>> GetByClientId(ISettings settings, Guid clientId)
-        {
-            return (await _dataFactory.GetByClientId(new CommonCore.DataSettings(settings), clientId))
-                .Select<RoleData, IRole>(Create);
-        }
-
-        public async Task<IEnumerable<IRole>> GetByUserId(ISettings settings, Guid userId)
-        {
-            return (await _dataFactory.GetByUserId(new CommonCore.DataSettings(settings), userId))
-                .Select<RoleData, IRole>(Create);
-        }
-
         public static void ClearCache() => _domainCache = Policy.Cache(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())), TimeSpan.FromMinutes(6));
     }
 }
