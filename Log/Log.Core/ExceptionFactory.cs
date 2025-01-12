@@ -25,8 +25,8 @@ namespace BrassLoon.Log.Core
             _settingsFactory = settingsFactory;
         }
 
-        private Exception Create(ExceptionData data) => new Exception(data, _dataSaver, this);
-        private Exception Create(ExceptionData data, IEventId eventId) => new Exception(data, _dataSaver, this, eventId);
+        private Exception Create(ExceptionData data) => new Exception(data, _dataFactory, _dataSaver, this);
+        private Exception Create(ExceptionData data, IEventId eventId) => new Exception(data, _dataFactory, _dataSaver, this, eventId);
 
         public IException Create(Guid domainId, DateTime? createTimestamp, IEventId eventId = null) => Create(domainId, createTimestamp, parentException: null, eventId: eventId);
 
@@ -42,22 +42,13 @@ namespace BrassLoon.Log.Core
             return result;
         }
 
-        public async Task<IException> Get(ISettings settings, long id)
+        public async Task<IException> Get(ISettings settings, Guid id)
         {
             IException result = null;
             ExceptionData data = await _dataFactory.Get(_settingsFactory.CreateData(settings), id);
             if (data != null)
                 result = Create(data);
             return result;
-        }
-
-        public async Task<IException> GetInnerException(ISettings settings, long id)
-        {
-            IException exception = null;
-            ExceptionData data = await _dataFactory.GetInnerException(_settingsFactory.CreateData(settings), id);
-            if (data != null)
-                exception = Create(data);
-            return exception;
         }
 
         public async Task<IEnumerable<IException>> GetTopBeforeTimestamp(ISettings settings, Guid domainId, DateTime maxTimestamp)

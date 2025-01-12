@@ -17,16 +17,18 @@ namespace BrassLoon.Log.Data.Internal.MongoDb
             _dbProvider = dbProvider;
         }
 
-        public async Task<ExceptionData> Get(CommonData.ISettings settings, long id)
+        public async Task<ExceptionData> Get(CommonData.ISettings settings, Guid id)
         {
-            // IMongoCollection<ExceptionData> collection = await _dbProvider.GetCollection<ExceptionData>(settings, Constants.CollectionName.Exception);
-            throw new NotSupportedException();
+            IMongoCollection<ExceptionData> collection = await _dbProvider.GetCollection<ExceptionData>(settings, Constants.CollectionName.Exception);
+            FilterDefinition<ExceptionData> filter = Builders<ExceptionData>.Filter.Eq(ex => ex.ExceptionGuid, id);
+            return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<ExceptionData> GetInnerException(CommonData.ISettings settings, long id)
+        public async Task<ExceptionData> GetInnerException(CommonData.ISettings settings, ExceptionData data)
         {
-            // IMongoCollection<ExceptionData> collection = await _dbProvider.GetCollection<ExceptionData>(settings, Constants.CollectionName.Exception);
-            throw new NotSupportedException();
+            IMongoCollection<ExceptionData> collection = await _dbProvider.GetCollection<ExceptionData>(settings, Constants.CollectionName.Exception);
+            FilterDefinition<ExceptionData> filter = Builders<ExceptionData>.Filter.Eq(ex => ex.ParentExceptionGuid, data.ExceptionGuid);
+            return await collection.Find(filter).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<ExceptionData>> GetTopBeforeTimestamp(CommonData.ISettings settings, Guid domainId, DateTime maxTimestamp)

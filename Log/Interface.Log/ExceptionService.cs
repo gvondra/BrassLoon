@@ -3,7 +3,6 @@ using Polly;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LogModels = BrassLoon.Interface.Log.Models;
@@ -36,17 +35,6 @@ namespace BrassLoon.Interface.Log
             return response.Value;
         }
 
-        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, Exception exception) => Create(settings, domainId, null, exception);
-
-        public Task<LogModels.Exception> Create(ISettings settings, Guid domainId, DateTime? createTimestamp, Exception exception)
-        {
-            return Create(
-                settings,
-                domainId,
-                exception,
-                createTimestamp: createTimestamp);
-        }
-
         public Task<LogModels.Exception> Create(
             ISettings settings,
             Guid domainId,
@@ -61,12 +49,12 @@ namespace BrassLoon.Interface.Log
                 CreateException(domainId, exception, createTimestamp, category, level, eventId));
         }
 
-        public Task<LogModels.Exception> Get(ISettings settings, Guid domainId, long id)
+        public Task<LogModels.Exception> Get(ISettings settings, Guid domainId, Guid id)
         {
             IRequest request = _service.CreateRequest(new Uri(settings.BaseAddress), HttpMethod.Get)
             .AddPath("Exception")
             .AddPath(domainId.ToString("N"))
-            .AddPath(id.ToString(CultureInfo.InvariantCulture))
+            .AddPath(id.ToString("N"))
             .AddJwtAuthorizationToken(settings.GetToken)
             ;
             return _restUtil.Send<LogModels.Exception>(_service, request);

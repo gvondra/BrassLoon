@@ -19,22 +19,22 @@ namespace BrassLoon.Log.Data.Internal.SqlClient
             _genericDataFactory = new GenericDataFactory<ExceptionData>();
         }
 
-        public async Task<ExceptionData> Get(CommonData.ISettings settings, long id)
+        public async Task<ExceptionData> Get(CommonData.ISettings settings, Guid id)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "exceptionId", DbType.Int64, id);
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "exceptionId", DbType.Guid, id);
             return (await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,
-                "[bll].[GetException]",
+                "[bll].[GetException_v2]",
                 () => new ExceptionData(),
                 DataUtil.AssignDataStateManager,
                 new List<IDataParameter> { parameter }))
                 .FirstOrDefault();
         }
 
-        public async Task<ExceptionData> GetInnerException(CommonData.ISettings settings, long id)
+        public async Task<ExceptionData> GetInnerException(CommonData.ISettings settings, ExceptionData data)
         {
-            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64, id);
+            IDataParameter parameter = DataUtil.CreateParameter(_providerFactory, "id", DbType.Int64, data.ExceptionId);
             return (await _genericDataFactory.GetData(
                 settings,
                 _providerFactory,

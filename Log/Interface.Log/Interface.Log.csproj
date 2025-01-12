@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>5.0.0-prerelease.2</Version>
-		<AssemblyVersion>5.0.0.2</AssemblyVersion>
+		<Version>5.0.0-prerelease.3</Version>
+		<AssemblyVersion>5.0.0.3</AssemblyVersion>
 		<PackageReleaseNotes>
 			- v5.0 Switch to GUID type key fields
 			- v4.1 Extend support to Autofac version 9

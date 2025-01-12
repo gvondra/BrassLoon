@@ -83,7 +83,7 @@ namespace LogAPI.Controllers
         [HttpGet("{domainId}/{id}")]
         [ProducesResponseType(typeof(LogModels.Exception), 200)]
         [Authorize]
-        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] long? id)
+        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? id)
         {
             IActionResult result = null;
             try

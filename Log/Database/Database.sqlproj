@@ -105,6 +105,7 @@
     <Build Include="Stored Procedures\bll.CreateTrace_v2.sql" />
     <Build Include="Stored Procedures\bll.CreateMetric_v2.sql" />
     <Build Include="Stored Procedures\bll.CreateException_v2.sql" />
+    <Build Include="Stored Procedures\bll.GetException_v2.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LocalSqlSchemaCompare.scmp" />
