@@ -1,5 +1,6 @@
 ﻿using BrassLoon.DataClient.MongoDB;
 using BrassLoon.Log.Data.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,12 @@ namespace BrassLoon.Log.Data.Internal.MongoDb
         {
             IMongoCollection<TraceData> collection = await _dbProvider.GetCollection<TraceData>(settings, Constants.CollectionName.Trace);
             FilterDefinition<TraceData> filter = Builders<TraceData>.Filter.Eq(t => t.DomainId, domainId);
-            return await collection
-                .Find(filter)
-                .Sort(Builders<TraceData>.Sort.Ascending(t => t.EventCode))
-                .Project(t => t.EventCode)
-                .ToListAsync();
+            return (await collection.Aggregate()
+                .Match(filter)
+                .Group(Builders<TraceData>.Projection.Include(t => t.EventCode))
+                .Sort(Builders<BsonDocument>.Sort.Ascending("EventCode"))
+                .ToListAsync())
+                .Select(doc => (string)doc["EventCode"]);
         }
 
         public async Task<IEnumerable<TraceData>> GetTopBeforeTimestamp(CommonData.ISettings settings, Guid domainId, string eventCode, DateTime maxTimestamp)
