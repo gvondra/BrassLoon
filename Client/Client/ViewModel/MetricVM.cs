@@ -16,7 +16,7 @@ namespace BrassLoon.Client.ViewModel
             _metric = metric;
         }
 
-        public long? MetricId => _metric.MetricId;
+        public Guid? MetricId => _metric.MetricId;
 
         public Guid? DomainId => _metric.DomainId;
 

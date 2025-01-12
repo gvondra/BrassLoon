@@ -19,7 +19,7 @@ namespace BrassLoon.Client.ViewModel
                 _innerException = new ExceptionVM(exception.InnerException);
         }
 
-        public long? ExceptionId => _exception.ExceptionId;
+        public Guid? ExceptionId => _exception.ExceptionId;
 
         public Guid? DomainId => _exception.DomainId;
 

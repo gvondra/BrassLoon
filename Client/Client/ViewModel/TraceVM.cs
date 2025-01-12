@@ -16,7 +16,7 @@ namespace BrassLoon.Client.ViewModel
             _trace = trace;
         }
 
-        public long? TraceId => _trace.TraceId;
+        public Guid? TraceId => _trace.TraceId;
 
         public Guid? DomainId => _trace.DomainId;
 
