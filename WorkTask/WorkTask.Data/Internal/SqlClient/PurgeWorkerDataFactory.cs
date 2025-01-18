@@ -12,7 +12,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public PurgeWorkerDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<Guid?> ClaimPurgeWorker(ISqlSettings settings)
+        public async Task<Guid?> ClaimPurgeWorker(CommonData.ISettings settings)
         {
             Guid? result = null;
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
@@ -31,7 +31,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return result;
         }
 
-        public async Task<PurgeWorkerData> Get(ISqlSettings settings, Guid id)
+        public async Task<PurgeWorkerData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

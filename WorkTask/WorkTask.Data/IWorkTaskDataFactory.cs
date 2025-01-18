@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.WorkTask.Data.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,9 +7,9 @@ namespace BrassLoon.WorkTask.Data
 {
     public interface IWorkTaskDataFactory
     {
-        Task<WorkTaskData> Get(ISqlSettings settings, Guid id);
-        Task<IAsyncEnumerable<WorkTaskData>> GetAll(ISqlSettings settings, Guid domainId);
-        Task<IEnumerable<WorkTaskData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId, bool includeClosed = false);
-        Task<IEnumerable<WorkTaskData>> GetByContextReference(ISqlSettings settings, Guid domainId, short referenceType, byte[] referenceValueHash, bool includeClosed = false);
+        Task<WorkTaskData> Get(ISettings settings, Guid id);
+        Task<IAsyncEnumerable<WorkTaskData>> GetAll(ISettings settings, Guid domainId);
+        Task<IEnumerable<WorkTaskData>> GetByWorkGroupId(ISettings settings, Guid workGroupId, bool includeClosed = false);
+        Task<IEnumerable<WorkTaskData>> GetByContextReference(ISettings settings, Guid domainId, short referenceType, byte[] referenceValueHash, bool includeClosed = false);
     }
 }

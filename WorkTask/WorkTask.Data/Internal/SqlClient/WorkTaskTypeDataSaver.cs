@@ -12,15 +12,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkTaskTypeDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, WorkTaskTypeData data)
+        public async Task Create(CommonData.ISaveSettings settings, WorkTaskTypeData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[CreateWorkTaskType]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
                 id.Direction = ParameterDirection.Output;
@@ -41,15 +41,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, WorkTaskTypeData data)
+        public async Task Update(CommonData.ISaveSettings settings, WorkTaskTypeData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[UpdateWorkTaskType]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;

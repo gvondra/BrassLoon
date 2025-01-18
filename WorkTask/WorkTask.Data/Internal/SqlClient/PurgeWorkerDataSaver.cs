@@ -11,7 +11,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public PurgeWorkerDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task InitializePurgeWorker(ISqlSettings settings)
+        public async Task InitializePurgeWorker(CommonData.ISettings settings)
         {
             using DbConnection connection = await ProviderFactory.OpenConnection(settings);
             using DbCommand command = connection.CreateCommand();
@@ -19,15 +19,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             command.CommandType = CommandType.StoredProcedure;
             _ = await command.ExecuteNonQueryAsync();
         }
-        public async Task Update(ISqlTransactionHandler transactionHandler, PurgeWorkerData purgeWorkerData)
+        public async Task Update(CommonData.ISaveSettings settings, PurgeWorkerData purgeWorkerData)
         {
             if (purgeWorkerData.Manager.GetState(purgeWorkerData) == DataState.Updated)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, purgeWorkerData);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, purgeWorkerData);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[UpdatePurgeWorker]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;

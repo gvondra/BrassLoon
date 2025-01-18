@@ -26,7 +26,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             _loaderFactory = loaderFactory;
         }
 
-        public async Task<WorkTaskData> Get(ISqlSettings settings, Guid id)
+        public async Task<WorkTaskData> Get(CommonData.ISettings settings, Guid id)
         {
             WorkTaskData workTaskData = null;
             IDataParameter[] parameters = new IDataParameter[]
@@ -59,7 +59,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return workTaskData;
         }
 
-        public async Task<IEnumerable<WorkTaskData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId, bool includeClosed = false)
+        public async Task<IEnumerable<WorkTaskData>> GetByWorkGroupId(CommonData.ISettings settings, Guid workGroupId, bool includeClosed = false)
         {
             IEnumerable<WorkTaskData> result = new List<WorkTaskData>();
             IDataParameter[] parameters = new IDataParameter[]
@@ -81,7 +81,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return result;
         }
 
-        public async Task<IEnumerable<WorkTaskData>> GetByContextReference(ISqlSettings settings, Guid domainId, short referenceType, byte[] referenceValueHash, bool includeClosed = false)
+        public async Task<IEnumerable<WorkTaskData>> GetByContextReference(CommonData.ISettings settings, Guid domainId, short referenceType, byte[] referenceValueHash, bool includeClosed = false)
         {
             IEnumerable<WorkTaskData> result = new List<WorkTaskData>();
             IDataParameter[] parameters = new IDataParameter[]
@@ -136,7 +136,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return result.ToList();
         }
 
-        public async Task<IAsyncEnumerable<WorkTaskData>> GetAll(ISqlSettings settings, Guid domainId)
+        public async Task<IAsyncEnumerable<WorkTaskData>> GetAll(CommonData.ISettings settings, Guid domainId)
         {
             Dictionary<Guid, WorkTaskTypeData> workTaskTypes = (await _workTaskTypeDataFactory.GetByDomainId(settings, domainId))
                 .ToDictionary(d => d.WorkTaskTypeId);
@@ -160,7 +160,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 
         private static async Task<WorkTaskData> GetAllLoadData(
             DbDataReader reader,
-            ISqlSettings settings,
+            CommonData.ISettings settings,
             IDbProviderFactory providerFactory,
             ILoader loader,
             Dictionary<Guid, WorkTaskTypeData> workTaskTypes,
@@ -174,7 +174,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return workTaskData;
         }
 
-        private static async Task<IEnumerable<WorkTaskContextData>> GetContextByWorkTaskId(ISqlSettings settings, IDbProviderFactory providerFactory, Guid workTaskId)
+        private static async Task<IEnumerable<WorkTaskContextData>> GetContextByWorkTaskId(CommonData.ISettings settings, IDbProviderFactory providerFactory, Guid workTaskId)
         {
             GenericDataFactory<WorkTaskContextData> genericDataFactory = new GenericDataFactory<WorkTaskContextData>();
             IDataParameter parameter = DataUtil.CreateParameter(providerFactory, "workTaskId", DbType.Guid, workTaskId);

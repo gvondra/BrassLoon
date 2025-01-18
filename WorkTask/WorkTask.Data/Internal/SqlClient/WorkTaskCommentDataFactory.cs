@@ -11,7 +11,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkTaskCommentDataFactory(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<IEnumerable<CommentData>> GetByWorkTaskId(ISqlSettings settings, Guid workTaskId)
+        public async Task<IEnumerable<CommentData>> GetByWorkTaskId(CommonData.ISettings settings, Guid workTaskId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workTaskId", DbType.Guid, workTaskId);
             return await GenericDataFactory.GetData(

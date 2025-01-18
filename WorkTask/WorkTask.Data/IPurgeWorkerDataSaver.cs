@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.WorkTask.Data.Models;
 using System.Threading.Tasks;
 
@@ -6,7 +6,7 @@ namespace BrassLoon.WorkTask.Data
 {
     public interface IPurgeWorkerDataSaver
     {
-        Task InitializePurgeWorker(ISqlSettings settings);
-        Task Update(ISqlTransactionHandler transactionHandler, PurgeWorkerData purgeWorkerData);
+        Task InitializePurgeWorker(ISettings settings);
+        Task Update(ISaveSettings settings, PurgeWorkerData purgeWorkerData);
     }
 }

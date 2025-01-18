@@ -14,7 +14,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             : base(providerFactory)
         { }
 
-        private Task<IEnumerable<WorkGroupMemberData>> GetMembersByWorkGroupId(ISqlSettings settings, Guid workGroupId)
+        private Task<IEnumerable<WorkGroupMemberData>> GetMembersByWorkGroupId(CommonData.ISettings settings, Guid workGroupId)
         {
             GenericDataFactory<WorkGroupMemberData> genericDataFactory = new GenericDataFactory<WorkGroupMemberData>();
 
@@ -31,7 +31,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 parameters);
         }
 
-        private Task<IEnumerable<WorkTaskTypeGroupData>> GetTaskTypesByWorkGroupId(ISqlSettings settings, Guid workGroupId)
+        private Task<IEnumerable<WorkTaskTypeGroupData>> GetTaskTypesByWorkGroupId(CommonData.ISettings settings, Guid workGroupId)
         {
             GenericDataFactory<WorkTaskTypeGroupData> genericDataFactory = new GenericDataFactory<WorkTaskTypeGroupData>();
 
@@ -48,7 +48,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 parameters);
         }
 
-        public async Task<WorkGroupData> Get(ISqlSettings settings, Guid id)
+        public async Task<WorkGroupData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -73,7 +73,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return data;
         }
 
-        private async Task<IEnumerable<WorkGroupData>> InnerGetData(ISqlSettings settings, string procedureName, IDataParameter[] parameters)
+        private async Task<IEnumerable<WorkGroupData>> InnerGetData(CommonData.ISettings settings, string procedureName, IDataParameter[] parameters)
         {
             List<WorkGroupData> workGroups = new List<WorkGroupData>();
             List<WorkGroupMemberData> members = new List<WorkGroupMemberData>();
@@ -88,12 +88,12 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 readAction: async (reader) =>
                 {
                     workGroups = (await GenericDataFactory.LoadData(reader, Create, DataUtil.AssignDataStateManager)).ToList();
-                    if (reader.NextResult())
+                    if (await reader.NextResultAsync())
                     {
                         GenericDataFactory<WorkGroupMemberData> genericDataFactory = new GenericDataFactory<WorkGroupMemberData>();
                         members = (await genericDataFactory.LoadData(reader, () => new WorkGroupMemberData(), DataUtil.AssignDataStateManager)).ToList();
                     }
-                    if (reader.NextResult())
+                    if (await reader.NextResultAsync())
                     {
                         GenericDataFactory<WorkTaskTypeGroupData> genericDataFactory = new GenericDataFactory<WorkTaskTypeGroupData>();
                         taskTypes = (await genericDataFactory.LoadData(reader, () => new WorkTaskTypeGroupData(), DataUtil.AssignDataStateManager)).ToList();
@@ -121,7 +121,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return workGroups;
         }
 
-        public Task<IEnumerable<WorkGroupData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public Task<IEnumerable<WorkGroupData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -130,7 +130,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return InnerGetData(settings, "[blwt].[GetWorkGroup_by_DomainId]", parameters);
         }
 
-        public Task<IEnumerable<WorkGroupData>> GetByMemberUserId(ISqlSettings settings, Guid domainId, string userId)
+        public Task<IEnumerable<WorkGroupData>> GetByMemberUserId(CommonData.ISettings settings, Guid domainId, string userId)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {

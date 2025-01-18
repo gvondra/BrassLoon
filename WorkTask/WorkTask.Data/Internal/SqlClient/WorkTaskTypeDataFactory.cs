@@ -13,7 +13,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             : base(providerFactory)
         { }
 
-        public async Task<WorkTaskTypeData> Get(ISqlSettings settings, Guid id)
+        public async Task<WorkTaskTypeData> Get(CommonData.ISettings settings, Guid id)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id);
             return (await GenericDataFactory.GetData(
@@ -26,7 +26,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<WorkTaskTypeData>> GetByDomainId(ISqlSettings settings, Guid domainId)
+        public async Task<IEnumerable<WorkTaskTypeData>> GetByDomainId(CommonData.ISettings settings, Guid domainId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "domainId", DbType.Guid, domainId);
             return await GenericDataFactory.GetData(
@@ -39,7 +39,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 ;
         }
 
-        public async Task<WorkTaskTypeData> GetByDomainIdCode(ISqlSettings settings, Guid domainId, string code)
+        public async Task<WorkTaskTypeData> GetByDomainIdCode(CommonData.ISettings settings, Guid domainId, string code)
         {
             IDataParameter[] parameters = new IDataParameter[]
             {
@@ -56,7 +56,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(ISqlSettings settings, Guid workGroupId)
+        public async Task<IEnumerable<WorkTaskTypeData>> GetByWorkGroupId(CommonData.ISettings settings, Guid workGroupId)
         {
             IDataParameter parameter = DataUtil.CreateParameter(ProviderFactory, "workGroupId", DbType.Guid, workGroupId);
             return await GenericDataFactory.GetData(

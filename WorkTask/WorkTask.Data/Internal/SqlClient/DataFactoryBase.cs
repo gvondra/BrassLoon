@@ -15,6 +15,6 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 
         protected IDbProviderFactory ProviderFactory => _providerFactory;
         protected GenericDataFactory<T> GenericDataFactory => _genericDataFactory;
-        protected T Create() => new T();
+        protected static T Create() => new T();
     }
 }

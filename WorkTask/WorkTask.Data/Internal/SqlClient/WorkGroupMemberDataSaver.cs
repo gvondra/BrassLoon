@@ -11,15 +11,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkGroupMemberDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, WorkGroupMemberData data)
+        public async Task Create(CommonData.ISaveSettings settings, WorkGroupMemberData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[CreateWorkGroupMember]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
                 id.Direction = ParameterDirection.Output;
@@ -39,13 +39,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             }
         }
 
-        public async Task Delete(ISqlTransactionHandler transactionHandler, Guid id)
+        public async Task Delete(CommonData.ISaveSettings settings, Guid id)
         {
-            await ProviderFactory.EstablishTransaction(transactionHandler);
-            using DbCommand command = transactionHandler.Connection.CreateCommand();
+            await ProviderFactory.EstablishTransaction(settings);
+            using DbCommand command = settings.Connection.CreateCommand();
             command.CommandText = "[blwt].[DeleteWorkGroupMember]";
             command.CommandType = CommandType.StoredProcedure;
-            command.Transaction = transactionHandler.Transaction.InnerTransaction;
+            command.Transaction = settings.Transaction.InnerTransaction;
 
             DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
 

@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.WorkTask.Data.Models;
 using System.Threading.Tasks;
 
@@ -6,6 +6,6 @@ namespace BrassLoon.WorkTask.Data
 {
     public interface IWorkTaskCommentDataSaver
     {
-        Task Create(ISqlTransactionHandler transactionHandler, CommentData data, Guid workTaskId);
+        Task Create(ISaveSettings settings, CommentData data, Guid workTaskId);
     }
 }

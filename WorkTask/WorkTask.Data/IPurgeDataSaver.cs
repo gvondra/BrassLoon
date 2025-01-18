@@ -1,12 +1,12 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data
 {
     public interface IPurgeDataSaver
     {
-        Task DeleteWorkTaskByMinTimestamp(ISqlSettings settings, DateTime timestamp);
-        Task InitializeWorkTask(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp, short defaultPurgePeriod);
-        Task PurgeWorkTask(ISqlSettings settings, Guid domainId, DateTime expirationTimestamp);
+        Task DeleteWorkTaskByMinTimestamp(ISettings settings, DateTime timestamp);
+        Task InitializeWorkTask(ISettings settings, Guid domainId, DateTime expirationTimestamp, short defaultPurgePeriod);
+        Task PurgeWorkTask(ISettings settings, Guid domainId, DateTime expirationTimestamp);
     }
 }

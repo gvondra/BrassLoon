@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.CommonData;
 using BrassLoon.WorkTask.Data.Models;
 using System.Threading.Tasks;
 
@@ -6,8 +6,8 @@ namespace BrassLoon.WorkTask.Data
 {
     public interface IWorkTaskStatusDataSaver
     {
-        Task Create(ISqlTransactionHandler transactionHandler, WorkTaskStatusData data);
-        Task Update(ISqlTransactionHandler transactionHandler, WorkTaskStatusData data);
-        Task Delete(ISqlTransactionHandler transactionHandler, Guid id);
+        Task Create(ISaveSettings settings, WorkTaskStatusData data);
+        Task Update(ISaveSettings settings, WorkTaskStatusData data);
+        Task Delete(ISaveSettings settings, Guid id);
     }
 }

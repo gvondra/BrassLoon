@@ -12,13 +12,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkTaskDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task<bool> Claim(ISqlTransactionHandler transactionHandler, Guid domainId, Guid id, string userId, DateTime? assignedDate = null)
+        public async Task<bool> Claim(CommonData.ISaveSettings settings, Guid domainId, Guid id, string userId, DateTime? assignedDate = null)
         {
-            await ProviderFactory.EstablishTransaction(transactionHandler);
-            using DbCommand command = transactionHandler.Connection.CreateCommand();
+            await ProviderFactory.EstablishTransaction(settings);
+            using DbCommand command = settings.Connection.CreateCommand();
             command.CommandText = "[blwt].[ClaimWorkTask]";
             command.CommandType = CommandType.StoredProcedure;
-            command.Transaction = transactionHandler.Transaction.InnerTransaction;
+            command.Transaction = settings.Transaction.InnerTransaction;
 
             IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
             timestamp.Direction = ParameterDirection.Output;
@@ -33,15 +33,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             return count > 0;
         }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, WorkTaskData data)
+        public async Task Create(CommonData.ISaveSettings settings, WorkTaskData data)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[CreateWorkTask]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid);
                 id.Direction = ParameterDirection.Output;
@@ -62,15 +62,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             }
         }
 
-        public async Task Update(ISqlTransactionHandler transactionHandler, WorkTaskData data)
+        public async Task Update(CommonData.ISaveSettings settings, WorkTaskData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[UpdateWorkTask]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter timestamp = DataUtil.CreateParameter(ProviderFactory, "timestamp", DbType.DateTime2);
                 timestamp.Direction = ParameterDirection.Output;

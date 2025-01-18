@@ -10,13 +10,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkTaskTypeGroupDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
+        public async Task Create(CommonData.ISaveSettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
         {
-            await ProviderFactory.EstablishTransaction(transactionHandler);
-            using DbCommand command = transactionHandler.Connection.CreateCommand();
+            await ProviderFactory.EstablishTransaction(settings);
+            using DbCommand command = settings.Connection.CreateCommand();
             command.CommandText = "[blwt].[CreateWorktTaskTypeGroup_v2]";
             command.CommandType = CommandType.StoredProcedure;
-            command.Transaction = transactionHandler.Transaction.InnerTransaction;
+            command.Transaction = settings.Transaction.InnerTransaction;
 
             DataUtil.AddParameter(ProviderFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId));
             DataUtil.AddParameter(ProviderFactory, command.Parameters, "workTaskTypeId", DbType.Guid, DataUtil.GetParameterValue(workTaskTypeId));
@@ -25,13 +25,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             _ = await command.ExecuteNonQueryAsync();
         }
 
-        public async Task Delete(ISqlTransactionHandler transactionHandler, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
+        public async Task Delete(CommonData.ISaveSettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
         {
-            await ProviderFactory.EstablishTransaction(transactionHandler);
-            using DbCommand command = transactionHandler.Connection.CreateCommand();
+            await ProviderFactory.EstablishTransaction(settings);
+            using DbCommand command = settings.Connection.CreateCommand();
             command.CommandText = "[blwt].[DeleteWorktTaskTypeGroup_v2]";
             command.CommandType = CommandType.StoredProcedure;
-            command.Transaction = transactionHandler.Transaction.InnerTransaction;
+            command.Transaction = settings.Transaction.InnerTransaction;
 
             DataUtil.AddParameter(ProviderFactory, command.Parameters, "domainId", DbType.Guid, DataUtil.GetParameterValue(domainId));
             DataUtil.AddParameter(ProviderFactory, command.Parameters, "workTaskTypeId", DbType.Guid, DataUtil.GetParameterValue(workTaskTypeId));

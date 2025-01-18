@@ -11,15 +11,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         public WorkTaskCommentDataSaver(IDbProviderFactory providerFactory)
             : base(providerFactory) { }
 
-        public async Task Create(ISqlTransactionHandler transactionHandler, CommentData data, Guid workTaskId)
+        public async Task Create(CommonData.ISaveSettings settings, CommentData data, Guid workTaskId)
         {
             if (data.Manager.GetState(data) == DataState.New)
             {
-                await ProviderFactory.EstablishTransaction(transactionHandler, data);
-                using DbCommand command = transactionHandler.Connection.CreateCommand();
+                await ProviderFactory.EstablishTransaction(settings, data);
+                using DbCommand command = settings.Connection.CreateCommand();
                 command.CommandText = "[blwt].[CreateWorkTaskComment]";
                 command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transactionHandler.Transaction.InnerTransaction;
+                command.Transaction = settings.Transaction.InnerTransaction;
 
                 IDataParameter id = DataUtil.CreateParameter(ProviderFactory, "commentId", DbType.Guid);
                 id.Direction = ParameterDirection.Output;
