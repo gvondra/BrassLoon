@@ -375,6 +375,7 @@ FodyWeavers.xsd
 /Authorization/AuthorizationAPI/**/launchSettings.json
 /Authorization/AuthorizationRPC/**/launchSettings.json
 /Authorization/TestClient/**/launchSettings.json
+/Client/Client/**/launchSettings.json
 /Config/ConfigAPI/**/launchSettings.json
 /Config/TestClient/**/launchSettings.json
 /Log/LogAPI/**/launchSettings.json
