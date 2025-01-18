@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Data.Internal
+namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public class WorkTaskCommentDataFactory : DataFactoryBase<CommentData>, IWorkTaskCommentDataFactory
     {

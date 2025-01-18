@@ -31,4 +31,8 @@
 	  <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Internal\MongoDb\" />
+	</ItemGroup>
+
 </Project>

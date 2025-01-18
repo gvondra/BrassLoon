@@ -3,7 +3,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using BrassLoon.DataClient;
 
-namespace BrassLoon.WorkTask.Data.Internal
+namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public class PurgeDataSaver : DataSaverBase, IPurgeDataSaver
     {

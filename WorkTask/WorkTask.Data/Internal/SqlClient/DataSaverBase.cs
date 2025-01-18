@@ -1,6 +1,6 @@
 ﻿using BrassLoon.DataClient;
 
-namespace BrassLoon.WorkTask.Data.Internal
+namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public abstract class DataSaverBase
     {

@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using BrassLoon.DataClient;
-using BrassLoon.WorkTask.Data.Internal;
+using BrassLoon.WorkTask.Data.Internal.SqlClient;
 
 namespace BrassLoon.WorkTask.Data
 {

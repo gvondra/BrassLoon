@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using BrassLoon.DataClient;
 using BrassLoon.WorkTask.Data.Models;
 
-namespace BrassLoon.WorkTask.Data.Internal
+namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public class PurgeWorkerDataFactory : DataFactoryBase<PurgeWorkerData>, IPurgeWorkerDataFactory
     {

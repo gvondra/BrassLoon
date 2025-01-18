@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BrassLoon.WorkTask.Data.Internal
+namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public class WorkTaskStatusDataFactory : DataFactoryBase<WorkTaskStatusData>, IWorkTaskStatusDataFactory
     {
