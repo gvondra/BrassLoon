@@ -16,8 +16,8 @@ namespace BrassLoon.WorkTask.Framework
         DateTime UpdateTimestamp { get; }
         int WorkTaskCount { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
-        Task Update(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
+        Task Update(ISaveSettings settings);
 
         IWorkTaskStatus CreateWorkTaskStatus(string code);
     }

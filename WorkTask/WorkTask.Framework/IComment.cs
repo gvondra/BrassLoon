@@ -11,6 +11,6 @@ namespace BrassLoon.WorkTask.Framework
         string Text { get; }
         DateTime CreateTimestamp { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
     }
 }

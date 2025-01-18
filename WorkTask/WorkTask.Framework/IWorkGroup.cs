@@ -16,8 +16,8 @@ namespace BrassLoon.WorkTask.Framework
         IReadOnlyList<string> MemberUserIds { get; }
         IReadOnlyList<Guid> WorkTaskTypeIds { get; }
 
-        Task Create(ITransactionHandler transactionHandler);
-        Task Update(ITransactionHandler transactionHandler);
+        Task Create(ISaveSettings settings);
+        Task Update(ISaveSettings settings);
 
         void AddMember(string userId);
         void RemoveMember(string userId);

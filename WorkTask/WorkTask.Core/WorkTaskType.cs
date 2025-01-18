@@ -40,11 +40,11 @@ namespace BrassLoon.WorkTask.Core
 
         public short? PurgePeriod { get => _data.PurgePeriod; set => _data.PurgePeriod = value > 0 ? value : default; }
 
-        public Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data);
+        public Task Create(ISaveSettings settings) => _dataSaver.Create(settings, _data);
 
         public IWorkTaskStatus CreateWorkTaskStatus(string code)
             => _factory.GetWorkTaskStatusFactory().Create(this, code);
 
-        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(ISaveSettings settings) => _dataSaver.Update(settings, _data);
     }
 }

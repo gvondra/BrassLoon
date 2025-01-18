@@ -7,10 +7,17 @@ namespace WorkTaskRPC
 #pragma warning disable S101 // Types should be named in PascalCase
     public class WorkTakRPCModule : Module
     {
+        private readonly bool _useMongoDb;
+
+        public WorkTakRPCModule(bool useMongoDb)
+        {
+            _useMongoDb = useMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule());
+            _ = builder.RegisterModule(new BrassLoon.WorkTask.Core.WorkTaskCoreModule(_useMongoDb));
             _ = builder.RegisterModule(new BrassLoon.Interface.Account.AccountInterfaceModule());
             _ = builder.RegisterType<DomainAcountAccessVerifier>().As<IDomainAcountAccessVerifier>();
             _ = builder.RegisterType<MetaDataProcessor>()

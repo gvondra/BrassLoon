@@ -56,23 +56,23 @@ namespace BrassLoon.WorkTask.Core
         public DateTime? AssignedDate { get => _data.AssignedDate; set => _data.AssignedDate = value; }
         public DateTime? ClosedDate { get => _data.ClosedDate; private set => _data.ClosedDate = value; }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(ISaveSettings settings)
         {
             if (_workTaskType == null)
                 throw new ApplicationException("Unable to create work task as no work task type was specified");
             SetWorkTaskTypeId(_workTaskType.WorkTaskTypeId);
             SetWorkTaskStatusId();
             SetClosedDate();
-            await _dataSaver.Create(transactionHandler, _data);
-            await SaveNewContexts(transactionHandler);
+            await _dataSaver.Create(settings, _data);
+            await SaveNewContexts(settings);
         }
 
-        public async Task Update(ITransactionHandler transactionHandler)
+        public async Task Update(ISaveSettings settings)
         {
             SetWorkTaskStatusId();
             SetClosedDate();
-            await _dataSaver.Update(transactionHandler, _data);
-            await SaveNewContexts(transactionHandler);
+            await _dataSaver.Update(settings, _data);
+            await SaveNewContexts(settings);
         }
 
         private void SetWorkTaskTypeId(Guid value) => _data.WorkTaskTypeId = value;
@@ -109,13 +109,13 @@ namespace BrassLoon.WorkTask.Core
             return workTaskContext;
         }
 
-        private async Task SaveNewContexts(ITransactionHandler transactionHandler)
+        private async Task SaveNewContexts(ISaveSettings settings)
         {
             if (_newContexts != null)
             {
                 foreach (IWorkTaskContext context in _newContexts)
                 {
-                    await context.Create(transactionHandler);
+                    await context.Create(settings);
                 }
             }
         }

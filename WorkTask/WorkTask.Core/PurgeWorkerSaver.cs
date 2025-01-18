@@ -21,11 +21,11 @@ namespace BrassLoon.WorkTask.Core
         {
             if (purgeWorker != null)
             {
-                await Saver.Save(new TransactionHandler(settings), async th =>
+                await Saver.Save(new SaveSettings(settings), async ss =>
                 {
                     for (int i = 0; i < purgeWorker.Length; i += 1)
                     {
-                        await purgeWorker[i].Update(th);
+                        await purgeWorker[i].Update(ss);
                     }
                 });
             }

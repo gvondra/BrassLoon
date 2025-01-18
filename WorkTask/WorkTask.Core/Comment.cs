@@ -23,6 +23,6 @@ namespace BrassLoon.WorkTask.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public abstract Task Create(ITransactionHandler transactionHandler);
+        public abstract Task Create(ISaveSettings settings);
     }
 }

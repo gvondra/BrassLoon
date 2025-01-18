@@ -78,10 +78,10 @@ namespace BrassLoon.WorkTask.Core
             }
         }
 
-        public async Task Create(ITransactionHandler transactionHandler)
+        public async Task Create(ISaveSettings settings)
         {
-            await _dataSaver.Create(transactionHandler, _data);
-            await SaveMemberChanges(transactionHandler);
+            await _dataSaver.Create(settings, _data);
+            await SaveMemberChanges(settings);
         }
 
         public void RemoveMember(string userId)
@@ -93,10 +93,10 @@ namespace BrassLoon.WorkTask.Core
             _deletedMemberData.AddRange(_data.Members.Where(m => string.Equals(userId, m.UserId, StringComparison.OrdinalIgnoreCase) && !_deletedMemberData.Exists(d => d.WorkGroupMemberId.Equals(m.WorkGroupMemberId))));
         }
 
-        public async Task Update(ITransactionHandler transactionHandler)
+        public async Task Update(ISaveSettings settings)
         {
-            await _dataSaver.Update(transactionHandler, _data);
-            await SaveMemberChanges(transactionHandler);
+            await _dataSaver.Update(settings, _data);
+            await SaveMemberChanges(settings);
         }
 
         void DataClient.IDbTransactionObserver.AfterCommit()
@@ -128,7 +128,7 @@ namespace BrassLoon.WorkTask.Core
 
         void DataClient.IDbTransactionObserver.BeforeRollback() { }
 
-        private async Task SaveMemberChanges(ITransactionHandler transactionHandler)
+        private async Task SaveMemberChanges(ISaveSettings settings)
         {
             if (_data.Members == null)
                 _data.Members = new List<WorkGroupMemberData>();
@@ -137,14 +137,14 @@ namespace BrassLoon.WorkTask.Core
                 foreach (WorkGroupMemberData data in _newMemberData)
                 {
                     data.WorkGroupId = WorkGroupId;
-                    await _workGroupMemberDataSaver.Create(transactionHandler, data);
+                    await _workGroupMemberDataSaver.Create(settings, data);
                 }
             }
             if (_deletedMemberData != null)
             {
                 foreach (WorkGroupMemberData data in _deletedMemberData)
                 {
-                    await _workGroupMemberDataSaver.Delete(transactionHandler, data.WorkGroupMemberId);
+                    await _workGroupMemberDataSaver.Delete(settings, data.WorkGroupMemberId);
                 }
             }
         }

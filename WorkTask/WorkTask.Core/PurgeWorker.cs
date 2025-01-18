@@ -31,7 +31,7 @@ namespace BrassLoon.WorkTask.Core
 
         public DateTime UpdateTimestamp => _data.UpdateTimestamp;
 
-        public Task Update(ITransactionHandler transactionHandler)
-            => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(ISaveSettings settings)
+            => _dataSaver.Update(settings, _data);
     }
 }

@@ -23,6 +23,6 @@ namespace BrassLoon.WorkTask.Core
             _workTaskId = workTaskId;
         }
 
-        public override Task Create(ITransactionHandler transactionHandler) => _dataSaver.Create(transactionHandler, _data, _workTaskId);
+        public override Task Create(ISaveSettings settings) => _dataSaver.Create(settings, _data, _workTaskId);
     }
 }

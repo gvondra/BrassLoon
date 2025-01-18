@@ -38,7 +38,6 @@ namespace BrassLoon.WorkTask.Core
             return result;
         }
 
-
         public async ValueTask DisposeAsync()
         {
             if (_dataEnumerator != null)

@@ -39,7 +39,7 @@ namespace BrassLoon.WorkTask.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public Task Create(ITransactionHandler transactionHandler)
+        public Task Create(ISaveSettings settings)
         {
             if (_workTask == null)
             {
@@ -47,7 +47,7 @@ namespace BrassLoon.WorkTask.Core
                 // Make sure to use the contructor that takes an IWorkTask when creating new work task contexts
             }
             WorkTaskId = _workTask.WorkTaskId;
-            return _dataSaver.Create(transactionHandler, _data);
+            return _dataSaver.Create(settings, _data);
         }
     }
 }

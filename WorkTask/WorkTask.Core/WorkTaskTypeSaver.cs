@@ -20,12 +20,12 @@ namespace BrassLoon.WorkTask.Core
             if (statuses != null && statuses.Length > 0)
             {
                 return Saver.Save(
-                    new TransactionHandler(settings),
-                    async th =>
+                    new SaveSettings(settings),
+                    async ss =>
                     {
                         for (int i = 0; i < statuses.Length; i += 1)
                         {
-                            await statuses[i].Create(th);
+                            await statuses[i].Create(ss);
                         }
                     });
             }
@@ -40,12 +40,12 @@ namespace BrassLoon.WorkTask.Core
             if (types != null && types.Length > 0)
             {
                 return Saver.Save(
-                    new TransactionHandler(settings),
-                    async th =>
+                    new SaveSettings(settings),
+                    async ss =>
                     {
                         for (int i = 0; i < types.Length; i += 1)
                         {
-                            await types[i].Create(th);
+                            await types[i].Create(ss);
                         }
                     });
             }
@@ -60,12 +60,12 @@ namespace BrassLoon.WorkTask.Core
             if (ids != null && ids.Length > 0)
             {
                 return Saver.Save(
-                    new TransactionHandler(settings),
-                    async th =>
+                    new SaveSettings(settings),
+                    async ss =>
                     {
                         for (int i = 0; i < ids.Length; i += 1)
                         {
-                            await _statusDataSaver.Delete(th, ids[i]);
+                            await _statusDataSaver.Delete(ss, ids[i]);
                         }
                     });
             }
@@ -80,12 +80,12 @@ namespace BrassLoon.WorkTask.Core
             if (statuses != null && statuses.Length > 0)
             {
                 return Saver.Save(
-                    new TransactionHandler(settings),
-                    async th =>
+                    new SaveSettings(settings),
+                    async ss =>
                     {
                         for (int i = 0; i < statuses.Length; i += 1)
                         {
-                            await statuses[i].Update(th);
+                            await statuses[i].Update(ss);
                         }
                     });
             }
@@ -100,12 +100,12 @@ namespace BrassLoon.WorkTask.Core
             if (types != null && types.Length > 0)
             {
                 return Saver.Save(
-                    new TransactionHandler(settings),
-                    async th =>
+                    new SaveSettings(settings),
+                    async ss =>
                     {
                         for (int i = 0; i < types.Length; i += 1)
                         {
-                            await types[i].Update(th);
+                            await types[i].Update(ss);
                         }
                     });
             }

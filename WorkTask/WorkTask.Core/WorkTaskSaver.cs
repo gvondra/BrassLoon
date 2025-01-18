@@ -18,9 +18,9 @@ namespace BrassLoon.WorkTask.Core
         public async Task<bool> Claim(ISettings settings, Guid domainId, Guid id, string userId, DateTime? assingedDate = null)
         {
             bool result = false;
-            await Saver.Save(new TransactionHandler(settings), async (th) =>
+            await Saver.Save(new SaveSettings(settings), async (ss) =>
             {
-                result = await _dataSaver.Claim(th, domainId, id, userId, assingedDate);
+                result = await _dataSaver.Claim(ss, domainId, id, userId, assingedDate);
             });
             return result;
         }
@@ -29,11 +29,11 @@ namespace BrassLoon.WorkTask.Core
         {
             if (workTasks != null && workTasks.Length > 0)
             {
-                return Saver.Save(new TransactionHandler(settings), async th =>
+                return Saver.Save(new SaveSettings(settings), async ss =>
                 {
                     for (int i = 0; i < workTasks.Length; i += 1)
                     {
-                        await workTasks[i].Create(th);
+                        await workTasks[i].Create(ss);
                     }
                 });
             }
@@ -47,11 +47,11 @@ namespace BrassLoon.WorkTask.Core
         {
             if (workTasks != null && workTasks.Length > 0)
             {
-                return Saver.Save(new TransactionHandler(settings), async th =>
+                return Saver.Save(new SaveSettings(settings), async ss =>
                 {
                     for (int i = 0; i < workTasks.Length; i += 1)
                     {
-                        await workTasks[i].Update(th);
+                        await workTasks[i].Update(ss);
                     }
                 });
             }

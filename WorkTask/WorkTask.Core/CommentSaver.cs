@@ -10,13 +10,15 @@ namespace BrassLoon.WorkTask.Core
         {
             if (comments != null && comments.Length > 0)
             {
-                return Saver.Save(new TransactionHandler(settings), async th =>
-                {
-                    for (int i = 1; i < comments.Length; i += 1)
+                return Saver.Save(
+                    new SaveSettings(settings),
+                    async ss =>
                     {
-                        await comments[i].Create(th);
-                    }
-                });
+                        for (int i = 1; i < comments.Length; i += 1)
+                        {
+                            await comments[i].Create(ss);
+                        }
+                    });
             }
             else
             {

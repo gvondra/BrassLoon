@@ -49,15 +49,15 @@ namespace BrassLoon.WorkTask.Core
         public bool IsDefaultStatus { get => _data.IsDefaultStatus; set => _data.IsDefaultStatus = value; }
         public bool IsClosedStatus { get => _data.IsClosedStatus; set => _data.IsClosedStatus = value; }
 
-        public Task Create(ITransactionHandler transactionHandler)
+        public Task Create(ISaveSettings settings)
         {
             if (_workTaskType == null)
                 throw new ArgumentException($"{nameof(_workTaskType)} is null");
             WorkTaskTypeId = _workTaskType.WorkTaskTypeId;
             DomainId = _workTaskType.DomainId;
-            return _dataSaver.Create(transactionHandler, _data);
+            return _dataSaver.Create(settings, _data);
         }
 
-        public Task Update(ITransactionHandler transactionHandler) => _dataSaver.Update(transactionHandler, _data);
+        public Task Update(ISaveSettings settings) => _dataSaver.Update(settings, _data);
     }
 }

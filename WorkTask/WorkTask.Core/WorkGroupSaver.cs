@@ -18,29 +18,29 @@ namespace BrassLoon.WorkTask.Core
         public Task Create(ISettings settings, params IWorkGroup[] workGroups)
         {
             ArgumentNullException.ThrowIfNull(workGroups);
-            return Saver.Save(new TransactionHandler(settings), async th =>
+            return Saver.Save(new SaveSettings(settings), async ss =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)
                 {
-                    await workGroups[i].Create(th);
+                    await workGroups[i].Create(ss);
                 }
             });
         }
 
         public Task CreateWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
-            => Saver.Save(new TransactionHandler(settings), th => _dataSaver.Create(th, domainId, workTaskTypeId, workGroupId));
+            => Saver.Save(new SaveSettings(settings), ss => _dataSaver.Create(ss, domainId, workTaskTypeId, workGroupId));
 
         public Task DeleteWorkTaskTypeGroup(ISettings settings, Guid domainId, Guid workTaskTypeId, Guid workGroupId)
-            => Saver.Save(new TransactionHandler(settings), th => _dataSaver.Delete(th, domainId, workTaskTypeId, workGroupId));
+            => Saver.Save(new SaveSettings(settings), ss => _dataSaver.Delete(ss, domainId, workTaskTypeId, workGroupId));
 
         public Task Update(ISettings settings, params IWorkGroup[] workGroups)
         {
             ArgumentNullException.ThrowIfNull(workGroups);
-            return Saver.Save(new TransactionHandler(settings), async th =>
+            return Saver.Save(new SaveSettings(settings), async ss =>
             {
                 for (int i = 0; i < workGroups.Length; i += 1)
                 {
-                    await workGroups[i].Update(th);
+                    await workGroups[i].Update(ss);
                 }
             });
         }

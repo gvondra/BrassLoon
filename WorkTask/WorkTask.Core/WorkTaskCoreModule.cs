@@ -5,10 +5,17 @@ namespace BrassLoon.WorkTask.Core
 {
     public class WorkTaskCoreModule : Module
     {
+        private readonly bool _useMongoDb;
+
+        public WorkTaskCoreModule(bool useMongoDb = false)
+        {
+            _useMongoDb = useMongoDb;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            _ = builder.RegisterModule(new Data.WorkTaskDataModule());
+            _ = builder.RegisterModule(new Data.WorkTaskDataModule(_useMongoDb));
             _ = builder.RegisterType<CommentSaver>().As<ICommentSaver>();
             _ = builder.RegisterType<PurgeSaver>().As<IPurgeSaver>();
             _ = builder.RegisterType<PurgeWorkerFactory>().As<IPurgeWorkerFactory>();
