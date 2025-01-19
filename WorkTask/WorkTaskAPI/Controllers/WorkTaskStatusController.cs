@@ -83,7 +83,8 @@ namespace WorkTaskAPI.Controllers
                     IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.CreateWorkTaskStatus(workTaskStatus.Code);
                     IMapper mapper = CreateMapper();
                     _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
-                    await _workTaskTypeSaver.Create(settings, innerWorkTaskStatus);
+                    innerWorkTaskType.AddWorkTaskStatus(innerWorkTaskStatus);
+                    await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                     result = Ok(
                         mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
                 }
@@ -133,7 +134,7 @@ namespace WorkTaskAPI.Controllers
                     {
                         IMapper mapper = CreateMapper();
                         _ = mapper.Map(workTaskStatus, innerWorkTaskStatus);
-                        await _workTaskTypeSaver.Update(settings, innerWorkTaskStatus);
+                        await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                         result = Ok(
                             mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
                     }
@@ -185,16 +186,16 @@ namespace WorkTaskAPI.Controllers
                     {
                         result = NotFound();
                     }
+                    else if (innerWorkTaskStatus.WorkTaskCount > 0)
+                    {
+                        result = BadRequest("Unable to delete status in use");
+                    }
                     else
                     {
-                        if (innerWorkTaskStatus.WorkTaskCount > 0)
-                            result = BadRequest("Unable to delete status in use");
+                        innerWorkTaskType.RemoveWorkTaskStatus(innerWorkTaskStatus);
+                        await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
+                        result = Ok();
                     }
-                }
-                if (result == null && id.HasValue)
-                {
-                    await _workTaskTypeSaver.DeleteStatus(settings, id.Value);
-                    result = Ok();
                 }
             }
             catch (Exception ex)

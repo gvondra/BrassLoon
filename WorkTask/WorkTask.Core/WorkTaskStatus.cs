@@ -1,37 +1,21 @@
-﻿using BrassLoon.CommonCore;
-using BrassLoon.WorkTask.Data;
-using BrassLoon.WorkTask.Data.Models;
+﻿using BrassLoon.WorkTask.Data.Models;
 using BrassLoon.WorkTask.Framework;
 using System;
-using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
 {
-    public class WorkTaskStatus : IWorkTaskStatus
+    public sealed class WorkTaskStatus : IWorkTaskStatus
     {
         private readonly WorkTaskStatusData _data;
-        private readonly IWorkTaskStatusDataSaver _dataSaver;
-        private readonly IWorkTaskType _workTaskType;
 
-        public WorkTaskStatus(
-            WorkTaskStatusData data,
-            IWorkTaskStatusDataSaver dataSaver,
-            IWorkTaskType workTaskType)
+        public WorkTaskStatus(WorkTaskStatusData data)
         {
             _data = data;
-            _dataSaver = dataSaver;
-            _workTaskType = workTaskType;
         }
 
-        public WorkTaskStatus(
-            WorkTaskStatusData data,
-            IWorkTaskStatusDataSaver dataSaver)
-            : this(data, dataSaver, null)
-        { }
+        public Guid WorkTaskTypeId => _data.WorkTaskTypeId;
 
-        public Guid WorkTaskTypeId { get => _data.WorkTaskTypeId; private set => _data.WorkTaskTypeId = value; }
-
-        public Guid DomainId { get => _data.DomainId; private set => _data.DomainId = value; }
+        public Guid DomainId => _data.DomainId;
 
         public string Name { get => _data.Name; set => _data.Name = value; }
         public string Description { get => _data.Description; set => _data.Description = value; }
@@ -49,15 +33,23 @@ namespace BrassLoon.WorkTask.Core
         public bool IsDefaultStatus { get => _data.IsDefaultStatus; set => _data.IsDefaultStatus = value; }
         public bool IsClosedStatus { get => _data.IsClosedStatus; set => _data.IsClosedStatus = value; }
 
-        public Task Create(ISaveSettings settings)
+        internal WorkTaskStatusData InnerData => _data;
+
+        public static bool operator ==(WorkTaskStatus left, WorkTaskStatus right) => left.Equals(right);
+        public static bool operator !=(WorkTaskStatus left, WorkTaskStatus right) => !left.Equals(right);
+
+        public bool Equals(IWorkTaskStatus other)
+            => ReferenceEquals(this, other) || WorkTaskStatusId == other.WorkTaskStatusId;
+
+        public override bool Equals(object obj)
         {
-            if (_workTaskType == null)
-                throw new ArgumentException($"{nameof(_workTaskType)} is null");
-            WorkTaskTypeId = _workTaskType.WorkTaskTypeId;
-            DomainId = _workTaskType.DomainId;
-            return _dataSaver.Create(settings, _data);
+            if (obj is IWorkTaskStatus other)
+                return Equals(other);
+            else
+                return false;
         }
 
-        public Task Update(ISaveSettings settings) => _dataSaver.Update(settings, _data);
+        public override int GetHashCode()
+            => HashCode.Combine(WorkTaskStatusId);
     }
 }

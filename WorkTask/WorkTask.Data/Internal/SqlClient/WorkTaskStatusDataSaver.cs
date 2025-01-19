@@ -1,8 +1,10 @@
 ﻿using BrassLoon.DataClient;
 using BrassLoon.WorkTask.Data.Models;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Data.Internal.SqlClient
@@ -53,6 +55,23 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             _ = await command.ExecuteNonQueryAsync();
         }
 
+        public async Task DeleteExcluding(CommonData.ISaveSettings settings, IEnumerable<Guid> ids)
+        {
+            await ProviderFactory.EstablishTransaction(settings);
+            using DbCommand command = settings.Connection.CreateCommand();
+            command.CommandText = "[blwt].[DeleteWorkTaskStatus_Excluding]";
+            command.CommandType = CommandType.StoredProcedure;
+            command.Transaction = settings.Transaction.InnerTransaction;
+
+            DataUtil.AddParameter(
+                ProviderFactory,
+                command.Parameters,
+                "ids",
+                DbType.AnsiString,
+                DataUtil.GetParameterValue(string.Join(",", ids.Select(i => i.ToString("N")))));
+            _ = await command.ExecuteNonQueryAsync();
+        }
+
         public async Task Update(CommonData.ISaveSettings settings, WorkTaskStatusData data)
         {
             if (data.Manager.GetState(data) == DataState.Updated)
@@ -73,6 +92,22 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 _ = await command.ExecuteNonQueryAsync();
                 data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
+        }
+
+        public async Task Save(CommonData.ISaveSettings settings, IEnumerable<WorkTaskStatusData> statuses)
+        {
+            foreach (WorkTaskStatusData data in statuses)
+            {
+                if (data.Manager.GetState(data) == DataState.New)
+                {
+                    await Create(settings, data);
+                }
+                else if (data.Manager.GetState(data) == DataState.Updated)
+                {
+                    await Update(settings, data);
+                }
+            }
+            await DeleteExcluding(settings, statuses.Select(wts => wts.WorkTaskStatusId));
         }
 
         private void AddCommonParameters(IList commandParameters, WorkTaskStatusData data)

@@ -15,20 +15,17 @@ namespace BrassLoon.WorkTask.Core
         private readonly IWorkTaskDataSaver _dataSaver;
         private readonly IWorkTaskContextDataSaver _contextDataSaver;
         private readonly WorkTaskTypeFactory _typeFactory;
-        private readonly WorkTaskStatusFactory _statusFactory;
 
         public WorkTaskFactory(
             IWorkTaskDataFactory dataFactory,
             IWorkTaskDataSaver dataSaver,
             IWorkTaskContextDataSaver contextDataSaver,
-            WorkTaskTypeFactory typeFactory,
-            WorkTaskStatusFactory statusFactory)
+            WorkTaskTypeFactory typeFactory)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
             _contextDataSaver = contextDataSaver;
             _typeFactory = typeFactory;
-            _statusFactory = statusFactory;
         }
 
         private WorkTask Create(
@@ -91,7 +88,7 @@ namespace BrassLoon.WorkTask.Core
         private WorkTask LoadWorkTask(WorkTaskData data)
         {
             WorkTaskType workTaskType = _typeFactory.Create(data.WorkTaskType);
-            WorkTaskStatus workTaskStatus = _statusFactory.Create(data.WorkTaskStatus);
+            WorkTaskStatus workTaskStatus = WorkTaskStatusFactory.Create(data.WorkTaskStatus);
             List<IWorkTaskContext> taskContexts = data.WorkTaskContexts.Select<WorkTaskContextData, IWorkTaskContext>(Create).ToList();
             WorkTask workTask = Create(data, workTaskType, taskContexts);
             workTask.WorkTaskStatus = workTaskStatus;

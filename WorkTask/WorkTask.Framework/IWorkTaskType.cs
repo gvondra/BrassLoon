@@ -22,5 +22,7 @@ namespace BrassLoon.WorkTask.Framework
         Task Update(ISaveSettings settings);
 
         IWorkTaskStatus CreateWorkTaskStatus(string code);
+        void AddWorkTaskStatus(IWorkTaskStatus workTaskStatus);
+        void RemoveWorkTaskStatus(IWorkTaskStatus workTaskStatus);
     }
 }

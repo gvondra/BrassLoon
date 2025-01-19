@@ -9,8 +9,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     public class WorkTaskTypeDataSaver : DataSaverBase, IWorkTaskTypeDataSaver
     {
-        public WorkTaskTypeDataSaver(IDbProviderFactory providerFactory)
-            : base(providerFactory) { }
+        private readonly IWorkTaskStatusDataSaver _statusDataSaver;
+
+        public WorkTaskTypeDataSaver(IDbProviderFactory providerFactory, IWorkTaskStatusDataSaver statusDataSaver)
+            : base(providerFactory)
+        {
+            _statusDataSaver = statusDataSaver;
+        }
 
         public async Task Create(CommonData.ISaveSettings settings, WorkTaskTypeData data)
         {
@@ -38,6 +43,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 data.WorkTaskTypeId = (Guid)id.Value;
                 data.CreateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
                 data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
+                await _statusDataSaver.Save(settings, data.Statuses);
             }
         }
 
@@ -61,6 +67,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 _ = await command.ExecuteNonQueryAsync();
                 data.UpdateTimestamp = DateTime.SpecifyKind((DateTime)timestamp.Value, DateTimeKind.Utc);
             }
+            await _statusDataSaver.Save(settings, data.Statuses);
         }
 
         private void AddCommonParameters(IList commandParameters, WorkTaskTypeData data)

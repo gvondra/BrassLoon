@@ -1,10 +1,8 @@
-﻿using BrassLoon.CommonCore;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace BrassLoon.WorkTask.Framework
 {
-    public interface IWorkTaskStatus
+    public interface IWorkTaskStatus : IEquatable<IWorkTaskStatus>
     {
         Guid WorkTaskStatusId { get; }
         Guid WorkTaskTypeId { get; }
@@ -17,8 +15,5 @@ namespace BrassLoon.WorkTask.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         int WorkTaskCount { get; }
-
-        Task Create(ISaveSettings settings);
-        Task Update(ISaveSettings settings);
     }
 }

@@ -63,7 +63,8 @@ namespace WorkTaskRPC.Services
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task type \"{request.WorkTaskTypeId}\" not found");
                 IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.CreateWorkTaskStatus(request.Code);
                 Map(request, innerWorkTaskStatus);
-                await _workTaskTypeSaver.Create(settings, innerWorkTaskStatus);
+                innerWorkTaskType.AddWorkTaskStatus(innerWorkTaskStatus);
+                await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
                 return Map(innerWorkTaskStatus);
             }
             catch (RpcException)
@@ -106,7 +107,7 @@ namespace WorkTaskRPC.Services
                 if (innerWorkTaskStatus == null || innerWorkTaskType.WorkTaskTypeId != innerWorkTaskStatus.WorkTaskTypeId)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task status \"{id}\" not found");
                 Map(request, innerWorkTaskStatus);
-                await _workTaskTypeSaver.Update(settings, innerWorkTaskStatus);
+                await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                 return Map(innerWorkTaskStatus);
             }
             catch (RpcException)
@@ -149,9 +150,14 @@ namespace WorkTaskRPC.Services
                     && innerWorkTaskType.WorkTaskTypeId == innerWorkTaskStatus.WorkTaskTypeId)
                 {
                     if (innerWorkTaskStatus.WorkTaskCount > 0)
+                    {
                         throw new RpcException(new Status(StatusCode.FailedPrecondition, "Bad Request"), "Unable to delete status is in use");
+                    }
                     else
-                        await _workTaskTypeSaver.DeleteStatus(settings, id);
+                    {
+                        innerWorkTaskType.RemoveWorkTaskStatus(innerWorkTaskStatus);
+                        await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
+                    }
                 }
                 return new Empty();
             }
