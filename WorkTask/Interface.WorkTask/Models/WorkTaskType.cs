@@ -1,5 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BrassLoon.Interface.WorkTask.Models
 {
@@ -14,6 +16,7 @@ namespace BrassLoon.Interface.WorkTask.Models
         public DateTime? CreateTimestamp { get; set; }
         public DateTime? UpdateTimestamp { get; set; }
         public int? WorkTaskCount { get; set; }
+        public List<WorkTaskStatus> Statuses { get; set; }
 
         internal static WorkTaskType Create(Protos.WorkTaskType proto)
         {
@@ -27,13 +30,14 @@ namespace BrassLoon.Interface.WorkTask.Models
                 PurgePeriod = proto.PurgePeriod.HasValue ? (short)proto.PurgePeriod.Value : default(short?),
                 UpdateTimestamp = proto.UpdateTimestamp?.ToDateTime(),
                 WorkTaskCount = proto.WorkTaskCount,
-                WorkTaskTypeId = !string.IsNullOrEmpty(proto.WorkTaskTypeId) ? Guid.Parse(proto.WorkTaskTypeId) : default(Guid?)
+                WorkTaskTypeId = !string.IsNullOrEmpty(proto.WorkTaskTypeId) ? Guid.Parse(proto.WorkTaskTypeId) : default(Guid?),
+                Statuses = proto.Statuses?.Select(WorkTaskStatus.Create).ToList() ?? new List<WorkTaskStatus>()
             };
         }
 
         internal Protos.WorkTaskType ToProto()
         {
-            return new Protos.WorkTaskType
+            Protos.WorkTaskType workTaskType = new Protos.WorkTaskType
             {
                 Code = Code,
                 Title = Title,
@@ -45,6 +49,11 @@ namespace BrassLoon.Interface.WorkTask.Models
                 WorkTaskCount = WorkTaskCount,
                 WorkTaskTypeId = WorkTaskTypeId?.ToString("D") ?? string.Empty
             };
+            if (Statuses != null)
+            {
+                workTaskType.Statuses.AddRange(Statuses.Select(sts => sts.ToProto()));
+            }
+            return workTaskType;
         }
     }
 }

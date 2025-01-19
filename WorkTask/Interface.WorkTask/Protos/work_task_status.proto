@@ -7,22 +7,9 @@ import "google/protobuf/wrappers.proto";
 option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
 
 service WorkTaskStatusService {
-    rpc GetAll(GetAllWorkTaskStatusRequest) returns (stream WorkTaskStatus);
-    rpc Get(GetWorkTaskStatusRequest) returns (WorkTaskStatus);
     rpc Create(WorkTaskStatus) returns (WorkTaskStatus);
     rpc Update(WorkTaskStatus) returns (WorkTaskStatus);
     rpc Delete(DateWorkTaskStatusRequest) returns (google.protobuf.Empty);
-}
-
-message GetAllWorkTaskStatusRequest {
-    string DomainId = 1;
-    string WorkTaskTypeId = 2;
-}
-
-message GetWorkTaskStatusRequest {
-    string DomainId = 1;
-    string WorkTaskTypeId = 2;
-    string WorkTaskStatusId = 3;
 }
 
 message DateWorkTaskStatusRequest {

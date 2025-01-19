@@ -3,6 +3,7 @@
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "Protos/get_by_domain_request.proto";
+import "Protos/work_task_status.proto";
 
 option csharp_namespace = "BrassLoon.Interface.WorkTask.Protos";
 
@@ -40,4 +41,5 @@ message WorkTaskType {
     google.protobuf.Timestamp CreateTimestamp = 7;
     google.protobuf.Timestamp UpdateTimestamp = 8;
     google.protobuf.Int32Value WorkTaskCount = 9;
+    repeated WorkTaskStatus Statuses = 10;
 }
