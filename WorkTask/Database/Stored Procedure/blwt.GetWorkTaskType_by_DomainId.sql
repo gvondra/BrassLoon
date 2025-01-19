@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [blwt].[GetWorkTaskType_by_DomainId]
 	@domainId UNIQUEIDENTIFIER
 AS
+BEGIN
 SELECT [WorkTaskTypeId], [DomainId], [Code], [Title], [Description], [PurgePeriod],
 	[CreateTimestamp], [UpdateTimestamp],
 	(SELECT COUNT(1) FROM [blwt].[WorkTask] WITH(READUNCOMMITTED) WHERE [DomainId] = @domainId AND [WorkTaskTypeId] = [blwt].[WorkTaskType].[WorkTaskTypeId]) [WorkTaskCount]
@@ -8,3 +9,5 @@ FROM [blwt].[WorkTaskType]
 WHERE [DomainId] = @domainId
 ORDER BY [Title], [CreateTimestamp]
 ;
+EXEC [blwt].[GetWorkTaskStatus_by_DomainId] @domainId;
+END

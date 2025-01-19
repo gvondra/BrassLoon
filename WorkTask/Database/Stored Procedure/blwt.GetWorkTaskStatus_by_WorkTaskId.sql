@@ -6,6 +6,6 @@ SELECT TOP 1 [sts].[WorkTaskStatusId], [sts].[WorkTaskTypeId], [sts].[DomainId],
 	[sts].[CreateTimestamp], [sts].[UpdateTimestamp],
 	(SELECT COUNT(1) FROM [blwt].[WorkTask] WITH(READUNCOMMITTED) WHERE [DomainId] = [sts].[DomainId] AND [WorkTaskStatusId] = [sts].[WorkTaskStatusId]) [WorkTaskCount]
 FROM [blwt].[WorkTaskStatus] [sts]
-INNER JOIN [blwt].[WorkTask] [tsk] on [sts].[WorkTaskStatusId] = [tsk].[WorkTaskStatusId]
+INNER JOIN [blwt].[WorkTask] [tsk] on [sts].[WorkTaskTypeId] = [tsk].[WorkTaskTypeId]
 WHERE [tsk].[WorkTaskId] = @workTaskId
 ;

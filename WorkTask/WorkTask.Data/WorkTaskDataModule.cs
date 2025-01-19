@@ -46,7 +46,6 @@ namespace BrassLoon.WorkTask.Data
             _ = builder.RegisterType<SqlClient.WorkTaskContextDataSaver>().As<IWorkTaskContextDataSaver>();
             _ = builder.RegisterType<SqlClient.WorkTaskDataFactory>().As<IWorkTaskDataFactory>();
             _ = builder.RegisterType<SqlClient.WorkTaskDataSaver>().As<IWorkTaskDataSaver>();
-            _ = builder.RegisterType<SqlClient.WorkTaskStatusDataFactory>().As<IWorkTaskStatusDataFactory>();
             _ = builder.RegisterType<SqlClient.WorkTaskStatusDataSaver>().As<IWorkTaskStatusDataSaver>();
             _ = builder.RegisterType<SqlClient.WorkTaskTypeDataFactory>().As<IWorkTaskTypeDataFactory>();
             _ = builder.RegisterType<SqlClient.WorkTaskTypeDataSaver>().As<IWorkTaskTypeDataSaver>();

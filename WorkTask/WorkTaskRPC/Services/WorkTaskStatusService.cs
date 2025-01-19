@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrassLoon.CommonAPI;
@@ -18,7 +17,6 @@ namespace WorkTaskRPC.Services
         private readonly IMetaDataProcessor _metaDataProcessor;
         private readonly SettingsFactory _settingsFactory;
         private readonly ILogger<WorkTaskStatusService> _logger;
-        private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskTypeSaver _workTaskTypeSaver;
 
@@ -27,7 +25,6 @@ namespace WorkTaskRPC.Services
             IMetaDataProcessor metaDataProcessor,
             SettingsFactory settingsFactory,
             ILogger<WorkTaskStatusService> logger,
-            IWorkTaskStatusFactory workTaskStatusFactory,
             IWorkTaskTypeFactory workTaskTypeFactory,
             IWorkTaskTypeSaver workTaskTypeSaver)
         {
@@ -35,85 +32,10 @@ namespace WorkTaskRPC.Services
             _metaDataProcessor = metaDataProcessor;
             _settingsFactory = settingsFactory;
             _logger = logger;
-            _workTaskStatusFactory = workTaskStatusFactory;
             _workTaskTypeFactory = workTaskTypeFactory;
             _workTaskTypeSaver = workTaskTypeSaver;
         }
 
-        public override async Task GetAll(GetAllWorkTaskStatusRequest request, IServerStreamWriter<WorkTaskStatus> responseStream, ServerCallContext context)
-        {
-            try
-            {
-                Guid domainId;
-                Guid workTaskTypeId;
-                if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or work task type id \"{request.WorkTaskTypeId}\"");
-                string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
-                if (!await _domainAcountAccessVerifier.HasAccess(
-                    _settingsFactory.CreateAccount(accessToken),
-                    domainId,
-                    accessToken))
-                {
-                    throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
-                }
-                CoreSettings settings = _settingsFactory.CreateCore();
-                IEnumerable<IWorkTaskStatus> innerWorkTaskStatuses = await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId, workTaskTypeId);
-                foreach (WorkTaskStatus workTaskStatus in innerWorkTaskStatuses.Select(Map))
-                {
-                    await responseStream.WriteAsync(workTaskStatus);
-                }
-            }
-            catch (RpcException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
-            }
-        }
-
-        public override async Task<WorkTaskStatus> Get(GetWorkTaskStatusRequest request, ServerCallContext context)
-        {
-            try
-            {
-                Guid domainId;
-                Guid workTaskTypeId;
-                Guid id;
-                if (string.IsNullOrEmpty(request?.DomainId) || !Guid.TryParse(request.DomainId, out domainId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or invalid domain id \"{request?.DomainId}\"");
-                if (string.IsNullOrEmpty(request.WorkTaskTypeId) || !Guid.TryParse(request.WorkTaskTypeId, out workTaskTypeId))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or work task type id \"{request.WorkTaskTypeId}\"");
-                if (string.IsNullOrEmpty(request.WorkTaskStatusId) || !Guid.TryParse(request.WorkTaskStatusId, out id))
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Bad Request"), $"Missing or work task status id \"{request.WorkTaskStatusId}\"");
-                string accessToken = _metaDataProcessor.GetBearerAuthorizationToken(context.RequestHeaders);
-                if (!await _domainAcountAccessVerifier.HasAccess(
-                    _settingsFactory.CreateAccount(accessToken),
-                    domainId,
-                    accessToken))
-                {
-                    throw new RpcException(new Status(StatusCode.PermissionDenied, "Unauthorized"));
-                }
-                CoreSettings settings = _settingsFactory.CreateCore();
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
-                WorkTaskStatus workTaskStatus = null;
-                if (innerWorkTaskStatus != null)
-                    workTaskStatus = Map(innerWorkTaskStatus);
-                return workTaskStatus;
-            }
-            catch (RpcException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                throw new RpcException(new Status(StatusCode.Internal, "Internal System Error"), ex.Message);
-            }
-        }
         public override async Task<WorkTaskStatus> Create(WorkTaskStatus request, ServerCallContext context)
         {
             try
@@ -180,7 +102,7 @@ namespace WorkTaskRPC.Services
                 IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId, workTaskTypeId);
                 if (innerWorkTaskType == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task type \"{request.WorkTaskTypeId}\" not found");
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
+                IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(sts => sts.DomainId == domainId && sts.WorkTaskStatusId == id);
                 if (innerWorkTaskStatus == null || innerWorkTaskType.WorkTaskTypeId != innerWorkTaskStatus.WorkTaskTypeId)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Not Found"), $"Work task status \"{id}\" not found");
                 Map(request, innerWorkTaskStatus);
@@ -221,7 +143,7 @@ namespace WorkTaskRPC.Services
                 }
                 CoreSettings settings = _settingsFactory.CreateCore();
                 IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId, workTaskTypeId);
-                IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId, id);
+                IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(sts => sts.DomainId == domainId && sts.WorkTaskStatusId == id);
                 if (innerWorkTaskType != null
                     && innerWorkTaskStatus != null
                     && innerWorkTaskType.WorkTaskTypeId == innerWorkTaskStatus.WorkTaskTypeId)

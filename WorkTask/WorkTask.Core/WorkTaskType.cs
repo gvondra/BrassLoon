@@ -3,6 +3,9 @@ using BrassLoon.WorkTask.Data;
 using BrassLoon.WorkTask.Data.Models;
 using BrassLoon.WorkTask.Framework;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Core
@@ -12,15 +15,20 @@ namespace BrassLoon.WorkTask.Core
         private readonly WorkTaskTypeData _data;
         private readonly IWorkTaskTypeDataSaver _dataSaver;
         private readonly IWorkTaskTypeFactory _factory;
+        private readonly ImmutableList<IWorkTaskStatus> _statuses;
 
         public WorkTaskType(
             WorkTaskTypeData data,
             IWorkTaskTypeDataSaver dataSaver,
+            IWorkTaskStatusDataSaver statusDataSaver,
             IWorkTaskTypeFactory factory)
         {
             _data = data;
             _dataSaver = dataSaver;
             _factory = factory;
+            _statuses = data.Statuses != null
+                ? ImmutableList.CreateRange(data.Statuses.Select<WorkTaskStatusData, IWorkTaskStatus>(d => new WorkTaskStatus(d, statusDataSaver)))
+                : ImmutableList<IWorkTaskStatus>.Empty;
         }
 
         public Guid WorkTaskTypeId => _data.WorkTaskTypeId;
@@ -39,6 +47,8 @@ namespace BrassLoon.WorkTask.Core
         public int WorkTaskCount => _data.WorkTaskCount;
 
         public short? PurgePeriod { get => _data.PurgePeriod; set => _data.PurgePeriod = value > 0 ? value : default; }
+
+        public IEnumerable<IWorkTaskStatus> Statuses => _statuses;
 
         public Task Create(ISaveSettings settings) => _dataSaver.Create(settings, _data);
 

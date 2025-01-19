@@ -24,7 +24,6 @@ namespace WorkTaskAPI.Controllers
         private readonly IWorkTaskFactory _workTaskFactory;
         private readonly IWorkTaskSaver _workTaskSaver;
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
-        private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
         private readonly IWorkTaskPatcher _workTaskPatcher;
 
         public WorkTaskController(
@@ -37,7 +36,6 @@ namespace WorkTaskAPI.Controllers
             IWorkTaskFactory workTaskFactory,
             IWorkTaskSaver workTaskSaver,
             IWorkTaskTypeFactory workTaskTypeFactory,
-            IWorkTaskStatusFactory workTaskStatusFactory,
             IWorkTaskPatcher workTaskPatcher)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
@@ -45,7 +43,6 @@ namespace WorkTaskAPI.Controllers
             _workTaskFactory = workTaskFactory;
             _workTaskSaver = workTaskSaver;
             _workTaskTypeFactory = workTaskTypeFactory;
-            _workTaskStatusFactory = workTaskStatusFactory;
             _workTaskPatcher = workTaskPatcher;
 
         }
@@ -209,8 +206,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null && innerWorkTaskType != null)
                 {
-                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, innerWorkTaskType.WorkTaskTypeId))
-                        .FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
+                    innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
                     if (innerWorkTaskStatus == null)
                         result = BadRequest("Invalid work task status. The status doesn't exist or is not valid for the task type");
                 }
@@ -295,8 +291,7 @@ namespace WorkTaskAPI.Controllers
                 }
                 if (result == null && innerWorkTask != null)
                 {
-                    innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, innerWorkTask.WorkTaskType.WorkTaskTypeId))
-                        .FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
+                    innerWorkTaskStatus = innerWorkTask.WorkTaskType.Statuses.FirstOrDefault(s => s.WorkTaskStatusId.Equals(workTask.WorkTaskStatus.WorkTaskStatusId.Value));
                     if (innerWorkTaskStatus == null)
                         result = BadRequest("Invalid work task status. The status doesn't exist or is not valid for the task type");
                 }

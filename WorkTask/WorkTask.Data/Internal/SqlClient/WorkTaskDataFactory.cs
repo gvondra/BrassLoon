@@ -11,18 +11,15 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
     public class WorkTaskDataFactory : DataFactoryBase<WorkTaskData>, IWorkTaskDataFactory
     {
         private readonly IWorkTaskTypeDataFactory _workTaskTypeDataFactory;
-        private readonly IWorkTaskStatusDataFactory _workTaskStatusDataFactory;
         private readonly ILoaderFactory _loaderFactory;
 
         public WorkTaskDataFactory(
             IDbProviderFactory providerFactory,
             IWorkTaskTypeDataFactory workTaskTypeDataFactory,
-            IWorkTaskStatusDataFactory workTaskStatusDataFactory,
             ILoaderFactory loaderFactory)
             : base(providerFactory)
         {
             _workTaskTypeDataFactory = workTaskTypeDataFactory;
-            _workTaskStatusDataFactory = workTaskStatusDataFactory;
             _loaderFactory = loaderFactory;
         }
 
@@ -34,28 +31,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 DataUtil.CreateParameter(ProviderFactory, "id", DbType.Guid, id)
             };
             DataReaderProcess dataReaderProcess = new DataReaderProcess();
-            await dataReaderProcess.Read(
+            workTaskData = await dataReaderProcess.Read(
                 settings,
                 ProviderFactory,
                 "[blwt].[GetWorkTask]",
                 CommandType.StoredProcedure,
                 parameters: parameters,
-                readAction: async (reader) =>
-                {
-                    workTaskData = (await GenericDataFactory.LoadData(reader, Create, DataUtil.AssignDataStateManager)).FirstOrDefault();
-                    if (workTaskData != null)
-                    {
-                        GenericDataFactory<WorkTaskTypeData> typeFactory = new GenericDataFactory<WorkTaskTypeData>();
-                        GenericDataFactory<WorkTaskStatusData> statusFactory = new GenericDataFactory<WorkTaskStatusData>();
-                        GenericDataFactory<WorkTaskContextData> contextFactory = new GenericDataFactory<WorkTaskContextData>();
-                        _ = reader.NextResult();
-                        workTaskData.WorkTaskType = (await typeFactory.LoadData(reader, () => new WorkTaskTypeData(), DataUtil.AssignDataStateManager)).FirstOrDefault();
-                        _ = reader.NextResult();
-                        workTaskData.WorkTaskStatus = (await statusFactory.LoadData(reader, () => new WorkTaskStatusData(), DataUtil.AssignDataStateManager)).FirstOrDefault();
-                        _ = reader.NextResult();
-                        workTaskData.WorkTaskContexts = (await contextFactory.LoadData(reader, () => new WorkTaskContextData(), DataUtil.AssignDataStateManager)).ToList();
-                    }
-                });
+                readAction: async (reader) => (await ReadWorkTaskData(reader)).FirstOrDefault());
             return workTaskData;
         }
 
@@ -113,11 +95,21 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             GenericDataFactory<WorkTaskContextData> contextFactory = new GenericDataFactory<WorkTaskContextData>();
             IEnumerable<WorkTaskData> result = (await taskFactory.LoadData(reader, () => new WorkTaskData(), DataUtil.AssignDataStateManager)).ToList();
             _ = await reader.NextResultAsync();
-            List<WorkTaskTypeData> types = (await typeFactory.LoadData(reader, () => new WorkTaskTypeData(), DataUtil.AssignDataStateManager)).ToList();
+            IEnumerable<WorkTaskTypeData> types = await typeFactory.LoadData(reader, () => new WorkTaskTypeData(), DataUtil.AssignDataStateManager);
             _ = await reader.NextResultAsync();
             List<WorkTaskStatusData> statuses = (await statusFactory.LoadData(reader, () => new WorkTaskStatusData(), DataUtil.AssignDataStateManager)).ToList();
             _ = await reader.NextResultAsync();
             List<WorkTaskContextData> contexts = (await contextFactory.LoadData(reader, () => new WorkTaskContextData(), DataUtil.AssignDataStateManager)).ToList();
+            types = types.GroupJoin(
+                statuses,
+                typ => typ.WorkTaskTypeId,
+                sts => sts.WorkTaskTypeId,
+                (typ, sts) =>
+                {
+                    typ.Statuses = sts.ToList();
+                    return typ;
+                })
+                .ToList();
             result = result.GroupJoin(contexts, tsk => tsk.WorkTaskId, ctx => ctx.WorkTaskId, (tsk, ctxs) =>
             {
                 tsk.WorkTaskContexts = ctxs.ToList();
@@ -126,11 +118,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             .Join(types, tsk => tsk.WorkTaskTypeId, typ => typ.WorkTaskTypeId, (tsk, typ) =>
             {
                 tsk.WorkTaskType = typ;
-                return tsk;
-            })
-            .Join(statuses, tsk => tsk.WorkTaskStatusId, sts => sts.WorkTaskStatusId, (tsk, sts) =>
-            {
-                tsk.WorkTaskStatus = sts;
+                tsk.WorkTaskStatus = typ.Statuses.Find(sts => sts.WorkTaskStatusId == tsk.WorkTaskStatusId);
                 return tsk;
             });
             return result.ToList();
@@ -140,13 +128,11 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         {
             Dictionary<Guid, WorkTaskTypeData> workTaskTypes = (await _workTaskTypeDataFactory.GetByDomainId(settings, domainId))
                 .ToDictionary(d => d.WorkTaskTypeId);
-            Dictionary<Guid, WorkTaskStatusData> workTaskStatuses = (await _workTaskStatusDataFactory.GetByDomainId(settings, domainId))
-                .ToDictionary(d => d.WorkTaskStatusId);
             return new WorkTaskDataEnumerable(
                 settings,
                 ProviderFactory,
                 (connection) => GetAllBeginReader(connection, ProviderFactory, domainId),
-                (reader) => GetAllLoadData(reader, settings, ProviderFactory, _loaderFactory.CreateLoader(), workTaskTypes, workTaskStatuses));
+                (reader) => GetAllLoadData(reader, settings, ProviderFactory, _loaderFactory.CreateLoader(), workTaskTypes));
         }
 
         private static async Task<DbDataReader> GetAllBeginReader(DbConnection connection, IDbProviderFactory providerFactory, Guid domainId)
@@ -163,12 +149,11 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             CommonData.ISettings settings,
             IDbProviderFactory providerFactory,
             ILoader loader,
-            Dictionary<Guid, WorkTaskTypeData> workTaskTypes,
-            Dictionary<Guid, WorkTaskStatusData> workTaskStatuses)
+            Dictionary<Guid, WorkTaskTypeData> workTaskTypes)
         {
             WorkTaskData workTaskData = (WorkTaskData)await loader.Load(new WorkTaskData(), reader);
             workTaskData.WorkTaskType = workTaskTypes[workTaskData.WorkTaskTypeId];
-            workTaskData.WorkTaskStatus = workTaskStatuses[workTaskData.WorkTaskStatusId];
+            workTaskData.WorkTaskStatus = workTaskData.WorkTaskType.Statuses.Find(sts => workTaskData.WorkTaskStatusId == sts.WorkTaskStatusId);
             workTaskData.WorkTaskContexts = (await GetContextByWorkTaskId(settings, providerFactory, workTaskData.WorkTaskId)).ToList();
             workTaskData.Manager = new DataStateManager(workTaskData.Clone());
             return workTaskData;

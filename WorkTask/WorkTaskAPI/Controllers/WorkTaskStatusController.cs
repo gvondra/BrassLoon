@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +20,6 @@ namespace WorkTaskAPI.Controllers
     public class WorkTaskStatusController : WorkTaskControllerBase
     {
         private readonly ILogger<WorkTaskStatusController> _logger;
-        private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
         private readonly IWorkTaskTypeFactory _workTaskTypeFactory;
         private readonly IWorkTaskTypeSaver _workTaskTypeSaver;
 
@@ -32,100 +30,13 @@ namespace WorkTaskAPI.Controllers
             ILogger<WorkTaskStatusController> logger,
             MapperFactory mapperFactory,
             IDomainService domainService,
-            IWorkTaskStatusFactory workTaskStatusFactory,
             IWorkTaskTypeFactory workTaskTypeFactory,
             IWorkTaskTypeSaver workTaskTypeSaver)
             : base(settings, settingsFactory, exceptionService, mapperFactory, domainService)
         {
             _logger = logger;
-            _workTaskStatusFactory = workTaskStatusFactory;
             _workTaskTypeFactory = workTaskTypeFactory;
             _workTaskTypeSaver = workTaskTypeSaver;
-        }
-
-        [HttpGet]
-        [Authorize(Constants.POLICY_BL_AUTH)]
-        [ProducesResponseType(typeof(List<WorkTaskStatus>), 200)]
-        public async Task<IActionResult> GetAll([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId)
-        {
-            IActionResult result;
-            try
-            {
-                if (!workTaskTypeId.HasValue || workTaskTypeId.Value.Equals(Guid.Empty))
-                {
-                    result = BadRequest("Missing work task type id parameter value");
-                }
-                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
-                {
-                    result = BadRequest("Missing domain id parameter value");
-                }
-                else if (!await VerifyDomainAccount(domainId.Value))
-                {
-                    result = StatusCode(StatusCodes.Status401Unauthorized);
-                }
-                else
-                {
-                    CoreSettings settings = CreateCoreSettings();
-                    IMapper mapper = CreateMapper();
-                    result = Ok(
-                        (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId.Value, workTaskTypeId.Value))
-                        .Select(mapper.Map<WorkTaskStatus>));
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            return result;
-        }
-
-        [HttpGet("{id}")]
-        [Authorize(Constants.POLICY_BL_AUTH)]
-        [ProducesResponseType(typeof(WorkTaskStatus), 200)]
-        public async Task<IActionResult> Get([FromRoute] Guid? domainId, [FromRoute] Guid? workTaskTypeId, [FromRoute] Guid? id)
-        {
-            IActionResult result;
-            try
-            {
-                if (!id.HasValue || id.Value.Equals(Guid.Empty))
-                {
-                    result = BadRequest("Missing id parameter value");
-                }
-                else if (!workTaskTypeId.HasValue || workTaskTypeId.Value.Equals(Guid.Empty))
-                {
-                    result = BadRequest("Missing work task type id parameter value");
-                }
-                else if (!domainId.HasValue || domainId.Value.Equals(Guid.Empty))
-                {
-                    result = BadRequest("Missing domain id parameter value");
-                }
-                else if (!await VerifyDomainAccount(domainId.Value))
-                {
-                    result = StatusCode(StatusCodes.Status401Unauthorized);
-                }
-                else
-                {
-                    CoreSettings settings = CreateCoreSettings();
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
-                    if (innerWorkTaskStatus == null)
-                    {
-                        result = NotFound();
-                    }
-                    else
-                    {
-                        IMapper mapper = CreateMapper();
-                        result = Ok(
-                            mapper.Map<WorkTaskStatus>(innerWorkTaskStatus));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            return result;
         }
 
         [NonAction]
@@ -211,9 +122,9 @@ namespace WorkTaskAPI.Controllers
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
-                if (result == null && id.HasValue && domainId.HasValue)
+                if (result == null && innerWorkTaskType != null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(sts => sts.DomainId == domainId.Value && sts.WorkTaskStatusId == id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();
@@ -267,9 +178,9 @@ namespace WorkTaskAPI.Controllers
                     if (innerWorkTaskType == null)
                         result = NotFound();
                 }
-                if (result == null && id.HasValue && domainId.HasValue)
+                if (result == null && innerWorkTaskType != null)
                 {
-                    IWorkTaskStatus innerWorkTaskStatus = await _workTaskStatusFactory.Get(settings, domainId.Value, id.Value);
+                    IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(sts => sts.DomainId == domainId.Value && sts.WorkTaskStatusId == id.Value);
                     if (innerWorkTaskStatus == null)
                     {
                         result = NotFound();

@@ -147,7 +147,7 @@ namespace BrassLoon.WorkTask.TestClient
             {
                 _logger.Information($"Found existing work task type \"{_workTaskType.Title}\"");
             }
-            List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, _workTaskType.WorkTaskTypeId.Value);
+            List<WorkTaskStatus> workTaskStatuses = _workTaskType.Statuses;
             _logger.Information($"Found {workTaskStatuses.Count} total work task statuses");
             _workTaskStatus = workTaskStatuses.Find(wts => string.Equals(wts.Name, _workTaskStatusTitle, StringComparison.OrdinalIgnoreCase));
             if (_workTaskStatus == null)

@@ -4,6 +4,7 @@ using BrassLoon.WorkTask.TestClient.Settings;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -72,7 +73,7 @@ namespace BrassLoon.WorkTask.TestClient
         {
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting work task status");
-            List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, testType.WorkTaskTypeId.Value);
+            List<WorkTaskStatus> workTaskStatuses = testType.Statuses;
             WorkTaskStatus testStatus = workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testStatus == null)
             {
@@ -97,7 +98,7 @@ namespace BrassLoon.WorkTask.TestClient
             testStatus.Name = updatedName;
             testStatus = await _workTaskStatusService.Update(settings, testStatus);
             _logger.Information($"Name returned from update {testStatus.Name}");
-            testStatus = await _workTaskStatusService.Get(settings, _appSettings.Domain.Value, testType.WorkTaskTypeId.Value, testStatus.WorkTaskStatusId.Value);
+            testStatus = testType.Statuses.FirstOrDefault(sts => sts.DomainId == _appSettings.Domain.Value && sts.WorkTaskStatusId == testStatus.WorkTaskStatusId.Value);
             _logger.Information($"Name returned from get {testStatus.Name}");
         }
 
@@ -105,7 +106,7 @@ namespace BrassLoon.WorkTask.TestClient
         {
             WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
             _logger.Information("Getting work task status for delete test");
-            List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, testType.WorkTaskTypeId.Value);
+            List<WorkTaskStatus> workTaskStatuses = testType.Statuses;
             WorkTaskStatus testStatus = workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*To\s*Delete", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
             if (testStatus == null)
             {

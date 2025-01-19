@@ -24,6 +24,5 @@ BEGIN
 	ORDER BY [tsk].[AssignedDate], [tsk].[CreateTimestamp]
 	;
 	EXEC [blwt].[GetWorkTaskType_by_WorkGroupId] @workGroupId;
-	EXEC [blwt].[GetWorkTaskStatus_by_WorkGroupId] @workGroupId;
 	EXEC [blwt].[GetWorkTaskContext_by_WorkGroupId] @workGroupId;
 END

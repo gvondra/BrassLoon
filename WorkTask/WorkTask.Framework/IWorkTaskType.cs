@@ -1,5 +1,6 @@
 ﻿using BrassLoon.CommonCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BrassLoon.WorkTask.Framework
@@ -15,6 +16,7 @@ namespace BrassLoon.WorkTask.Framework
         DateTime CreateTimestamp { get; }
         DateTime UpdateTimestamp { get; }
         int WorkTaskCount { get; }
+        IEnumerable<IWorkTaskStatus> Statuses { get; }
 
         Task Create(ISaveSettings settings);
         Task Update(ISaveSettings settings);

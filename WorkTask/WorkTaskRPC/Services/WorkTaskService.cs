@@ -148,8 +148,7 @@ namespace WorkTaskRPC.Services
                 IWorkTaskType innerWorkTaskType = await _workTaskTypeFactory.Get(settings, domainId, workTaskTypeId);
                 if (innerWorkTaskType == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Work Task Type Not Found"), $"Work task type not found ({workTaskTypeId})");
-                IWorkTaskStatus innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId, innerWorkTaskType.WorkTaskTypeId))
-                    .FirstOrDefault(s => s.WorkTaskStatusId.Equals(Guid.Parse(request.WorkTaskStatus.WorkTaskStatusId)));
+                IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.Statuses.FirstOrDefault(s => s.WorkTaskStatusId.Equals(Guid.Parse(request.WorkTaskStatus.WorkTaskStatusId)));
                 if (innerWorkTaskStatus == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Status Not Found"), "Invalid work task status. The status doesn't exist or is not valid for the task type");
                 IWorkTask innerWorkTask = _workTaskFactory.Create(domainId, innerWorkTaskType, innerWorkTaskStatus);
@@ -400,8 +399,7 @@ namespace WorkTaskRPC.Services
                 IWorkTask innerWorkTask = await _workTaskFactory.Get(settings, domainId, id);
                 if (innerWorkTask == null)
                     throw new RpcException(new Status(StatusCode.NotFound, "Not Found"));
-                IWorkTaskStatus innerWorkTaskStatus = (await _workTaskStatusFactory.GetByWorkTaskTypeId(settings, domainId, innerWorkTask.WorkTaskType.WorkTaskTypeId))
-                    .FirstOrDefault(s => s.WorkTaskStatusId.Equals(Guid.Parse(request.WorkTaskStatus.WorkTaskStatusId)));
+                IWorkTaskStatus innerWorkTaskStatus = innerWorkTask.WorkTaskType.Statuses.FirstOrDefault(s => s.WorkTaskStatusId.Equals(Guid.Parse(request.WorkTaskStatus.WorkTaskStatusId)));
                 if (innerWorkTaskStatus == null)
                     throw new RpcException(new Status(StatusCode.FailedPrecondition, "Status Not Found"), "Invalid work task status. The status doesn't exist or is not valid for the task type");
                 Map(request, innerWorkTask);

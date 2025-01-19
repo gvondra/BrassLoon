@@ -12,7 +12,7 @@ WHERE [DomainId] = @domainId
 	AND EXISTS (SELECT TOP 1 1 
 	FROM [blwt].[WorkTask] [tsk]
 	INNER JOIN [blwt].[WorkTaskContext] [wtc] ON [tsk].[WorkTaskId] = [wtc].[WorkTaskId]
-	WHERE [tsk].[WorkTaskStatusId] = [blwt].[WorkTaskStatus].[WorkTaskStatusId]
+	WHERE [tsk].[WorkTaskTypeId] = [blwt].[WorkTaskStatus].[WorkTaskTypeId]
 	AND [tsk].[DomainId] = @domainId
 	AND [wtc].[DomainId] = @domainId
 	AND [wtc].[ReferenceType] = @referenceType

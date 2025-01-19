@@ -13,16 +13,22 @@ namespace BrassLoon.WorkTask.Core
     {
         private readonly IWorkTaskTypeDataFactory _dataFactory;
         private readonly IWorkTaskTypeDataSaver _dataSaver;
+        private readonly IWorkTaskStatusDataSaver _statusDataSaver;
         private readonly IWorkTaskStatusFactory _workTaskStatusFactory;
 
-        public WorkTaskTypeFactory(IWorkTaskTypeDataFactory dataFactory, IWorkTaskTypeDataSaver dataSaver, IWorkTaskStatusFactory workTaskStatusFactory)
+        public WorkTaskTypeFactory(
+            IWorkTaskTypeDataFactory dataFactory,
+            IWorkTaskTypeDataSaver dataSaver,
+            IWorkTaskStatusDataSaver statusDataSaver,
+            IWorkTaskStatusFactory workTaskStatusFactory)
         {
             _dataFactory = dataFactory;
             _dataSaver = dataSaver;
+            _statusDataSaver = statusDataSaver;
             _workTaskStatusFactory = workTaskStatusFactory;
         }
 
-        internal WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, this);
+        internal WorkTaskType Create(WorkTaskTypeData data) => new WorkTaskType(data, _dataSaver, _statusDataSaver, this);
 
         public IWorkTaskType Create(Guid domainId, string code)
         {

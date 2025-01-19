@@ -3,6 +3,7 @@
 	@referenceType SMALLINT,
 	@referenceValueHash VARBINARY(64)
 AS
+BEGIN
 SELECT [WorkTaskTypeId], [DomainId], [Code], [Title], [Description], [PurgePeriod],
 	[CreateTimestamp], [UpdateTimestamp],
 	(SELECT COUNT(1) FROM [blwt].[WorkTask] WITH(READUNCOMMITTED) WHERE [DomainId] = [blwt].[WorkTaskType].[DomainId] AND [WorkTaskTypeId] = [blwt].[WorkTaskType].[WorkTaskTypeId]) [WorkTaskCount]
@@ -18,3 +19,5 @@ WHERE [DomainId] = @domainId
 	AND [wtc].[ReferenceType] = @referenceType
 	AND [wtc].[ReferenceValueHash] = @referenceValueHash
 );
+EXEC [blwt].[GetWorkTaskStatus_by_ContextReference] @domainId, @referenceType, @referenceValueHash;
+END

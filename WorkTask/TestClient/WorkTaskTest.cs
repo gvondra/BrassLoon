@@ -17,22 +17,19 @@ namespace BrassLoon.WorkTask.TestClient
         private readonly ILogger _logger;
         private readonly IWorkTaskService _workTaskService;
         private readonly IWorkTaskTypeService _workTaskTypeService;
-        private readonly IWorkTaskStatusService _workTaskStatusService;
 
         public WorkTaskTest(
             AppSettings appSettings,
             ISettingsFactory settingsFactory,
             ILogger logger,
             IWorkTaskService workTaskService,
-            IWorkTaskTypeService workTaskTypeService,
-            IWorkTaskStatusService workTaskStatusService)
+            IWorkTaskTypeService workTaskTypeService)
         {
             _appSettings = appSettings;
             _settingsFactory = settingsFactory;
             _logger = logger;
             _workTaskService = workTaskService;
             _workTaskTypeService = workTaskTypeService;
-            _workTaskStatusService = workTaskStatusService;
         }
 
         public async Task Execute()
@@ -46,7 +43,7 @@ namespace BrassLoon.WorkTask.TestClient
             }
             else
             {
-                testStatus = await GetWorkTaskStatus(settings, testType.WorkTaskTypeId.Value);
+                testStatus = await GetWorkTaskStatus(settings, testType.Statuses, testType.WorkTaskTypeId.Value);
                 if (testStatus == null)
                     _logger.Error("Work task status notfound. Run the work task type tests to create it.");
             }
@@ -94,11 +91,10 @@ namespace BrassLoon.WorkTask.TestClient
             return workTaskTypes.Find(wtt => Regex.IsMatch(wtt.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
         }
 
-        private async Task<WorkTaskStatus> GetWorkTaskStatus(WorkTaskSettings settings, Guid workTaskTypeId)
+        private async Task<WorkTaskStatus> GetWorkTaskStatus(WorkTaskSettings settings, List<WorkTaskStatus> statuses, Guid workTaskTypeId)
         {
             _logger.Information("Getting work task status");
-            List<WorkTaskStatus> workTaskStatuses = await _workTaskStatusService.GetAll(settings, _appSettings.Domain.Value, workTaskTypeId);
-            return workTaskStatuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
+            return statuses.Find(wts => Regex.IsMatch(wts.Name, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)));
         }
     }
 }

@@ -38,20 +38,10 @@ namespace WorkTask.Core.Test
             _ = workTask.SetupGet(wt => wt.WorkTaskType).Returns(workTaskType.Object);
             workTask.Object.WorkTaskStatus = workTaskStatus.Object;
 
-            Mock<IWorkTaskStatusFactory> workTaskStatusFactory = new Mock<IWorkTaskStatusFactory>();
-            _ = workTaskStatusFactory.Setup(f => f.GetByWorkTaskTypeId(It.IsAny<ISettings>(), domainId, workTaskTypeId))
-                .Returns((ISettings s, Guid dId, Guid id) =>
-                {
-                    Mock<IWorkTaskStatus> status = new Mock<IWorkTaskStatus>();
-                    _ = status.SetupGet(s => s.WorkTaskStatusId).Returns(targetStatusId);
-                    _ = status.SetupGet(s => s.WorkTaskTypeId).Returns(id);
-                    return Task.FromResult<IEnumerable<IWorkTaskStatus>>(new List<IWorkTaskStatus> { status.Object });
-                });
-
             Mock<IWorkTaskFactory> workTaskFactory = new Mock<IWorkTaskFactory>();
             _ = workTaskFactory.Setup(f => f.Get(It.IsAny<ISettings>(), domainId, workTaskId)).Returns(() => Task.FromResult(workTask.Object));
 
-            WorkTaskPatcher workTaskPatcher = new WorkTaskPatcher(workTaskFactory.Object, workTaskStatusFactory.Object);
+            WorkTaskPatcher workTaskPatcher = new WorkTaskPatcher(workTaskFactory.Object);
             IEnumerable<IWorkTask> result = await workTaskPatcher.Apply(null, domainId, patchData);
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());

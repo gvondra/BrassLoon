@@ -7,7 +7,6 @@ BEGIN
 	FROM [blwt].[WorkTask] 
 	WHERE [WorkTaskId] = @id 
 	;
-	EXEC [blwt].[GetWorkTaskType_by_WorkTaskId] @id;
-	EXEC [blwt].[GetWorkTaskStatus_by_WorkTaskId] @id;
+	EXEC [blwt].[GetWorkTaskType_by_WorkTaskId] @id;	
 	EXEC [blwt].[GetWorkTaskContext_by_WorkTaskId] @id;
 END

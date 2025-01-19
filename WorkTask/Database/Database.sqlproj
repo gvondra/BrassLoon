@@ -80,8 +80,6 @@
     <Build Include="Stored Procedure\blwt.GetWorkTaskType.sql" />
     <Build Include="Stored Procedure\blwt.CreateWorkTaskStatus.sql" />
     <Build Include="Stored Procedure\blwt.UpdateWorkTaskStatus.sql" />
-    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskTypeId.sql" />
-    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus.sql" />
     <Build Include="Stored Procedure\blwt.CreateWorkGroup.sql" />
     <Build Include="Stored Procedure\blwt.UpdateWorkGroup.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkGroup_by_DomainId.sql" />
@@ -102,7 +100,6 @@
     <Build Include="Stored Procedure\blwt.GetWorkTask_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskContext_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskId.sql" />
-    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkGroupId.sql" />
     <Build Include="Stored Procedure\blwt.CreateComment.sql" />
     <Build Include="Stored Procedure\blwt.CreateWorkTaskComment.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskComment_by_WorkTaskId.sql" />
@@ -129,6 +126,8 @@
     <Build Include="Stored Procedure\blwt.DeleteWorktTaskTypeGroup_v2.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTask_by_DomainId.sql" />
     <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_DomainId.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_DomainId_TypeCode.sql" />
+    <Build Include="Stored Procedure\blwt.GetWorkTaskStatus_by_WorkTaskTypeId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompareLocal.scmp" />

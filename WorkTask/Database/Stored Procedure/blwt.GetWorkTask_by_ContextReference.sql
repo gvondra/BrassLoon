@@ -28,7 +28,6 @@ BEGIN
 	))
 	ORDER BY [tsk].[AssignedDate], [tsk].[CreateTimestamp]
 	;
-	EXEC [blwt].[GetWorkTaskType_by_ContextReference] @domainId, @referenceType, @referenceValueHash;
-	EXEC [blwt].[GetWorkTaskStatus_by_ContextReference] @domainId, @referenceType, @referenceValueHash;
+	EXEC [blwt].[GetWorkTaskType_by_ContextReference] @domainId, @referenceType, @referenceValueHash;	
 	EXEC [blwt].[GetWorkTaskContext_by_Reference] @domainId, @referenceType, @referenceValueHash;
 END
