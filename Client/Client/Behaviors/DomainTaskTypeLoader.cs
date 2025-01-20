@@ -60,13 +60,9 @@ namespace BrassLoon.Client.Behaviors
             }
         }
 
-        private Dictionary<Guid, IEnumerable<WorkTaskStatus>> LoadTaskStatuses(List<WorkTaskType> taskTypes)
+        private static Dictionary<Guid, IEnumerable<WorkTaskStatus>> LoadTaskStatuses(List<WorkTaskType> taskTypes)
         {
-            WorkTaskSettings settings = _settingsFactory.CreateWorkTaskSettings();
-            return Task.WhenAll(taskTypes.Select<WorkTaskType, Task<List<WorkTaskStatus>>>(
-                tt => _workTaskStatusService.GetAll(settings, _domainVM.DomainId, tt.WorkTaskTypeId.Value)))
-                .Result
-                .SelectMany(s => s)
+            return taskTypes.SelectMany(tt => tt.Statuses)
                 .GroupBy(s => s.WorkTaskTypeId.Value)
                 .ToDictionary<IGrouping<Guid, WorkTaskStatus>, Guid, IEnumerable<WorkTaskStatus>>(
                     g => g.Key,
