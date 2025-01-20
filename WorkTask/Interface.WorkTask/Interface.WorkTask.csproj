@@ -11,8 +11,8 @@
 		<Product>Brass Loon</Product>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.0.0-prerelease.1</Version>
-		<AssemblyVersion>4.0.0.1</AssemblyVersion>
+		<Version>4.0.0-prerelease.2</Version>
+		<AssemblyVersion>4.0.0.2</AssemblyVersion>
 		<PackageReleaseNotes>-v4 Refactored data model
 			-v3.1 add net 8.0 target
             -v3.0 Switch to gRPC

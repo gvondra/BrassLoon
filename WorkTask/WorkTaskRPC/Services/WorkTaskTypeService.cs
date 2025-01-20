@@ -264,7 +264,7 @@ namespace WorkTaskRPC.Services
 
         internal static WorkTaskType Map(IWorkTaskType innerWorkTaskType)
         {
-            return new WorkTaskType
+            WorkTaskType result = new WorkTaskType
             {
                 Code = innerWorkTaskType.Code,
                 CreateTimestamp = Timestamp.FromDateTime(innerWorkTaskType.CreateTimestamp),
@@ -276,6 +276,24 @@ namespace WorkTaskRPC.Services
                 WorkTaskCount = innerWorkTaskType.WorkTaskCount,
                 WorkTaskTypeId = innerWorkTaskType.WorkTaskTypeId.ToString("D")
             };
+            if (innerWorkTaskType.Statuses != null)
+            {
+                result.Statuses.AddRange(innerWorkTaskType.Statuses.Select(sts => new WorkTaskStatus
+                {
+                    Code = sts.Code,
+                    CreateTimestamp = Timestamp.FromDateTime(sts.CreateTimestamp),
+                    Description = sts.Description ?? string.Empty,
+                    DomainId = sts.DomainId.ToString("D"),
+                    IsClosedStatus = sts.IsClosedStatus,
+                    IsDefaultStatus = sts.IsDefaultStatus,
+                    Name = sts.Name ?? string.Empty,
+                    UpdateTimestamp = Timestamp.FromDateTime(sts.UpdateTimestamp),
+                    WorkTaskCount = sts.WorkTaskCount,
+                    WorkTaskStatusId = sts.WorkTaskStatusId.ToString("D"),
+                    WorkTaskTypeId = sts.WorkTaskTypeId.ToString("D")
+                }));
+            }
+            return result;
         }
     }
 }

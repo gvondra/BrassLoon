@@ -98,6 +98,7 @@ namespace BrassLoon.WorkTask.TestClient
             testStatus.Name = updatedName;
             testStatus = await _workTaskStatusService.Update(settings, testStatus);
             _logger.Information($"Name returned from update {testStatus.Name}");
+            testType = await _workTaskTypeService.Get(settings, testType.DomainId.Value, testType.WorkTaskTypeId.Value);
             testStatus = testType.Statuses.FirstOrDefault(sts => sts.DomainId == _appSettings.Domain.Value && sts.WorkTaskStatusId == testStatus.WorkTaskStatusId.Value);
             _logger.Information($"Name returned from get {testStatus.Name}");
         }
@@ -115,7 +116,7 @@ namespace BrassLoon.WorkTask.TestClient
                     Code = "tst-clnt-gen-delete",
                     Description = "Create by test client",
                     DomainId = _appSettings.Domain.Value,
-                    Name = $"TestCient To Delete {DateTime.Now:O}",
+                    Name = $"TestClient To Delete {DateTime.Now:O}",
                     WorkTaskTypeId = testType.WorkTaskTypeId.Value,
                     IsClosedStatus = false
                 };

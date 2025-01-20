@@ -64,7 +64,7 @@ namespace WorkTaskRPC.Services
                 IWorkTaskStatus innerWorkTaskStatus = innerWorkTaskType.CreateWorkTaskStatus(request.Code);
                 Map(request, innerWorkTaskStatus);
                 innerWorkTaskType.AddWorkTaskStatus(innerWorkTaskStatus);
-                await _workTaskTypeSaver.Create(settings, innerWorkTaskType);
+                await _workTaskTypeSaver.Update(settings, innerWorkTaskType);
                 return Map(innerWorkTaskStatus);
             }
             catch (RpcException)

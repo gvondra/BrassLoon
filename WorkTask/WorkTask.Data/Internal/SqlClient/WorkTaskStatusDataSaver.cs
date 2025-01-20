@@ -68,7 +68,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
                 command.Parameters,
                 "ids",
                 DbType.AnsiString,
-                DataUtil.GetParameterValue(string.Join(",", ids.Select(i => i.ToString("N")))));
+                DataUtil.GetParameterValue(string.Join(",", ids.Select(i => i.ToString("D")))));
             _ = await command.ExecuteNonQueryAsync();
         }
 
@@ -96,6 +96,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 
         public async Task Save(CommonData.ISaveSettings settings, IEnumerable<WorkTaskStatusData> statuses)
         {
+            statuses ??= Enumerable.Empty<WorkTaskStatusData>();
             foreach (WorkTaskStatusData data in statuses)
             {
                 if (data.Manager.GetState(data) == DataState.New)

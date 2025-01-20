@@ -51,7 +51,7 @@ namespace BrassLoon.WorkTask.Core
         public short? PurgePeriod { get => _data.PurgePeriod; set => _data.PurgePeriod = value > 0 ? value : default; }
 
         public IEnumerable<IWorkTaskStatus> Statuses
-            => _statuses.Where(sts => _removedStatues == null || _removedStatues.Exists(rmsts => rmsts == sts)).Concat(_addedStatues ?? Enumerable.Empty<IWorkTaskStatus>());
+            => _statuses.Where(sts => _removedStatues == null || !_removedStatues.Exists(rmsts => rmsts == sts)).Concat(_addedStatues ?? Enumerable.Empty<IWorkTaskStatus>());
 
         public void AddWorkTaskStatus(IWorkTaskStatus workTaskStatus)
         {
@@ -69,15 +69,15 @@ namespace BrassLoon.WorkTask.Core
             _removedStatues = null;
         }
 
-        public void AfterRollback() => throw new NotImplementedException();
-        public void BeforeCommit() => throw new NotImplementedException();
-        public void BeforeRollback() => throw new NotImplementedException();
+        public void AfterRollback() { }
+        public void BeforeCommit() { }
+        public void BeforeRollback() { }
 
         public async Task Create(ISaveSettings settings)
         {
-            settings.Transaction.AddObserver(this);
             _data.Statuses = Statuses.Where(sts => sts is WorkTaskStatus).Select(sts => ((WorkTaskStatus)sts).InnerData).ToList();
             await _dataSaver.Create(settings, _data);
+            settings.Transaction?.AddObserver(this);
         }
 
         public IWorkTaskStatus CreateWorkTaskStatus(string code)
@@ -86,14 +86,15 @@ namespace BrassLoon.WorkTask.Core
         public void RemoveWorkTaskStatus(IWorkTaskStatus workTaskStatus)
         {
             _removedStatues ??= new List<IWorkTaskStatus>();
-            _ = _removedStatues.Remove(workTaskStatus);
+            if (!_removedStatues.Contains(workTaskStatus))
+                _removedStatues.Add(workTaskStatus);
         }
 
         public async Task Update(ISaveSettings settings)
         {
-            settings.Transaction.AddObserver(this);
             _data.Statuses = Statuses.Where(sts => sts is WorkTaskStatus).Select(sts => ((WorkTaskStatus)sts).InnerData).ToList();
             await _dataSaver.Update(settings, _data);
+            settings.Transaction?.AddObserver(this);
         }
     }
 }
