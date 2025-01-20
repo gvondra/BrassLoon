@@ -17,19 +17,22 @@ namespace BrassLoon.WorkTask.TestClient
         private readonly ILogger _logger;
         private readonly IWorkTaskService _workTaskService;
         private readonly IWorkTaskTypeService _workTaskTypeService;
+        private readonly IWorkTaskCommentService _workTaskCommentService;
 
         public WorkTaskTest(
             AppSettings appSettings,
             ISettingsFactory settingsFactory,
             ILogger logger,
             IWorkTaskService workTaskService,
-            IWorkTaskTypeService workTaskTypeService)
+            IWorkTaskTypeService workTaskTypeService,
+            IWorkTaskCommentService workTaskCommentService)
         {
             _appSettings = appSettings;
             _settingsFactory = settingsFactory;
             _logger = logger;
             _workTaskService = workTaskService;
             _workTaskTypeService = workTaskTypeService;
+            _workTaskCommentService = workTaskCommentService;
         }
 
         public async Task Execute()
@@ -55,13 +58,15 @@ namespace BrassLoon.WorkTask.TestClient
                     Text = "Created by test client",
                     Title = $"TestClient Generated {DateTime.Now:O}",
                     WorkTaskStatus = testStatus,
-                    WorkTaskType = testType
+                    WorkTaskType = testType,
+                    WorkTaskContexts = new List<WorkTaskContext> { new WorkTaskContext { ReferenceType = 17, ReferenceValue = Guid.NewGuid().ToString("D") } }
                 };
                 task = await _workTaskService.Create(settings, task);
                 _logger.Information($"Created task {task.Title}");
                 string updatedTitle = $"TestClient Generated {DateTime.Now:O}";
                 _logger.Information($"Changing type title to {updatedTitle}");
                 task.Title = updatedTitle;
+                task.WorkTaskContexts = new List<WorkTaskContext> { new WorkTaskContext { ReferenceType = 17, ReferenceValue = Guid.NewGuid().ToString("D") } };
                 task = await _workTaskService.Update(settings, task);
                 _logger.Information($"Title returned from update {task.Title}");
                 task = await _workTaskService.Get(settings, _appSettings.Domain.Value, task.WorkTaskId.Value);
@@ -77,12 +82,32 @@ namespace BrassLoon.WorkTask.TestClient
                             { "WorkTaskStatusId", testStatus.WorkTaskStatusId.Value.ToString("D") }
                         }
                     });
+                await AddCommentsTest(settings, task);
             }
             await foreach (Models.WorkTask task in await _workTaskService.GetAll(settings, _appSettings.Domain.Value))
             {
                 if (Regex.IsMatch(task.Title, @"^TestClient\s*Generated", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200)))
                     _logger.Information($"Found task {task.Title}");
             }
+        }
+
+        private async Task AddCommentsTest(WorkTaskSettings settings, Models.WorkTask task)
+        {
+            Comment[] CreateComments()
+            {
+                Comment[] comments = new Comment[25];
+                for (int i = 0; i < comments.Length; i += 1)
+                {
+                    comments[i] = new Comment { Text = $"new comment {i + 1}", DomainId = _appSettings.Domain.Value };
+                }
+                return comments;
+            }
+            for (int i = 0; i < 25; i += 1)
+            {
+                _ = await _workTaskCommentService.Create(settings, task.WorkTaskId.Value, CreateComments());
+            }
+            List<Comment> comments = await _workTaskCommentService.GetAll(settings, _appSettings.Domain.Value, task.WorkTaskId.Value);
+            _logger.Information("Retreived {0} comments", comments.Count);
         }
 
         private async Task<WorkTaskType> GetWorkTaskType(WorkTaskSettings settings)

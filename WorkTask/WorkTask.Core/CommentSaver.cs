@@ -14,7 +14,7 @@ namespace BrassLoon.WorkTask.Core
                     new SaveSettings(settings),
                     async ss =>
                     {
-                        for (int i = 1; i < comments.Length; i += 1)
+                        for (int i = 0; i < comments.Length; i += 1)
                         {
                             await comments[i].Create(ss);
                         }

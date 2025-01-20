@@ -33,6 +33,7 @@ namespace BrassLoon.Interface.WorkTask
                             WorkTaskId = workTaskId.ToString("D")
                         });
                 }
+                await streamingCall.RequestStream.CompleteAsync();
                 while (await streamingCall.ResponseStream.MoveNext())
                 {
                     result.Add(
