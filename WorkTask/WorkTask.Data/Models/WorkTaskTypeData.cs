@@ -38,6 +38,7 @@ namespace BrassLoon.WorkTask.Data.Models
         public DateTime UpdateTimestamp { get; set; }
 
         [ColumnMapping]
+        [BsonIgnore]
         public int WorkTaskCount { get; set; }
 
         [BsonRequired]

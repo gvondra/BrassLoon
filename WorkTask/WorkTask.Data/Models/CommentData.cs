@@ -1,12 +1,25 @@
 ﻿using BrassLoon.DataClient;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BrassLoon.WorkTask.Data.Models
 {
     public class CommentData : DataManagedStateBase
     {
-        [ColumnMapping(IsPrimaryKey = true)] public Guid CommentId { get; set; }
-        [ColumnMapping] public Guid DomainId { get; set; }
-        [ColumnMapping] public string Text { get; set; }
-        [ColumnMapping(IsUtc = true)] public DateTime CreateTimestamp { get; set; }
+        [ColumnMapping(IsPrimaryKey = true)]
+        [BsonId]
+        [BsonGuidRepresentation(MongoDB.Bson.GuidRepresentation.Standard)]
+        public Guid CommentId { get; set; }
+
+        [ColumnMapping]
+        [BsonGuidRepresentation(MongoDB.Bson.GuidRepresentation.Standard)]
+        public Guid DomainId { get; set; }
+
+        [ColumnMapping]
+        [BsonRequired]
+        public string Text { get; set; }
+
+        [ColumnMapping(IsUtc = true)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime CreateTimestamp { get; set; }
     }
 }

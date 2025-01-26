@@ -144,7 +144,7 @@ namespace BrassLoon.WorkTask.Core
             {
                 foreach (WorkGroupMemberData data in _deletedMemberData)
                 {
-                    await _workGroupMemberDataSaver.Delete(settings, data.WorkGroupMemberId);
+                    await _workGroupMemberDataSaver.Delete(settings, data);
                 }
             }
         }

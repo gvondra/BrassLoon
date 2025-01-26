@@ -4,6 +4,7 @@ using BrassLoon.DataClient.MongoDB;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using MongoDb = BrassLoon.WorkTask.Data.Internal.MongoDb;
 using SqlClient = BrassLoon.WorkTask.Data.Internal.SqlClient;
 
 namespace BrassLoon.WorkTask.Data
@@ -55,6 +56,17 @@ namespace BrassLoon.WorkTask.Data
         private static void LoadMongoDb(ContainerBuilder builder)
         {
             _ = builder.RegisterType<DbProvider>().As<IDbProvider>();
+            _ = builder.RegisterType<MongoDb.WorkGroupDataFactory>().As<IWorkGroupDataFactory>();
+            _ = builder.RegisterType<MongoDb.WorkGroupDataSaver>().As<IWorkGroupDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkGroupMemberDataSaver>().As<IWorkGroupMemberDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkTaskCommentDataFactory>().As<IWorkTaskCommentDataFactory>();
+            _ = builder.RegisterType<MongoDb.WorkTaskCommentDataSaver>().As<IWorkTaskCommentDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkTaskContextDataSaver>().As<IWorkTaskContextDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkTaskDataFactory>().As<IWorkTaskDataFactory>();
+            _ = builder.RegisterType<MongoDb.WorkTaskDataSaver>().As<IWorkTaskDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkTaskTypeDataFactory>().As<IWorkTaskTypeDataFactory>();
+            _ = builder.RegisterType<MongoDb.WorkTaskTypeDataSaver>().As<IWorkTaskTypeDataSaver>();
+            _ = builder.RegisterType<MongoDb.WorkTaskTypeGroupDataSaver>().As<IWorkTaskTypeGroupDataSaver>();
 
             // the following BsonClassMap are out of place. Just threw it here for simplicity
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));

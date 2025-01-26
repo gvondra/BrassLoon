@@ -29,10 +29,8 @@
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="8.2.*" />
 	  <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Internal\MongoDb\" />
+	  <PackageReference Include="Polly" Version="8.5.*" />
+	  <PackageReference Include="Polly.Caching.Memory" Version="3.0.*" />
 	</ItemGroup>
 
 	<ItemGroup>

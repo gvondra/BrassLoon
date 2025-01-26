@@ -43,17 +43,17 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             }
         }
 
-        public async Task Delete(CommonData.ISaveSettings settings, Guid id)
-        {
-            await ProviderFactory.EstablishTransaction(settings);
-            using DbCommand command = settings.Connection.CreateCommand();
-            command.CommandText = "[blwt].[DeleteWorkTaskStatus]";
-            command.CommandType = CommandType.StoredProcedure;
-            command.Transaction = settings.Transaction.InnerTransaction;
+        //public async Task Delete(CommonData.ISaveSettings settings, Guid id)
+        //{
+        //    await ProviderFactory.EstablishTransaction(settings);
+        //    using DbCommand command = settings.Connection.CreateCommand();
+        //    command.CommandText = "[blwt].[DeleteWorkTaskStatus]";
+        //    command.CommandType = CommandType.StoredProcedure;
+        //    command.Transaction = settings.Transaction.InnerTransaction;
 
-            DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
-            _ = await command.ExecuteNonQueryAsync();
-        }
+        //    DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
+        //    _ = await command.ExecuteNonQueryAsync();
+        //}
 
         public async Task DeleteExcluding(CommonData.ISaveSettings settings, IEnumerable<Guid> ids)
         {

@@ -39,7 +39,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             }
         }
 
-        public async Task Delete(CommonData.ISaveSettings settings, Guid id)
+        public async Task Delete(CommonData.ISaveSettings settings, WorkGroupMemberData data)
         {
             await ProviderFactory.EstablishTransaction(settings);
             using DbCommand command = settings.Connection.CreateCommand();
@@ -47,7 +47,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
             command.CommandType = CommandType.StoredProcedure;
             command.Transaction = settings.Transaction.InnerTransaction;
 
-            DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(id));
+            DataUtil.AddParameter(ProviderFactory, command.Parameters, "id", DbType.Guid, DataUtil.GetParameterValue(data.WorkGroupMemberId));
 
             _ = await command.ExecuteNonQueryAsync();
         }
