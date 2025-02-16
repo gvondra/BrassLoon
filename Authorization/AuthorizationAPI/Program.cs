@@ -116,6 +116,8 @@ namespace AuthorizationAPI
 
             _ = app.UseEndpoints(endpoints => endpoints.MapControllers());
 
+            _ = app.MapGet("api/HealthCheck", () => "Success");
+
             app.Run();
         }
     }
