@@ -118,6 +118,8 @@ namespace WorkTaskAPI
 
             app.MapControllers();
 
+            _ = app.MapGet("api/HealthCheck", () => "Success");
+
             app.Run();
         }
     }
