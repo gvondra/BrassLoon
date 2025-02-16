@@ -58,6 +58,7 @@ namespace AddressRPC
 
             // Configure the HTTP request pipeline.
             _ = app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+            _ = app.MapGet("api/HealthCheck", () => "Success");
 
             _ = app.UseAuthentication();
             _ = app.UseAuthorization();
@@ -65,6 +66,7 @@ namespace AddressRPC
             _ = app.MapGrpcService<AddressService>();
             _ = app.MapGrpcService<EmailAddressService>();
             _ = app.MapGrpcService<PhoneService>();
+
 
             app.Run();
         }
