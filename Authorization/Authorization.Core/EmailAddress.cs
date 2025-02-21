@@ -30,7 +30,7 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public bool IsNew => _data.Manager.GetState(_data) == DataClient.DataState.New;
+        public bool IsNew { get; init; }
 
         public Task Create(CommonCore.ISaveSettings settings) => _dataSaver.Create(settings, _data);
 

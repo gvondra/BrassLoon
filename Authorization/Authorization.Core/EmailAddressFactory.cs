@@ -17,7 +17,7 @@ namespace BrassLoon.Authorization.Core
             _dataSaver = dataSaver;
         }
 
-        private EmailAddress Create(EmailAddressData data) => new EmailAddress(data, _dataSaver);
+        private EmailAddress Create(EmailAddressData data, bool isNew = false) => new EmailAddress(data, _dataSaver) { IsNew = isNew };
 
         public async Task<IEmailAddress> Get(ISettings settings, Guid id)
         {
@@ -31,12 +31,17 @@ namespace BrassLoon.Authorization.Core
         public async Task<IEmailAddress> GetByAddress(ISettings settings, string address)
         {
             byte[] hash = EmailAddress.HashAddress(address);
-            EmailAddressData data = await _dataFactory.GetByAddressHash(new CommonCore.DataSettings(settings), hash) ?? new EmailAddressData
+            EmailAddressData data = await _dataFactory.GetByAddressHash(new CommonCore.DataSettings(settings), hash);
+            bool isNew = data == null;
+            if (isNew)
             {
-                Address = address,
-                AddressHash = hash
-            };
-            return Create(data);
+                data = new EmailAddressData
+                {
+                    Address = address,
+                    AddressHash = hash
+                };
+            }
+            return Create(data, isNew);
         }
     }
 }
