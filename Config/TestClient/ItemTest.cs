@@ -56,7 +56,7 @@ namespace BrassLoon.Config.TestClient
             }
             finally
             {
-                _logger.Information("Lookup Test Ended");
+                _logger.Information("Item Test Ended");
             }
         }
 #pragma warning restore S1854 // Unused assignments should be removed
