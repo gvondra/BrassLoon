@@ -19,7 +19,7 @@ namespace AccountAPI
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             _ = builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AccountAPIModule()));
+            _ = builder.Host.ConfigureContainer((ContainerBuilder builder) => builder.RegisterModule(new AccountApiModule()));
             // Add services to the container.
             _ = builder.Services.Configure<Settings>(builder.Configuration);
 
