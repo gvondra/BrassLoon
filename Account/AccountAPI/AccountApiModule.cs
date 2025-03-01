@@ -1,7 +1,7 @@
 ﻿using Autofac;
 namespace AccountAPI
 {
-    public class AccountAPIModule : Module
+    public class AccountApiModule : Module
     {
         private readonly bool _useMongoDb;
 
