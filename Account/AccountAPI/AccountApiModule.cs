@@ -5,7 +5,7 @@ namespace AccountAPI
     {
         private readonly bool _useMongoDb;
 
-        public AccountAPIModule(bool useMongoDb)
+        public AccountApiModule(bool useMongoDb)
         {
             _useMongoDb = useMongoDb;
         }
