@@ -6,7 +6,7 @@ namespace BrassLoon.CommonCore
     public static class Saver
     {
         public static async Task Save<T>(T transactionHandler, Func<T, Task> save)
-            where T : DataClient.ISqlTransactionHandler
+            where T : DataClient.SqlClient.ISqlTransactionHandler
         {
             try
             {

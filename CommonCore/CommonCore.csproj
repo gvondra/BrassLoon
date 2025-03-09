@@ -24,7 +24,8 @@
 
     <ItemGroup>
         <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.*" />
-        <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
+        <PackageReference Include="BrassLoon.DataClient" Version="4.0.0-prerelease.*" />
+		<PackageReference Include="BrassLoon.DataClient.SqlClient" Version="4.0.0-prerelease.*" />
         <PackageReference Include="Polly" Version="8.5.*" />
         <PackageReference Include="Polly.Caching.Memory" Version="3.0.*" />
     </ItemGroup>

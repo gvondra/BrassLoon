@@ -24,7 +24,9 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="8.2.*" />
-	  <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
+	  <PackageReference Include="BrassLoon.DataClient" Version="4.0.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.DataClient.MongoDb" Version="4.0.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.DataClient.SqlClient" Version="4.0.0-prerelease.*" />
 	</ItemGroup>
 
 	<ItemGroup>

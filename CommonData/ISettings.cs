@@ -1,6 +1,6 @@
 ﻿namespace BrassLoon.CommonData
 {
-    public interface ISettings : DataClient.ISqlSettings, DataClient.MongoDB.ISettings
+    public interface ISettings : DataClient.SqlClient.ISqlSettings, DataClient.MongoDB.ISettings
     {
     }
 }

@@ -1,4 +1,4 @@
-﻿using BrassLoon.DataClient;
+﻿using BrassLoon.DataClient.SqlClient;
 
 namespace BrassLoon.CommonData
 {
