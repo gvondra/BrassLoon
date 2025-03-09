@@ -1,6 +1,7 @@
 ﻿using BrassLoon.Authorization.Data;
 using BrassLoon.Authorization.Data.Models;
 using BrassLoon.Authorization.Framework;
+using BrassLoon.DataClient;
 using System;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -9,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace BrassLoon.Authorization.Core
 {
-    public class EmailAddress : IEmailAddress
+    public class EmailAddress : IEmailAddress, IDbTransactionObserver
     {
         private const string HashPrefix = "brass-loon-authorization";
 
         private readonly EmailAddressData _data;
         private readonly IEmailAddressDataSaver _dataSaver;
+        private bool _isNew;
 
         public EmailAddress(EmailAddressData data, IEmailAddressDataSaver dataSaver)
         {
@@ -30,9 +32,20 @@ namespace BrassLoon.Authorization.Core
 
         public DateTime CreateTimestamp => _data.CreateTimestamp;
 
-        public bool IsNew { get; init; }
+        public bool IsNew
+        {
+            get => _isNew;
+            init => _isNew = value;
+        }
 
-        public Task Create(CommonCore.ISaveSettings settings) => _dataSaver.Create(settings, _data);
+        public async Task Create(CommonCore.ISaveSettings settings)
+        {
+            if (IsNew)
+            {
+                await _dataSaver.Create(settings, _data);
+                settings.Transaction?.AddObserver(this);
+            }
+        }
 
         public static byte[] HashAddress(string address)
         {
@@ -41,5 +54,17 @@ namespace BrassLoon.Authorization.Core
             address = HashPrefix + address.Trim().ToLower(CultureInfo.InvariantCulture);
             return SHA512.HashData(Encoding.UTF8.GetBytes(address));
         }
+
+        public void BeforeCommit()
+        { }
+
+        public void AfterCommit()
+            => _isNew = false;
+
+        public void BeforeRollback()
+        { }
+
+        public void AfterRollback()
+        { }
     }
 }
