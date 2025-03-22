@@ -8,7 +8,7 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
 {
     internal sealed class WorkTaskDataEnumerator : IAsyncEnumerator<WorkTaskData>
     {
-        private readonly ISqlSettings _settings;
+        private readonly ISettings _settings;
         private readonly IDbProviderFactory _providerFactory;
         private readonly Func<DbConnection, Task<DbDataReader>> _beginReader;
         private readonly Func<DbDataReader, Task<WorkTaskData>> _loadData;
@@ -45,13 +45,13 @@ namespace BrassLoon.WorkTask.Data.Internal.SqlClient
         {
             if (_connection != null)
             {
-                _connection.Close();
-                _connection.Dispose();
+                await _connection.CloseAsync();
+                await _connection.DisposeAsync();
                 _connection = null;
             }
             if (_reader != null)
             {
-                _reader.Close();
+                await _reader.CloseAsync();
                 await _reader.DisposeAsync();
                 _reader = null;
             }
