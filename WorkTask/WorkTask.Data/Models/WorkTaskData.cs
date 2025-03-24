@@ -30,6 +30,7 @@ namespace BrassLoon.WorkTask.Data.Models
         public string Text { get; set; }
 
         [ColumnMapping]
+        [BsonDefaultValue("")]
         public string AssignedToUserId { get; set; }
 
         [ColumnMapping]
