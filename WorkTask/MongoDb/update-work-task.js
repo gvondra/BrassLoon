@@ -1,6 +1,6 @@
 db = db.getSiblingDB("dev-bl-work-task");
 
 db.WorkTask.updateOne(
-    { _id: UUID('9fe851c3-b1b8-4157-ac29-d3b88593ab9f') },
+    { _id: UUID('bb14a6a8-4371-450f-be1d-24316e838b6e') },
     { $set: { AssignedToUserId: "" } }
 );

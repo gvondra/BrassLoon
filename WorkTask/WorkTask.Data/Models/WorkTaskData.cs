@@ -6,6 +6,8 @@ namespace BrassLoon.WorkTask.Data.Models
 {
     public class WorkTaskData : DataManagedStateBase
     {
+        private string _assignedToUserId = string.Empty;
+
         [ColumnMapping(IsPrimaryKey = true)]
         [BsonId]
         [BsonGuidRepresentation(MongoDB.Bson.GuidRepresentation.Standard)]
@@ -31,7 +33,11 @@ namespace BrassLoon.WorkTask.Data.Models
 
         [ColumnMapping]
         [BsonDefaultValue("")]
-        public string AssignedToUserId { get; set; }
+        public string AssignedToUserId
+        {
+            get => _assignedToUserId ?? string.Empty;
+            set => _assignedToUserId = value ?? string.Empty;
+        }
 
         [ColumnMapping]
         [BsonDateTimeOptions(Kind = DateTimeKind.Unspecified, DateOnly = true)]
