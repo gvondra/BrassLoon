@@ -6,6 +6,8 @@ namespace BrassLoon.WorkTask.Data.Models
 {
     public class WorkGroupData : DataManagedStateBase
     {
+        private List<WorkGroupMemberData> _members = new List<WorkGroupMemberData>();
+
         [ColumnMapping(IsPrimaryKey = true)]
         [BsonId]
         [BsonGuidRepresentation(MongoDB.Bson.GuidRepresentation.Standard)]
@@ -30,7 +32,11 @@ namespace BrassLoon.WorkTask.Data.Models
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime UpdateTimestamp { get; set; }
 
-        public List<WorkGroupMemberData> Members { get; set; }
+        public List<WorkGroupMemberData> Members
+        {
+            get => _members ?? new List<WorkGroupMemberData>();
+            set => _members = value ?? new List<WorkGroupMemberData>();
+        }
 
         [BsonIgnore]
         public List<WorkTaskTypeGroupData> TaskTypes { get; set; }
