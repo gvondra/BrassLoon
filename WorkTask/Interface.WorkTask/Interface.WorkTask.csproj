@@ -35,7 +35,7 @@
 		<PackageReference Include="Autofac" Version="[7.1,9.0)" />
         <PackageReference Include="Google.Protobuf" Version="[3.28.3,4.0)" />
         <PackageReference Include="Grpc.Net.Client" Version="[2.66.0,3.0)" />
-        <PackageReference Include="Grpc.Tools" Version="2.71.*">
+        <PackageReference Include="Grpc.Tools" Version="2.72.*">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

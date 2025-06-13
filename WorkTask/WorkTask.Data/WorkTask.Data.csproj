@@ -27,7 +27,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="8.2.*" />
+	  <PackageReference Include="Autofac" Version="8.3.*" />
 	  <PackageReference Include="BrassLoon.DataClient" Version="4.0.0-prerelease.*" />
 	  <PackageReference Include="BrassLoon.DataClient.SqlClient" Version="4.0.0-prerelease.*" />
 	  <PackageReference Include="Polly" Version="8.5.*" />
