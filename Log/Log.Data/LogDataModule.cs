@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BrassLoon.DataClient;
 using BrassLoon.DataClient.MongoDB;
+using BrassLoon.DataClient.SqlClient;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;

@@ -1,4 +1,5 @@
 ﻿using BrassLoon.DataClient;
+using BrassLoon.DataClient.SqlClient;
 using BrassLoon.Log.Data.Models;
 using System;
 using System.Data;

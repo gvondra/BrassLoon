@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFramework>net8.0</TargetFramework>
@@ -24,9 +24,10 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.3.*" />
-    <PackageReference Include="BrassLoon.DataClient" Version="3.8.*" />
-	  <PackageReference Include="BrassLoon.DataClient.MongoDB" Version="1.0.0-prerelease.*" />
-	  <PackageReference Include="MongoDB.Driver" Version="3.1.*" />
+    <PackageReference Include="BrassLoon.DataClient" Version="4.0.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.DataClient.MongoDB" Version="4.0.0-prerelease.*" />
+	  <PackageReference Include="BrassLoon.DataClient.SqlClient" Version="4.0.0-prerelease.*" />
+	  <PackageReference Include="MongoDB.Driver" Version="3.4.*" />
   </ItemGroup>
 
   <ItemGroup>
