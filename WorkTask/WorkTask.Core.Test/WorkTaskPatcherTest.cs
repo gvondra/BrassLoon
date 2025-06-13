@@ -30,6 +30,13 @@ namespace WorkTask.Core.Test
 
             Mock<IWorkTaskType> workTaskType = new Mock<IWorkTaskType>();
             _ = workTaskType.SetupGet(wt => wt.WorkTaskTypeId).Returns(workTaskTypeId);
+            _ = workTaskType.SetupGet(wt => wt.Statuses).Returns(() =>
+            {
+                Mock<IWorkTaskStatus> status = new Mock<IWorkTaskStatus>();
+                _ = status.SetupGet(s => s.WorkTaskStatusId).Returns(targetStatusId);
+                _ = status.SetupGet(s => s.WorkTaskTypeId).Returns(workTaskTypeId);
+                return new List<IWorkTaskStatus> { status.Object };
+            });
             Mock<IWorkTaskStatus> workTaskStatus = new Mock<IWorkTaskStatus>();
             _ = workTaskStatus.SetupGet(wts => wts.WorkTaskStatusId).Returns(Guid.NewGuid());
             Mock<IWorkTask> workTask = new Mock<IWorkTask>();
